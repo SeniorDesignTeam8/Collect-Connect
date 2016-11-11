@@ -2,11 +2,11 @@
 
 namespace GitHubTest001
 {
-    class Program
+    internal static class Program
     {
-        static void Main(string[] args)
+        private static void Main()
         {
-            for (int index = 0; index < 50; index++)
+            for (var index = 0; index < 50; index++)
             {
                 Console.WriteLine("Hello World");
             }
