@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GitHubTest001
 {
@@ -10,6 +6,10 @@ namespace GitHubTest001
     {
         static void Main(string[] args)
         {
+            for (int index = 0; index < 50; index++)
+            {
+                Console.WriteLine("Hello World");
+            }
         }
     }
 }
