@@ -3399,6 +3399,27 @@ If relativePath is empty it refers to the game object the animation clip is atta
         <para>ReplayKit is only available on iPhoneiPadiPod Touch running iOS 9.0 or later.</para>
       </summary>
     </member>
+    <member name="P:UnityEngine.Apple.ReplayKit.ReplayKit.broadcastingAPIAvailable">
+      <summary>
+        <para>A Boolean that indicates whether ReplayKit broadcasting API is available (true means available) (Read Only).
+Check the value of this property before making ReplayKit broadcasting API calls. On iOS versions prior to iOS 10, this property will have a value of false.</para>
+      </summary>
+    </member>
+    <member name="P:UnityEngine.Apple.ReplayKit.ReplayKit.broadcastURL">
+      <summary>
+        <para>A string property that contains an URL used to redirect the user to an on-going or completed broadcast (Read Only).</para>
+      </summary>
+    </member>
+    <member name="P:UnityEngine.Apple.ReplayKit.ReplayKit.cameraEnabled">
+      <summary>
+        <para>Camera enabled status, true, if camera enabled, false otherwise.</para>
+      </summary>
+    </member>
+    <member name="P:UnityEngine.Apple.ReplayKit.ReplayKit.isBroadcasting">
+      <summary>
+        <para>Boolean property that indicates whether a broadcast is currently in progress (Read Only).</para>
+      </summary>
+    </member>
     <member name="P:UnityEngine.Apple.ReplayKit.ReplayKit.isRecording">
       <summary>
         <para>A boolean that indicates whether ReplayKit is making a recording (where True means a recording is in progress). (Read Only)</para>
@@ -3407,6 +3428,11 @@ If relativePath is empty it refers to the game object the animation clip is atta
     <member name="P:UnityEngine.Apple.ReplayKit.ReplayKit.lastError">
       <summary>
         <para>A string value of the last error incurred by the ReplayKit: Either 'Failed to get Screen Recorder' or 'No recording available'. (Read Only)</para>
+      </summary>
+    </member>
+    <member name="P:UnityEngine.Apple.ReplayKit.ReplayKit.microphoneEnabled">
+      <summary>
+        <para>Microphone enabled status, true, if microhone enabled, false otherwise.</para>
       </summary>
     </member>
     <member name="P:UnityEngine.Apple.ReplayKit.ReplayKit.recordingAvailable">
@@ -3419,6 +3445,13 @@ If relativePath is empty it refers to the game object the animation clip is atta
         <para>A boolean that indicates whether the ReplayKit API is available (where True means available). (Read Only)</para>
       </summary>
     </member>
+    <member name="T:UnityEngine.Apple.ReplayKit.ReplayKit.BroadcastStatusCallback">
+      <summary>
+        <para>Function called at the completion of broadcast startup.</para>
+      </summary>
+      <param name="hasStarted">This parameter will be true if the broadcast started successfully and false in the event of an error.</param>
+      <param name="errorMessage">In the event of failure to start a broadcast, this parameter contains the associated error message.</param>
+    </member>
     <member name="M:UnityEngine.Apple.ReplayKit.ReplayKit.Discard">
       <summary>
         <para>Discard the current recording.</para>
@@ -3426,6 +3459,11 @@ If relativePath is empty it refers to the game object the animation clip is atta
       <returns>
         <para>A boolean value of True if the recording was discarded successfully or False if an error occurred.</para>
       </returns>
+    </member>
+    <member name="M:UnityEngine.Apple.ReplayKit.ReplayKit.HideCameraPreview">
+      <summary>
+        <para>Hide the camera preview view.</para>
+      </summary>
     </member>
     <member name="M:UnityEngine.Apple.ReplayKit.ReplayKit.Preview">
       <summary>
@@ -3435,14 +3473,39 @@ If relativePath is empty it refers to the game object the animation clip is atta
         <para>A boolean value of True if the video preview window opened successfully or False if an error occurred.</para>
       </returns>
     </member>
-    <member name="M:UnityEngine.Apple.ReplayKit.ReplayKit.StartRecording(System.Boolean)">
+    <member name="M:UnityEngine.Apple.ReplayKit.ReplayKit.ShowCameraPreviewAt(System.Single,System.Single)">
+      <summary>
+        <para>Shows camera preview at coordinates posX and posY.</para>
+      </summary>
+      <param name="posX"></param>
+      <param name="posY"></param>
+    </member>
+    <member name="M:UnityEngine.Apple.ReplayKit.ReplayKit.StartBroadcasting">
+      <summary>
+        <para>Initiates and starts a new broadcast
+When StartBroadcast is called, user is presented with a broadcast provider selection screen, and then a broadcast setup screen. Once it is finished, a broadcast will be started, and the callback will be invoked.
+It will also be invoked in case of any error.
+        </para>
+      </summary>
+      <param name="callback">A callback for getting the status of broadcast initiation.</param>
+      <param name="enableMicrophone">Enable or disable the microphone while broadcasting. Enabling the microphone allows you to include user commentary while broadcasting. The default value is false.</param>
+      <param name="enableCamera">Enable or disable the camera while broadcasting. Enabling camera allows you to include user camera footage while broadcasting. The default value is false. To actually include camera footage in your broadcast, you also have to call ShowCameraPreviewAt as well to position the preview view.</param>
+    </member>
+    <member name="M:UnityEngine.Apple.ReplayKit.ReplayKit.StartRecording(System.Boolean,System.Boolean)">
       <summary>
         <para>Start a new recording.</para>
       </summary>
       <param name="enableMicrophone">Enable or disable the microphone while making a recording. Enabling the microphone allows you to include user commentary while recording. The default value is false.</param>
+      <param name="enableCamera">Enable or disable the camera while making a recording. Enabling camera allows you to include user camera footage while recording. The default value is false. To actually include camera footage in your recording, you also have to call ShowCameraPreviewAt as well to position the preview view.</param>
       <returns>
         <para>A boolean value of True if recording started successfully or False if an error occurred.</para>
       </returns>
+    </member>
+    <member name="M:UnityEngine.Apple.ReplayKit.ReplayKit.StopBroadcasting">
+      <summary>
+        <para>Stops current broadcast. 
+Will terminate currently on-going broadcast. If no broadcast is in progress, does nothing.</para>
+      </summary>
     </member>
     <member name="M:UnityEngine.Apple.ReplayKit.ReplayKit.StopRecording">
       <summary>
@@ -19599,6 +19662,12 @@ GUILayout.MaxHeight, GUILayout.ExpandWidth, GUILayout.ExpandHeight.</param>
       <param name="style"></param>
     </member>
     <member name="M:UnityEngine.Handheld.SetActivityIndicatorStyle(UnityEngine.AndroidActivityIndicatorStyle)">
+      <summary>
+        <para>Sets the desired activity indicator style.</para>
+      </summary>
+      <param name="style"></param>
+    </member>
+    <member name="M:UnityEngine.Handheld.SetActivityIndicatorStyle(UnityEngine.TizenActivityIndicatorStyle)">
       <summary>
         <para>Sets the desired activity indicator style.</para>
       </summary>
@@ -44737,6 +44806,36 @@ Returns NULL if there is no associated alpha texture for the source sprite. This
     <member name="P:UnityEngine.Tizen.Window.windowHandle">
       <summary>
         <para>Get pointer to the native window handle.</para>
+      </summary>
+    </member>
+    <member name="T:UnityEngine.TizenActivityIndicatorStyle">
+      <summary>
+        <para>Enumerator list of different indicator styles used on Handheld.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.TizenActivityIndicatorStyle.DontShow">
+      <summary>
+        <para>Sets your game to not show any indicator while loading.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.TizenActivityIndicatorStyle.InversedLarge">
+      <summary>
+        <para>The loading indicator size is large and rotates counterclockwise (progress_large and inverted).</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.TizenActivityIndicatorStyle.InversedSmall">
+      <summary>
+        <para>The loading indicator size is small and rotates counterclockwise (process_small and inverted).</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.TizenActivityIndicatorStyle.Large">
+      <summary>
+        <para>The loading indicator size is large and rotates clockwise (progress_large).</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.TizenActivityIndicatorStyle.Small">
+      <summary>
+        <para>The loading indicator size is small and rotates clockwise (process_small).</para>
       </summary>
     </member>
     <member name="T:UnityEngine.TooltipAttribute">
