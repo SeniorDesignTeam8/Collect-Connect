@@ -36,7 +36,11 @@ public class Dealer : MonoBehaviour
             }
         }
 
-
+        public CardCollection(string name)
+        {
+            _name = name;
+            _cardList = new List<Card>();
+        }
 
         public void Shuffle()
         {
@@ -65,10 +69,28 @@ public class Dealer : MonoBehaviour
         }
     }
 
+    public static Dealer Instance;
     private CardCollection _deck;
 
     // Use this for initialization
-    private void Start()
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            BuildDeck();
+            if (_deck == null)
+                _deck = new CardCollection("Deck");
+            _deck.Shuffle();
+            Instance = this;
+        }
+        else if (Instance != this)
+        {
+            Destroy(gameObject);
+        }
+        DontDestroyOnLoad(gameObject);
+    }
+
+    private void BuildDeck()
     {
         List<CardCollection> deckList = new List<CardCollection>();
         // Load the collections.
@@ -96,7 +118,8 @@ public class Dealer : MonoBehaviour
         {
             foreach (string col in collectionList)
             {
-                List<string> artifactList = new List<string>();
+                List<Card> cards = new List<Card>();
+                
                 using (
                     StreamReader reader =
                         new StreamReader(
@@ -105,31 +128,26 @@ public class Dealer : MonoBehaviour
                 {
                     while (!reader.EndOfStream)
                     {
-                        artifactList.Add(reader.ReadLine());
+                        Card c = new Card();
+                        c.SetName(reader.ReadLine());
+                        c.AddProperty("Collection", col, "1");
+                        string s = reader.ReadLine();
+                        while (s != @"\" && s != null)
+                        {
+                            string[] separated = s.Split(new[] {'|'}, StringSplitOptions.RemoveEmptyEntries);
+                            c.AddProperty(separated[0], separated[2], separated[3]);
+                            s = reader.ReadLine();
+                        }
+                        cards.Add(c);
                     }
-                }
-                artifactList = artifactList.Distinct().ToList();
-                List<Card> cards = new List<Card>();
-                foreach (string art in artifactList)
-                {
-                    Card c = new Card();
-                    c.SetName(art);
-                    c.AddProperty("Collection", col);
-                    cards.Add(c);
                 }
                 deckList.Add(new CardCollection(col, cards.ToArray()));
             }
         }
         catch (Exception)
         {
-            
             throw;
         }
         _deck = new CardCollection("Deck", deckList.ToArray());
-    }
-
-    // Update is called once per frame
-    private void Update()
-    {
     }
 }
