@@ -1,0 +1,80 @@
+Ace of Spades
+Pips|Ace|2
+Color|Black|1
+Special|Face Card|3
+Special|Literary Character|5
+Odd or Even|Odd|2
+Odd or Even|Even|2
+\
+Two of Spades
+Pips|Two|2
+Color|Black|1
+Special|Pip Card|1
+Odd or Even|Even|2
+\
+Three of Spades
+Pips|Three|2
+Color|Black|1
+Special|Pip Card|1
+Odd or Even|Odd|2
+\
+Four of Spades
+Pips|Four|2
+Color|Black|1
+Special|Pip Card|1
+Odd or Even|Even|2
+\
+Five of Spades
+Pips|Five|2
+Color|Black|1
+Special|Pip Card|1
+Odd or Even|Odd|2
+\
+Six of Spades
+Pips|Six|2
+Color|Black|1
+Special|Pip Card|1
+Odd or Even|Even|2
+\
+Seven of Spades
+Pips|Seven|2
+Color|Black|1
+Special|Pip Card|1
+Odd or Even|Odd|2
+\
+Eight of Spades
+Pips|Eight|2
+Color|Black|1
+Special|Pip Card|1
+Odd or Even|Even|2
+\
+Nine of Spades
+Pips|Nine|2
+Color|Black|1
+Special|Pip Card|1
+Odd or Even|Odd|2
+\
+Ten of Spades
+Pips|Ten|2
+Color|Black|1
+Special|Pip Card|1
+Odd or Even|Even|2
+\
+Jack of Spades
+Pips|Jack|2
+Color|Black|1
+Special|Face Card|3
+Odd or Even|Odd|2
+\
+Queen of Spades
+Pips|Queen|2
+Color|Black|1
+Special|Face Card|3
+Odd or Even|Even|2
+\
+King of Spades
+Pips|King|2
+Color|Black|1
+Special|Face Card|3
+Odd or Even|Odd|2
+\

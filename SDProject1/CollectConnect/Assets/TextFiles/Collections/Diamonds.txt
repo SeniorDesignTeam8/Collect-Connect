@@ -1,0 +1,79 @@
+Ace of Diamonds
+Pips|Ace|2
+Color|Red|1
+Special|Face Card|3
+Odd or Even|Odd|2
+Odd or Even|Even|2
+\
+Two of Diamonds
+Pips|Two|2
+Color|Red|1
+Special|Pip Card|1
+Odd or Even|Even|2
+\
+Three of Diamonds
+Pips|Three|2
+Color|Red|1
+Special|Pip Card|1
+Odd or Even|Odd|2
+\
+Four of Diamonds
+Pips|Four|2
+Color|Red|1
+Special|Pip Card|1
+Odd or Even|Even|2
+\
+Five of Diamonds
+Pips|Five|2
+Color|Red|1
+Special|Pip Card|1
+Odd or Even|Odd|2
+\
+Six of Diamonds
+Pips|Six|2
+Color|Red|1
+Special|Pip Card|1
+Odd or Even|Even|2
+\
+Seven of Diamonds
+Pips|Seven|2
+Color|Red|1
+Special|Pip Card|1
+Odd or Even|Odd|2
+\
+Eight of Diamonds
+Pips|Eight|2
+Color|Red|1
+Special|Pip Card|1
+Odd or Even|Even|2
+\
+Nine of Diamonds
+Pips|Nine|2
+Color|Red|1
+Special|Pip Card|1
+Odd or Even|Odd|2
+\
+Ten of Diamonds
+Pips|Ten|2
+Color|Red|1
+Special|Pip Card|1
+Odd or Even|Even|2
+\
+Jack of Diamonds
+Pips|Jack|2
+Color|Red|1
+Special|Face Card|3
+Odd or Even|Odd|2
+\
+Queen of Diamonds
+Pips|Queen|2
+Color|Red|1
+Special|Face Card|3
+Odd or Even|Even|2
+\
+King of Diamonds
+Pips|King|2
+Color|Red|1
+Special|Face Card|3
+Odd or Even|Odd|2
+\

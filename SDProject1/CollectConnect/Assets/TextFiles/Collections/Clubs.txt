@@ -1,0 +1,80 @@
+Ace of Clubs
+Pips|Ace|2
+Color|Black|1
+Special|Literary Character|5
+Special|Face Card|3
+Odd or Even|Odd|2
+Odd or Even|Even|2
+\
+Two of Clubs
+Pips|Two|2
+Color|Black|1
+Special|Pip Card|1
+Odd or Even|Even|2
+\
+Three of Clubs
+Pips|Three|2
+Color|Black|1
+Special|Pip Card|1
+Odd or Even|Odd|2
+\
+Four of Clubs
+Pips|Four|2
+Color|Black|1
+Special|Pip Card|1
+Odd or Even|Even|2
+\
+Five of Clubs
+Pips|Five|2
+Color|Black|1
+Special|Pip Card|1
+Odd or Even|Odd|2
+\
+Six of Clubs
+Pips|Six|2
+Color|Black|1
+Special|Pip Card|1
+Odd or Even|Even|2
+\
+Seven of Clubs
+Pips|Seven|2
+Color|Black|1
+Special|Pip Card|1
+Odd or Even|Odd|2
+\
+Eight of Clubs
+Pips|Eight|2
+Color|Black|1
+Special|Pip Card|1
+Odd or Even|Even|2
+\
+Nine of Clubs
+Pips|Nine|2
+Color|Black|1
+Special|Pip Card|1
+Odd or Even|Odd|2
+\
+Ten of Clubs
+Pips|Ten|2
+Color|Black|1
+Special|Pip Card|1
+Odd or Even|Even|2
+\
+Jack of Clubs
+Pips|Jack|2
+Color|Black|1
+Special|Face Card|3
+Odd or Even|Odd|2
+\
+Queen of Clubs
+Pips|Queen|2
+Color|Black|1
+Special|Face Card|3
+Odd or Even|Even|2
+\
+King of Clubs
+Pips|King|2
+Color|Black|1
+Special|Face Card|3
+Odd or Even|Odd|2
+\
