@@ -11,7 +11,7 @@ public class Card : MonoBehaviour
     {
         public readonly string PropertyName;
         public readonly string PropertyValue;
-        public int PointValue;
+        private int PointValue;
 
         public CardProperty(string name, string value, string pointString = "0")
         {
@@ -44,19 +44,30 @@ public class Card : MonoBehaviour
     }
 
     private SpriteRenderer _renderer;
+    private bool _isOnBoard;
     private string _name;
-    private List<CardProperty> _propertyList = new List<CardProperty>();
+    private readonly List<CardProperty> _propertyList = new List<CardProperty>();
 
     // Use this for initialization
     private void Start()
     {
         _renderer = GetComponent<SpriteRenderer>();
+        _renderer.enabled = false;
+        if (SetSprite())
+            _isOnBoard = false;
     }
 
     // Update is called once per frame
-    private void Update()
+    private void LateUpdate()
     {
-
+        if (_isOnBoard && !_renderer.enabled)
+        {
+            _renderer.enabled = true;
+        }
+        else if (!_isOnBoard && _renderer.enabled)
+        {
+            _renderer.enabled = false;
+        }
     }
 
     public void AddProperty(string propName, string propVal, string pointVal = "0")
@@ -77,12 +88,12 @@ public class Card : MonoBehaviour
                 .FirstOrDefault();
     }
 
-    public bool SetSprite()
+    private bool SetSprite()
     {
         try
         {
             string collectionName = _propertyList.Find(prop => prop.PropertyName == "Collection").PropertyValue;
-            string spriteName = _propertyList.Find(prop => prop.PropertyName == "SpriteName").PropertyValue;
+            string spriteName = _name + ".png";
             _renderer.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(@"Assets\Sprites\" + collectionName + @"\" + spriteName);
 
         }
@@ -96,5 +107,10 @@ public class Card : MonoBehaviour
     public void SetName(string cardName)
     {
         _name = cardName;
+    }
+
+    public bool DoesPropertyExist(string propertyValue, string propertyName = "")
+    {
+        return string.IsNullOrEmpty(propertyName) ? _propertyList.Any(prop => prop.PropertyValue == propertyValue) : _propertyList.Any(prop => prop.PropertyName == propertyName && prop.PropertyValue == propertyValue);
     }
 }
