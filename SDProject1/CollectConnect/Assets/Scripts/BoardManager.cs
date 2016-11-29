@@ -80,9 +80,10 @@ public class BoardManager : MonoBehaviour
         if (!_isTurnOver)
             return;
         _currentPlayer++;
+        _currentPlayer %= _players.Length;
         _isTurnOver = false;
     }
-    private void BuildDeck()
+    private static void BuildDeck()
     {
         List<CardCollection> deckList = new List<CardCollection>();
         // Load the collections.
