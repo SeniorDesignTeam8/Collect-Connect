@@ -11,6 +11,7 @@ public class BoardManager : MonoBehaviour
     public static BoardManager Instance;
     public int Columns = 8, Rows = 8;
     public static CardCollection Deck;
+    public static bool IsCardExpanded;
 
     private Player[] _players =
     {
@@ -102,8 +103,9 @@ public class BoardManager : MonoBehaviour
             }
             collectionList = collectionList.Distinct().ToList(); // Remove any duplicates.
         }
-        catch (Exception)
+        catch (Exception e)
         {
+            Debug.LogException(e);
             throw;
         }
         // Load the artifacts from each collection to make cards from them. Then add them to their respective lists.

@@ -44,8 +44,16 @@ public class Card : MonoBehaviour
     }
 
     private SpriteRenderer _renderer;
-    private bool _isOnBoard;
-    private string _name;
+    private const float ExpandedInfoDelay = 2.0f; // Time to wait before expanding.
+    private float _mouseDownTime; // Time when last clicked, in seconds since game start.
+    private bool _isOnBoard; // Specifies if the card is in play or in the deck.
+    private bool _isExpanded; // Specifies if the card is currently in expanded view.
+
+    private static bool _isAnySelected; // Specifies if a card is selected.
+    private bool _isThisSelected; // Specifies if this card is selected.
+    private bool _isTimerRunning; // If true, mouse is currently held down on card.
+    private string _name; // Name of card to display to player.
+    private string _expandedInfo; // Information to display in expanded view.
     private readonly List<CardProperty> _propertyList = new List<CardProperty>();
 
     // Use this for initialization
@@ -55,6 +63,45 @@ public class Card : MonoBehaviour
         _renderer.enabled = false;
         if (SetSprite())
             _isOnBoard = false;
+    }
+
+    private void OnMouseDown()
+    {
+        _mouseDownTime = Time.time; // Mark the current time as 0. After 2 seconds, expand card.
+        _isTimerRunning = true;
+    }
+
+    private void OnMouseUp()
+    {
+        _isTimerRunning = false;
+        if (_isExpanded) // Is the card expanded?
+        {
+            // TODO: Shrink the card to regular size.
+            _isExpanded = false;
+        }
+        else if (!_isAnySelected) // Select this card.
+        {
+            _isAnySelected = true;
+            // TODO: Mark card as selected.
+            _isThisSelected = true;
+        }
+        else if (_isThisSelected) // A card is selected, but is it this one?
+        {
+            _isThisSelected = false; // If so, then deselect this card.
+            // TODO: Deselect card.
+            _isAnySelected = false;
+        }
+        // Otherwise, do nothing (might change to deselect other card in future).
+    }
+
+    private void Update()
+    {
+        if (_isTimerRunning && Time.time - _mouseDownTime >= ExpandedInfoDelay)
+        {
+            _isTimerRunning = false;
+            // TODO: Expand Card.
+            _isExpanded = true;
+        }
     }
 
     // Update is called once per frame
@@ -97,8 +144,9 @@ public class Card : MonoBehaviour
             _renderer.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(@"Assets\Sprites\" + collectionName + @"\" + spriteName);
 
         }
-        catch (ArgumentNullException)
+        catch (ArgumentNullException e)
         {
+            Debug.LogException(e);
             return false;
         }
         return true;
@@ -107,6 +155,12 @@ public class Card : MonoBehaviour
     public void SetName(string cardName)
     {
         _name = cardName;
+    }
+
+    public void SetExpInfo(string info)
+    {
+        if (string.IsNullOrEmpty(_expandedInfo))
+            _expandedInfo = info;
     }
 
     public bool DoesPropertyExist(string propertyValue, string propertyName = "")
