@@ -123,6 +123,7 @@ public class BoardManager : MonoBehaviour
                 {
                     Card c = new Card();
                     c.SetName(reader.ReadLine());
+                    c.SetExpInfo(reader.ReadLine());
                     c.AddProperty("Collection", col, "1");
                     string s = reader.ReadLine();
                     while (s != @"\" && s != null)

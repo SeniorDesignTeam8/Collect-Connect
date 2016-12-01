@@ -96,12 +96,10 @@ public class Card : MonoBehaviour
 
     private void Update()
     {
-        if (_isTimerRunning && Time.time - _mouseDownTime >= ExpandedInfoDelay)
-        {
-            _isTimerRunning = false;
-            // TODO: Expand Card.
-            _isExpanded = true;
-        }
+        if (!_isTimerRunning || !(Time.time - _mouseDownTime >= ExpandedInfoDelay)) return;
+        _isTimerRunning = false;
+        // TODO: Expand Card.
+        _isExpanded = true;
     }
 
     // Update is called once per frame
@@ -161,6 +159,11 @@ public class Card : MonoBehaviour
     {
         if (string.IsNullOrEmpty(_expandedInfo))
             _expandedInfo = info;
+    }
+
+    public string GetExpInfo()
+    {
+        return _expandedInfo;
     }
 
     public bool DoesPropertyExist(string propertyValue, string propertyName = "")
