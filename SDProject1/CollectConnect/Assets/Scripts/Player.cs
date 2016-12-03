@@ -5,33 +5,49 @@ using System.Collections.Generic;
 
 public class Player : MonoBehaviour
 {
-    public readonly string PlayerName;
-    private CardCollection _playerHand;
-    public int PlayerScore;
+    public int Score { get; private set; }
 
-    public Player(string name)
+    private string _playerName; // The player's name (internally).
+    private CardCollection _playerHand; // Represents the player's cards.
+    private static int _numInvalidHands; // Counts how many nonexistent players tried to draw hands.
+
+
+
+    private void Start()
     {
-        PlayerName = name;
+        _playerName = gameObject.name.Replace(" ", "").ToLower(); // Remove spaces and change to all lowercase to standardize.
+        if (_playerName == "player1" || _playerName == "player2" || _playerName == "player3" || _playerName == "player4")
+            DrawHand(); // Draw 5 cards (or whatever's left in the deck).
+        else // Invalid player name. Use empty hand.
+        {
+            _numInvalidHands++;
+            _playerHand = new CardCollection("Invalid Deck #" + _numInvalidHands);
+        }
     }
 
     public void DrawHand()
     {
         List<Card> handList = new List<Card>();
         int deckSize = BoardManager.Deck.Size;
-        for (int i = 0; i < Math.Min(5, deckSize); i++)
+        bool shouldCardsFlip = _playerName == "player1" || _playerName == "player4";
+        for (int i = 0; i < Math.Min(5, deckSize); i++) // If there are < 5 cards left, just draw them all.
             handList.Add(BoardManager.Deck.Draw());
-        _playerHand = new CardCollection(PlayerName + "'s Hand", handList.ToArray());
+        foreach (var c in handList) // Move each card to the board, flipping if needed.
+        {
+            c.MoveToBoard(shouldCardsFlip);
+        }
+        _playerHand = new CardCollection(_playerName + "'s Hand", handList.ToArray());
     }
 
 
 
     public void IncreaseScore(int reward)
     {
-        PlayerScore += reward;
+        Score += reward;
     }
 
     public void ReduceScore(int penalty)
     {
-        PlayerScore -= penalty;
+        Score -= penalty;
     }
 }

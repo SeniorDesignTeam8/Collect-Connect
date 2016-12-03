@@ -9,14 +9,10 @@ using Random = UnityEngine.Random;
 public class BoardManager : MonoBehaviour
 {
     public static BoardManager Instance;
+    public static Player[] Players = new Player[4];
     public int Columns = 8, Rows = 8;
     public static CardCollection Deck;
     public static bool IsCardExpanded;
-
-    private Player[] _players =
-    {
-        new Player("Player 1"), new Player("Player 2"), new Player("Player 3"), new Player("Player 4")
-    };
 
     private int _currentPlayer = 1;
     private bool _isTurnOver;
@@ -30,7 +26,7 @@ public class BoardManager : MonoBehaviour
             if (Deck == null)
                 Deck = new CardCollection("Deck");
             Deck.Shuffle();
-            foreach (Player p in _players)
+            foreach (Player p in Players)
             {
                 p.DrawHand();
             }
@@ -81,7 +77,7 @@ public class BoardManager : MonoBehaviour
         if (!_isTurnOver)
             return;
         _currentPlayer++;
-        _currentPlayer %= _players.Length;
+        _currentPlayer %= Players.Length;
         _isTurnOver = false;
     }
     private static void BuildDeck()

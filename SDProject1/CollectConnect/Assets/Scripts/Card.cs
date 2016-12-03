@@ -30,17 +30,6 @@ public class Card : MonoBehaviour
         {
             PointValue = newValue;
         }
-
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                var hashCode = PropertyName != null ? PropertyName.GetHashCode() : 0;
-                hashCode = (hashCode * 397) ^ (PropertyValue != null ? PropertyValue.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ PointValue;
-                return hashCode;
-            }
-        }
     }
 
     private SpriteRenderer _renderer;
@@ -169,5 +158,11 @@ public class Card : MonoBehaviour
     public bool DoesPropertyExist(string propertyValue, string propertyName = "")
     {
         return string.IsNullOrEmpty(propertyName) ? _propertyList.Any(prop => prop.PropertyValue == propertyValue) : _propertyList.Any(prop => prop.PropertyName == propertyName && prop.PropertyValue == propertyValue);
+    }
+
+    public void MoveToBoard(bool flipCard)
+    {
+        // TODO Place card at placeholder. Flip if needed.
+        _isOnBoard = true;
     }
 }
