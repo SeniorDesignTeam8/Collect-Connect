@@ -9,7 +9,7 @@ using Random = UnityEngine.Random;
 public class BoardManager : MonoBehaviour
 {
     public static BoardManager Instance;
-    public static Player[] Players = new Player[4];
+    public Player[] Players;
     public int Columns = 8, Rows = 8;
     public static CardCollection Deck;
     public static bool IsCardExpanded;

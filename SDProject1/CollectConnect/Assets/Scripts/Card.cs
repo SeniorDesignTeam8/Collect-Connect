@@ -37,6 +37,7 @@ public class Card : MonoBehaviour
     private float _mouseDownTime; // Time when last clicked, in seconds since game start.
     private bool _isOnBoard; // Specifies if the card is in play or in the deck.
     private bool _isExpanded; // Specifies if the card is currently in expanded view.
+    
 
     private static bool _isAnySelected; // Specifies if a card is selected.
     private bool _isThisSelected; // Specifies if this card is selected.
@@ -162,6 +163,7 @@ public class Card : MonoBehaviour
 
     public void MoveToBoard(bool flipCard)
     {
+        _renderer.flipY = true;
         // TODO Place card at placeholder. Flip if needed.
         _isOnBoard = true;
     }
