@@ -6,40 +6,45 @@ using System.Collections.Generic;
 public class Player : MonoBehaviour
 {
     public int Score { get; private set; }
+    public bool IsDrawingCards { get; private set; }
 
+    public GameObject[] CardPlaceholders;
+    public GameObject PlayerScore;
+    public GameObject ExpCardPlace; // The expanded card placeholder.
+    public const int HandSize = 5;
+
+    private bool[] _slotStatus = new bool[HandSize]; // True if taken, false if available.
     private string _playerName; // The player's name (internally).
     private CardCollection _playerHand; // Represents the player's cards.
-    private static int _numInvalidHands; // Counts how many nonexistent players tried to draw hands.
-
-
 
     private void Start()
     {
+        IsDrawingCards = true;
         _playerName = gameObject.name.Replace(" ", "").ToLower(); // Remove spaces and change to all lowercase to standardize.
-        if (_playerName == "player1" || _playerName == "player2" || _playerName == "player3" || _playerName == "player4")
-            DrawHand(); // Draw 5 cards (or whatever's left in the deck).
-        else // Invalid player name. Use empty hand.
-        {
-            _numInvalidHands++;
-            _playerHand = new CardCollection("Invalid Deck #" + _numInvalidHands);
-        }
+        _playerHand = new CardCollection(gameObject.name + "'s Hand");
     }
 
-    public void DrawHand()
+    private void Update()
     {
-        List<Card> handList = new List<Card>();
-        int deckSize = BoardManager.Deck.Size;
-        bool shouldCardsFlip = _playerName == "player1" || _playerName == "player4";
-        for (int i = 0; i < Math.Min(5, deckSize); i++) // If there are < 5 cards left, just draw them all.
-            handList.Add(BoardManager.Deck.Draw());
-        foreach (var c in handList) // Move each card to the board, flipping if needed.
+        if (IsDrawingCards)
         {
-            c.MoveToBoard(shouldCardsFlip);
+            if (_playerHand.Size < HandSize)
+            {
+                if (BoardManager.IsDeckReady)
+                {
+                    Card c = BoardManager.Deck.Draw();
+                    c.MoveToBoard(this);
+                    _playerHand.AddCards(c);
+                }
+                else
+                {
+                    IsDrawingCards = false;
+                }
+            }
+            else
+                IsDrawingCards = false;
         }
-        _playerHand = new CardCollection(_playerName + "'s Hand", handList.ToArray());
     }
-
-
 
     public void IncreaseScore(int reward)
     {
@@ -49,5 +54,18 @@ public class Player : MonoBehaviour
     public void ReduceScore(int penalty)
     {
         Score -= penalty;
+    }
+
+    public void PlaceCard(Card c)
+    {
+        for (int i = 0; i < CardPlaceholders.Length; i++)
+        {
+            if (!_slotStatus[i])
+            {
+                c.GetComponent<Transform>().position = CardPlaceholders[i].GetComponent<Transform>().position;
+                
+                _slotStatus[i] = true;
+            }
+        }
     }
 }

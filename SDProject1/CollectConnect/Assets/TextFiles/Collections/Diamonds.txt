@@ -1,92 +1,91 @@
 Ace of Diamonds
 Ambitious and hardworking, the Ace of Diamonds focuses on fulfilling their material needs nearly to the exclusion of all else. Independent and determined, they often gravitate toward leadership and entrepreneurial roles in life. Unfortunately, their personal relationships may suffer as a result of this single focus of attention.
-Pips|Ace|2
-Color|Red|1
-Special|Face Card|3
-Odd or Even|Odd|2
-Odd or Even|Even|2
-\
+Pips\Ace\2
+Color\Red\1
+Special\Face Card\3
+Odd or Even\Odd\2
+Odd or Even\Even\2
+|
 Two of Diamonds
 Nothing motivates a Two of Diamonds person like money. A willingness to throw themselves into a business venture coupled with a refined intuition makes a Two of Diamonds a steady business partner. Some of their most ideal partners are family and friends; people with whom they feel most familiar and to whom they have a deep sense of loyalty and responsibility. They're happiest working in a union of shared values and least happy when working alone.
-Pips|Two|2
-Color|Red|1
-Special|Pip Card|1
-Odd or Even|Even|2
-\
+Pips\Two\2
+Color\Red\1
+Special\Pip Card\1
+Odd or Even\Even\2
+|
 Three of Diamonds
 Deciding what they value plagues the Three of Diamonds more than anything else. Typical of all Threes, indecision & uncertainty are hallmarks of this card. They're destined to have more experiences in life that teach them about values than any other card in the deck.
-Pips|Three|2
-Color|Red|1
-Special|Pip Card|1
-Odd or Even|Odd|2
-\
+Pips\Three\2
+Color\Red\1
+Special\Pip Card\1
+Odd or Even\Odd\2
+|
 Four of Diamonds
 Pragmatic, self-reliant, & straightforward, financial stability comes to Four of Diamonds people through a solid work ethic. Determined & focused as well, their payoff will be a steady income as a direct effect of the effort expended. This card won't be able to rest on their laurels, but at least will be rewarded for a job well done. The fruits of their labor will provide the financial foundation to help them feel safe & secure.
-Pips|Four|2
-Color|Red|1
-Special|Pip Card|1
-Odd or Even|Even|2
-\
+Pips\Four\2
+Color\Red\1
+Special\Pip Card\1
+Odd or Even\Even\2
+|
 Five of Diamonds
 Not one to be hemmed in, the Five of Diamonds finds satisfaction in personal freedom. Travel, adventure, & living by their own rules, these people seek fulfillment in their lives while resisting settling down long enough to create stability. Work that includes travel is a great compromise between freedom & responsibility – a career in which they set their own hours coupled with the opportunity to get out of the office, or at the very least get away from their desks. Sales positions are often a rewarding profession for Five of Diamonds people.
-Pips|Five|2
-Color|Red|1
-Special|Pip Card|1
-Odd or Even|Odd|2
-\
+Pips\Five\2
+Color\Red\1
+Special\Pip Card\1
+Odd or Even\Odd\2
+|
 Six of Diamonds
 The Six of Diamonds person's a natural accountant of sorts. They're aware of how much they give compared to how much value they receive in exchange. Their mantra is, “As you sow, so shall you reap!” The universe seems to hold them accountable with swift rebalancing of the scales when they're out of integrity & honor. They're just as swift to mete out justice if they feel they’ve been wronged.
-Pips|Six|2
-Color|Red|1
-Special|Pip Card|1
-Odd or Even|Even|2
-\
+Pips\Six\2
+Color\Red\1
+Special\Pip Card\1
+Odd or Even\Even\2
+|
 Seven of Diamonds
 As one of the alternating Semi-Fixed Cards of the deck, the Seven of Diamonds occupies the Venus/Venus position in the Master Life Script & the Saturn/Saturn position in the Master Spirit Script. This Venus influence bestows an artistic flair, a love of nature & beauty, & a certain social charm like no other. The Saturn energy however, tends more toward firm boundaries & self-discipline. An interesting, unique blend of flow and constriction is experienced by this Seven in the cards of life. Its Semi-Fixed Card (also known as Twin Soul), the Nine of Hearts, similarly shares these positions and influences.
-Pips|Seven|2
-Color|Red|1
-Special|Pip Card|1
-Odd or Even|Odd|2
-\
+Pips\Seven\2
+Color\Red\1
+Special\Pip Card\1
+Odd or Even\Odd\2
+|
 Eight of Diamonds
 Powerful people make you sit up & take notice. This is certainly the experience with the Eight of Diamonds, aka the card of fame & fortune. They like to take charge, be out in front, & be recognized for their achievements. Often power-earners, they enjoy the money they create & spend it with enthusiasm.
-Pips|Eight|2
-Color|Red|1
-Special|Pip Card|1
-Odd or Even|Even|2
-\
+Pips\Eight\2
+Color\Red\1
+Special\Pip Card\1
+Odd or Even\Even\2
+|
 Nine of Diamonds
 After lifetimes of collecting, creating, & receiving, the Nine of Diamonds completes this cycle of its soul evolution through giving & releasing to others in this lifetime. Their life lesson is to trust in the universal flow, an expression of their Neptune/Saturn placement in the Master Spirit Script. When the abundance of the universe is doubted, the letting go of material things can be a challenge. To align with trust in a benign universe & willingly let go for the benefit of others allows for more to flow into their life, and thus is the higher expression of this card.
-Pips|Nine|2
-Color|Red|1
-Special|Pip Card|1
-Odd or Even|Odd|2
-\
+Pips\Nine\2
+Color\Red\1
+Special\Pip Card\1
+Odd or Even\Odd\2
+|
 Ten of Diamonds
 As one of the most fortunate cards in the deck with its Jupiter/Jupiter placement in the Master Life Script, the Ten of Diamonds experiences many blessings in life. They often marry well and/or achieve financial success on their own.
-Pips|Ten|2
-Color|Red|1
-Special|Pip Card|1
-Odd or Even|Even|2
-\
+Pips\Ten\2
+Color\Red\1
+Special\Pip Card\1
+Odd or Even\Even\2
+|
 Jack of Diamonds
 Like all Jacks in the deck, the Jack of Diamonds is young at heart, playful, & social with a nimble mind. Whether promoting themselves, selling goods & services, or bartering, Jack of Diamonds people know how to make connections & close the deal. They have the ability to wheel & deal their way through life. The Eight of Hearts in Jupiter in their life’s script suggests mixing business with pleasure – a Jack feature that certainly makes life more fun. There’s a social ease with the Jack of Diamonds that can make them a welcome addition or focal point of any business dinner or networking event.
-Pips|Jack|2
-Color|Red|1
-Special|Face Card|3
-Odd or Even|Odd|2
-\
+Pips\Jack\2
+Color\Red\1
+Special\Face Card\3
+Odd or Even\Odd\2
+|
 Queen of Diamonds
 With so many Threes in their life script, the Queen of Diamonds is bursting with innovative ideas & the drive to see them through. Their Three of Spades card in Mars is a motivator. They may have several different careers in quest for their true expression, but none of that energy is wasted as they build on their experiences from one to the next. They're also influenced by a Three of Clubs in Venus & a Three of Diamonds Challenging Karma Card (-KC). Three Threes is a powerful combination for variety & creativity as well as contributing to worry & indecision.
-Pips|Queen|2
-Color|Red|1
-Special|Face Card|3
-Odd or Even|Even|2
-\
+Pips\Queen\2
+Color\Red\1
+Special\Face Card\3
+Odd or Even\Even\2
+|
 King of Diamonds
 Members of the royal Court Cards are known for having strong personalities, & Kings in particular are famous for being strong-willed, confident, & authoritative. The King of Diamonds, a natural born leader as the master of higher values, is all that & quite enterprising as well.
-Pips|King|2
-Color|Red|1
-Special|Face Card|3
-Odd or Even|Odd|2
-\
+Pips\King\2
+Color\Red\1
+Special\Face Card\3
+Odd or Even\Odd\2

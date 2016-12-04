@@ -8,8 +8,9 @@ using Random = UnityEngine.Random;
 
 public class BoardManager : MonoBehaviour
 {
+    public static bool IsDeckReady { get; private set; }
     public static BoardManager Instance;
-    public Player[] Players;
+    public static GameObject[] Players;
     public int Columns = 8, Rows = 8;
     public static CardCollection Deck;
     public static bool IsCardExpanded;
@@ -18,18 +19,21 @@ public class BoardManager : MonoBehaviour
     private bool _isTurnOver;
     private readonly List<Vector3> _gridPositions = new List<Vector3>();
 
+    private void Awake()
+    {
+        IsDeckReady = false;
+    }
+
     private void Start()
     {
         if (Instance == null)
         {
+            Deck = new CardCollection("Deck");
             BuildDeck();
             if (Deck == null)
                 Deck = new CardCollection("Deck");
             Deck.Shuffle();
-            foreach (Player p in Players)
-            {
-                p.DrawHand();
-            }
+            IsDeckReady = true;
             Instance = this;
         }
         else if (Instance != this)
@@ -39,37 +43,12 @@ public class BoardManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    private void InitializeList()
-    {
-        _gridPositions.Clear();
-        for (var x = 1; x < Columns - 1; x++)
-            for (var y = 1; y < Rows - 1; y++)
-                _gridPositions.Add(new Vector3(x, y, 0f));
-    }
-
-    private Vector3 RandomPosition()
-    {
-        var randomIndex = Random.Range(0, _gridPositions.Count);
-        var randomPosition = _gridPositions[randomIndex];
-        _gridPositions.RemoveAt(randomIndex);
-        return randomPosition;
-    }
-
-    private void LayOutObjectAtRandom(IList<GameObject> tileArray, int min, int max)
-    {
-        var objectCount = Random.Range(min, max + 1);
-
-        for (var i = 0; i < objectCount; i++)
-        {
-            var tileChoice = tileArray[Random.Range(0, tileArray.Count)];
-            Instantiate(tileChoice, RandomPosition(), Quaternion.identity);
-        }
-    }
-
     // Update is called once per frame
     private void Update()
     {
-        
+        if (Deck.Size == 0)
+            IsDeckReady = false;
+        // Play turn like normal.
     }
 
     private void LateUpdate()
@@ -82,14 +61,13 @@ public class BoardManager : MonoBehaviour
     }
     private static void BuildDeck()
     {
-        List<CardCollection> deckList = new List<CardCollection>();
         // Load the collections.
         List<string> collectionList = new List<string>();
         try
         {
             using (
                 StreamReader reader =
-                    new StreamReader(new FileStream(Application.dataPath + @"\Assets\TextFiles\Collections.txt",
+                    new StreamReader(new FileStream(Application.dataPath + @"/TextFiles/Collections.txt",
                         FileMode.OpenOrCreate)))
             {
                 while (!reader.EndOfStream)
@@ -107,32 +85,31 @@ public class BoardManager : MonoBehaviour
         // Load the artifacts from each collection to make cards from them. Then add them to their respective lists.
         foreach (string col in collectionList)
         {
-            List<Card> cards = new List<Card>();
-
             using (
                 StreamReader reader =
                     new StreamReader(
-                        new FileStream(Application.dataPath + @"\Assets\TextFiles\Collections\" + col + @".txt",
+                        new FileStream(Application.dataPath + @"/TextFiles/Collections/" + col + @".txt",
                             FileMode.OpenOrCreate)))
             {
                 while (!reader.EndOfStream)
                 {
-                    Card c = new Card();
-                    c.SetName(reader.ReadLine());
-                    c.SetExpInfo(reader.ReadLine());
-                    c.AddProperty("Collection", col, "1");
+                    GameObject c = Instantiate(GameObject.Find("Card"));
+                    c.AddComponent<Card>();
+                    Card cardComponent = c.GetComponent<Card>();
+                    cardComponent.name = reader.ReadLine();
+                    cardComponent.AddProperty("Collection", col, "1");
                     string s = reader.ReadLine();
-                    while (s != @"\" && s != null)
+                    cardComponent.SetExpInfo(s);
+                    s = reader.ReadLine();
+                    while (s != @"|" && s != null)
                     {
-                        string[] separated = s.Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
-                        c.AddProperty(separated[0], separated[2], separated[3]);
+                        string[] separated = s.Split('\\');
+                        cardComponent.AddProperty(separated[0], separated[1], separated[2]);
                         s = reader.ReadLine();
                     }
-                    cards.Add(c);
+                    Deck.AddCards(cardComponent);
                 }
             }
-            deckList.Add(new CardCollection(col, cards.ToArray()));
         }
-        Deck = new CardCollection("Deck", deckList.ToArray());
     }
 }

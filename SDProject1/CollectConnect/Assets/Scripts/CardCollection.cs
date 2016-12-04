@@ -2,42 +2,29 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Random = UnityEngine.Random;
 
-public class CardCollection : ScriptableObject
+public class CardCollection
 {
     private string _name;
-    private readonly List<Card> _cardList;
+    private List<Card> _cardList;
 
     public int Size
     {
         get { return _cardList.Count; }
     }
 
-    public CardCollection(string name, params Card[] cards)
-    {
-        _name = name;
-        _cardList = new List<Card>();
-        foreach (Card c in cards)
-        {
-            _cardList.Add(c);
-        }
-    }
-
-    public CardCollection(string name, params CardCollection[] collections)
-    {
-        _name = name;
-        _cardList = new List<Card>();
-        foreach (CardCollection cC in collections)
-        {
-            _cardList.AddRange(cC._cardList);
-        }
-    }
-
     public CardCollection(string name)
     {
         _name = name;
         _cardList = new List<Card>();
+    }
+
+    public void AddCards(params Card[] cards)
+    {
+        _cardList.AddRange(cards);
+        _cardList = _cardList.Distinct().ToList();
     }
 
     public void Shuffle()
