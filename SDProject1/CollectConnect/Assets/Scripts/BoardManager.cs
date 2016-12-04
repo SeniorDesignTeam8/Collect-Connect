@@ -9,13 +9,10 @@ using Random = UnityEngine.Random;
 public class BoardManager : MonoBehaviour
 {
     public static BoardManager Instance;
+    public Player[] Players;
     public int Columns = 8, Rows = 8;
     public static CardCollection Deck;
-
-    private Player[] _players =
-    {
-        new Player("Player 1"), new Player("Player 2"), new Player("Player 3"), new Player("Player 4")
-    };
+    public static bool IsCardExpanded;
 
     private int _currentPlayer = 1;
     private bool _isTurnOver;
@@ -29,7 +26,7 @@ public class BoardManager : MonoBehaviour
             if (Deck == null)
                 Deck = new CardCollection("Deck");
             Deck.Shuffle();
-            foreach (Player p in _players)
+            foreach (Player p in Players)
             {
                 p.DrawHand();
             }
@@ -80,9 +77,10 @@ public class BoardManager : MonoBehaviour
         if (!_isTurnOver)
             return;
         _currentPlayer++;
+        _currentPlayer %= Players.Length;
         _isTurnOver = false;
     }
-    private void BuildDeck()
+    private static void BuildDeck()
     {
         List<CardCollection> deckList = new List<CardCollection>();
         // Load the collections.
@@ -101,8 +99,9 @@ public class BoardManager : MonoBehaviour
             }
             collectionList = collectionList.Distinct().ToList(); // Remove any duplicates.
         }
-        catch (Exception)
+        catch (Exception e)
         {
+            Debug.LogException(e);
             throw;
         }
         // Load the artifacts from each collection to make cards from them. Then add them to their respective lists.
@@ -120,6 +119,7 @@ public class BoardManager : MonoBehaviour
                 {
                     Card c = new Card();
                     c.SetName(reader.ReadLine());
+                    c.SetExpInfo(reader.ReadLine());
                     c.AddProperty("Collection", col, "1");
                     string s = reader.ReadLine();
                     while (s != @"\" && s != null)
