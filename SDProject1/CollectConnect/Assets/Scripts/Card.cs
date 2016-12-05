@@ -33,10 +33,10 @@ public class Card : MonoBehaviour
         }
     }
 
-    public AudioClip SelectSound;
+    private BoxCollider2D _collider;
 
     private SpriteRenderer _renderer;
-    private const float ExpandedInfoDelay = 2.0f; // Time to wait before expanding.
+    private const float ExpandedInfoDelay = 1.0f; // Time to wait before expanding.
     private float _mouseDownTime; // Time when last clicked, in seconds since game start.
     private bool _isOnBoard; // Specifies if the card is in play or in the deck.
     private bool _isExpanded; // Specifies if the card is currently in expanded view.
@@ -52,32 +52,40 @@ public class Card : MonoBehaviour
     // Use this for initialization
     private void Start()
     {
+        _collider = GetComponent<BoxCollider2D>();
         _renderer = GetComponent<SpriteRenderer>();
     }
 
     private void OnMouseDown()
     {
+        Debug.Log("Mouse Down.");
         _mouseDownTime = Time.time; // Mark the current time as 0. After 2 seconds, expand card.
         _isTimerRunning = true;
     }
 
     private void OnMouseUp()
     {
+        Debug.Log("Mouse Up.");
         _isTimerRunning = false;
         if (_isExpanded) // Is the card expanded?
         {
+            Debug.Log("Shrinking " + name);
             // TODO: Shrink the card to regular size.
             _isExpanded = false;
         }
         else if (!_isAnySelected) // Select this card.
         {
             _isAnySelected = true;
+            Debug.Log("Selecting " + name);
+            BoardManager.Instance.PlaySelect();
             // TODO: Mark card as selected.
             _isThisSelected = true;
         }
         else if (_isThisSelected) // A card is selected, but is it this one?
         {
             _isThisSelected = false; // If so, then deselect this card.
+            Debug.Log("Deselecting " + name);
+            BoardManager.Instance.PlayDeselect();
             // TODO: Deselect card.
             _isAnySelected = false;
         }
@@ -94,6 +102,8 @@ public class Card : MonoBehaviour
         if (!_isTimerRunning || !(Time.time - _mouseDownTime >= ExpandedInfoDelay))
             return;
         _isTimerRunning = false;
+        Debug.Log("Expanding " + name);
+        BoardManager.Instance.PlayExpand();
         // TODO: Expand Card.
         _isExpanded = true;
     }

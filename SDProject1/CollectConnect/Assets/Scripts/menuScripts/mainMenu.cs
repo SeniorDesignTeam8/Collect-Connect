@@ -7,6 +7,13 @@ public class mainMenu : MonoBehaviour {
     public Texture BackgroundTexture;
     public Texture TitleText;
     public GUIStyle btn;
+    public AudioClip ButtonClickSound;
+    public AudioSource MenuSoundSource;
+
+    private void Start()
+    {
+        MenuSoundSource.clip = ButtonClickSound;
+    }
 
     private void OnGUI()
     {
@@ -24,6 +31,7 @@ public class mainMenu : MonoBehaviour {
 
     private void OnMouseDown()
     {
+        MenuSoundSource.Play();
         SceneManager.LoadScene("MainScene");
     }
 }

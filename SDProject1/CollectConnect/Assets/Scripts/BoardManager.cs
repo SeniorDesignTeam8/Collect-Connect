@@ -14,6 +14,10 @@ public class BoardManager : MonoBehaviour
     public int Columns = 8, Rows = 8;
     public static CardCollection Deck;
     public static bool IsCardExpanded;
+    public AudioSource SoundEffectSource;
+    public AudioClip SelectSound;
+    public AudioClip DeselectSound;
+    public AudioClip ExpandSound;
 
     private int _currentPlayer = 1;
     private bool _isTurnOver;
@@ -111,5 +115,29 @@ public class BoardManager : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void PlaySelect()
+    {
+        if (SoundEffectSource.isPlaying)
+            SoundEffectSource.Stop();
+        SoundEffectSource.clip = SelectSound;
+        SoundEffectSource.Play();
+    }
+
+    public void PlayDeselect()
+    {
+        if (SoundEffectSource.isPlaying)
+            SoundEffectSource.Stop();
+        SoundEffectSource.clip = DeselectSound;
+        SoundEffectSource.Play();
+    }
+
+    public void PlayExpand()
+    {
+        if (SoundEffectSource.isPlaying)
+            SoundEffectSource.Stop();
+        SoundEffectSource.clip = ExpandSound;
+        SoundEffectSource.Play();
     }
 }
