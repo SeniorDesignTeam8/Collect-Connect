@@ -10,7 +10,8 @@ public class BoardManager : MonoBehaviour
 {
     public static bool IsDeckReady { get; private set; }
     public static BoardManager Instance;
-    public static GameObject[] Players;
+    public GameObject[] Players;
+
     public int Columns = 8, Rows = 8;
     public static CardCollection Deck;
     public static bool IsCardExpanded;
@@ -18,13 +19,18 @@ public class BoardManager : MonoBehaviour
     public AudioClip SelectSound;
     public AudioClip DeselectSound;
     public AudioClip ExpandSound;
+    private List<string> _keywordList;
 
+    private List<Player> _playerScriptRefs;
+    private bool _isGameStarted;
     private int _currentPlayer = 1;
     private bool _isTurnOver;
     private readonly List<Vector3> _gridPositions = new List<Vector3>();
+    private int[] _scoreboard;
 
     private void Awake()
     {
+        _isGameStarted = false;
         IsDeckReady = false;
     }
 
@@ -39,6 +45,11 @@ public class BoardManager : MonoBehaviour
             Deck.Shuffle();
             IsDeckReady = true;
             Instance = this;
+            _playerScriptRefs = new List<Player>();
+            foreach (GameObject player in Players)
+                _playerScriptRefs.Add(player.GetComponent<Player>());
+            _keywordList = new List<string>();
+            _scoreboard = new int[Players.Length];
         }
         else if (Instance != this)
         {
@@ -50,6 +61,27 @@ public class BoardManager : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
+        // First, check if all players have drawn their cards.
+        // If so, then populate the players' word banks.
+        if (!_isGameStarted)
+        {
+            bool allHandsDrawn = Players.All(t => !t.GetComponent<Player>().IsDrawingCards);
+
+            if (allHandsDrawn)
+            {
+                _keywordList.Clear();
+                //Clear and (re?)populate the word banks.
+                foreach (GameObject t in Players)
+                {
+                    _keywordList.AddRange(t.GetComponent<Player>().GetKeywords());
+                }
+                // Remove any duplicates, then we're ready to start.
+                // TODO: Might place a first card at center of the board.
+                _keywordList = _keywordList.Distinct().ToList();
+                _isGameStarted = true;
+            }
+        }
+
         if (Deck.Size == 0)
             IsDeckReady = false;
         // Play turn like normal.

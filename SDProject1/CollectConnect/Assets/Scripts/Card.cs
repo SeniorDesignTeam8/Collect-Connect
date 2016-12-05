@@ -8,7 +8,7 @@ using UnityEditor;
 
 public class Card : MonoBehaviour
 {
-    private struct CardProperty
+    public struct CardProperty
     {
         public readonly string PropertyName;
         public readonly string PropertyValue;
@@ -33,6 +33,7 @@ public class Card : MonoBehaviour
         }
     }
 
+    public List<LineRenderer> LineList;
     private BoxCollider2D _collider;
 
     private SpriteRenderer _renderer;
@@ -47,13 +48,14 @@ public class Card : MonoBehaviour
     private bool _isThisSelected; // Specifies if this card is selected.
     private bool _isTimerRunning; // If true, mouse is currently held down on card.
     private string _expandedInfo; // Information to display in expanded view.
-    private readonly List<CardProperty> _propertyList = new List<CardProperty>();
+    public readonly List<CardProperty> _propertyList = new List<CardProperty>();
 
     // Use this for initialization
     private void Start()
     {
         _collider = GetComponent<BoxCollider2D>();
         _renderer = GetComponent<SpriteRenderer>();
+        LineList = new List<LineRenderer>();
     }
 
     private void OnMouseDown()
@@ -180,23 +182,22 @@ public class Card : MonoBehaviour
         switch (p.name.ToLower())
         {
             case "player1":
-                rotation = Vector3.left;
+                rotation = new Vector3(0.0f, 0.0f, -180.0f);
                 break;
             case "player2":
-                rotation = Vector3.zero;
+                rotation = new Vector3(0.0f, 0.0f, -90.0f);
                 break;
             case "player3":
-                rotation = Vector3.right;
+                rotation = Vector3.zero;
                 break;
             case "player4":
-                rotation = Vector3.up;
+                rotation = new Vector3(0.0f, 0.0f, 90.0f);
                 break;
             default:
                 rotation = Vector3.zero;
                 break;
         }
-        transform.Rotate(rotation);
-        p.PlaceCard(this);
+        p.PlaceCard(this, rotation);
         _renderer.enabled = true;
         _isOnBoard = true;
     }
