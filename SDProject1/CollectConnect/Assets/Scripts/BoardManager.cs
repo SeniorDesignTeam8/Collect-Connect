@@ -78,6 +78,7 @@ public class BoardManager : MonoBehaviour
                 // Remove any duplicates, then we're ready to start.
                 // TODO: Might place a first card at center of the board.
                 _keywordList = _keywordList.Distinct().ToList();
+                //TODO:Set keyword list to scroll Rect
                 _isGameStarted = true;
             }
         }
@@ -93,6 +94,7 @@ public class BoardManager : MonoBehaviour
             return;
         _currentPlayer++;
         _currentPlayer %= Players.Length;
+        //TODO: Set keyword list to scroll Rect
         _isTurnOver = false;
     }
     private static void BuildDeck()
