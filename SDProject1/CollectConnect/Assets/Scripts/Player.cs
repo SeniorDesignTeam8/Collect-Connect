@@ -79,4 +79,14 @@ public class Player : MonoBehaviour
         // Remove any duplicates and return.
         return keywords.Distinct().ToList();
     }
+
+    public CardCollection GetHand()
+    {
+        return _playerHand;
+    }
+
+    public void CardExpansion(Card card, Player player)
+    {
+        //TODO: connect to correct player board
+    }
 }

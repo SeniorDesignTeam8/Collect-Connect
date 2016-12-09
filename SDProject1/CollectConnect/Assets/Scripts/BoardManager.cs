@@ -172,4 +172,23 @@ public class BoardManager : MonoBehaviour
         SoundEffectSource.clip = ExpandSound;
         SoundEffectSource.Play();
     }
+
+    public void CardExpand(Card card)
+    {
+        foreach (Player p in _playerScriptRefs)
+        {
+            foreach (Card c in p.GetHand())
+            {
+                if (c.name == card.name)
+                {
+                    p.CardExpansion(c, p);
+                }
+            }
+        }
+    }
+
+    public void CardUnexpand(Card c)
+    {
+        
+    }
 }

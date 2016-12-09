@@ -73,6 +73,9 @@ public class Card : MonoBehaviour
         {
             Debug.Log("Shrinking " + name);
             // TODO: Shrink the card to regular size.
+
+            BoardManager.Instance.CardUnexpand(this);
+
             _isExpanded = false;
         }
         else if (!_isAnySelected) // Select this card.
@@ -107,6 +110,9 @@ public class Card : MonoBehaviour
         Debug.Log("Expanding " + name);
         BoardManager.Instance.PlayExpand();
         // TODO: Expand Card.
+        BoardManager.Instance.CardExpand(this);
+
+
         _isExpanded = true;
     }
 
