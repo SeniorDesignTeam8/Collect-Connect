@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class BoardManager : MonoBehaviour
@@ -11,6 +12,7 @@ public class BoardManager : MonoBehaviour
     public static bool IsDeckReady { get; private set; }
     public static BoardManager Instance;
     public GameObject[] Players;
+    public GameObject KeywordContainer;
 
     public int Columns = 8, Rows = 8;
     public static CardCollection Deck;
@@ -78,7 +80,7 @@ public class BoardManager : MonoBehaviour
                 // Remove any duplicates, then we're ready to start.
                 // TODO: Might place a first card at center of the board.
                 _keywordList = _keywordList.Distinct().ToList();
-                //TODO:Set keyword list to scroll Rect
+                PopulateKeywords();
                 _isGameStarted = true;
             }
         }
@@ -95,7 +97,38 @@ public class BoardManager : MonoBehaviour
         _currentPlayer++;
         _currentPlayer %= Players.Length;
         //TODO: Set keyword list to scroll Rect
+        PopulateKeywords();
         _isTurnOver = false;
+    }
+
+    private void PopulateKeywords()
+    {
+
+        //Clear and (re?)populate the word banks.
+        foreach (GameObject t in Players)
+        {
+            _keywordList.AddRange(t.GetComponent<Player>().GetKeywords());
+        }
+
+        foreach (string item in _keywordList )
+        {
+            Button keywordText = GetComponent<Button>();
+            keywordText.GetComponentInChildren<Text>().text = item;
+            //add the text to the scroll rect
+           // GameObject link = Instantiate(Text) as GameObject;
+
+
+            /*     OR-Text view instead of buttons
+            Text keywordText = GetComponent<Text>();
+            keywordText.text = item;
+
+
+            */
+
+        }
+       
+
+
     }
     private static void BuildDeck()
     {

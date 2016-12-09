@@ -8,6 +8,8 @@ public class btnScript : MonoBehaviour {
        Debug.Log("Do button functionality");
 
         //insert button functionality here
+
     }
+
 
 }
