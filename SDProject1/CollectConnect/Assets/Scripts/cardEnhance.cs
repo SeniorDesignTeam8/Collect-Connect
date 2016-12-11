@@ -1,6 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
-using Boo.Lang.Environments;
 
 public class cardEnhance : MonoBehaviour {
 

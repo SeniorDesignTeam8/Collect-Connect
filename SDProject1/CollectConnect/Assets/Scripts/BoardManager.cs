@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using UnityEditor;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
@@ -13,7 +14,7 @@ public class BoardManager : MonoBehaviour
     public static BoardManager Instance;
     public GameObject[] Players;
     public GameObject KeywordContainer;
-
+    public GameObject NodeOne;
     public int Columns = 8, Rows = 8;
     public static CardCollection Deck;
     public static bool IsCardExpanded;
@@ -21,11 +22,16 @@ public class BoardManager : MonoBehaviour
     public AudioClip SelectSound;
     public AudioClip DeselectSound;
     public AudioClip ExpandSound;
+    public AudioClip PlaceSound;
     private List<string> _keywordList;
 
+    private List<GameObject> _keywordNodes;
     private List<Player> _playerScriptRefs;
     private bool _isGameStarted;
-    private int _currentPlayer = 1;
+    private bool _isFirstCardPlay;
+    private bool _isPlayerCardSelected;
+    private bool _isBoardCardSelected;
+    private int _currentPlayer = 0;
     private bool _isTurnOver;
     private readonly List<Vector3> _gridPositions = new List<Vector3>();
     private int[] _scoreboard;
@@ -52,6 +58,8 @@ public class BoardManager : MonoBehaviour
                 _playerScriptRefs.Add(player.GetComponent<Player>());
             _keywordList = new List<string>();
             _scoreboard = new int[Players.Length];
+            _keywordNodes = new List<GameObject>();
+            _isFirstCardPlay = true;
         }
         else if (Instance != this)
         {
@@ -83,11 +91,35 @@ public class BoardManager : MonoBehaviour
                 PopulateKeywords();
                 _isGameStarted = true;
             }
+
         }
 
         if (Deck.Size == 0)
             IsDeckReady = false;
         // Play turn like normal.
+        if (_isFirstCardPlay)
+        {
+            if (_isPlayerCardSelected)
+            {
+                foreach (Card c in _playerScriptRefs[_currentPlayer].GetHand())
+                {
+                    if (c.IsSelected())
+                    {
+                        ConnectionManager.CreateConnection(c.GetComponent<RectTransform>());
+                        c.SetIsSelected(false);
+                        c.SetIsOnBoard(true);
+                        PlayPlace();
+                        _isPlayerCardSelected = false;
+                        _isFirstCardPlay = false;
+                        _isTurnOver = true;
+                    }
+                }
+            }
+        }
+        else
+        {
+            
+        }
     }
 
     private void LateUpdate()
@@ -99,6 +131,8 @@ public class BoardManager : MonoBehaviour
         //TODO: Set keyword list to scroll Rect
         PopulateKeywords();
         _isTurnOver = false;
+        _isPlayerCardSelected = false;
+        _isBoardCardSelected = false;
     }
 
     private void PopulateKeywords()
@@ -109,24 +143,24 @@ public class BoardManager : MonoBehaviour
         {
             _keywordList.AddRange(t.GetComponent<Player>().GetKeywords());
         }
-
-        foreach (string item in _keywordList )
-        {
-            Button keywordText = GetComponent<Button>();
-            keywordText.GetComponentInChildren<Text>().text = item;
-            //add the text to the scroll rect
-           // GameObject link = Instantiate(Text) as GameObject;
-
-
-            /*     OR-Text view instead of buttons
-            Text keywordText = GetComponent<Text>();
-            keywordText.text = item;
+         //Commenting this out for the sake of testing. Sorry.
+        //foreach (string item in _keywordList)
+        //{
+        //    Button keywordText = GetComponent<Button>();
+        //    keywordText.GetComponentInChildren<Text>().text = item;
+        //    //add the text to the scroll rect
+        //    // GameObject link = Instantiate(Text) as GameObject;
 
 
-            */
+        //    /*     OR-Text view instead of buttons
+        //    Text keywordText = GetComponent<Text>();
+        //    keywordText.text = item;
 
-        }
-       
+
+        //    */
+
+        //}
+
 
 
     }
@@ -208,6 +242,14 @@ public class BoardManager : MonoBehaviour
         SoundEffectSource.Play();
     }
 
+    public void PlayPlace()
+    {
+        if (SoundEffectSource.isPlaying)
+            SoundEffectSource.Stop();
+        SoundEffectSource.clip = PlaceSound;
+        SoundEffectSource.Play();
+    }
+
     public void CardExpand(Card card)
     {
         foreach (Player p in _playerScriptRefs)
@@ -217,6 +259,7 @@ public class BoardManager : MonoBehaviour
                 if (c.name == card.name)
                 {
                     p.CardExpansion(c, p);
+                    return; // We expanded the card. No need to continue looping.
                 }
             }
         }
@@ -226,4 +269,103 @@ public class BoardManager : MonoBehaviour
     {
         
     }
+
+    public bool TryAddCard(Card cardA, Card boardCard, string keyword)
+    {
+        if (cardA.gameObject.GetComponent<GraphNode>() == null)
+            cardA.gameObject.AddComponent<GraphNode>();
+        if (cardA.DoesPropertyExist(keyword) && boardCard.DoesPropertyExist(keyword))
+        {
+            foreach (GameObject keyNode in _keywordNodes)
+            {
+                if (keyNode.transform.FindChild("Text").gameObject.GetComponent<Text>().text == keyword)
+                {
+                    // The keyword is already a node. Use it.
+                    ConnectionManager.CreateConnection(cardA.gameObject.GetComponent<RectTransform>(), keyNode.GetComponent<RectTransform>());
+                    return true;
+                }
+            }
+            // Couldn't find the keyword in an existing node. Add it and connect both cards to it.
+            GameObject newKeyNode = Instantiate(NodeOne); // Copy the template keyword node.
+            newKeyNode.transform.FindChild("Text").gameObject.GetComponent<Text>().text = keyword; // Set the text of the new keyword node.
+            _keywordNodes.Add(newKeyNode); // Add the keyword to the list of keyword nodes.
+            // Connect both cards to the new keyword node.
+            ConnectionManager.CreateConnection(boardCard.gameObject.GetComponent<RectTransform>(), newKeyNode.GetComponent<RectTransform>());
+            ConnectionManager.CreateConnection(cardA.gameObject.GetComponent<RectTransform>(), newKeyNode.GetComponent<RectTransform>());
+            return true;
+        }
+        return false;
+    }
+    public void SelectCardInHand(Card card)
+    {
+        bool cardFound = _playerScriptRefs[_currentPlayer].GetHand().Cast<Card>().Any(c => c.name == card.name && !c.IsOnBoard());
+        // First, check if the card is in the current player's hand.
+        if (cardFound) // Check for an already selected card in the player's hand.
+        {
+            foreach (Card c in _playerScriptRefs[_currentPlayer].GetHand())
+            {
+                if (!c.IsSelected() || c.IsOnBoard()) // Skip cards that aren't selected or are on the board.
+                    continue;
+                if (c.name == card.name) // Is the card already selected?
+                {
+                    card.SetIsSelected(false); // If so, deselect the card
+                    PlayDeselect();
+                    _isPlayerCardSelected = false;
+                    return;
+                }
+                c.SetIsSelected(false); // Deselect the other card, then select this one.
+                card.SetIsSelected(true);
+                PlaySelect();
+                return;
+            }
+            card.SetIsSelected(true);
+            PlaySelect();
+            _isPlayerCardSelected = true;
+        }
+    }
+
+    public void SelectCardOnBoard(Card card)
+    {
+        bool cardFound = false;
+        foreach (Player p in _playerScriptRefs)
+        {
+            foreach (Card c in p.GetHand())
+            {
+                if (c.IsOnBoard() && c.name == card.name)
+                {
+                    cardFound = true;
+                    break;
+                }
+            }
+            if (cardFound)
+                break;
+        }
+        if (cardFound)
+        {
+            foreach (Player p in _playerScriptRefs)
+            {
+                foreach (Card c in p.GetHand())
+                {
+                    if (c.IsOnBoard() && c.IsSelected())
+                    {
+                        if (c.name == card.name)
+                        {
+                            c.SetIsSelected(false);
+                            PlayDeselect();
+                            _isBoardCardSelected = false;
+                            return;
+                        }
+                        c.SetIsSelected(false);
+                        card.SetIsSelected(true);
+                        PlaySelect();
+                        return;
+                    }
+                }
+            }
+            card.SetIsSelected(true);
+            PlaySelect();
+            _isBoardCardSelected = true;
+        }
+    }
+
 }

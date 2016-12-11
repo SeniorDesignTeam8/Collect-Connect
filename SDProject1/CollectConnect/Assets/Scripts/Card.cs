@@ -37,15 +37,14 @@ public class Card : MonoBehaviour
     private BoxCollider2D _collider;
 
     private SpriteRenderer _renderer;
-    private const float ExpandedInfoDelay = 1.0f; // Time to wait before expanding.
+    private const float ExpandedInfoDelay = 0.5f; // Time to wait before expanding.
     private float _mouseDownTime; // Time when last clicked, in seconds since game start.
     private bool _isOnBoard; // Specifies if the card is in play or in the deck.
     private bool _isExpanded; // Specifies if the card is currently in expanded view.
 
 
-    private static bool _isAnySelected; // Specifies if a card is selected.
     private bool _isSpriteLoaded;
-    private bool _isThisSelected; // Specifies if this card is selected.
+    private bool _isSelected; // Specifies if this card is selected.
     private bool _isTimerRunning; // If true, mouse is currently held down on card.
     private string _expandedInfo; // Information to display in expanded view.
     public readonly List<CardProperty> _propertyList = new List<CardProperty>();
@@ -78,21 +77,13 @@ public class Card : MonoBehaviour
 
             _isExpanded = false;
         }
-        else if (!_isAnySelected) // Select this card.
+        else if (IsOnBoard()) // Is the card on the board? If not, then select from player's hand.
         {
-            _isAnySelected = true;
-            Debug.Log("Selecting " + name);
-            BoardManager.Instance.PlaySelect();
-            // TODO: Mark card as selected.
-            _isThisSelected = true;
+            BoardManager.Instance.SelectCardOnBoard(this);
         }
-        else if (_isThisSelected) // A card is selected, but is it this one?
+        else // It's in a player's hand. If it's the owning player's turn, then select it.
         {
-            _isThisSelected = false; // If so, then deselect this card.
-            Debug.Log("Deselecting " + name);
-            BoardManager.Instance.PlayDeselect();
-            // TODO: Deselect card.
-            _isAnySelected = false;
+            BoardManager.Instance.SelectCardInHand(this);
         }
         // Otherwise, do nothing (might change to deselect other card in future).
     }
@@ -205,6 +196,25 @@ public class Card : MonoBehaviour
         }
         p.PlaceCard(this, rotation);
         _renderer.enabled = true;
-        _isOnBoard = true;
+    }
+
+    public bool IsSelected()
+    {
+        return _isSelected;
+    }
+
+    public void SetIsSelected(bool selected)
+    {
+        _isSelected = selected;
+    }
+
+    public bool IsOnBoard()
+    {
+        return _isOnBoard;
+    }
+
+    public void SetIsOnBoard(bool onBoard)
+    {
+        _isOnBoard = onBoard;
     }
 }
