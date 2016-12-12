@@ -218,7 +218,7 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    public void PlaySelect()
+    private void PlaySelect()
     {
         if (SoundEffectSource.isPlaying)
             SoundEffectSource.Stop();
@@ -226,7 +226,7 @@ public class BoardManager : MonoBehaviour
         SoundEffectSource.Play();
     }
 
-    public void PlayDeselect()
+    private void PlayDeselect()
     {
         if (SoundEffectSource.isPlaying)
             SoundEffectSource.Stop();
@@ -242,7 +242,7 @@ public class BoardManager : MonoBehaviour
         SoundEffectSource.Play();
     }
 
-    public void PlayPlace()
+    private void PlayPlace()
     {
         if (SoundEffectSource.isPlaying)
             SoundEffectSource.Stop();
@@ -256,11 +256,10 @@ public class BoardManager : MonoBehaviour
         {
             foreach (Card c in p.GetHand())
             {
-                if (c.name == card.name)
-                {
-                    p.CardExpansion(c, p);
-                    return; 
-                }
+                if (c.name != card.name)
+                    continue;
+                p.CardExpansion(c, p);
+                return;
             }
         }
     }
@@ -271,11 +270,10 @@ public class BoardManager : MonoBehaviour
         {
             foreach (Card c in p.GetHand())
             {
-                if (c.name == card.name)
-                {
-                    p.CardUnexpansion(c, p);
-                    return; 
-                }
+                if (c.name != card.name)
+                    continue;
+                p.CardShrink(c, p);
+                return;
             }
         }
     }

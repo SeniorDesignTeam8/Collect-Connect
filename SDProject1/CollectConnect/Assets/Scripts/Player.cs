@@ -20,6 +20,8 @@ public class Player : MonoBehaviour
     private bool[] _slotStatus = new bool[HandSize]; // True if taken, false if available.
     private string _playerName; // The player's name (internally).
     private CardCollection _playerHand; // Represents the player's cards.
+    private Vector3 _expCardPosition;
+    private Vector3 _expCardScale;
 
     private void Start()
     {
@@ -69,17 +71,16 @@ public class Player : MonoBehaviour
     {
         for (int i = 0; i < CardPlaceholders.Length; i++)
         {
-            if (!_slotStatus[i])
-            {
-                c.transform.position = CardPlaceholders[i].transform.position + new Vector3(0,0, -5);
-                c.transform.Rotate(rotation, Space.Self);
-                _slotStatus[i] = true;
-                break;
-            }
+            if (_slotStatus[i])
+                continue;
+            c.transform.position = CardPlaceholders[i].transform.position + new Vector3(0,0, -5);
+            c.transform.Rotate(rotation, Space.Self);
+            _slotStatus[i] = true;
+            break;
         }
     }
 
-    public List<string> GetKeywords()
+    public IEnumerable<string> GetKeywords()
     {
         // Get the property value string from the property list in each card.
         List<string> keywords = (from Card c in _playerHand from prop in c._propertyList select prop.PropertyValue).ToList();
@@ -92,7 +93,7 @@ public class Player : MonoBehaviour
         return _playerHand;
     }
 
-    public void CardExpansion(Card card, Player player)  //expand card 
+    public void CardExpansion(Card card, Player player)  //Expand card
     {
         ExpCardPlace.gameObject.GetComponent<Renderer>().enabled = true;
         ExpCardImage.gameObject.GetComponent<Renderer>().enabled = true;
@@ -100,16 +101,21 @@ public class Player : MonoBehaviour
         ExpCardInfo.gameObject.GetComponent<Text>().text = card.GetExpInfo();
         ExpCardTitle.gameObject.GetComponent<Text>().enabled = true;
         ExpCardInfo.gameObject.GetComponent<Text>().enabled = true;
+        _expCardPosition = card.gameObject.transform.position;
+        _expCardScale = card.gameObject.transform.localScale;
+        card.gameObject.transform.position = ExpCardImage.transform.position;
+        card.gameObject.transform.localScale = Vector3.one;
         //TODO Make card appear in expand
     }
 
-    public void CardUnexpansion(Card card, Player player)  //unexpand card
+    public void CardShrink(Card card, Player player)  //Shrink card
     {
-        
         ExpCardPlace.gameObject.GetComponent<Renderer>().enabled = false;
         ExpCardImage.gameObject.GetComponent<Renderer>().enabled = false;
         ExpCardTitle.gameObject.GetComponent<Text>().enabled = false;
         ExpCardInfo.gameObject.GetComponent<Text>().enabled = false;
+        card.gameObject.transform.position = _expCardPosition;
+        card.gameObject.transform.localScale = _expCardScale;
         //TODO Make card disappear in expand
     }
 }
