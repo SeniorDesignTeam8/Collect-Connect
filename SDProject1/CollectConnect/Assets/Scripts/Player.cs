@@ -13,6 +13,7 @@ public class Player : MonoBehaviour
     public GameObject[] CardPlaceholders;
     public GameObject PlayerScore;
     public GameObject ExpCardPlace; // The expanded card placeholder.
+    public GameObject ExpCardImage; // Expand card Image
     public const int HandSize = 5;
     private bool[] _slotStatus = new bool[HandSize]; // True if taken, false if available.
     private string _playerName; // The player's name (internally).
@@ -24,6 +25,8 @@ public class Player : MonoBehaviour
         _playerName = gameObject.name.Replace(" ", "").ToLower(); // Remove spaces and change to all lowercase to standardize.
         _playerHand = new CardCollection(gameObject.name + "'s Hand");
         PlayerScore.GetComponent<Text>();
+        ExpCardPlace.gameObject.GetComponent<Renderer>().enabled = false;  //make card expansion invisible to user
+        ExpCardImage.gameObject.GetComponent<Renderer>().enabled = false;
     }
 
     private void Update()
@@ -85,8 +88,18 @@ public class Player : MonoBehaviour
         return _playerHand;
     }
 
-    public void CardExpansion(Card card, Player player)
+    public void CardExpansion(Card card, Player player)  //expand card 
     {
-        //TODO: connect to correct player board
+        ExpCardPlace.gameObject.GetComponent<Renderer>().enabled = true;
+        ExpCardImage.gameObject.GetComponent<Renderer>().enabled = true;
+        //TODO Make card appear in expand
+    }
+
+    public void CardUnexpansion(Card card, Player player)  //unexpand card
+    {
+        
+        ExpCardPlace.gameObject.GetComponent<Renderer>().enabled = false;
+        ExpCardImage.gameObject.GetComponent<Renderer>().enabled = false;
+        //TODO Make card disappear in expand
     }
 }

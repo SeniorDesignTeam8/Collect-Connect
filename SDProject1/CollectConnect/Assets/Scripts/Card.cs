@@ -71,8 +71,6 @@ public class Card : MonoBehaviour
         if (_isExpanded) // Is the card expanded?
         {
             Debug.Log("Shrinking " + name);
-            // TODO: Shrink the card to regular size.
-
             BoardManager.Instance.CardUnexpand(this);
 
             _isExpanded = false;

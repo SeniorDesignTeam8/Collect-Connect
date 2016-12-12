@@ -250,7 +250,7 @@ public class BoardManager : MonoBehaviour
         SoundEffectSource.Play();
     }
 
-    public void CardExpand(Card card)
+    public void CardExpand(Card card)  //find card and player to expand
     {
         foreach (Player p in _playerScriptRefs)
         {
@@ -259,15 +259,25 @@ public class BoardManager : MonoBehaviour
                 if (c.name == card.name)
                 {
                     p.CardExpansion(c, p);
-                    return; // We expanded the card. No need to continue looping.
+                    return; 
                 }
             }
         }
     }
 
-    public void CardUnexpand(Card c)
+    public void CardUnexpand(Card card)  //find card and player to unexpand
     {
-        
+        foreach (Player p in _playerScriptRefs)
+        {
+            foreach (Card c in p.GetHand())
+            {
+                if (c.name == card.name)
+                {
+                    p.CardUnexpansion(c, p);
+                    return; 
+                }
+            }
+        }
     }
 
     public bool TryAddCard(Card cardA, Card boardCard, string keyword)
