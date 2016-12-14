@@ -28,13 +28,14 @@ public class BoardManager : MonoBehaviour
     public AudioClip ExpandSound;
     public AudioClip PlaceSound;
     private List<string> _keywordList;
-
+    private string _currentKeyword = null;
     private List<GameObject> _keywordNodes;
     private List<Player> _playerScriptRefs;
     private bool _isGameStarted;
     private bool _isFirstCardPlay;
     private bool _isPlayerCardSelected;
     private bool _isBoardCardSelected;
+    private bool _isKeywordSelected;
     private int _currentPlayer = 0;
     private bool _isTurnOver;
     private readonly List<Vector3> _gridPositions = new List<Vector3>();
@@ -122,7 +123,44 @@ public class BoardManager : MonoBehaviour
         }
         else
         {
-            
+            //tri select check
+            Card _cardA = null, _cardB = null;
+            if (_isBoardCardSelected && _isPlayerCardSelected && !String.IsNullOrEmpty(_currentKeyword))
+            {
+
+                foreach (Player p in _playerScriptRefs)
+                {
+                    foreach (Card c in p.GetHand())
+                    {
+                        if (c.IsOnBoard() && c.IsSelected())
+                        {
+                            //This is the card on the game board
+                             _cardB = c;
+                        }
+                        if (c.IsSelected())
+                        {
+                            //This is the card in the players hand
+                             _cardA = c;
+                        }
+                    }
+                }
+                   //Call tryaddcard with cardA and cardB
+                if (TryAddCard(_cardA, _cardB, _currentKeyword))
+                {
+                    //scoring
+                    Debug.Log("Try Add Card Worked.");
+                    _isTurnOver = true;
+                    _currentKeyword = "";
+                }
+                else
+                {
+                    _currentKeyword = "";
+                    Debug.Log("Try Add Card Failed.");
+                }
+
+            }
+
+
         }
     }
 
@@ -175,7 +213,11 @@ public class BoardManager : MonoBehaviour
             GameObject go = Instantiate(keywordPrefab) as GameObject;
             go.GetComponentInChildren<Text>().text = str;
             go.transform.SetParent(KeywordContainerP1.transform);
-
+            Button btn = go.GetComponent<Button>();
+            btn.onClick.AddListener(() => {
+                Debug.Log(go.GetComponentInChildren<Text>().text + " Clicked!");
+                _currentKeyword = go.GetComponentInChildren<Text>().text;
+            });
             Vector3 scale = transform.localScale;
             scale.x = 1;
             scale.y = 1;
@@ -193,7 +235,11 @@ public class BoardManager : MonoBehaviour
             GameObject go = Instantiate(keywordPrefab) as GameObject;
             go.GetComponentInChildren<Text>().text = str;
             go.transform.SetParent(KeywordContainerP2.transform);
-
+            Button btn = go.GetComponent<Button>();
+            btn.onClick.AddListener(() => {
+                Debug.Log(go.GetComponentInChildren<Text>().text + " Clicked!");
+                _currentKeyword = go.GetComponentInChildren<Text>().text;
+            });
             Vector3 scale = transform.localScale;
             scale.x = 1;
             scale.y = 1;
@@ -210,7 +256,11 @@ public class BoardManager : MonoBehaviour
             GameObject go = Instantiate(keywordPrefab) as GameObject;
             go.GetComponentInChildren<Text>().text = str;
             go.transform.SetParent(KeywordContainerP3.transform);
-
+            Button btn = go.GetComponent<Button>();
+            btn.onClick.AddListener(() => {
+                Debug.Log(go.GetComponentInChildren<Text>().text + " Clicked!");
+                _currentKeyword = go.GetComponentInChildren<Text>().text;
+            });
             Vector3 scale = transform.localScale;
             scale.x = 1;
             scale.y = 1;
@@ -226,7 +276,10 @@ public class BoardManager : MonoBehaviour
             GameObject go = Instantiate(keywordPrefab) as GameObject;
             go.GetComponentInChildren<Text>().text = str;
             go.transform.SetParent(KeywordContainerP4.transform);
-
+            Button btn = go.GetComponent<Button>();
+            btn.onClick.AddListener(() => { Debug.Log(go.GetComponentInChildren<Text>().text + " Clicked!");
+                _currentKeyword = go.GetComponentInChildren<Text>().text;
+            });
             Vector3 scale = transform.localScale;
             scale.x = 1;
             scale.y = 1;
@@ -365,6 +418,10 @@ public class BoardManager : MonoBehaviour
                 {
                     // The keyword is already a node. Use it.
                     ConnectionManager.CreateConnection(cardA.gameObject.GetComponent<RectTransform>(), keyNode.GetComponent<RectTransform>());
+                    cardA.SetIsOnBoard(true);
+                    PlayPlace();
+                    cardA.SetIsSelected(false);
+                    boardCard.SetIsSelected(false);
                     return true;
                 }
             }
@@ -375,6 +432,10 @@ public class BoardManager : MonoBehaviour
             // Connect both cards to the new keyword node.
             ConnectionManager.CreateConnection(boardCard.gameObject.GetComponent<RectTransform>(), newKeyNode.GetComponent<RectTransform>());
             ConnectionManager.CreateConnection(cardA.gameObject.GetComponent<RectTransform>(), newKeyNode.GetComponent<RectTransform>());
+            cardA.SetIsOnBoard(true);
+            PlayPlace();
+            cardA.SetIsSelected(false);
+            boardCard.SetIsSelected(false);
             return true;
         }
         return false;
