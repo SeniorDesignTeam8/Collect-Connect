@@ -13,7 +13,10 @@ public class BoardManager : MonoBehaviour
     public static bool IsDeckReady { get; private set; }
     public static BoardManager Instance;
     public GameObject[] Players;
-    public GameObject KeywordContainer;
+    public GameObject KeywordContainerP1;
+    public GameObject KeywordContainerP2;
+    public GameObject KeywordContainerP3;
+    public GameObject KeywordContainerP4;
     public GameObject keywordPrefab;
     public GameObject NodeOne;
     public int Columns = 8, Rows = 8;
@@ -163,24 +166,88 @@ public class BoardManager : MonoBehaviour
         //}
 
         // clear the list
-        foreach (Transform child in KeywordContainer.transform)
+        foreach (Transform child in KeywordContainerP1.transform)
         {
             GameObject.Destroy(child.gameObject);
         }
 
+        foreach (Transform child in KeywordContainerP2.transform)
+        {
+            GameObject.Destroy(child.gameObject);
+        }
 
+        foreach (Transform child in KeywordContainerP3.transform)
+        {
+            GameObject.Destroy(child.gameObject);
+        }
 
+        foreach (Transform child in KeywordContainerP4.transform)
+        {
+            GameObject.Destroy(child.gameObject);
+        }
 
         foreach (string str in _keywordList)
         {
             GameObject go = Instantiate(keywordPrefab) as GameObject;
             go.GetComponentInChildren<Text>().text = str;
-            go.transform.SetParent(KeywordContainer.transform);
+            go.transform.SetParent(KeywordContainerP1.transform);
 
             Vector3 scale = transform.localScale;
             scale.x = 1;
             scale.y = 1;
             scale.z = 1;
+
+            go.transform.Rotate(0, 0, 180);
+            go.transform.localScale = scale;
+            go.SetActive(true);
+
+            //Debug.Log(str);
+        }
+
+        foreach (string str in _keywordList)
+        {
+            GameObject go = Instantiate(keywordPrefab) as GameObject;
+            go.GetComponentInChildren<Text>().text = str;
+            go.transform.SetParent(KeywordContainerP2.transform);
+
+            Vector3 scale = transform.localScale;
+            scale.x = 1;
+            scale.y = 1;
+            scale.z = 1;
+            go.transform.Rotate(0, 0, -90);
+            go.transform.localScale = scale;
+            go.SetActive(true);
+
+            //Debug.Log(str);
+        }
+
+        foreach (string str in _keywordList)
+        {
+            GameObject go = Instantiate(keywordPrefab) as GameObject;
+            go.GetComponentInChildren<Text>().text = str;
+            go.transform.SetParent(KeywordContainerP3.transform);
+
+            Vector3 scale = transform.localScale;
+            scale.x = 1;
+            scale.y = 1;
+            scale.z = 1;
+            go.transform.localScale = scale;
+            go.SetActive(true);
+
+            //Debug.Log(str);
+        }
+
+        foreach (string str in _keywordList)
+        {
+            GameObject go = Instantiate(keywordPrefab) as GameObject;
+            go.GetComponentInChildren<Text>().text = str;
+            go.transform.SetParent(KeywordContainerP4.transform);
+
+            Vector3 scale = transform.localScale;
+            scale.x = 1;
+            scale.y = 1;
+            scale.z = 1;
+            go.transform.Rotate(0, 0, 90);
             go.transform.localScale = scale;
             go.SetActive(true);
 
