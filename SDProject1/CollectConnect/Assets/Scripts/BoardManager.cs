@@ -14,6 +14,7 @@ public class BoardManager : MonoBehaviour
     public static BoardManager Instance;
     public GameObject[] Players;
     public GameObject KeywordContainer;
+    public GameObject keywordPrefab;
     public GameObject NodeOne;
     public int Columns = 8, Rows = 8;
     public static CardCollection Deck;
@@ -143,7 +144,7 @@ public class BoardManager : MonoBehaviour
         {
             _keywordList.AddRange(t.GetComponent<Player>().GetKeywords());
         }
-         //Commenting this out for the sake of testing. Sorry.
+        //Commenting this out for the sake of testing. Sorry.
         //foreach (string item in _keywordList)
         //{
         //    Button keywordText = GetComponent<Button>();
@@ -161,7 +162,30 @@ public class BoardManager : MonoBehaviour
 
         //}
 
+        // clear the list
+        foreach (Transform child in KeywordContainer.transform)
+        {
+            GameObject.Destroy(child.gameObject);
+        }
 
+
+
+
+        foreach (string str in _keywordList)
+        {
+            GameObject go = Instantiate(keywordPrefab) as GameObject;
+            go.GetComponentInChildren<Text>().text = str;
+            go.transform.SetParent(KeywordContainer.transform);
+
+            Vector3 scale = transform.localScale;
+            scale.x = 1;
+            scale.y = 1;
+            scale.z = 1;
+            go.transform.localScale = scale;
+            go.SetActive(true);
+
+            //Debug.Log(str);
+        }
 
     }
     private static void BuildDeck()
