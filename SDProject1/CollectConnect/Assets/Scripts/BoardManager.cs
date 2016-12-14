@@ -144,23 +144,7 @@ public class BoardManager : MonoBehaviour
         {
             _keywordList.AddRange(t.GetComponent<Player>().GetKeywords());
         }
-        //Commenting this out for the sake of testing. Sorry.
-        //foreach (string item in _keywordList)
-        //{
-        //    Button keywordText = GetComponent<Button>();
-        //    keywordText.GetComponentInChildren<Text>().text = item;
-        //    //add the text to the scroll rect
-        //    // GameObject link = Instantiate(Text) as GameObject;
-
-
-        //    /*     OR-Text view instead of buttons
-        //    Text keywordText = GetComponent<Text>();
-        //    keywordText.text = item;
-
-
-        //    */
-
-        //}
+        
 
         // clear the list
         foreach (Transform child in KeywordContainer.transform)
