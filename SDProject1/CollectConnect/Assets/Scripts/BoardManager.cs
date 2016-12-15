@@ -451,4 +451,10 @@ public class BoardManager : MonoBehaviour
         }
     }
 
+    public void passBtnHit()  //player hit pass button
+    {
+        _isTurnOver = true;
+        LateUpdate();
+    }
+
 }

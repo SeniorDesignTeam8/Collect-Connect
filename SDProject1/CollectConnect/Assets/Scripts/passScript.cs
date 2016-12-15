@@ -1,14 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class btnScript : MonoBehaviour
+public class passScript : MonoBehaviour
 {
 
     public void OnStartGame()
     {
-        Debug.Log("Do button functionality");
-
-        //insert button functionality here
+        BoardManager.Instance.passBtnHit();
     }
 
     public void Update()
