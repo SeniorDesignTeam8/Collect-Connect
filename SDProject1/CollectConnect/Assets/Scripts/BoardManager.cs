@@ -28,7 +28,7 @@ public class BoardManager : MonoBehaviour
     public AudioClip ExpandSound;
     public AudioClip PlaceSound;
     private List<string> _keywordList;
-    private string _currentKeyword = null;
+    private string _currentKeyword;
     private List<GameObject> _keywordNodes;
     private List<Player> _playerScriptRefs;
     private bool _isGameStarted;
@@ -36,7 +36,7 @@ public class BoardManager : MonoBehaviour
     private bool _isPlayerCardSelected;
     private bool _isBoardCardSelected;
     private bool _isKeywordSelected;
-    private int _currentPlayer = 0;
+    private int _currentPlayer;
     private bool _isTurnOver;
     private readonly List<Vector3> _gridPositions = new List<Vector3>();
     private int[] _scoreboard;
@@ -110,7 +110,7 @@ public class BoardManager : MonoBehaviour
                 {
                     if (c.IsSelected())
                     {
-                        ConnectionManager.CreateConnection(c.GetComponent<RectTransform>());
+                        //ConnectionManager.CreateConnection(c.GetComponent<RectTransform>());
                         c.SetIsSelected(false);
                         c.SetIsOnBoard(true);
                         PlayPlace();
@@ -124,10 +124,9 @@ public class BoardManager : MonoBehaviour
         else
         {
             //tri select check
-            Card _cardA = null, _cardB = null;
-            if (_isBoardCardSelected && _isPlayerCardSelected && !String.IsNullOrEmpty(_currentKeyword))
+            Card cardA = null, cardB = null;
+            if (_isBoardCardSelected && _isPlayerCardSelected && !string.IsNullOrEmpty(_currentKeyword))
             {
-
                 foreach (Player p in _playerScriptRefs)
                 {
                     foreach (Card c in p.GetHand())
@@ -135,32 +134,29 @@ public class BoardManager : MonoBehaviour
                         if (c.IsOnBoard() && c.IsSelected())
                         {
                             //This is the card on the game board
-                             _cardB = c;
+                             cardB = c;
                         }
                         if (c.IsSelected())
                         {
                             //This is the card in the players hand
-                             _cardA = c;
+                             cardA = c;
                         }
                     }
                 }
                    //Call tryaddcard with cardA and cardB
-                if (TryAddCard(_cardA, _cardB, _currentKeyword))
+                if (TryAddCard(cardA, cardB, _currentKeyword))
                 {
                     //scoring
-                    Debug.Log("Try Add Card Worked.");
+                    //Debug.Log("Try Add Card Worked.");
                     _isTurnOver = true;
                     _currentKeyword = "";
                 }
                 else
                 {
                     _currentKeyword = "";
-                    Debug.Log("Try Add Card Failed.");
+                    //Debug.Log("Try Add Card Failed.");
                 }
-
             }
-
-
         }
     }
 
@@ -179,38 +175,39 @@ public class BoardManager : MonoBehaviour
 
     private void PopulateKeywords()
     {
-
         //Clear and (re?)populate the word banks.
         foreach (GameObject t in Players)
         {
             _keywordList.AddRange(t.GetComponent<Player>().GetKeywords());
         }
-        
-
+        _keywordList = _keywordList.Distinct().ToList();
+        _keywordList.Sort();
         // clear the list
+        // TODO Possibly combine KeywordContainers into an array?
         foreach (Transform child in KeywordContainerP1.transform)
         {
-            GameObject.Destroy(child.gameObject);
+            Destroy(child.gameObject);
         }
 
         foreach (Transform child in KeywordContainerP2.transform)
         {
-            GameObject.Destroy(child.gameObject);
+            Destroy(child.gameObject);
         }
 
         foreach (Transform child in KeywordContainerP3.transform)
         {
-            GameObject.Destroy(child.gameObject);
+            Destroy(child.gameObject);
         }
 
         foreach (Transform child in KeywordContainerP4.transform)
         {
-            GameObject.Destroy(child.gameObject);
+            Destroy(child.gameObject);
         }
 
+        // TODO: Possibly combine these into one block? A lot of repetition.
         foreach (string str in _keywordList)
         {
-            GameObject go = Instantiate(keywordPrefab) as GameObject;
+            GameObject go = Instantiate(keywordPrefab);
             go.GetComponentInChildren<Text>().text = str;
             go.transform.SetParent(KeywordContainerP1.transform);
             Button btn = go.GetComponent<Button>();
@@ -219,11 +216,11 @@ public class BoardManager : MonoBehaviour
                 _currentKeyword = go.GetComponentInChildren<Text>().text;
             });
             Vector3 scale = transform.localScale;
-            scale.x = 1;
-            scale.y = 1;
-            scale.z = 1;
+            scale.x = 1.0f;
+            scale.y = 1.0f;
+            scale.z = 1.0f;
 
-            go.transform.Rotate(0, 0, 180);
+            go.transform.Rotate(0.0f, 0.0f, 180.0f);
             go.transform.localScale = scale;
             go.SetActive(true);
 
@@ -232,7 +229,7 @@ public class BoardManager : MonoBehaviour
 
         foreach (string str in _keywordList)
         {
-            GameObject go = Instantiate(keywordPrefab) as GameObject;
+            GameObject go = Instantiate(keywordPrefab);
             go.GetComponentInChildren<Text>().text = str;
             go.transform.SetParent(KeywordContainerP2.transform);
             Button btn = go.GetComponent<Button>();
@@ -241,10 +238,10 @@ public class BoardManager : MonoBehaviour
                 _currentKeyword = go.GetComponentInChildren<Text>().text;
             });
             Vector3 scale = transform.localScale;
-            scale.x = 1;
-            scale.y = 1;
-            scale.z = 1;
-            go.transform.Rotate(0, 0, -90);
+            scale.x = 1.0f;
+            scale.y = 1.0f;
+            scale.z = 1.0f;
+            go.transform.Rotate(0.0f, 0.0f, -90.0f);
             go.transform.localScale = scale;
             go.SetActive(true);
 
@@ -253,7 +250,7 @@ public class BoardManager : MonoBehaviour
 
         foreach (string str in _keywordList)
         {
-            GameObject go = Instantiate(keywordPrefab) as GameObject;
+            GameObject go = Instantiate(keywordPrefab);
             go.GetComponentInChildren<Text>().text = str;
             go.transform.SetParent(KeywordContainerP3.transform);
             Button btn = go.GetComponent<Button>();
@@ -262,9 +259,9 @@ public class BoardManager : MonoBehaviour
                 _currentKeyword = go.GetComponentInChildren<Text>().text;
             });
             Vector3 scale = transform.localScale;
-            scale.x = 1;
-            scale.y = 1;
-            scale.z = 1;
+            scale.x = 1.0f;
+            scale.y = 1.0f;
+            scale.z = 1.0f;
             go.transform.localScale = scale;
             go.SetActive(true);
 
@@ -273,7 +270,7 @@ public class BoardManager : MonoBehaviour
 
         foreach (string str in _keywordList)
         {
-            GameObject go = Instantiate(keywordPrefab) as GameObject;
+            GameObject go = Instantiate(keywordPrefab);
             go.GetComponentInChildren<Text>().text = str;
             go.transform.SetParent(KeywordContainerP4.transform);
             Button btn = go.GetComponent<Button>();
@@ -281,10 +278,10 @@ public class BoardManager : MonoBehaviour
                 _currentKeyword = go.GetComponentInChildren<Text>().text;
             });
             Vector3 scale = transform.localScale;
-            scale.x = 1;
-            scale.y = 1;
-            scale.z = 1;
-            go.transform.Rotate(0, 0, 90);
+            scale.x = 1.0f;
+            scale.y = 1.0f;
+            scale.z = 1.0f;
+            go.transform.Rotate(0.0f, 0.0f, 90.0f);
             go.transform.localScale = scale;
             go.SetActive(true);
 
@@ -380,29 +377,25 @@ public class BoardManager : MonoBehaviour
 
     public void CardExpand(Card card)  //find card and player to expand
     {
-        foreach (Player p in _playerScriptRefs)
+        Player p = FindOwningPlayer(card);
+        foreach (Card c in p.GetHand())
         {
-            foreach (Card c in p.GetHand())
-            {
-                if (c.name != card.name)
-                    continue;
-                p.CardExpansion(c, p);
-                return;
-            }
+            if (c.name != card.name)
+                continue;
+            p.CardExpansion(c, p);
+            return;
         }
     }
 
     public void CardUnexpand(Card card)  //find card and player to unexpand
     {
-        foreach (Player p in _playerScriptRefs)
+        Player p = FindOwningPlayer(card);
+        foreach (Card c in p.GetHand())
         {
-            foreach (Card c in p.GetHand())
-            {
-                if (c.name != card.name)
-                    continue;
-                p.CardShrink(c, p);
-                return;
-            }
+            if (c.name != card.name)
+                continue;
+            p.CardShrink(c, p);
+            return;
         }
     }
 
@@ -418,6 +411,11 @@ public class BoardManager : MonoBehaviour
                 {
                     // The keyword is already a node. Use it.
                     ConnectionManager.CreateConnection(cardA.gameObject.GetComponent<RectTransform>(), keyNode.GetComponent<RectTransform>());
+                    keyNode.transform.position = CalculatePosition(keyNode);
+                    foreach (Connection connection in ConnectionManager.FindConnections(cardA.gameObject.GetComponent<RectTransform>()))
+                    {
+                        connection.OnValidate();
+                    }
                     cardA.SetIsOnBoard(true);
                     PlayPlace();
                     cardA.SetIsSelected(false);
@@ -428,10 +426,17 @@ public class BoardManager : MonoBehaviour
             // Couldn't find the keyword in an existing node. Add it and connect both cards to it.
             GameObject newKeyNode = Instantiate(NodeOne); // Copy the template keyword node.
             newKeyNode.transform.FindChild("Text").gameObject.GetComponent<Text>().text = keyword; // Set the text of the new keyword node.
+            newKeyNode.name = keyword;
             _keywordNodes.Add(newKeyNode); // Add the keyword to the list of keyword nodes.
             // Connect both cards to the new keyword node.
             ConnectionManager.CreateConnection(boardCard.gameObject.GetComponent<RectTransform>(), newKeyNode.GetComponent<RectTransform>());
             ConnectionManager.CreateConnection(cardA.gameObject.GetComponent<RectTransform>(), newKeyNode.GetComponent<RectTransform>());
+            newKeyNode.transform.position = (cardA.gameObject.transform.position +
+                                             boardCard.gameObject.transform.position) / 2;
+            foreach (Connection connection in ConnectionManager.FindConnections(newKeyNode.gameObject.GetComponent<RectTransform>()))
+            {
+                connection.OnValidate();
+            }
             cardA.SetIsOnBoard(true);
             PlayPlace();
             cardA.SetIsSelected(false);
@@ -440,6 +445,26 @@ public class BoardManager : MonoBehaviour
         }
         return false;
     }
+
+    private Vector3 CalculatePosition(GameObject keyNode)
+    {
+        int numConnections = 0;
+        Vector3 location = Vector3.zero;
+        foreach (Connection conn in ConnectionManager.FindConnections(keyNode.GetComponent<RectTransform>()))
+        {
+            if (conn.target[0].gameObject.name == keyNode.name) // Check one end of the connection.
+            {
+                location += conn.target[1].gameObject.transform.position;
+            }
+            else
+            {
+                location += conn.target[0].gameObject.transform.position;
+            }
+            numConnections++;
+        }
+        return location / numConnections;
+    }
+
     public void SelectCardInHand(Card card)
     {
         bool cardFound = _playerScriptRefs[_currentPlayer].GetHand().Cast<Card>().Any(c => c.name == card.name && !c.IsOnBoard());
@@ -470,40 +495,27 @@ public class BoardManager : MonoBehaviour
 
     public void SelectCardOnBoard(Card card)
     {
-        bool cardFound = false;
-        foreach (Player p in _playerScriptRefs)
-        {
-            foreach (Card c in p.GetHand())
-            {
-                if (c.IsOnBoard() && c.name == card.name)
-                {
-                    cardFound = true;
-                    break;
-                }
-            }
-            if (cardFound)
-                break;
-        }
+        Player p = FindOwningPlayer(card);
+        bool cardFound = p.GetHand().Cast<Card>().Any(c => c.IsOnBoard() && c.name == card.name);
         if (cardFound)
         {
-            foreach (Player p in _playerScriptRefs)
+            foreach (var player in _playerScriptRefs)
             {
-                foreach (Card c in p.GetHand())
+                foreach (Card c in player.GetHand())
                 {
-                    if (c.IsOnBoard() && c.IsSelected())
+                    if (!c.IsOnBoard() || !c.IsSelected())
+                        continue;
+                    if (c.name == card.name)
                     {
-                        if (c.name == card.name)
-                        {
-                            c.SetIsSelected(false);
-                            PlayDeselect();
-                            _isBoardCardSelected = false;
-                            return;
-                        }
                         c.SetIsSelected(false);
-                        card.SetIsSelected(true);
-                        PlaySelect();
+                        PlayDeselect();
+                        _isBoardCardSelected = false;
                         return;
                     }
+                    c.SetIsSelected(false);
+                    card.SetIsSelected(true);
+                    PlaySelect();
+                    return;
                 }
             }
             card.SetIsSelected(true);
@@ -512,10 +524,14 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    public void passBtnHit()  //player hit pass button
+    public void PassBtnHit()  //player hit pass button
     {
         _isTurnOver = true;
         LateUpdate();
     }
 
+    public Player FindOwningPlayer(Card card)
+    {
+        return _playerScriptRefs.FirstOrDefault(p => p.GetHand().Cast<Card>().Any(c => c.name == card.name));
+    }
 }

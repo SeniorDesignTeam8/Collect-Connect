@@ -44,8 +44,8 @@ public class Player : MonoBehaviour
                 if (BoardManager.IsDeckReady)
                 {
                     Card c = BoardManager.Deck.Draw();
-                    c.MoveToBoard(this);
                     _playerHand.AddCards(c);
+                    c.MoveToBoard();
                 }
                 else
                 {
@@ -73,7 +73,7 @@ public class Player : MonoBehaviour
         {
             if (_slotStatus[i])
                 continue;
-            c.transform.position = CardPlaceholders[i].transform.position + new Vector3(0,0, -5);
+            c.transform.position = CardPlaceholders[i].transform.position + new Vector3(0.0f, 0.0f, -5.0f);
             c.transform.Rotate(rotation, Space.Self);
             _slotStatus[i] = true;
             break;

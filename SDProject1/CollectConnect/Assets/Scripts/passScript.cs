@@ -6,7 +6,7 @@ public class passScript : MonoBehaviour
 
     public void OnStartGame()
     {
-        BoardManager.Instance.passBtnHit();
+        BoardManager.Instance.PassBtnHit();
     }
 
     public void Update()

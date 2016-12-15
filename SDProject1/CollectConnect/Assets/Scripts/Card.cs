@@ -3,8 +3,10 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Security.Cryptography;
 using UnityEditor;
+using UnityEngine.Networking;
 
 public class Card : MonoBehaviour
 {
@@ -42,7 +44,7 @@ public class Card : MonoBehaviour
     private bool _isOnBoard; // Specifies if the card is in play or in the deck.
     private bool _isExpanded; // Specifies if the card is currently in expanded view.
 
-
+    private Vector3 originalPosition;
     private bool _isSpriteLoaded;
     private bool _isSelected; // Specifies if this card is selected.
     private bool _isTimerRunning; // If true, mouse is currently held down on card.
@@ -170,10 +172,10 @@ public class Card : MonoBehaviour
         return string.IsNullOrEmpty(propertyName) ? _propertyList.Any(prop => prop.PropertyValue == propertyValue) : _propertyList.Any(prop => prop.PropertyName == propertyName && prop.PropertyValue == propertyValue);
     }
 
-    public void MoveToBoard(Player p)
+    public void MoveToBoard()
     {
         Vector3 rotation;
-
+        Player p = BoardManager.Instance.FindOwningPlayer(this);
         switch (p.name.ToLower())
         {
             case "player1":
@@ -204,6 +206,46 @@ public class Card : MonoBehaviour
     public void SetIsSelected(bool selected)
     {
         _isSelected = selected;
+        if (_isOnBoard)
+            return;
+        Player p = BoardManager.Instance.FindOwningPlayer(this);
+        if (selected)
+        {
+            char changeAxis;
+            float changeMagnitude;
+            switch (p.name.ToLower())
+            {
+                case "player1":
+                    changeAxis = 'y';
+                    changeMagnitude = -1.0f;
+                    break;
+                case "player2":
+                    changeAxis = 'x';
+                    changeMagnitude = 1.0f;
+                    break;
+                case "player3":
+                    changeAxis = 'y';
+                    changeMagnitude = 1.0f;
+                    break;
+                case "player4":
+                    changeAxis = 'x';
+                    changeMagnitude = -1.0f;
+                    break;
+                default:
+                    return;
+            }
+            originalPosition = transform.position;
+            if (changeAxis == 'x')
+                transform.position += new Vector3(changeMagnitude, 0.0f);
+            else
+                transform.position += new Vector3(0.0f, changeMagnitude);
+        }
+        else
+        {
+            transform.position = originalPosition;
+        }
+
+
     }
 
     public bool IsOnBoard()
