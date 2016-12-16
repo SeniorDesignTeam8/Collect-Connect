@@ -1,13 +1,16 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class btnScript : MonoBehaviour {
-
+public class btnScript : MonoBehaviour
+{
     public void OnStartGame()
     {
-       Debug.Log("Do button functionality");
+        Debug.Log(tag);
 
         //insert button functionality here
+        switch (gameObject.name)
+        {
+            
+        }
     }
-
 }
