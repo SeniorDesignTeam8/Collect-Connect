@@ -10898,6 +10898,11 @@ This value is the number of screen pixels per point of interface space. For inst
         <para>Place the built player in the build folder.</para>
       </summary>
     </member>
+    <member name="P:UnityEditor.EditorUserBuildSettings.iOSBuildConfigType">
+      <summary>
+        <para>Scheme with which the project will be run in Xcode.</para>
+      </summary>
+    </member>
     <member name="P:UnityEditor.EditorUserBuildSettings.n3dsCreateCIAFile">
       <summary>
         <para>Create a .cia "download image" for deploying to test kits (3DS).</para>
@@ -13473,6 +13478,21 @@ Note: Use HandleUtility.GetHandleSize where you might want to have constant scre
     <member name="T:UnityEditor.InitializeOnLoadMethodAttribute">
       <summary>
         <para>Allow an editor class method to be initialized when Unity loads without action from the user.</para>
+      </summary>
+    </member>
+    <member name="T:UnityEditor.iOSBuildType">
+      <summary>
+        <para>Build configurations for the generated Xcode project.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEditor.iOSBuildType.Debug">
+      <summary>
+        <para>Build configuration set to Debug for the generated Xcode project.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEditor.iOSBuildType.Release">
+      <summary>
+        <para>Build configuration set to Release for the generated Xcode project with optimization enabled.</para>
       </summary>
     </member>
     <member name="T:UnityEditor.iOSDeviceRequirement">
@@ -17475,6 +17495,11 @@ Note: calling this function will implicitly call Application.SetStackTraceLogTyp
         <para>URL of your project to be displayed in the Tizen Store.</para>
       </summary>
     </member>
+    <member name="P:UnityEditor.PlayerSettings.Tizen.showActivityIndicatorOnLoading">
+      <summary>
+        <para>Sets or gets the game loading indicator style.For available styles see TizenShowActivityIndicatorOnLoading.</para>
+      </summary>
+    </member>
     <member name="P:UnityEditor.PlayerSettings.Tizen.signingProfileName">
       <summary>
         <para>Name of the security profile to code sign Tizen applications with.</para>
@@ -21167,6 +21192,36 @@ Valid values are in the range [0-1], with higher values generating a tighter mes
     <member name="F:UnityEditor.TizenOSVersion.Version24">
       <summary>
         <para></para>
+      </summary>
+    </member>
+    <member name="T:UnityEditor.TizenShowActivityIndicatorOnLoading">
+      <summary>
+        <para>Enumerator list of different activity indicators your game can show when loading.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEditor.TizenShowActivityIndicatorOnLoading.DontShow">
+      <summary>
+        <para>Sets your game to not show any indicator while loading.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEditor.TizenShowActivityIndicatorOnLoading.InversedLarge">
+      <summary>
+        <para>The loading indicator size is large and rotates counterclockwise.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEditor.TizenShowActivityIndicatorOnLoading.InversedSmall">
+      <summary>
+        <para>The loading indicator size is small and rotates counterclockwise.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEditor.TizenShowActivityIndicatorOnLoading.Large">
+      <summary>
+        <para>The loading indicator size is large and rotates clockwise.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEditor.TizenShowActivityIndicatorOnLoading.Small">
+      <summary>
+        <para>The loading indicator size is small and rotates clockwise.</para>
       </summary>
     </member>
     <member name="T:UnityEditor.Tool">
