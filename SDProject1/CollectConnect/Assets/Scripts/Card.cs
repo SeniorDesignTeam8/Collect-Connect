@@ -3,8 +3,10 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Security.Cryptography;
 using UnityEditor;
+using UnityEngine.Networking;
 
 public class Card : MonoBehaviour
 {
@@ -37,15 +39,14 @@ public class Card : MonoBehaviour
     private BoxCollider2D _collider;
 
     private SpriteRenderer _renderer;
-    private const float ExpandedInfoDelay = 1.0f; // Time to wait before expanding.
+    private const float ExpandedInfoDelay = 0.5f; // Time to wait before expanding.
     private float _mouseDownTime; // Time when last clicked, in seconds since game start.
     private bool _isOnBoard; // Specifies if the card is in play or in the deck.
     private bool _isExpanded; // Specifies if the card is currently in expanded view.
 
-
-    private static bool _isAnySelected; // Specifies if a card is selected.
+    private Vector3 originalPosition;
     private bool _isSpriteLoaded;
-    private bool _isThisSelected; // Specifies if this card is selected.
+    private bool _isSelected; // Specifies if this card is selected.
     private bool _isTimerRunning; // If true, mouse is currently held down on card.
     private string _expandedInfo; // Information to display in expanded view.
     public readonly List<CardProperty> _propertyList = new List<CardProperty>();
@@ -72,24 +73,17 @@ public class Card : MonoBehaviour
         if (_isExpanded) // Is the card expanded?
         {
             Debug.Log("Shrinking " + name);
-            // TODO: Shrink the card to regular size.
+            BoardManager.Instance.CardUnexpand(this);
+
             _isExpanded = false;
         }
-        else if (!_isAnySelected) // Select this card.
+        else if (IsOnBoard()) // Is the card on the board? If not, then select from player's hand.
         {
-            _isAnySelected = true;
-            Debug.Log("Selecting " + name);
-            BoardManager.Instance.PlaySelect();
-            // TODO: Mark card as selected.
-            _isThisSelected = true;
+            BoardManager.Instance.SelectCardOnBoard(this);
         }
-        else if (_isThisSelected) // A card is selected, but is it this one?
+        else // It's in a player's hand. If it's the owning player's turn, then select it.
         {
-            _isThisSelected = false; // If so, then deselect this card.
-            Debug.Log("Deselecting " + name);
-            BoardManager.Instance.PlayDeselect();
-            // TODO: Deselect card.
-            _isAnySelected = false;
+            BoardManager.Instance.SelectCardInHand(this);
         }
         // Otherwise, do nothing (might change to deselect other card in future).
     }
@@ -107,6 +101,9 @@ public class Card : MonoBehaviour
         Debug.Log("Expanding " + name);
         BoardManager.Instance.PlayExpand();
         // TODO: Expand Card.
+        BoardManager.Instance.CardExpand(this);
+
+
         _isExpanded = true;
     }
 
@@ -175,23 +172,23 @@ public class Card : MonoBehaviour
         return string.IsNullOrEmpty(propertyName) ? _propertyList.Any(prop => prop.PropertyValue == propertyValue) : _propertyList.Any(prop => prop.PropertyName == propertyName && prop.PropertyValue == propertyValue);
     }
 
-    public void MoveToBoard(Player p)
+    public void MoveToBoard()
     {
         Vector3 rotation;
-
+        Player p = BoardManager.Instance.FindOwningPlayer(this);
         switch (p.name.ToLower())
         {
             case "player1":
-                rotation = new Vector3(0.0f, 0.0f, -180.0f);
-                break;
-            case "player2":
-                rotation = new Vector3(0.0f, 0.0f, -90.0f);
-                break;
-            case "player3":
                 rotation = Vector3.zero;
                 break;
-            case "player4":
+            case "player2":
                 rotation = new Vector3(0.0f, 0.0f, 90.0f);
+                break;
+            case "player3":
+                rotation = new Vector3(0.0f, 0.0f, 180.0f);
+                break;
+            case "player4":
+                rotation = new Vector3(0.0f, 0.0f, -90.0f);
                 break;
             default:
                 rotation = Vector3.zero;
@@ -199,6 +196,65 @@ public class Card : MonoBehaviour
         }
         p.PlaceCard(this, rotation);
         _renderer.enabled = true;
-        _isOnBoard = true;
+    }
+
+    public bool IsSelected()
+    {
+        return _isSelected;
+    }
+
+    public void SetIsSelected(bool selected)
+    {
+        _isSelected = selected;
+        if (_isOnBoard)
+            return;
+        Player p = BoardManager.Instance.FindOwningPlayer(this);
+        if (selected)
+        {
+            char changeAxis;
+            float changeMagnitude;
+            switch (p.name.ToLower())
+            {
+                case "player1":
+                    changeAxis = 'y';
+                    changeMagnitude = -1.0f;
+                    break;
+                case "player2":
+                    changeAxis = 'x';
+                    changeMagnitude = 1.0f;
+                    break;
+                case "player3":
+                    changeAxis = 'y';
+                    changeMagnitude = 1.0f;
+                    break;
+                case "player4":
+                    changeAxis = 'x';
+                    changeMagnitude = -1.0f;
+                    break;
+                default:
+                    return;
+            }
+            originalPosition = transform.position;
+            if (changeAxis == 'x')
+                transform.position += new Vector3(changeMagnitude, 0.0f);
+            else
+                transform.position += new Vector3(0.0f, changeMagnitude);
+        }
+        else
+        {
+            transform.position = originalPosition;
+        }
+
+
+    }
+
+    public bool IsOnBoard()
+    {
+        return _isOnBoard;
+    }
+
+    public void SetIsOnBoard(bool onBoard)
+    {
+        _isOnBoard = onBoard;
     }
 }
