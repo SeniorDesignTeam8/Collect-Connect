@@ -86,13 +86,13 @@ public class Connection : MonoBehaviour {
 		}
 	}
 
-	void UpdateName() {
+	public void UpdateName() {
 		string n1 = target[0] ? target[0].name : "None";
 		string n2 = target[1] ? target[1].name : "None";
 		gameObject.name = string.Format("{0} <> {1}", n1, n2);
 	}
 
-	void UpdateCurve() {
+	public void UpdateCurve() {
 		if (!line) return;
 		if (!isValid) {
 			line.enabled = false;
@@ -106,19 +106,24 @@ public class Connection : MonoBehaviour {
 			line.enabled = false;
 		} else {
 			line.enabled = true;
-			if (sActive && !eActive) {
-				line.SetColors(points[0].color, Color.clear);
-			} else if (!sActive && eActive) {
-				line.SetColors(Color.clear, points[1].color);
-			} else {
-				line.SetColors(points[0].color, points[1].color);
+			if (sActive && !eActive)
+			{
+			    line.startColor = points[0].color;
+                line.endColor = Color.clear;
+			} else if (!sActive && eActive)
+			{
+			    line.startColor = Color.clear;
+			    line.endColor = points[1].color;
+			} else
+			{
+			    line.startColor = points[0].color;
+			    line.endColor = points[1].color;
 			}
 		}
 
 		points[0].CalculateVectors(target[0]);
 		points[1].CalculateVectors(target[1]);
-
-		line.SetVertexCount(resolution);
+	    line.numPositions = resolution;
 		for (int i = 0; i < resolution; i++) {
 			line.SetPosition(i, GetBezierPoint((float)i/(float)(resolution-1)));
 		}

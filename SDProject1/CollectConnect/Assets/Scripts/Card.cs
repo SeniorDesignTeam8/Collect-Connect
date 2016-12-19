@@ -1,12 +1,8 @@
 ﻿using System;
 using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
-using System.Security.Cryptography;
 using UnityEditor;
-using UnityEngine.Networking;
 
 public class Card : MonoBehaviour
 {
@@ -99,7 +95,6 @@ public class Card : MonoBehaviour
             return;
         _isTimerRunning = false;
         Debug.Log("Expanding " + name);
-        BoardManager.Instance.PlayExpand();
         // TODO: Expand Card.
         BoardManager.Instance.CardExpand(this);
 

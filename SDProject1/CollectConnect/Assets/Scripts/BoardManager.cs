@@ -1,12 +1,9 @@
 ﻿using System;
 using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using UnityEditor;
 using UnityEngine.UI;
-using Random = UnityEngine.Random;
 
 public class BoardManager : MonoBehaviour
 {
@@ -38,6 +35,12 @@ public class BoardManager : MonoBehaviour
     private bool _isKeywordSelected;
     private int _currentPlayer;
     private bool _isTurnOver;
+
+    private Color[] _playerColors =
+    {
+        Color.red, Color.blue, Color.green, Color.yellow
+    };
+
     private readonly List<Vector3> _gridPositions = new List<Vector3>();
     private int[] _scoreboard;
 
@@ -111,8 +114,9 @@ public class BoardManager : MonoBehaviour
                     if (c.IsSelected())
                     {
                         //ConnectionManager.CreateConnection(c.GetComponent<RectTransform>());
-                        c.SetIsSelected(false);
                         c.SetIsOnBoard(true);
+                        c.SetIsSelected(false);
+
                         PlayPlace();
                         _isPlayerCardSelected = false;
                         _isFirstCardPlay = false;
@@ -136,7 +140,7 @@ public class BoardManager : MonoBehaviour
                             //This is the card on the game board
                              cardB = c;
                         }
-                        if (c.IsSelected())
+                        else if (c.IsSelected())
                         {
                             //This is the card in the players hand
                              cardA = c;
@@ -383,6 +387,7 @@ public class BoardManager : MonoBehaviour
             if (c.name != card.name)
                 continue;
             p.CardExpansion(c, p);
+            PlayExpand();
             return;
         }
     }
@@ -395,6 +400,7 @@ public class BoardManager : MonoBehaviour
             if (c.name != card.name)
                 continue;
             p.CardShrink(c, p);
+            PlayDeselect();
             return;
         }
     }
@@ -414,7 +420,9 @@ public class BoardManager : MonoBehaviour
                     keyNode.transform.position = CalculatePosition(keyNode);
                     foreach (Connection connection in ConnectionManager.FindConnections(cardA.gameObject.GetComponent<RectTransform>()))
                     {
-                        connection.OnValidate();
+                        SetDirectionsAndColor(connection);
+                        connection.UpdateName();
+                        connection.UpdateCurve();
                     }
                     cardA.SetIsOnBoard(true);
                     PlayPlace();
@@ -435,7 +443,9 @@ public class BoardManager : MonoBehaviour
                                              boardCard.gameObject.transform.position) / 2;
             foreach (Connection connection in ConnectionManager.FindConnections(newKeyNode.gameObject.GetComponent<RectTransform>()))
             {
-                connection.OnValidate();
+                SetDirectionsAndColor(connection);
+                connection.UpdateName();
+                connection.UpdateCurve();
             }
             cardA.SetIsOnBoard(true);
             PlayPlace();
@@ -444,6 +454,37 @@ public class BoardManager : MonoBehaviour
             return true;
         }
         return false;
+    }
+
+    private void SetDirectionsAndColor(Connection connection)
+    {
+        Card c = connection.target[0].gameObject.GetComponent<Card>();
+        Player p = FindOwningPlayer(c);
+        int playerIndex = _playerScriptRefs.IndexOf(p);
+
+        switch (playerIndex)
+        {
+            case 0:
+                connection.points[0].direction = ConnectionPoint.ConnectionDirection.North;
+                connection.points[1].direction = ConnectionPoint.ConnectionDirection.North;
+                break;
+            case 1:
+                connection.points[0].direction = ConnectionPoint.ConnectionDirection.North;
+                connection.points[1].direction = ConnectionPoint.ConnectionDirection.West;
+                break;
+            case 2:
+                connection.points[0].direction = ConnectionPoint.ConnectionDirection.North;
+                connection.points[1].direction = ConnectionPoint.ConnectionDirection.South;
+                break;
+            case 3:
+                connection.points[0].direction = ConnectionPoint.ConnectionDirection.North;
+                connection.points[1].direction = ConnectionPoint.ConnectionDirection.East;
+                break;
+            default:
+                return; // Should never reach here.
+        }
+        connection.points[0].color = _playerColors[playerIndex];
+        connection.points[1].color = _playerColors[playerIndex];
     }
 
     private Vector3 CalculatePosition(GameObject keyNode)
