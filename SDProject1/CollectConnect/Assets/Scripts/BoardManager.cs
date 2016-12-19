@@ -301,7 +301,7 @@ public class BoardManager : MonoBehaviour
         {
             using (
                 StreamReader reader =
-                    new StreamReader(new FileStream(Application.dataPath + @"/TextFiles/Collections.txt",
+                    new StreamReader(new FileStream(Application.dataPath + "/TextFiles/Collections.txt",
                         FileMode.OpenOrCreate)))
             {
                 while (!reader.EndOfStream)
@@ -322,7 +322,7 @@ public class BoardManager : MonoBehaviour
             using (
                 StreamReader reader =
                     new StreamReader(
-                        new FileStream(Application.dataPath + @"/TextFiles/Collections/" + col + @".txt",
+                        new FileStream(Application.dataPath + "/TextFiles/Collections/" + col + ".txt",
                             FileMode.OpenOrCreate)))
             {
                 while (!reader.EndOfStream)
@@ -363,7 +363,7 @@ public class BoardManager : MonoBehaviour
         SoundEffectSource.Play();
     }
 
-    public void PlayExpand()
+    private void PlayExpand()
     {
         if (SoundEffectSource.isPlaying)
             SoundEffectSource.Stop();
@@ -405,7 +405,7 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    public bool TryAddCard(Card cardA, Card boardCard, string keyword)
+    private bool TryAddCard(Card cardA, Card boardCard, string keyword)
     {
         if (cardA.gameObject.GetComponent<GraphNode>() == null)
             cardA.gameObject.AddComponent<GraphNode>();

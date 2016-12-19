@@ -2,7 +2,6 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor;
 
 public class Card : MonoBehaviour
 {
@@ -140,8 +139,8 @@ public class Card : MonoBehaviour
             string collectionName = _propertyList.Find(prop => prop.PropertyName == "Collection").PropertyValue;
             if (string.IsNullOrEmpty(collectionName))
                 return false;
-            string spriteName = name + ".png";
-            _renderer.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(@"Assets/Sprites/" + collectionName + "/" + spriteName);
+            //string spriteName = name + ".png";
+            _renderer.sprite = Resources.Load<Sprite>("Sprites/" + collectionName + "/" + name);
             return true;
         }
         catch (ArgumentNullException e)
