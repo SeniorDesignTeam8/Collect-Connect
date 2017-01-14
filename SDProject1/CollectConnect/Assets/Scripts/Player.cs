@@ -35,24 +35,23 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        if (IsDrawingCards)
+        if (!IsDrawingCards)
+            return;
+        if (_playerHand.Size < HandSize)
         {
-            if (_playerHand.Size < HandSize)
+            if (BoardManager.IsDeckReady)
             {
-                if (BoardManager.IsDeckReady)
-                {
-                    Card c = BoardManager.Deck.Draw();
-                    _playerHand.AddCards(c);
-                    c.MoveToBoard();
-                }
-                else
-                {
-                    IsDrawingCards = false;
-                }
+                Card c = BoardManager.Deck.Draw();
+                _playerHand.AddCards(c);
+                c.MoveToBoard();
             }
             else
+            {
                 IsDrawingCards = false;
+            }
         }
+        else
+            IsDrawingCards = false;
     }
 
     public void IncreaseScore(int reward)
@@ -81,7 +80,7 @@ public class Player : MonoBehaviour
     public IEnumerable<string> GetKeywords()
     {
         // Get the property value string from the property list in each card.
-        List<string> keywords = (from Card c in _playerHand from prop in c._propertyList select prop.PropertyValue).ToList();
+        List<string> keywords = (from Card c in _playerHand from prop in c.PropertyList select prop.PropertyValue).ToList();
         // Remove any duplicates and return.
         return keywords.Distinct().ToList();
     }
@@ -91,7 +90,7 @@ public class Player : MonoBehaviour
         return _playerHand;
     }
 
-    public void CardExpansion(Card card, Player player)  //Expand card
+    public void CardExpansion(Card card)  //Expand card
     {
         ExpCardPlace.gameObject.GetComponent<Renderer>().enabled = true;
         ExpCardImage.gameObject.GetComponent<Renderer>().enabled = true;
@@ -106,7 +105,7 @@ public class Player : MonoBehaviour
         //TODO Make card appear in expand
     }
 
-    public void CardShrink(Card card, Player player)  //Shrink card
+    public void CardShrink(Card card)  //Shrink card
     {
         ExpCardPlace.gameObject.GetComponent<Renderer>().enabled = false;
         ExpCardImage.gameObject.GetComponent<Renderer>().enabled = false;

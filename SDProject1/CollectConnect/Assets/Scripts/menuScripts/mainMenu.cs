@@ -1,12 +1,11 @@
 ﻿using UnityEngine;
-using System.Collections;
 using UnityEngine.SceneManagement;
 
 public class mainMenu : MonoBehaviour {
 
     public Texture BackgroundTexture;
     public Texture TitleText;
-    public GUIStyle btn;
+    public GUIStyle Btn;
     public AudioClip ButtonClickSound;
     public AudioSource MenuSoundSource;
 
@@ -23,7 +22,7 @@ public class mainMenu : MonoBehaviour {
         GUI.DrawTexture(new Rect(Screen.width / 4, Screen.height - Screen.height, Screen.width * 0.5f, Screen.height * 0.5f), TitleText);
 
         //display buttons (without GUI Outline)
-        if (GUI.Button(new Rect(Screen.width * 0.35f, Screen.height * 0.65f, Screen.width * 0.3f, Screen.height * 0.2f), "", btn))
+        if (GUI.Button(new Rect(Screen.width * 0.35f, Screen.height * 0.65f, Screen.width * 0.3f, Screen.height * 0.2f), "", Btn))
         {
             OnMouseDown();
         }

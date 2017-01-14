@@ -14,7 +14,7 @@ public class BoardManager : MonoBehaviour
     public GameObject KeywordContainerP2;
     public GameObject KeywordContainerP3;
     public GameObject KeywordContainerP4;
-    public GameObject keywordPrefab;
+    public GameObject KeywordPrefab;
     public GameObject NodeOne;
     public int Columns = 8, Rows = 8;
     public static CardCollection Deck;
@@ -36,10 +36,10 @@ public class BoardManager : MonoBehaviour
     private int _currentPlayer;
     private bool _isTurnOver;
 
-    private Color[] _playerColors =
-    {
-        Color.red, Color.blue, Color.green, Color.yellow
-    };
+    //private readonly Color[] _playerColors =
+    //{
+    //    Color.red, Color.blue, Color.green, Color.yellow
+    //};
 
     private readonly List<Vector3> _gridPositions = new List<Vector3>();
     private int[] _scoreboard;
@@ -107,21 +107,20 @@ public class BoardManager : MonoBehaviour
         // Play turn like normal.
         if (_isFirstCardPlay)
         {
-            if (_isPlayerCardSelected)
+            if (!_isPlayerCardSelected)
+                return;
+            foreach (Card c in _playerScriptRefs[_currentPlayer].GetHand())
             {
-                foreach (Card c in _playerScriptRefs[_currentPlayer].GetHand())
+                if (c.IsSelected())
                 {
-                    if (c.IsSelected())
-                    {
-                        //ConnectionManager.CreateConnection(c.GetComponent<RectTransform>());
-                        c.SetIsOnBoard(true);
-                        c.SetIsSelected(false);
+                    //ConnectionManager.CreateConnection(c.GetComponent<RectTransform>());
+                    c.SetIsOnBoard(true);
+                    c.SetIsSelected(false);
 
-                        PlayPlace();
-                        _isPlayerCardSelected = false;
-                        _isFirstCardPlay = false;
-                        _isTurnOver = true;
-                    }
+                    PlayPlace();
+                    _isPlayerCardSelected = false;
+                    _isFirstCardPlay = false;
+                    _isTurnOver = true;
                 }
             }
         }
@@ -129,37 +128,36 @@ public class BoardManager : MonoBehaviour
         {
             //tri select check
             Card cardA = null, cardB = null;
-            if (_isBoardCardSelected && _isPlayerCardSelected && !string.IsNullOrEmpty(_currentKeyword))
+            if (!_isBoardCardSelected || !_isPlayerCardSelected || string.IsNullOrEmpty(_currentKeyword))
+                return;
+            foreach (Player p in _playerScriptRefs)
             {
-                foreach (Player p in _playerScriptRefs)
+                foreach (Card c in p.GetHand())
                 {
-                    foreach (Card c in p.GetHand())
+                    if (c.IsOnBoard() && c.IsSelected())
                     {
-                        if (c.IsOnBoard() && c.IsSelected())
-                        {
-                            //This is the card on the game board
-                             cardB = c;
-                        }
-                        else if (c.IsSelected())
-                        {
-                            //This is the card in the players hand
-                             cardA = c;
-                        }
+                        //This is the card on the game board
+                        cardB = c;
+                    }
+                    else if (c.IsSelected())
+                    {
+                        //This is the card in the players hand
+                        cardA = c;
                     }
                 }
-                   //Call tryaddcard with cardA and cardB
-                if (TryAddCard(cardA, cardB, _currentKeyword))
-                {
-                    //scoring
-                    //Debug.Log("Try Add Card Worked.");
-                    _isTurnOver = true;
-                    _currentKeyword = "";
-                }
-                else
-                {
-                    _currentKeyword = "";
-                    //Debug.Log("Try Add Card Failed.");
-                }
+            }
+            //Call tryaddcard with cardA and cardB
+            if (TryAddCard(cardA, cardB, _currentKeyword))
+            {
+                //scoring
+                //Debug.Log("Try Add Card Worked.");
+                _isTurnOver = true;
+                _currentKeyword = "";
+            }
+            else
+            {
+                _currentKeyword = "";
+                //Debug.Log("Try Add Card Failed.");
             }
         }
     }
@@ -211,7 +209,7 @@ public class BoardManager : MonoBehaviour
         // TODO: Possibly combine these into one block? A lot of repetition.
         foreach (string str in _keywordList)
         {
-            GameObject go = Instantiate(keywordPrefab);
+            GameObject go = Instantiate(KeywordPrefab);
             go.GetComponentInChildren<Text>().text = str;
             go.transform.SetParent(KeywordContainerP1.transform);
             Button btn = go.GetComponent<Button>();
@@ -233,7 +231,7 @@ public class BoardManager : MonoBehaviour
 
         foreach (string str in _keywordList)
         {
-            GameObject go = Instantiate(keywordPrefab);
+            GameObject go = Instantiate(KeywordPrefab);
             go.GetComponentInChildren<Text>().text = str;
             go.transform.SetParent(KeywordContainerP2.transform);
             Button btn = go.GetComponent<Button>();
@@ -254,7 +252,7 @@ public class BoardManager : MonoBehaviour
 
         foreach (string str in _keywordList)
         {
-            GameObject go = Instantiate(keywordPrefab);
+            GameObject go = Instantiate(KeywordPrefab);
             go.GetComponentInChildren<Text>().text = str;
             go.transform.SetParent(KeywordContainerP3.transform);
             Button btn = go.GetComponent<Button>();
@@ -274,7 +272,7 @@ public class BoardManager : MonoBehaviour
 
         foreach (string str in _keywordList)
         {
-            GameObject go = Instantiate(keywordPrefab);
+            GameObject go = Instantiate(KeywordPrefab);
             go.GetComponentInChildren<Text>().text = str;
             go.transform.SetParent(KeywordContainerP4.transform);
             Button btn = go.GetComponent<Button>();
@@ -386,7 +384,7 @@ public class BoardManager : MonoBehaviour
         {
             if (c.name != card.name)
                 continue;
-            p.CardExpansion(c, p);
+            p.CardExpansion(c);
             PlayExpand();
             return;
         }
@@ -399,7 +397,7 @@ public class BoardManager : MonoBehaviour
         {
             if (c.name != card.name)
                 continue;
-            p.CardShrink(c, p);
+            p.CardShrink(c);
             PlayDeselect();
             return;
         }
@@ -409,39 +407,16 @@ public class BoardManager : MonoBehaviour
     {
         if (cardA.gameObject.GetComponent<GraphNode>() == null)
             cardA.gameObject.AddComponent<GraphNode>();
-        if (cardA.DoesPropertyExist(keyword) && boardCard.DoesPropertyExist(keyword))
+        if (!cardA.DoesPropertyExist(keyword) || !boardCard.DoesPropertyExist(keyword))
+            return false;
+        foreach (GameObject keyNode in _keywordNodes)
         {
-            foreach (GameObject keyNode in _keywordNodes)
-            {
-                if (keyNode.transform.FindChild("Text").gameObject.GetComponent<Text>().text == keyword)
-                {
-                    // The keyword is already a node. Use it.
-                    ConnectionManager.CreateConnection(cardA.gameObject.GetComponent<RectTransform>(), keyNode.GetComponent<RectTransform>());
-                    keyNode.transform.position = CalculatePosition(keyNode);
-                    foreach (Connection connection in ConnectionManager.FindConnections(cardA.gameObject.GetComponent<RectTransform>()))
-                    {
-                        SetDirectionsAndColor(connection);
-                        connection.UpdateName();
-                        connection.UpdateCurve();
-                    }
-                    cardA.SetIsOnBoard(true);
-                    PlayPlace();
-                    cardA.SetIsSelected(false);
-                    boardCard.SetIsSelected(false);
-                    return true;
-                }
-            }
-            // Couldn't find the keyword in an existing node. Add it and connect both cards to it.
-            GameObject newKeyNode = Instantiate(NodeOne); // Copy the template keyword node.
-            newKeyNode.transform.FindChild("Text").gameObject.GetComponent<Text>().text = keyword; // Set the text of the new keyword node.
-            newKeyNode.name = keyword;
-            _keywordNodes.Add(newKeyNode); // Add the keyword to the list of keyword nodes.
-            // Connect both cards to the new keyword node.
-            ConnectionManager.CreateConnection(boardCard.gameObject.GetComponent<RectTransform>(), newKeyNode.GetComponent<RectTransform>());
-            ConnectionManager.CreateConnection(cardA.gameObject.GetComponent<RectTransform>(), newKeyNode.GetComponent<RectTransform>());
-            newKeyNode.transform.position = (cardA.gameObject.transform.position +
-                                             boardCard.gameObject.transform.position) / 2;
-            foreach (Connection connection in ConnectionManager.FindConnections(newKeyNode.gameObject.GetComponent<RectTransform>()))
+            if (keyNode.transform.FindChild("Text").gameObject.GetComponent<Text>().text != keyword)
+                continue;
+            // The keyword is already a node. Use it.
+            ConnectionManager.CreateConnection(cardA.gameObject.GetComponent<RectTransform>(), keyNode.GetComponent<RectTransform>());
+            keyNode.transform.position = CalculatePosition(keyNode);
+            foreach (Connection connection in ConnectionManager.FindConnections(cardA.gameObject.GetComponent<RectTransform>()))
             {
                 SetDirectionsAndColor(connection);
                 connection.UpdateName();
@@ -453,7 +428,27 @@ public class BoardManager : MonoBehaviour
             boardCard.SetIsSelected(false);
             return true;
         }
-        return false;
+        // Couldn't find the keyword in an existing node. Add it and connect both cards to it.
+        GameObject newKeyNode = Instantiate(NodeOne); // Copy the template keyword node.
+        newKeyNode.transform.FindChild("Text").gameObject.GetComponent<Text>().text = keyword; // Set the text of the new keyword node.
+        newKeyNode.name = keyword;
+        _keywordNodes.Add(newKeyNode); // Add the keyword to the list of keyword nodes.
+        // Connect both cards to the new keyword node.
+        ConnectionManager.CreateConnection(boardCard.gameObject.GetComponent<RectTransform>(), newKeyNode.GetComponent<RectTransform>());
+        ConnectionManager.CreateConnection(cardA.gameObject.GetComponent<RectTransform>(), newKeyNode.GetComponent<RectTransform>());
+        newKeyNode.transform.position = (cardA.gameObject.transform.position +
+                                         boardCard.gameObject.transform.position) / 2;
+        foreach (Connection connection in ConnectionManager.FindConnections(newKeyNode.gameObject.GetComponent<RectTransform>()))
+        {
+            SetDirectionsAndColor(connection);
+            connection.UpdateName();
+            connection.UpdateCurve();
+        }
+        cardA.SetIsOnBoard(true);
+        PlayPlace();
+        cardA.SetIsSelected(false);
+        boardCard.SetIsSelected(false);
+        return true;
     }
 
     private void SetDirectionsAndColor(Connection connection)
@@ -483,11 +478,11 @@ public class BoardManager : MonoBehaviour
             default:
                 return; // Should never reach here.
         }
-        connection.points[0].color = _playerColors[playerIndex];
-        connection.points[1].color = _playerColors[playerIndex];
+        //connection.points[0].color = _playerColors[playerIndex];
+        //connection.points[1].color = _playerColors[playerIndex];
     }
 
-    private Vector3 CalculatePosition(GameObject keyNode)
+    private static Vector3 CalculatePosition(GameObject keyNode)
     {
         int numConnections = 0;
         Vector3 location = Vector3.zero;
@@ -508,61 +503,60 @@ public class BoardManager : MonoBehaviour
 
     public void SelectCardInHand(Card card)
     {
-        bool cardFound = _playerScriptRefs[_currentPlayer].GetHand().Cast<Card>().Any(c => c.name == card.name && !c.IsOnBoard());
+        bool cardFound =
+            _playerScriptRefs[_currentPlayer].GetHand().Cast<Card>().Any(c => c.name == card.name && !c.IsOnBoard());
         // First, check if the card is in the current player's hand.
-        if (cardFound) // Check for an already selected card in the player's hand.
+        if (!cardFound)
+            return;
+        foreach (Card c in _playerScriptRefs[_currentPlayer].GetHand())
         {
-            foreach (Card c in _playerScriptRefs[_currentPlayer].GetHand())
+            if (!c.IsSelected() || c.IsOnBoard()) // Skip cards that aren't selected or are on the board.
+                continue;
+            if (c.name == card.name) // Is the card already selected?
             {
-                if (!c.IsSelected() || c.IsOnBoard()) // Skip cards that aren't selected or are on the board.
-                    continue;
-                if (c.name == card.name) // Is the card already selected?
-                {
-                    card.SetIsSelected(false); // If so, deselect the card
-                    PlayDeselect();
-                    _isPlayerCardSelected = false;
-                    return;
-                }
-                c.SetIsSelected(false); // Deselect the other card, then select this one.
-                card.SetIsSelected(true);
-                PlaySelect();
+                card.SetIsSelected(false); // If so, deselect the card
+                PlayDeselect();
+                _isPlayerCardSelected = false;
                 return;
             }
+            c.SetIsSelected(false); // Deselect the other card, then select this one.
             card.SetIsSelected(true);
             PlaySelect();
-            _isPlayerCardSelected = true;
+            return;
         }
+        card.SetIsSelected(true);
+        PlaySelect();
+        _isPlayerCardSelected = true;
     }
 
     public void SelectCardOnBoard(Card card)
     {
         Player p = FindOwningPlayer(card);
         bool cardFound = p.GetHand().Cast<Card>().Any(c => c.IsOnBoard() && c.name == card.name);
-        if (cardFound)
+        if (!cardFound)
+            return;
+        foreach (Player player in _playerScriptRefs)
         {
-            foreach (var player in _playerScriptRefs)
+            foreach (Card c in player.GetHand())
             {
-                foreach (Card c in player.GetHand())
+                if (!c.IsOnBoard() || !c.IsSelected())
+                    continue;
+                if (c.name == card.name)
                 {
-                    if (!c.IsOnBoard() || !c.IsSelected())
-                        continue;
-                    if (c.name == card.name)
-                    {
-                        c.SetIsSelected(false);
-                        PlayDeselect();
-                        _isBoardCardSelected = false;
-                        return;
-                    }
                     c.SetIsSelected(false);
-                    card.SetIsSelected(true);
-                    PlaySelect();
+                    PlayDeselect();
+                    _isBoardCardSelected = false;
                     return;
                 }
+                c.SetIsSelected(false);
+                card.SetIsSelected(true);
+                PlaySelect();
+                return;
             }
-            card.SetIsSelected(true);
-            PlaySelect();
-            _isBoardCardSelected = true;
         }
+        card.SetIsSelected(true);
+        PlaySelect();
+        _isBoardCardSelected = true;
     }
 
     public void PassBtnHit()  //player hit pass button
