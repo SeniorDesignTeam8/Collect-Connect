@@ -49,4 +49,9 @@ public class CardCollection : IEnumerable
         // This allows us to use a foreach loop across a CardCollection.
         return ((IEnumerable) _cardList).GetEnumerator();
     }
+
+    public int IndexOf(Card searchCard)
+    {
+        return _cardList.IndexOf(searchCard);
+    }
 }

@@ -76,6 +76,11 @@ public class BoardManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
+    internal Player GetCurrentPlayer()
+    {
+        return _playerScriptRefs[_currentPlayer];
+    }
+
     // Update is called once per frame
     private void Update()
     {

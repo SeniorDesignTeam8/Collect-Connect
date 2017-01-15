@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 public class Player : MonoBehaviour
 {
@@ -20,6 +21,7 @@ public class Player : MonoBehaviour
     private CardCollection _playerHand; // Represents the player's cards.
     private Vector3 _expCardPosition;
     private Vector3 _expCardScale;
+    private bool _isAiControlled;
 
     private void Start()
     {
@@ -52,6 +54,22 @@ public class Player : MonoBehaviour
         }
         else
             IsDrawingCards = false;
+        if (_isAiControlled && BoardManager.Instance.GetCurrentPlayer().name == name)
+        {
+            List<int> unplayedCardIndices = new List<int>();
+            foreach (Card c in _playerHand)
+            {
+                if (!c.IsOnBoard() && _playerHand.IndexOf(c) != -1)
+                {
+                    unplayedCardIndices.Add(_playerHand.IndexOf(c));
+                }
+            }
+            int randomIndex = Random.Range(0, unplayedCardIndices.Count - 1);
+            Card pickedCard = CardPlaceholders[randomIndex].GetComponent<Card>();
+            // TODO Select card.
+            // TODO For each placed card on the board, find a suitable keyword.
+            // TODO Place card and end turn.
+        }
     }
 
     public void IncreaseScore(int reward)
@@ -114,5 +132,10 @@ public class Player : MonoBehaviour
         card.gameObject.transform.position = _expCardPosition;
         card.gameObject.transform.localScale = _expCardScale;
         //TODO Make card disappear in expand
+    }
+
+    public void SetAiControl(bool aiControlled)
+    {
+        _isAiControlled = aiControlled;
     }
 }
