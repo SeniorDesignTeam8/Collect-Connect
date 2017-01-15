@@ -251,4 +251,9 @@ public class Card : MonoBehaviour
     {
         _isOnBoard = onBoard;
     }
+
+    public List<CardProperty> FindCommonProperties(Card other)
+    {
+        return other.PropertyList.Where(prop => DoesPropertyExist(prop.PropertyValue, prop.PropertyName)).Distinct().ToList();
+    }
 }

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine.Networking.NetworkSystem;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
@@ -21,7 +22,7 @@ public class Player : MonoBehaviour
     private CardCollection _playerHand; // Represents the player's cards.
     private Vector3 _expCardPosition;
     private Vector3 _expCardScale;
-    private bool _isAiControlled;
+    private bool _isAiControlled = true; // TODO Find a way to programatically change this.
 
     private void Start()
     {
@@ -56,16 +57,42 @@ public class Player : MonoBehaviour
             IsDrawingCards = false;
         if (_isAiControlled && BoardManager.Instance.GetCurrentPlayer().name == name)
         {
+            Debug.Log("AI Control: " + name);
             List<int> unplayedCardIndices = new List<int>();
-            foreach (Card c in _playerHand)
+            foreach (Card c in BoardManager.Instance.GetPlayersUnplayedCards())
             {
+                Debug.Log("Adding unplayed card " + c.name + " for " + name);
                 if (!c.IsOnBoard() && _playerHand.IndexOf(c) != -1)
                 {
                     unplayedCardIndices.Add(_playerHand.IndexOf(c));
                 }
             }
-            int randomIndex = Random.Range(0, unplayedCardIndices.Count - 1);
-            Card pickedCard = CardPlaceholders[randomIndex].GetComponent<Card>();
+            int randomIndex = Random.Range(0, unplayedCardIndices.Count);
+            Card pickedCard = _playerHand.At(randomIndex);
+            BoardManager.Instance.SelectCardInHand(pickedCard);
+            CardCollection playedCards = BoardManager.Instance.GetPlayedCards();
+            if (playedCards.Size == 0)
+            {
+                Debug.Log("No played cards as " + name);
+                // TODO No played cards, so must be first played card.
+            }
+            else
+            {
+                playedCards.Shuffle(); // More organized way of choosing a random card than just picking a random index.
+                foreach (Card c in playedCards)
+                {
+                    Debug.Log("Selecting played card " + c.name + " for " + name);
+                    BoardManager.Instance.SelectCardOnBoard(c);
+                    List<Card.CardProperty> commonProps = c.FindCommonProperties(pickedCard);
+                    if (commonProps.Count <= 0)
+                        continue;
+                    ShufflePropertyList(ref commonProps);
+                    Debug.Log("Puce");
+                    BoardManager.Instance.SelectKeyword(commonProps[0]);
+                    break;
+                }
+            }
+            Debug.Log(name + " has reached the end of Update()");
             // TODO Select card.
             // TODO For each placed card on the board, find a suitable keyword.
             // TODO Place card and end turn.
@@ -137,5 +164,16 @@ public class Player : MonoBehaviour
     public void SetAiControl(bool aiControlled)
     {
         _isAiControlled = aiControlled;
+    }
+
+    private static void ShufflePropertyList(ref List<Card.CardProperty> propList)
+    {
+        for (int i = 0; i < propList.Count; i++)
+        {
+            Card.CardProperty temp = propList[i];
+            int randIndex = Random.Range(0, propList.Count);
+            propList[i] = propList[randIndex];
+            propList[randIndex] = temp;
+        }
     }
 }

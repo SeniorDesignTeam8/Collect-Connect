@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Random = UnityEngine.Random;
@@ -29,7 +30,7 @@ public class CardCollection : IEnumerable
     {
         for (int i = 0; i < _cardList.Count; i++)
         {
-            int index = Random.Range(0, _cardList.Count - 1);
+            int index = Random.Range(0, _cardList.Count);
             Card temp = _cardList[index];
             _cardList[index] = _cardList[i];
             _cardList[i] = temp;
@@ -38,7 +39,7 @@ public class CardCollection : IEnumerable
 
     public Card Draw()
     {
-        int index = Random.Range(0, _cardList.Count - 1);
+        int index = Random.Range(0, _cardList.Count);
         Card c = _cardList[index];
         _cardList.RemoveAt(index);
         return c;
@@ -53,5 +54,10 @@ public class CardCollection : IEnumerable
     public int IndexOf(Card searchCard)
     {
         return _cardList.IndexOf(searchCard);
+    }
+
+    public Card At(int index)
+    {
+        return _cardList[index];
     }
 }

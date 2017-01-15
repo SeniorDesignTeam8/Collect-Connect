@@ -112,6 +112,7 @@ public class BoardManager : MonoBehaviour
         // Play turn like normal.
         if (_isFirstCardPlay)
         {
+            Debug.Log("First card play");
             if (!_isPlayerCardSelected)
                 return;
             foreach (Card c in _playerScriptRefs[_currentPlayer].GetHand())
@@ -155,14 +156,14 @@ public class BoardManager : MonoBehaviour
             if (TryAddCard(cardA, cardB, _currentKeyword))
             {
                 //scoring
-                //Debug.Log("Try Add Card Worked.");
+                Debug.Log("Try Add Card Worked.");
                 _isTurnOver = true;
                 _currentKeyword = "";
             }
             else
             {
                 _currentKeyword = "";
-                //Debug.Log("Try Add Card Failed.");
+                Debug.Log("Try Add Card Failed.");
             }
         }
     }
@@ -173,6 +174,7 @@ public class BoardManager : MonoBehaviour
             return;
         _currentPlayer++;
         _currentPlayer %= Players.Length;
+        Debug.Log("Ending player's turn");
         //TODO: Set keyword list to scroll Rect
         PopulateKeywords();
         _isTurnOver = false;
@@ -508,8 +510,15 @@ public class BoardManager : MonoBehaviour
 
     public void SelectCardInHand(Card card)
     {
-        bool cardFound =
-            _playerScriptRefs[_currentPlayer].GetHand().Cast<Card>().Any(c => c.name == card.name && !c.IsOnBoard());
+        bool cardFound = false;
+        foreach (Card c in _playerScriptRefs[_currentPlayer].GetHand())
+        {
+            if (c.name == card.name && !c.IsOnBoard())
+            {
+                cardFound = true;
+                break;
+            }
+        }
         // First, check if the card is in the current player's hand.
         if (!cardFound)
             return;
@@ -573,5 +582,32 @@ public class BoardManager : MonoBehaviour
     public Player FindOwningPlayer(Card card)
     {
         return _playerScriptRefs.FirstOrDefault(p => p.GetHand().Cast<Card>().Any(c => c.name == card.name));
+    }
+
+    public CardCollection GetPlayedCards()
+    {
+        CardCollection coll = new CardCollection("Board Cards");
+        foreach (Card c in _playerScriptRefs.SelectMany(p => (from Card c in p.GetHand() where c.IsOnBoard() select c)))
+        {
+            coll.AddCards(c); // Add all cards that are on the board to the collection.
+        }
+        return coll;
+    }
+
+    public CardCollection GetPlayersUnplayedCards()
+    {
+        CardCollection coll = new CardCollection("Unplayed Cards");
+        foreach (Card c in _playerScriptRefs[_currentPlayer].GetHand())
+        {
+            if (!c.IsOnBoard())
+                coll.AddCards(c);
+        }
+        return coll;
+    }
+
+    public void SelectKeyword(Card.CardProperty prop)
+    {
+        if (_keywordList.Contains(prop.PropertyValue))
+            _currentKeyword = prop.PropertyValue;
     }
 }
