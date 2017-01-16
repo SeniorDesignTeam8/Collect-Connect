@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.Networking.NetworkSystem;
@@ -38,7 +39,7 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        if (!IsDrawingCards)
+        if (!BoardManager.Instance.GetIsStarted() && !IsDrawingCards)
             return;
         if (_playerHand.Size < HandSize)
         {
@@ -55,25 +56,28 @@ public class Player : MonoBehaviour
         }
         else
             IsDrawingCards = false;
-        if (_isAiControlled && BoardManager.Instance.GetCurrentPlayer().name == name)
+
+        if (_isAiControlled &&  BoardManager.Instance.GetCurrentPlayer() == this &&
+            !BoardManager.Instance.GetIsTurnOver() && BoardManager.Instance.GetIsStarted())
         {
             Debug.Log("AI Control: " + name);
             List<int> unplayedCardIndices = new List<int>();
             foreach (Card c in BoardManager.Instance.GetPlayersUnplayedCards())
             {
-                Debug.Log("Adding unplayed card " + c.name + " for " + name);
                 if (!c.IsOnBoard() && _playerHand.IndexOf(c) != -1)
                 {
                     unplayedCardIndices.Add(_playerHand.IndexOf(c));
                 }
             }
+            if (unplayedCardIndices.Count == 0)
+                return;
             int randomIndex = Random.Range(0, unplayedCardIndices.Count);
-            Card pickedCard = _playerHand.At(randomIndex);
+            Card pickedCard = _playerHand.At(unplayedCardIndices[randomIndex]);
             BoardManager.Instance.SelectCardInHand(pickedCard);
             CardCollection playedCards = BoardManager.Instance.GetPlayedCards();
             if (playedCards.Size == 0)
             {
-                Debug.Log("No played cards as " + name);
+                Debug.Log("First played card.");
                 // TODO No played cards, so must be first played card.
             }
             else
@@ -81,18 +85,16 @@ public class Player : MonoBehaviour
                 playedCards.Shuffle(); // More organized way of choosing a random card than just picking a random index.
                 foreach (Card c in playedCards)
                 {
-                    Debug.Log("Selecting played card " + c.name + " for " + name);
-                    BoardManager.Instance.SelectCardOnBoard(c);
+
                     List<Card.CardProperty> commonProps = c.FindCommonProperties(pickedCard);
                     if (commonProps.Count <= 0)
                         continue;
+                    BoardManager.Instance.SelectCardOnBoard(c);
                     ShufflePropertyList(ref commonProps);
-                    Debug.Log("Puce");
                     BoardManager.Instance.SelectKeyword(commonProps[0]);
                     break;
                 }
             }
-            Debug.Log(name + " has reached the end of Update()");
             // TODO Select card.
             // TODO For each placed card on the board, find a suitable keyword.
             // TODO Place card and end turn.

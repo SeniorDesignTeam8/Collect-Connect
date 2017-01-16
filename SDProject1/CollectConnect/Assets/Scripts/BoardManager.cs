@@ -36,10 +36,10 @@ public class BoardManager : MonoBehaviour
     private int _currentPlayer;
     private bool _isTurnOver;
 
-    //private readonly Color[] _playerColors =
-    //{
-    //    Color.red, Color.blue, Color.green, Color.yellow
-    //};
+    private readonly Color[] _playerColors =
+    {
+        Color.red, Color.blue, Color.green, Color.yellow
+    };
 
     private readonly List<Vector3> _gridPositions = new List<Vector3>();
     private int[] _scoreboard;
@@ -47,6 +47,7 @@ public class BoardManager : MonoBehaviour
     private void Awake()
     {
         _isGameStarted = false;
+        _isTurnOver = true;
         IsDeckReady = false;
     }
 
@@ -88,7 +89,7 @@ public class BoardManager : MonoBehaviour
         // If so, then populate the players' word banks.
         if (!_isGameStarted)
         {
-            bool allHandsDrawn = Players.All(t => !t.GetComponent<Player>().IsDrawingCards);
+            bool allHandsDrawn = _playerScriptRefs.All(p => !p.IsDrawingCards);
 
             if (allHandsDrawn)
             {
@@ -112,7 +113,6 @@ public class BoardManager : MonoBehaviour
         // Play turn like normal.
         if (_isFirstCardPlay)
         {
-            Debug.Log("First card play");
             if (!_isPlayerCardSelected)
                 return;
             foreach (Card c in _playerScriptRefs[_currentPlayer].GetHand())
@@ -129,6 +129,10 @@ public class BoardManager : MonoBehaviour
                     _isTurnOver = true;
                 }
             }
+        }
+        else if (AllCardsPlayed())
+        {
+            _isGameStarted = false;
         }
         else
         {
@@ -156,25 +160,31 @@ public class BoardManager : MonoBehaviour
             if (TryAddCard(cardA, cardB, _currentKeyword))
             {
                 //scoring
-                Debug.Log("Try Add Card Worked.");
+                //Debug.Log("Try Add Card Worked.");
                 _isTurnOver = true;
                 _currentKeyword = "";
             }
             else
             {
                 _currentKeyword = "";
-                Debug.Log("Try Add Card Failed.");
+               //Debug.Log("Try Add Card Failed.");
             }
         }
+    }
+
+    private bool AllCardsPlayed()
+    {
+        return (from p in _playerScriptRefs from Card c in p.GetHand() select c).All(c => c.IsOnBoard());
     }
 
     private void LateUpdate()
     {
         if (!_isTurnOver)
             return;
+        if (!_isGameStarted)
+            return;
         _currentPlayer++;
         _currentPlayer %= Players.Length;
-        Debug.Log("Ending player's turn");
         //TODO: Set keyword list to scroll Rect
         PopulateKeywords();
         _isTurnOver = false;
@@ -184,10 +194,11 @@ public class BoardManager : MonoBehaviour
 
     private void PopulateKeywords()
     {
+        Debug.Log("Populating keywords");
         //Clear and (re?)populate the word banks.
-        foreach (GameObject t in Players)
+        foreach (Player p in _playerScriptRefs)
         {
-            _keywordList.AddRange(t.GetComponent<Player>().GetKeywords());
+            _keywordList.AddRange(p.GetKeywords());
         }
         _keywordList = _keywordList.Distinct().ToList();
         _keywordList.Sort();
@@ -296,7 +307,6 @@ public class BoardManager : MonoBehaviour
 
             //Debug.Log(str);
         }
-
     }
     private static void BuildDeck()
     {
@@ -485,8 +495,8 @@ public class BoardManager : MonoBehaviour
             default:
                 return; // Should never reach here.
         }
-        //connection.points[0].color = _playerColors[playerIndex];
-        //connection.points[1].color = _playerColors[playerIndex];
+        connection.points[0].color = _playerColors[playerIndex];
+        connection.points[1].color = _playerColors[playerIndex];
     }
 
     private static Vector3 CalculatePosition(GameObject keyNode)
@@ -510,6 +520,7 @@ public class BoardManager : MonoBehaviour
 
     public void SelectCardInHand(Card card)
     {
+        Debug.Log("Attempting to select hand card: " + card.name);
         bool cardFound = false;
         foreach (Card c in _playerScriptRefs[_currentPlayer].GetHand())
         {
@@ -545,6 +556,7 @@ public class BoardManager : MonoBehaviour
 
     public void SelectCardOnBoard(Card card)
     {
+        Debug.Log("Attempting to select board card: " + card.name);
         Player p = FindOwningPlayer(card);
         bool cardFound = p.GetHand().Cast<Card>().Any(c => c.IsOnBoard() && c.name == card.name);
         if (!cardFound)
@@ -609,5 +621,15 @@ public class BoardManager : MonoBehaviour
     {
         if (_keywordList.Contains(prop.PropertyValue))
             _currentKeyword = prop.PropertyValue;
+    }
+
+    public bool GetIsTurnOver()
+    {
+        return _isTurnOver;
+    }
+
+    public bool GetIsStarted()
+    {
+        return _isGameStarted;
     }
 }
