@@ -36,10 +36,10 @@ public class BoardManager : MonoBehaviour
     private int _currentPlayer;
     private bool _isTurnOver;
 
-    private readonly Color[] _playerColors =
-    {
-        Color.red, Color.blue, Color.green, Color.yellow
-    };
+    //private readonly Color[] _playerColors =
+    //{
+    //    Color.red, Color.blue, Color.green, Color.yellow
+    //};
 
     private readonly List<Vector3> _gridPositions = new List<Vector3>();
     private int[] _scoreboard;
@@ -47,7 +47,7 @@ public class BoardManager : MonoBehaviour
     private void Awake()
     {
         _isGameStarted = false;
-        _isTurnOver = true;
+        _isTurnOver = false;
         IsDeckReady = false;
     }
 
@@ -495,8 +495,8 @@ public class BoardManager : MonoBehaviour
             default:
                 return; // Should never reach here.
         }
-        connection.points[0].color = _playerColors[playerIndex];
-        connection.points[1].color = _playerColors[playerIndex];
+        //connection.points[0].color = _playerColors[playerIndex];
+        //connection.points[1].color = _playerColors[playerIndex];
     }
 
     private static Vector3 CalculatePosition(GameObject keyNode)

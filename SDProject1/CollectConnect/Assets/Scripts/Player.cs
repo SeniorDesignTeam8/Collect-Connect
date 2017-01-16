@@ -23,7 +23,7 @@ public class Player : MonoBehaviour
     private CardCollection _playerHand; // Represents the player's cards.
     private Vector3 _expCardPosition;
     private Vector3 _expCardScale;
-    private bool _isAiControlled = true; // TODO Find a way to programatically change this.
+    private bool _isAiControlled = false; // TODO Find a way to programatically change this.
 
     private void Start()
     {
