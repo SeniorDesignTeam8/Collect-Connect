@@ -65,6 +65,7 @@ public class BoardManager : MonoBehaviour
             _playerScriptRefs = new List<Player>();
             foreach (GameObject player in Players)
                 _playerScriptRefs.Add(player.GetComponent<Player>());
+            _playerScriptRefs[0].SetAiControl(true);
             _keywordList = new List<string>();
             _scoreboard = new int[Players.Length];
             _keywordNodes = new List<GameObject>();
