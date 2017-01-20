@@ -35,8 +35,6 @@ public class BoardManager : MonoBehaviour
     private bool _isKeywordSelected;
     private int _currentPlayer;
     private bool _isTurnOver;
-    private bool _playedTurn; //if placed connection on board so need vet
-    private bool _isRoundOver; //need to vote
 
     //private readonly Color[] _playerColors =
     //{
@@ -182,17 +180,7 @@ public class BoardManager : MonoBehaviour
     private void LateUpdate()
     {
         if (!_isTurnOver)
-        {
             return;
-        }
-        else
-            {
-                //TODO: vet code 
-                //have vet displayed from here
-                //if someone clicks on button have it go to vet code 
-                
-            }
-
         if (!_isGameStarted)
             return;
         _currentPlayer++;
@@ -635,7 +623,7 @@ public class BoardManager : MonoBehaviour
             _currentKeyword = prop.PropertyValue;
     }
 
-    public bool GetIsTurnOver() //is player's turn completed?
+    public bool GetIsTurnOver()
     {
         return _isTurnOver;
     }
@@ -643,10 +631,5 @@ public class BoardManager : MonoBehaviour
     public bool GetIsStarted()
     {
         return _isGameStarted;
-    }
-
-    public bool GetRoundOver() //is the round over (players 1 -> 4) had their turns?
-    {
-        return _isRoundOver;
     }
 }
