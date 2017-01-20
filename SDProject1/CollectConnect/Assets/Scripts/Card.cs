@@ -1,12 +1,7 @@
 ﻿using System;
 using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
-using System.Security.Cryptography;
-using UnityEditor;
-using UnityEngine.Networking;
 
 public class Card : MonoBehaviour
 {
@@ -14,24 +9,24 @@ public class Card : MonoBehaviour
     {
         public readonly string PropertyName;
         public readonly string PropertyValue;
-        private int PointValue;
+        private int _pointValue;
 
         public CardProperty(string name, string value, string pointString = "0")
         {
             PropertyName = name;
             PropertyValue = value;
-            if (!int.TryParse(pointString, out PointValue))
-                PointValue = 0;
+            if (!int.TryParse(pointString, out _pointValue))
+                _pointValue = 0;
         }
 
         public bool Equals(CardProperty other)
         {
-            return string.Equals(PropertyName, other.PropertyName) && string.Equals(PropertyValue, other.PropertyValue) && PointValue == other.PointValue;
+            return string.Equals(PropertyName, other.PropertyName) && string.Equals(PropertyValue, other.PropertyValue) && _pointValue == other._pointValue;
         }
 
         public void SetPointValue(int newValue)
         {
-            PointValue = newValue;
+            _pointValue = newValue;
         }
     }
 
@@ -44,12 +39,12 @@ public class Card : MonoBehaviour
     private bool _isOnBoard; // Specifies if the card is in play or in the deck.
     private bool _isExpanded; // Specifies if the card is currently in expanded view.
 
-    private Vector3 originalPosition;
+    private Vector3 _originalPosition;
     private bool _isSpriteLoaded;
     private bool _isSelected; // Specifies if this card is selected.
     private bool _isTimerRunning; // If true, mouse is currently held down on card.
     private string _expandedInfo; // Information to display in expanded view.
-    public readonly List<CardProperty> _propertyList = new List<CardProperty>();
+    public readonly List<CardProperty> PropertyList = new List<CardProperty>();
 
     // Use this for initialization
     private void Start()
@@ -99,7 +94,6 @@ public class Card : MonoBehaviour
             return;
         _isTimerRunning = false;
         Debug.Log("Expanding " + name);
-        BoardManager.Instance.PlayExpand();
         // TODO: Expand Card.
         BoardManager.Instance.CardExpand(this);
 
@@ -123,17 +117,17 @@ public class Card : MonoBehaviour
     public void AddProperty(string propName, string propVal, string pointVal = "0")
     {
         CardProperty newProp = new CardProperty(propName, propVal, pointVal);
-        if (_propertyList.Any(prop => prop.Equals(newProp)))
+        if (PropertyList.Any(prop => prop.Equals(newProp)))
         {
             return;
         }
-        _propertyList.Add(newProp);
+        PropertyList.Add(newProp);
     }
 
     public string GetProperty(string searchName)
     {
         return
-            _propertyList.Where(prop => prop.PropertyName == searchName)
+            PropertyList.Where(prop => prop.PropertyName == searchName)
                 .Select(prop => prop.PropertyValue)
                 .FirstOrDefault();
     }
@@ -142,11 +136,11 @@ public class Card : MonoBehaviour
     {
         try
         {
-            string collectionName = _propertyList.Find(prop => prop.PropertyName == "Collection").PropertyValue;
+            string collectionName = PropertyList.Find(prop => prop.PropertyName == "Collection").PropertyValue;
             if (string.IsNullOrEmpty(collectionName))
                 return false;
-            string spriteName = name + ".png";
-            _renderer.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(@"Assets/Sprites/" + collectionName + "/" + spriteName);
+            //string spriteName = name + ".png";
+            _renderer.sprite = Resources.Load<Sprite>("Sprites/" + collectionName + "/" + name);
             return true;
         }
         catch (ArgumentNullException e)
@@ -169,7 +163,7 @@ public class Card : MonoBehaviour
 
     public bool DoesPropertyExist(string propertyValue, string propertyName = "")
     {
-        return string.IsNullOrEmpty(propertyName) ? _propertyList.Any(prop => prop.PropertyValue == propertyValue) : _propertyList.Any(prop => prop.PropertyName == propertyName && prop.PropertyValue == propertyValue);
+        return string.IsNullOrEmpty(propertyName) ? PropertyList.Any(prop => prop.PropertyValue == propertyValue) : PropertyList.Any(prop => prop.PropertyName == propertyName && prop.PropertyValue == propertyValue);
     }
 
     public void MoveToBoard()
@@ -234,7 +228,7 @@ public class Card : MonoBehaviour
                 default:
                     return;
             }
-            originalPosition = transform.position;
+            _originalPosition = transform.position;
             if (changeAxis == 'x')
                 transform.position += new Vector3(changeMagnitude, 0.0f);
             else
@@ -242,7 +236,7 @@ public class Card : MonoBehaviour
         }
         else
         {
-            transform.position = originalPosition;
+            transform.position = _originalPosition;
         }
 
 
@@ -256,5 +250,10 @@ public class Card : MonoBehaviour
     public void SetIsOnBoard(bool onBoard)
     {
         _isOnBoard = onBoard;
+    }
+
+    public List<CardProperty> FindCommonProperties(Card other)
+    {
+        return other.PropertyList.Where(prop => DoesPropertyExist(prop.PropertyValue, prop.PropertyName)).Distinct().ToList();
     }
 }

@@ -1,9 +1,10 @@
 ﻿using System;
 using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine.Networking.NetworkSystem;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 public class Player : MonoBehaviour
 {
@@ -22,6 +23,7 @@ public class Player : MonoBehaviour
     private CardCollection _playerHand; // Represents the player's cards.
     private Vector3 _expCardPosition;
     private Vector3 _expCardScale;
+    private bool _isAiControlled = false; // TODO Find a way to programatically change this.
 
     private void Start()
     {
@@ -37,23 +39,65 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        if (IsDrawingCards)
+        if (!BoardManager.Instance.GetIsStarted() && !IsDrawingCards)
+            return;
+        if (_playerHand.Size < HandSize)
         {
-            if (_playerHand.Size < HandSize)
+            if (BoardManager.IsDeckReady)
             {
-                if (BoardManager.IsDeckReady)
-                {
-                    Card c = BoardManager.Deck.Draw();
-                    _playerHand.AddCards(c);
-                    c.MoveToBoard();
-                }
-                else
-                {
-                    IsDrawingCards = false;
-                }
+                Card c = BoardManager.Deck.Draw();
+                _playerHand.AddCards(c);
+                c.MoveToBoard();
             }
             else
+            {
                 IsDrawingCards = false;
+            }
+        }
+        else
+            IsDrawingCards = false;
+
+        if (_isAiControlled &&  BoardManager.Instance.GetCurrentPlayer() == this &&
+            !BoardManager.Instance.GetIsTurnOver() && BoardManager.Instance.GetIsStarted())
+        {
+            Debug.Log("AI Control: " + name);
+            List<int> unplayedCardIndices = new List<int>();
+            foreach (Card c in BoardManager.Instance.GetPlayersUnplayedCards())
+            {
+                if (!c.IsOnBoard() && _playerHand.IndexOf(c) != -1)
+                {
+                    unplayedCardIndices.Add(_playerHand.IndexOf(c));
+                }
+            }
+            if (unplayedCardIndices.Count == 0)
+                return;
+            int randomIndex = Random.Range(0, unplayedCardIndices.Count);
+            Card pickedCard = _playerHand.At(unplayedCardIndices[randomIndex]);
+            BoardManager.Instance.SelectCardInHand(pickedCard);
+            CardCollection playedCards = BoardManager.Instance.GetPlayedCards();
+            if (playedCards.Size == 0)
+            {
+                Debug.Log("First played card.");
+                // TODO No played cards, so must be first played card.
+            }
+            else
+            {
+                playedCards.Shuffle(); // More organized way of choosing a random card than just picking a random index.
+                foreach (Card c in playedCards)
+                {
+
+                    List<Card.CardProperty> commonProps = c.FindCommonProperties(pickedCard);
+                    if (commonProps.Count <= 0)
+                        continue;
+                    BoardManager.Instance.SelectCardOnBoard(c);
+                    ShufflePropertyList(ref commonProps);
+                    BoardManager.Instance.SelectKeyword(commonProps[0]);
+                    break;
+                }
+            }
+            // TODO Select card.
+            // TODO For each placed card on the board, find a suitable keyword.
+            // TODO Place card and end turn.
         }
     }
 
@@ -83,7 +127,7 @@ public class Player : MonoBehaviour
     public IEnumerable<string> GetKeywords()
     {
         // Get the property value string from the property list in each card.
-        List<string> keywords = (from Card c in _playerHand from prop in c._propertyList select prop.PropertyValue).ToList();
+        List<string> keywords = (from Card c in _playerHand from prop in c.PropertyList select prop.PropertyValue).ToList();
         // Remove any duplicates and return.
         return keywords.Distinct().ToList();
     }
@@ -93,7 +137,7 @@ public class Player : MonoBehaviour
         return _playerHand;
     }
 
-    public void CardExpansion(Card card, Player player)  //Expand card
+    public void CardExpansion(Card card)  //Expand card
     {
         ExpCardPlace.gameObject.GetComponent<Renderer>().enabled = true;
         ExpCardImage.gameObject.GetComponent<Renderer>().enabled = true;
@@ -108,7 +152,7 @@ public class Player : MonoBehaviour
         //TODO Make card appear in expand
     }
 
-    public void CardShrink(Card card, Player player)  //Shrink card
+    public void CardShrink(Card card)  //Shrink card
     {
         ExpCardPlace.gameObject.GetComponent<Renderer>().enabled = false;
         ExpCardImage.gameObject.GetComponent<Renderer>().enabled = false;
@@ -117,5 +161,21 @@ public class Player : MonoBehaviour
         card.gameObject.transform.position = _expCardPosition;
         card.gameObject.transform.localScale = _expCardScale;
         //TODO Make card disappear in expand
+    }
+
+    public void SetAiControl(bool aiControlled)
+    {
+        _isAiControlled = aiControlled;
+    }
+
+    private static void ShufflePropertyList(ref List<Card.CardProperty> propList)
+    {
+        for (int i = 0; i < propList.Count; i++)
+        {
+            Card.CardProperty temp = propList[i];
+            int randIndex = Random.Range(0, propList.Count);
+            propList[i] = propList[randIndex];
+            propList[randIndex] = temp;
+        }
     }
 }
