@@ -125,6 +125,7 @@ public class BoardManager : MonoBehaviour
                     c.SetIsSelected(false);
 
                     PlayPlace();
+                    c.gameObject.AddComponent<MobileNode>();
                     _isPlayerCardSelected = false;
                     _isFirstCardPlay = false;
                     _isTurnOver = true;
@@ -444,6 +445,7 @@ public class BoardManager : MonoBehaviour
             PlayPlace();
             cardA.SetIsSelected(false);
             boardCard.SetIsSelected(false);
+            //cardA.gameObject.AddComponent<MobileNode>();
             return true;
         }
         // Couldn't find the keyword in an existing node. Add it and connect both cards to it.
@@ -456,6 +458,7 @@ public class BoardManager : MonoBehaviour
         ConnectionManager.CreateConnection(cardA.gameObject.GetComponent<RectTransform>(), newKeyNode.GetComponent<RectTransform>());
         newKeyNode.transform.position = (cardA.gameObject.transform.position +
                                          boardCard.gameObject.transform.position) / 2;
+        newKeyNode.AddComponent<MobileNode>();
         foreach (Connection connection in ConnectionManager.FindConnections(newKeyNode.gameObject.GetComponent<RectTransform>()))
         {
             SetDirectionsAndColor(connection);
@@ -466,6 +469,7 @@ public class BoardManager : MonoBehaviour
         PlayPlace();
         cardA.SetIsSelected(false);
         boardCard.SetIsSelected(false);
+        //cardA.gameObject.AddComponent<MobileNode>();
         return true;
     }
 
