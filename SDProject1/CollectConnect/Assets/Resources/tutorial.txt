@@ -1,0 +1,103 @@
+Carousel Toggler for uGUI
+-------------------------
+
+Features:
+-Make a standard ScrollRect snap to and turn on any child Toggles it may have.
+-Horizontal, vertical, bidirectional snapping using any UI elements nested inside.
+-Fully compatible with uGUI scrollbars.
+-Canvas Scaler support.
+-Screen space or world space, rotated, scaled.
+-Runtime rotation, scaling, translation support (it doesn't break!)
+-Bonus Carousel Rotator cycles your toggles, working even if you add/remove toggles dynamically.
+
+Included in this asset are:
+Three prefabs:
+-One vertical carousel ready to have toggles added to it (step 2 only)
+-One horizontal carousel ready to have toggles added to it (step 2 only)
+-One bidirectional carousel ready to have toggles added to it (step 2 only)
+
+Three example scenes (and their graphics):
+-Globe is a fancy example of things you can do with a carousel in Unity.
+-WebStyle is the classic Web carousel.
+-WorldSpace is showing off CarouselToggler working with a 3D canvas.
+
+Two scripts:
+CarouselToggler.cs to have the ScrollRect content snap to center the child toggles.
+CarouselRotator.cs to have the CarouselToggler rotate among the available toggles on a given delay.
+
+
+HOW TO USE:
+-----------
+
+-----If you already have set up a working Toggle Group with scrolling toggles inside a Scroll Rect, skip to 3.
+
+1.- Set up a ScrollRect (standard Unity 5)
+-Create an UI panel
+-Attach the ScrollRect component to it (under UI)
+-Enable or disable vertical/horizontal scolling in the ScrollRect component, as you wish.
+-Attach the Mask component to it (under UI)
+-Choose your masking image in the image component
+-Enable or disable showing the background graphic in the Mask component
+-Create an empty object to hold the content, size it appropiately (larger than container) if you plan on using Clamped movement type.
+-In the inspector for the UI panel, drag the content reference into the content field of the ScrollRect component
+-Add scrollbars if desired
+
+2.- Set up the Toggles and their Toggle group
+-Place the UI objects you want as options as children of the content object
+-Add the Toggle component (under UI) to each one of them, if they don't have it already
+-Add the Toggle Group component (under UI)  to the content object
+-In the inspector for each toggle, drag the content object into the Toggle Group field of the Toggle component
+
+3.- Set up the Carousel Toggler component
+-Add the Carousel Toggler script to the UI Panel with the ScrollRect
+-Set the ScrollRect Movement type to Unrestricted (recommended) or Clamped (if you have a limited background graphic)
+-Disable Inertia
+-In each Toggle, disable Interactable. You might want to set Transition to "none" so it doesn't look disabled.
+-In each Toggle, ensure IsOn is disabled. If you disabled Allow Switch Off in the Toggle Group (as default), choose one toggle and enable IsOn in it.
+
+4.- Fiddling (optional)
+-Try different settings in SnapSpeed. Setting it to 0 means it doesn't move. Larger numbers make it snap faster.
+-Carousel Toggler will always center on the center of the RectTransform that has a Toggle component (not the pivot). Use this information to have it centered where you want it.
+-Tune your UI so that part of the other toggles are visible, so the user will know where to scroll to.
+
+5.- Rotator (optional)
+-Add the CarouselRotator script to the Carousel.
+-Tune the delay to something pleasing.
+
+TROUBLESHOOTING:
+-Is scroll "bouncing" once?
+  Inertia might be enabled (step 3).
+-Don't want to scroll anywhere on startup?
+  Enable Allow Switch Off in the Toggle Group (step 3).
+  Switch off all the toggles in the Unity Editor.
+-Is the ScrollRect NOT centering to anything on startup?
+  Check that only one toogle has IsOn enabled and that their Toggle Group is setup properly (step 2).
+-Is the content scrolling in an unintended axis?
+   Check that your toggle's rectangle center is aligned with your scrolling axis, check that only the appropriate scrolling axis are enabled in the ScrollRect (step 1)
+-Is the content scrolling out of bounds with Clamp movement type when you release the scroll?
+  Check that the toggles can be centered with the content still within bounds, as Carousel Toggler does not respect movement type or scrolling axis.
+
+
+NEW FEATURES IN 2.3
+ -Improved pivot math.
+ -Stickyness factor to tune distance to switch, with edge case.
+ -Non stick mode with edge cases, for smaller flicks (essentially factor=0)
+ -Embed a carousel across another scrollrect with CarouselTransferScrolling component: add it in the source object, after ScrollRect. Set the target carousel and choose the axis to copy (and choose clamp modes).
+
+NEW FEATURES IN 1.9
+-Now snapping respects the ScrollRect Horizontal/Vertical movement setting.
+-Snap toggle: You may disable snapping while keeping the other features.
+-Inertia: Just like ScrollRect, this had to be done so it plays nice with wrapping
+-Wrapping: Wrap horizontally or vertically while dragging or while sliding
+-Reveal: If your ScrollRect has a Mask, this will disable it while you're dragging. Good for combo boxes.
+-AddImpulse endpoint: To apply speed in code
+-Stop endpoint: To stop sliding in code
+-moving property: To find out if the slider is moving on it's own (either sliding or on the way to the closest toggle)
+
+Please see the included examples for wrapping and inertia and embedded:
+-WrapField: an infinite horizontal wheel of numbers
+-Slots: a slots machine (NOTE: Probabilities are hard to handle this way! This is just a demo of capabilities)
+-Embedded: a horizontal carousel embedded in a vertical ScrollRect which lets you scroll both simultaneously.
+----------------------------------------------
+I hope you find this asset useful
+Thanks for supporting my coding
