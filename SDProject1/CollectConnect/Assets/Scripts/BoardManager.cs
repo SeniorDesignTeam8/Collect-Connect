@@ -125,7 +125,7 @@ public class BoardManager : MonoBehaviour
                     c.SetIsSelected(false);
 
                     PlayPlace();
-                    c.gameObject.AddComponent<NodeMovement>();
+                  // c.gameObject.AddComponent<NodeMovement>();
                     _isPlayerCardSelected = false;
                     _isFirstCardPlay = false;
                     _isTurnOver = true;
@@ -458,7 +458,7 @@ public class BoardManager : MonoBehaviour
         ConnectionManager.CreateConnection(cardA.gameObject.GetComponent<RectTransform>(), newKeyNode.GetComponent<RectTransform>());
         newKeyNode.transform.position = (cardA.gameObject.transform.position +
                                          boardCard.gameObject.transform.position) / 2;
-        newKeyNode.AddComponent<NodeMovement>();
+        //newKeyNode.AddComponent<NodeMovement>();
         foreach (Connection connection in ConnectionManager.FindConnections(newKeyNode.gameObject.GetComponent<RectTransform>()))
         {
             SetDirectionsAndColor(connection);
