@@ -186,6 +186,7 @@ public class BoardManager : MonoBehaviour
         if (!_isGameStarted)
             return;
         _currentPlayer++;
+        Debug.Log("player's turn" + _currentPlayer);
         _currentPlayer %= Players.Length;
         //TODO: Set keyword list to scroll Rect
         PopulateKeywords();
