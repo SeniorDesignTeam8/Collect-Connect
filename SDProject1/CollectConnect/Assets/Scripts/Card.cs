@@ -38,8 +38,9 @@ public class Card : MonoBehaviour
     private float _mouseDownTime; // Time when last clicked, in seconds since game start.
     private bool _isOnBoard; // Specifies if the card is in play or in the deck.
     private bool _isExpanded; // Specifies if the card is currently in expanded view.
-
+    private bool _isDragging;
     private Vector3 _originalPosition;
+    private Vector3 _pointerDownPosition;
     private bool _isSpriteLoaded;
     private bool _isSelected; // Specifies if this card is selected.
     private bool _isTimerRunning; // If true, mouse is currently held down on card.
@@ -58,6 +59,7 @@ public class Card : MonoBehaviour
     {
         Debug.Log("Mouse Down.");
         _mouseDownTime = Time.time; // Mark the current time as 0. After 2 seconds, expand card.
+        _pointerDownPosition = Input.mousePosition;
         _isTimerRunning = true;
     }
 
@@ -65,6 +67,7 @@ public class Card : MonoBehaviour
     {
         Debug.Log("Mouse Up.");
         _isTimerRunning = false;
+        _isDragging = false;
         if (_isExpanded) // Is the card expanded?
         {
             Debug.Log("Shrinking " + name);
@@ -96,22 +99,27 @@ public class Card : MonoBehaviour
         Debug.Log("Expanding " + name);
         // TODO: Expand Card.
         BoardManager.Instance.CardExpand(this);
-
-
         _isExpanded = true;
+    }
+
+    private void OnMouseDrag()
+    {
+        if (_isOnBoard && Vector3.Distance(_pointerDownPosition, Input.mousePosition) >
+            gameObject.GetComponent<RectTransform>().rect.width / 2 && !_isExpanded)
+        {
+            _isDragging = true;
+            _isTimerRunning = false;
+        }
     }
 
     // Update is called once per frame
     private void LateUpdate()
     {
-        //if (_isOnBoard && !_renderer.enabled)
-        //{
-        //    _renderer.enabled = true;
-        //}
-        //else if (!_isOnBoard && _renderer.enabled)
-        //{
-        //    _renderer.enabled = false;
-        //}
+        if (_isDragging)
+        {
+            Vector3 actualMouseLocation = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            transform.position = new Vector3(actualMouseLocation.x, actualMouseLocation.y, transform.position.z);
+        }
     }
 
     public void AddProperty(string propName, string propVal, string pointVal = "0")
