@@ -67,7 +67,11 @@ public class Card : MonoBehaviour
     {
         Debug.Log("Mouse Up.");
         _isTimerRunning = false;
-        _isDragging = false;
+        if (_isDragging)
+        {
+            _isDragging = false;
+            return;
+        }
         if (_isExpanded) // Is the card expanded?
         {
             Debug.Log("Shrinking " + name);
