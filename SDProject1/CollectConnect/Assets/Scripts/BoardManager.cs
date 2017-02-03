@@ -187,6 +187,7 @@ public class BoardManager : MonoBehaviour
             return;
         _currentPlayer++;
         Debug.Log("player's turn" + _currentPlayer);
+        TimerScript.Timeleft = 90;
         _currentPlayer %= Players.Length;
         //TODO: Set keyword list to scroll Rect
         PopulateKeywords();

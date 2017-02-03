@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class TimerScript : MonoBehaviour
 {
-    public static int Timeleft = 90;
+    public static int Timeleft;
     private BoardManager bM;
     Text t;
 
@@ -22,7 +22,6 @@ public class TimerScript : MonoBehaviour
     {
         if (Timeleft < 0)
         {
-            Timeleft = 90;
             bM.PassBtnHit();
         }
 
