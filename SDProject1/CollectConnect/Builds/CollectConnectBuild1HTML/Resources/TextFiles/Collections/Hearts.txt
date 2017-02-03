@@ -1,0 +1,93 @@
+Ace of Hearts
+The Aces of the deck often bring forth a strong personality, one who is eager to express their uniqueness & individuality. As an Ace, they can be focused on self-interests, "What's in it for me?" The Ace of Hearts expression comes in the area of emotional expression, self-exploration, & finding someone to love them. They do enjoy their own company & do well using alone time for personal, creative pursuits.
+Pips\Ace\2
+Color\Red\1
+Special\Face Card\3
+Odd or Even\Odd\2
+Odd or Even\Even\2
+|
+Two of Hearts
+Born into the Venus/Neptune position in the Master Life Script, the Two of Hearts comes to the world with a concept of ideal love, & spends much of their life seeking it. They appreciate their friendships & make others feel appreciated & valued. Evident by their words & deeds, the focus is on the other, & this Two of the deck is happiest in a relationship. Often called the "sweetheart card," they are pleasant & amiable people.
+Pips\Two\2
+Color\Red\1
+Special\Pip Card\1
+Odd or Even\Even\2
+|
+Three of Hearts
+The Three of Hearts love to keep their options open. Whether it's in professional expression or personal exploration, the Threes have a hard time focusing, choosing, & committing to their choice. Highly creative as all Threes are, the Three of Hearts is forever curious about life & love, & gives ample time & energy to explore all possibilities. They need variety & travel in their profession to feed their insatiable craving for new & different experiences.
+Pips\Three\2
+Color\Red\1
+Special\Pip Card\1
+Odd or Even\Odd\2
+|
+Four of Hearts
+Charming & charismatic, the Four of Hearts is a "people person" whose deep fulfillment comes from satisfying, close relationships both at home & at work. A natural empath, they're highly attuned to the emotional climate around them & tend to address the needs of others before their own. They're lovingly devoted & dedicated to others as a unique expression of their card. Codependency & love of control of others are a slippery slope for the Four of Hearts, & to learn to balance their needs with those of others can be a lifelong challenge.
+Pips\Four\2
+Color\Red\1
+Special\Pip Card\1
+Odd or Even\Even\2
+|
+Five of Hearts
+"Variety's the spice of life" could be the motto of the Five of Hearts person. They're the seeker of all things new & different: ideas, careers, foreign lands, & lovers. With so much Three energy in their chart (the Three of Clubs in Mercury & the Three of Spades in Venus), they have a hard time deciding if this is all there is to life as they rush toward the next adventure. Even for those who are settled in their life, career, or marriage, they're likely to have a file folder of travel & vacation ideas or a strong fantasy life where they can live freely & without consequence.
+Pips\Five\2
+Color\Red\1
+Special\Pip Card\1
+Odd or Even\Odd\2
+|
+Six of Hearts
+There's a deep need for a Six of Hearts person to express themselves from their heart. Perhaps more than the other Sixes, they have a choice to be responsible with their emotional expression or be irresponsible. Irresponsibility is often met quickly with consequences, but the choice is ultimately theirs to make. When fair & peace-loving, they prefer a stable emotional life & focus their energy on developing balanced relationships. When avoidant, stubborn, or unfair, they may find themselves in rutted relationships that are ultimately unsatisfying or directionless.
+Pips\Six\2
+Color\Red\1
+Special\Pip Card\1
+Odd or Even\Even\2
+|
+Seven of Hearts
+The task of the Seven of Hearts person is to bridge the gap between conditional & unconditional love. These wise, old souls have come to this life to learn to love & let love without expectations. Self-faith in a benign universe will be the test throughout their lives as they learn to flow with life's inevitable ups & downs.
+Pips\Seven\2
+Color\Red\1
+Special\Pip Card\1
+Odd or Even\Odd\2
+|
+Eight of Hearts
+Charisma galore, the Eight of Hearts person is a natural charmer. They have an innate ability to connect with the needy child inside us & affirm our lovability. With such power with love comes great responsibility. With two Sevens as their karma cards (both positive and negative), the karma for misuse of their power with love is quick & just. When tempted by the lower vibration of manipulating others, the Eight of Hearts person meets the swift hand of karma very quickly.
+Pips\Eight\2
+Color\Red\1
+Special\Pip Card\1
+Odd or Even\Even\2
+|
+Nine of Hearts
+As the alternating Semi-Fixed Card (often called a Soul Twin) with the Seven of Diamonds, the Nine of Hearts holds only two positions: the Saturn/Saturn position & the Venus/Venus position in both Master Scripts (Spiritual & Life). Due to this "semi-fixed" nature, the influences on this card are always imbued with either double Venus or double Saturn energies throughout their life.
+Pips\Nine\2
+Color\Red\1
+Special\Pip Card\1
+Odd or Even\Odd\2
+|
+Ten of Hearts
+No one enjoys an audience more than the Ten of Hearts person. Whether it's their own family, a large group of friends, or a crowd of fans, these people love being up front, noticed, & admired. Naturally expressive & creative, they excel in public arenas.
+Pips\Ten\2
+Color\Red\1
+Special\Pip Card\1
+Odd or Even\Even\2
+|
+Jack of Hearts
+As though listening to a higher calling, the Jack of Hearts is drawn towards helping others. With ample personal charisma & charm combined with a charitable disposition, they're often as popular in their circle of friends as they are amongst their coworkers. As a member of the royal Court Cards, the Jack of Hearts appears to be an easygoing leader who is understanding & supportive, yet coupled with their King of Hearts in Jupiter, demonstrates an innate ability to be in charge with the opportunity to rise to high levels in their profession.
+Pips\Jack\2
+Color\Red\1
+Special\Face Card\3
+Special\Literary Character\5
+Odd or Even\Odd\2
+|
+Queen of Hearts
+Charming, magnetic, & often quite attractive, the Queen of Hearts has an innate ability to have favorable influence over others. The "Mother of Higher Love" commands powerful emotions of empathy & compassion with a flair for the dramatic, a potent combination that makes this card prone to excitability or moodiness when in a tight spot. As a royal member of the Crown Court Cards, the Queen of Hearts has the ability to reach others through her innate leadership abilities, powerful communication skills, & good business sense. The level of success achieved is predicated on the ability to keep emotional reactions in check.
+Pips\Queen\2
+Color\Red\1
+Special\Face Card\3
+Special\Literary Character\5
+Odd or Even\Even\2
+|
+King of Hearts
+Love's the greatest power in the universe, & no one knows this better than the King of Hearts. Embodying emotional strength & the authority inherent in a King, they make excellent leaders for a business or family. You'll often find a King of Hearts person in a leadership role in their work in whatever field interests them.
+Pips\King\2
+Color\Red\1
+Special\Face Card\3
+Odd or Even\Odd\2

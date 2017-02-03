@@ -1,10 +1,21 @@
 fileFormatVersion: 2
 guid: a264c8906acb4754ab1b2cc32228285b
-timeCreated: 1480346838
+timeCreated: 1485910768
 licenseType: Free
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - PlayerScore: {instanceID: 0}
+  - ExpCardPlace: {instanceID: 0}
+  - ExpCardImage: {instanceID: 0}
+  - ExpCardTitle: {instanceID: 0}
+  - ExpCardInfo: {instanceID: 0}
+  - VetEnhance: {instanceID: 0}
+  - VetText: {instanceID: 0}
+  - VetCard1: {instanceID: 0}
+  - VetCard2: {instanceID: 0}
+  - ConnectionBackground: {instanceID: 0}
+  - VetConnectionWordTxt: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

@@ -24,6 +24,10 @@ public class Player : MonoBehaviour
     private Vector3 _expCardPosition;
     private Vector3 _expCardScale;
     private bool _isAiControlled = false; // TODO Find a way to programatically change this.
+    public GameObject VetEnhance;
+    public GameObject VetText;
+    public Button VetYesBtn;
+    public Button VetNoBtn;
 
     private void Start()
     {
@@ -35,6 +39,12 @@ public class Player : MonoBehaviour
         ExpCardImage.gameObject.GetComponent<Renderer>().enabled = false;
         ExpCardTitle.gameObject.GetComponent<Text>().enabled = false;
         ExpCardInfo.gameObject.GetComponent<Text>().enabled = false;
+        VetEnhance.gameObject.GetComponent<Renderer>().enabled = false;
+        VetText.gameObject.GetComponent<Text>().enabled = false;
+        VetYesBtn.gameObject.SetActive(false);
+        VetNoBtn.gameObject.SetActive(false);
+        VetYesBtn.onClick.AddListener(onYesBtnHit);
+        VetNoBtn.onClick.AddListener(onNoBtnHit);
     }
 
     private void Update()
@@ -145,11 +155,11 @@ public class Player : MonoBehaviour
         ExpCardInfo.gameObject.GetComponent<Text>().text = card.GetExpInfo();
         ExpCardTitle.gameObject.GetComponent<Text>().enabled = true;
         ExpCardInfo.gameObject.GetComponent<Text>().enabled = true;
+
         _expCardPosition = card.gameObject.transform.position;
         _expCardScale = card.gameObject.transform.localScale;
         card.gameObject.transform.position = ExpCardImage.transform.position;
         card.gameObject.transform.localScale = Vector3.one;
-        //TODO Make card appear in expand
     }
 
     public void CardShrink(Card card)  //Shrink card
@@ -160,7 +170,6 @@ public class Player : MonoBehaviour
         ExpCardInfo.gameObject.GetComponent<Text>().enabled = false;
         card.gameObject.transform.position = _expCardPosition;
         card.gameObject.transform.localScale = _expCardScale;
-        //TODO Make card disappear in expand
     }
 
     public void SetAiControl(bool aiControlled)
@@ -177,5 +186,31 @@ public class Player : MonoBehaviour
             propList[i] = propList[randIndex];
             propList[randIndex] = temp;
         }
+    }
+
+    public void VetExpantion()
+    {
+        VetEnhance.gameObject.GetComponent<Renderer>().enabled = true;
+        VetText.gameObject.GetComponent<Text>().enabled = true;
+        VetYesBtn.gameObject.SetActive(true);
+        VetNoBtn.gameObject.SetActive(true);
+    }
+
+    public void VetShrink()
+    {
+        VetEnhance.gameObject.GetComponent<Renderer>().enabled = false;
+        VetText.gameObject.GetComponent<Text>().enabled = false;
+        VetYesBtn.gameObject.SetActive(false);
+        VetNoBtn.gameObject.SetActive(false);
+    }
+
+    private void onYesBtnHit()
+    {
+        BoardManager.Instance.vetResult[BoardManager.Instance.currentPlayer] = true;
+    }
+
+    private void onNoBtnHit()
+    {
+        BoardManager.Instance.vetResult[BoardManager.Instance.currentPlayer] = false;
     }
 }

@@ -1,9 +1,11 @@
-﻿using System;
+﻿ using System;
 using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Xml;
 using UnityEngine.UI;
+using System.Collections;
 
 public class BoardManager : MonoBehaviour
 {
@@ -33,8 +35,24 @@ public class BoardManager : MonoBehaviour
     private bool _isPlayerCardSelected;
     private bool _isBoardCardSelected;
     private bool _isKeywordSelected;
-    private int _currentPlayer;
+    public int currentPlayer;
     private bool _isTurnOver;
+    private bool _playedTurn;
+    public GameObject VetEnhance;
+    public GameObject VetText;
+    public GameObject VetCard1;
+    public GameObject VetCard2;
+    public GameObject ConnectionBackground;
+    public GameObject VetConnectionWordTxt;
+    public List<Card> PlayCardList;
+    public List<String> PlayKeywordList;
+    public Button VetBtnLeft;
+    public Button VetBtnRight;
+    public List<bool> PlayerVetSelection; //if player agrees or disagrees with vet
+    private int _listCount = 0;
+    private Card _copyCardLeft;
+    private Card _copyCardRight;
+    public List<bool> vetResult;
 
     //private readonly Color[] _playerColors =
     //{
@@ -49,11 +67,23 @@ public class BoardManager : MonoBehaviour
         _isGameStarted = false;
         _isTurnOver = false;
         IsDeckReady = false;
+        _playedTurn = false;
+        DisableVet();
+        vetResult = new List<bool>();
+
+        for (int i = 0; i < 4; i++) //prefill _verResult list
+        {
+            vetResult.Add(false);
+        }
+
+        //VetBtnLeft.onClick.AddListener(VetBtnSelected);
+        //VetBtnRight.onClick.AddListener(VetBtnSelected);
+
     }
 
     private void Start()
     {
-        if (Instance == null)
+     if (Instance == null)
         {
             Deck = new CardCollection("Deck");
             BuildDeck();
@@ -69,6 +99,7 @@ public class BoardManager : MonoBehaviour
             _keywordList = new List<string>();
             _scoreboard = new int[Players.Length];
             _keywordNodes = new List<GameObject>();
+            PlayCardList = new List<Card>();
             _isFirstCardPlay = true;
         }
         else if (Instance != this)
@@ -80,7 +111,7 @@ public class BoardManager : MonoBehaviour
 
     internal Player GetCurrentPlayer()
     {
-        return _playerScriptRefs[_currentPlayer];
+        return _playerScriptRefs[currentPlayer];
     }
 
     // Update is called once per frame
@@ -116,7 +147,7 @@ public class BoardManager : MonoBehaviour
         {
             if (!_isPlayerCardSelected)
                 return;
-            foreach (Card c in _playerScriptRefs[_currentPlayer].GetHand())
+            foreach (Card c in _playerScriptRefs[currentPlayer].GetHand())
             {
                 if (c.IsSelected())
                 {
@@ -125,7 +156,7 @@ public class BoardManager : MonoBehaviour
                     c.SetIsSelected(false);
 
                     PlayPlace();
-                  // c.gameObject.AddComponent<NodeMovement>();
+                    // c.gameObject.AddComponent<NodeMovement>();
                     _isPlayerCardSelected = false;
                     _isFirstCardPlay = false;
                     _isTurnOver = true;
@@ -161,15 +192,25 @@ public class BoardManager : MonoBehaviour
             //Call tryaddcard with cardA and cardB
             if (TryAddCard(cardA, cardB, _currentKeyword))
             {
+                //add cards to list for vetting (currentPlayer, card1, card2, keyword)
+                PlayCardList.Add(cardA);
+                PlayCardList.Add(cardB);
+                PlayKeywordList.Add(currentPlayer.ToString());
+                PlayKeywordList.Add(_currentKeyword);
+
                 //scoring
                 //Debug.Log("Try Add Card Worked.");
                 _isTurnOver = true;
                 _currentKeyword = "";
+
+                //TODO: add vetting here too?
+                StartCoroutine("TimerBeforeVet");
+
             }
             else
             {
                 _currentKeyword = "";
-               //Debug.Log("Try Add Card Failed.");
+                //Debug.Log("Try Add Card Failed.");
             }
         }
     }
@@ -185,13 +226,15 @@ public class BoardManager : MonoBehaviour
             return;
         if (!_isGameStarted)
             return;
-        _currentPlayer++;
-        _currentPlayer %= Players.Length;
+
+        currentPlayer++;
+        currentPlayer %= Players.Length;
         //TODO: Set keyword list to scroll Rect
         PopulateKeywords();
         _isTurnOver = false;
         _isPlayerCardSelected = false;
         _isBoardCardSelected = false;
+        _playedTurn = false;
     }
 
     private void PopulateKeywords()
@@ -233,7 +276,8 @@ public class BoardManager : MonoBehaviour
             go.GetComponentInChildren<Text>().text = str;
             go.transform.SetParent(KeywordContainerP1.transform);
             Button btn = go.GetComponent<Button>();
-            btn.onClick.AddListener(() => {
+            btn.onClick.AddListener(() =>
+            {
                 Debug.Log(go.GetComponentInChildren<Text>().text + " Clicked!");
                 _currentKeyword = go.GetComponentInChildren<Text>().text;
             });
@@ -255,7 +299,8 @@ public class BoardManager : MonoBehaviour
             go.GetComponentInChildren<Text>().text = str;
             go.transform.SetParent(KeywordContainerP2.transform);
             Button btn = go.GetComponent<Button>();
-            btn.onClick.AddListener(() => {
+            btn.onClick.AddListener(() =>
+            {
                 Debug.Log(go.GetComponentInChildren<Text>().text + " Clicked!");
                 _currentKeyword = go.GetComponentInChildren<Text>().text;
             });
@@ -276,7 +321,8 @@ public class BoardManager : MonoBehaviour
             go.GetComponentInChildren<Text>().text = str;
             go.transform.SetParent(KeywordContainerP3.transform);
             Button btn = go.GetComponent<Button>();
-            btn.onClick.AddListener(() => {
+            btn.onClick.AddListener(() =>
+            {
                 Debug.Log(go.GetComponentInChildren<Text>().text + " Clicked!");
                 _currentKeyword = go.GetComponentInChildren<Text>().text;
             });
@@ -296,7 +342,9 @@ public class BoardManager : MonoBehaviour
             go.GetComponentInChildren<Text>().text = str;
             go.transform.SetParent(KeywordContainerP4.transform);
             Button btn = go.GetComponent<Button>();
-            btn.onClick.AddListener(() => { Debug.Log(go.GetComponentInChildren<Text>().text + " Clicked!");
+            btn.onClick.AddListener(() =>
+            {
+                Debug.Log(go.GetComponentInChildren<Text>().text + " Clicked!");
                 _currentKeyword = go.GetComponentInChildren<Text>().text;
             });
             Vector3 scale = transform.localScale;
@@ -310,6 +358,7 @@ public class BoardManager : MonoBehaviour
             //Debug.Log(str);
         }
     }
+
     private static void BuildDeck()
     {
         // Load the collections.
@@ -396,7 +445,7 @@ public class BoardManager : MonoBehaviour
         SoundEffectSource.Play();
     }
 
-    public void CardExpand(Card card)  //find card and player to expand
+    public void CardExpand(Card card) //find card and player to expand
     {
         Player p = FindOwningPlayer(card);
         foreach (Card c in p.GetHand())
@@ -409,7 +458,7 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    public void CardUnexpand(Card card)  //find card and player to unexpand
+    public void CardUnexpand(Card card) //find card and player to unexpand
     {
         Player p = FindOwningPlayer(card);
         foreach (Card c in p.GetHand())
@@ -433,9 +482,12 @@ public class BoardManager : MonoBehaviour
             if (keyNode.transform.FindChild("Text").gameObject.GetComponent<Text>().text != keyword)
                 continue;
             // The keyword is already a node. Use it.
-            ConnectionManager.CreateConnection(cardA.gameObject.GetComponent<RectTransform>(), keyNode.GetComponent<RectTransform>());
+            ConnectionManager.CreateConnection(cardA.gameObject.GetComponent<RectTransform>(),
+                keyNode.GetComponent<RectTransform>());
             keyNode.transform.position = CalculatePosition(keyNode);
-            foreach (Connection connection in ConnectionManager.FindConnections(cardA.gameObject.GetComponent<RectTransform>()))
+            foreach (
+                Connection connection in
+                ConnectionManager.FindConnections(cardA.gameObject.GetComponent<RectTransform>()))
             {
                 SetDirectionsAndColor(connection);
                 connection.UpdateName();
@@ -445,21 +497,31 @@ public class BoardManager : MonoBehaviour
             PlayPlace();
             cardA.SetIsSelected(false);
             boardCard.SetIsSelected(false);
+
+            //_connectionList.Add();
+
+
+
             //cardA.gameObject.AddComponent<MobileNode>();
             return true;
         }
         // Couldn't find the keyword in an existing node. Add it and connect both cards to it.
         GameObject newKeyNode = Instantiate(NodeOne); // Copy the template keyword node.
-        newKeyNode.transform.FindChild("Text").gameObject.GetComponent<Text>().text = keyword; // Set the text of the new keyword node.
+        newKeyNode.transform.FindChild("Text").gameObject.GetComponent<Text>().text = keyword;
+            // Set the text of the new keyword node.
         newKeyNode.name = keyword;
         _keywordNodes.Add(newKeyNode); // Add the keyword to the list of keyword nodes.
         // Connect both cards to the new keyword node.
-        ConnectionManager.CreateConnection(boardCard.gameObject.GetComponent<RectTransform>(), newKeyNode.GetComponent<RectTransform>());
-        ConnectionManager.CreateConnection(cardA.gameObject.GetComponent<RectTransform>(), newKeyNode.GetComponent<RectTransform>());
+        ConnectionManager.CreateConnection(boardCard.gameObject.GetComponent<RectTransform>(),
+            newKeyNode.GetComponent<RectTransform>());
+        ConnectionManager.CreateConnection(cardA.gameObject.GetComponent<RectTransform>(),
+            newKeyNode.GetComponent<RectTransform>());
         newKeyNode.transform.position = (cardA.gameObject.transform.position +
                                          boardCard.gameObject.transform.position) / 2;
         //newKeyNode.AddComponent<NodeMovement>();
-        foreach (Connection connection in ConnectionManager.FindConnections(newKeyNode.gameObject.GetComponent<RectTransform>()))
+        foreach (
+            Connection connection in
+            ConnectionManager.FindConnections(newKeyNode.gameObject.GetComponent<RectTransform>()))
         {
             SetDirectionsAndColor(connection);
             connection.UpdateName();
@@ -527,7 +589,7 @@ public class BoardManager : MonoBehaviour
     {
         Debug.Log("Attempting to select hand card: " + card.name);
         bool cardFound = false;
-        foreach (Card c in _playerScriptRefs[_currentPlayer].GetHand())
+        foreach (Card c in _playerScriptRefs[currentPlayer].GetHand())
         {
             if (c.name == card.name && !c.IsOnBoard())
             {
@@ -538,7 +600,7 @@ public class BoardManager : MonoBehaviour
         // First, check if the card is in the current player's hand.
         if (!cardFound)
             return;
-        foreach (Card c in _playerScriptRefs[_currentPlayer].GetHand())
+        foreach (Card c in _playerScriptRefs[currentPlayer].GetHand())
         {
             if (!c.IsSelected() || c.IsOnBoard()) // Skip cards that aren't selected or are on the board.
                 continue;
@@ -590,9 +652,11 @@ public class BoardManager : MonoBehaviour
         _isBoardCardSelected = true;
     }
 
-    public void PassBtnHit()  //player hit pass button
+    public void PassBtnHit() //player hit pass button
     {
         _isTurnOver = true;
+        PlayKeywordList.Add(currentPlayer.ToString());  //add player passed
+        PlayKeywordList.Add("Pass");
         LateUpdate();
     }
 
@@ -614,7 +678,7 @@ public class BoardManager : MonoBehaviour
     public CardCollection GetPlayersUnplayedCards()
     {
         CardCollection coll = new CardCollection("Unplayed Cards");
-        foreach (Card c in _playerScriptRefs[_currentPlayer].GetHand())
+        foreach (Card c in _playerScriptRefs[currentPlayer].GetHand())
         {
             if (!c.IsOnBoard())
                 coll.AddCards(c);
@@ -636,5 +700,68 @@ public class BoardManager : MonoBehaviour
     public bool GetIsStarted()
     {
         return _isGameStarted;
+    }
+
+    public void DisableVet() //diable vet screen
+    {
+        VetEnhance.gameObject.GetComponent<Renderer>().enabled = false;
+        VetText.gameObject.GetComponent<Text>().enabled = false;
+        VetCard1.gameObject.GetComponent<Renderer>().enabled = false;
+        VetCard2.gameObject.GetComponent<Renderer>().enabled = false;
+        ConnectionBackground.gameObject.GetComponent<Renderer>().enabled = false;
+        VetConnectionWordTxt.gameObject.GetComponent<Text>().enabled = false;
+        VetBtnRight.gameObject.SetActive(false);
+        VetBtnLeft.gameObject.SetActive(false);
+    }
+
+    public void EnableVet() //enable vet screen
+    {
+        VetEnhance.gameObject.GetComponent<Renderer>().enabled = true;
+        VetText.gameObject.GetComponent<Text>().enabled = true;
+        ConnectionBackground.gameObject.GetComponent<Renderer>().enabled = true;
+        VetConnectionWordTxt.gameObject.GetComponent<Text>().enabled = true;
+        VetBtnRight.gameObject.SetActive(true);
+        VetBtnLeft.gameObject.SetActive(true);
+    }
+
+    private IEnumerator TimerBeforeVet()  //timer before vet screen pops up
+    {
+        yield return new WaitForSeconds(1.0f);
+        EnableVet();
+       
+        VetConnectionWordTxt.gameObject.GetComponent<Text>().text = PlayKeywordList[++_listCount];
+        _listCount--;
+
+        _copyCardLeft = Instantiate(PlayCardList[_listCount++], new Vector3(0f, 0f, 0f), Quaternion.identity);
+        _copyCardLeft.transform.position = VetCard1.gameObject.transform.position;
+        _copyCardLeft.transform.localScale = Vector3.one;
+
+        _copyCardRight = (Card)Instantiate(PlayCardList[_listCount++], new Vector3(0f, 0f, 0f), Quaternion.identity);
+        _copyCardRight.transform.position = VetCard2.gameObject.transform.position;
+        _copyCardRight.transform.localScale = Vector3.one;
+        StartCoroutine("VetTimer"); //7 sec timer to vet if want
+    }
+
+    private IEnumerator VetTimer()  //timer for players to select vet
+    {
+        yield return new WaitForSeconds(7.0f);
+        _copyCardLeft.transform.GetComponent<Renderer>().enabled = false;
+        _copyCardRight.transform.GetComponent<Renderer>().enabled = false;
+        DisableVet();
+    }
+
+    public void VetBtnSelected()
+    {
+        Debug.Log("Got here 2");
+        for (int i = 1; i < 4; i++)  //CURRENTLY SKIPPING AI
+        {
+            vetResult[i] = false; //reset all results to false
+            Player p = _playerScriptRefs[i];
+            p.VetExpantion();
+
+            //TODO: need to decide how to differ between AI and human players
+
+            p.VetShrink();
+        }
     }
 }
