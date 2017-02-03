@@ -256,9 +256,4 @@ public class Card : MonoBehaviour
     {
         return other.PropertyList.Where(prop => DoesPropertyExist(prop.PropertyValue, prop.PropertyName)).Distinct().ToList();
     }
-
-    public static implicit operator GameObject(Card v)
-    {
-        throw new NotImplementedException();
-    }
 }
