@@ -305,7 +305,7 @@ public class BoardManager : MonoBehaviour
             scale.x = 1.0f;
             scale.y = 1.0f;
             scale.z = 1.0f;
-            go.transform.Rotate(0.0f, 0.0f, -90.0f);
+            //go.transform.Rotate(0.0f, 0.0f, -90.0f);
             go.transform.localScale = scale;
             go.SetActive(true);
 
@@ -348,7 +348,7 @@ public class BoardManager : MonoBehaviour
             scale.x = 1.0f;
             scale.y = 1.0f;
             scale.z = 1.0f;
-            go.transform.Rotate(0.0f, 0.0f, 90.0f);
+            //go.transform.Rotate(0.0f, 0.0f, 90.0f);
             go.transform.localScale = scale;
             go.SetActive(true);
 
