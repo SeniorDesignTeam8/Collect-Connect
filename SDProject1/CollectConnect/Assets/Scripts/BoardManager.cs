@@ -764,9 +764,11 @@ public void DisableVet() //diable vet screen
 
     private IEnumerator VetTimer()  //timer for players to select vet
     {
-        yield return new WaitForSeconds(7.0f);
-        _copyCardLeft.transform.GetComponent<Renderer>().enabled = false;
-        _copyCardRight.transform.GetComponent<Renderer>().enabled = false;
+        yield return new WaitForSeconds(5.0f);
+
+        Destroy(_copyCardLeft.gameObject);
+        Destroy(_copyCardRight.gameObject);
+
         DisableVet();
     }
 
