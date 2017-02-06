@@ -9,7 +9,7 @@ public class Card : MonoBehaviour
     {
         public readonly string PropertyName;
         public readonly string PropertyValue;
-        private int _pointValue;
+        internal int _pointValue;
 
         public CardProperty(string name, string value, string pointString = "0")
         {
@@ -142,6 +142,13 @@ public class Card : MonoBehaviour
             PropertyList.Where(prop => prop.PropertyName == searchName)
                 .Select(prop => prop.PropertyValue)
                 .FirstOrDefault();
+    }
+
+    public int GetPts(string searchName)
+    {
+        return PropertyList.Where(prop => prop.PropertyName == searchName)
+            .Select(prop => prop._pointValue)
+            .FirstOrDefault();
     }
 
     private bool SetSprite()

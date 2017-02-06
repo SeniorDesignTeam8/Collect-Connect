@@ -189,6 +189,7 @@ public class BoardManager : MonoBehaviour
                     }
                 }
             }
+
             //after tri-select, add cards to list for vetting (currentPlayer, card1, card2, keyword)
             PlayCardList.Add(cardA);
             PlayCardList.Add(cardB);
@@ -198,19 +199,40 @@ public class BoardManager : MonoBehaviour
             //The following line starts the vetting process before the cards are added the the board
             StartCoroutine("TimerBeforeVet");
 
-            //Add this connection with cardA and cardB and keyword
-            if (AddCardsToBoard(cardA, cardB, _currentKeyword))
+            //get the vet result, true for yes/valid, false for no/invalid
+
+            if (getVetResult())
             {
-                _currentKeyword = "";
-                _isTurnOver = true;
-                //scoring
-                //Debug.Log("Try Add Card Worked."); 
+                //Add this connection with cardA and cardB and keyword
+                if (AddCardsToBoard(cardA, cardB, _currentKeyword))
+                {
+                    if (cardA != null)
+                    {
+                        GetCurrentPlayer().IncreaseScore(cardA.GetPts(_currentKeyword));
+                    }
+                    else
+                    {
+                       Debug.Log("CardA is null. Null Pointer Exception.");
+                    }
+                    _currentKeyword = "";
+                    _isTurnOver = true;
+                    
+                    //Debug.Log("Try Add Card Worked."); 
+                }
+                else
+                {
+                    _currentKeyword = "";
+                    //Debug.Log("Try Add Card Failed.");
+                }
             }
             else
             {
+                //the players vetted against the connection. Reset the cards and pass. 
                 _currentKeyword = "";
-                //Debug.Log("Try Add Card Failed.");
+                cardA.gameObject.GetComponent<Renderer>().enabled = false;
+                PassBtnHit();
             }
+
         }
     }
 
