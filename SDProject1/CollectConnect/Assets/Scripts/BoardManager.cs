@@ -223,6 +223,7 @@ public class BoardManager : MonoBehaviour
             return;
         if (!_isGameStarted)
             return;
+        TimerScript.Timeleft = 90;
         currentPlayer++;
         Debug.Log("player's turn" + currentPlayer);
         currentPlayer %= Players.Length;
