@@ -201,7 +201,7 @@ public class BoardManager : MonoBehaviour
                 _isTurnOver = true;
                 _currentKeyword = "";
 
-                //TODO: add vetting here too?
+                //The following line starts the vetting process
                 StartCoroutine("TimerBeforeVet");
             }
             else
@@ -471,10 +471,11 @@ public class BoardManager : MonoBehaviour
 
     private bool TryAddCard(Card cardA, Card boardCard, string keyword)
     {
+        bool validPlay = true;
         if (cardA.gameObject.GetComponent<GraphNode>() == null)
             cardA.gameObject.AddComponent<GraphNode>();
         if (!cardA.DoesPropertyExist(keyword) || !boardCard.DoesPropertyExist(keyword))
-            return false;
+            validPlay = false;
         foreach (GameObject keyNode in _keywordNodes)
         {
             if (keyNode.transform.FindChild("Text").gameObject.GetComponent<Text>().text != keyword)
