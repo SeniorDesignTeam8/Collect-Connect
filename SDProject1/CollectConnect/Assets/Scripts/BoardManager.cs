@@ -53,6 +53,7 @@ public class BoardManager : MonoBehaviour
     private Card _copyCardLeft;
     private Card _copyCardRight;
     public List<bool> vetResult;
+    
 
     //private readonly Color[] _playerColors =
     //{
@@ -188,21 +189,22 @@ public class BoardManager : MonoBehaviour
                     }
                 }
             }
-            //Call tryaddcard with cardA and cardB
-            if (TryAddCard(cardA, cardB, _currentKeyword))
-            {
-                //add cards to list for vetting (currentPlayer, card1, card2, keyword)
-                PlayCardList.Add(cardA);
-                PlayCardList.Add(cardB);
-                PlayKeywordList.Add(currentPlayer.ToString());
-                PlayKeywordList.Add(_currentKeyword);
-                //scoring
-                //Debug.Log("Try Add Card Worked.");
-                _isTurnOver = true;
-                _currentKeyword = "";
+            //after tri-select, add cards to list for vetting (currentPlayer, card1, card2, keyword)
+            PlayCardList.Add(cardA);
+            PlayCardList.Add(cardB);
+            PlayKeywordList.Add(currentPlayer.ToString());
+            PlayKeywordList.Add(_currentKeyword);
+            
+            //The following line starts the vetting process before the cards are added the the board
+            StartCoroutine("TimerBeforeVet");
 
-                //The following line starts the vetting process
-                StartCoroutine("TimerBeforeVet");
+            //Add this connection with cardA and cardB and keyword
+            if (AddCardsToBoard(cardA, cardB, _currentKeyword))
+            {
+                _currentKeyword = "";
+                _isTurnOver = true;
+                //scoring
+                //Debug.Log("Try Add Card Worked."); 
             }
             else
             {
@@ -469,7 +471,7 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    private bool TryAddCard(Card cardA, Card boardCard, string keyword)
+    private bool AddCardsToBoard(Card cardA, Card boardCard, string keyword)
     {
         bool validPlay = true;
         if (cardA.gameObject.GetComponent<GraphNode>() == null)
@@ -758,6 +760,30 @@ public void DisableVet() //diable vet screen
             //TODO: need to decide how to differ between AI and human players
 
             p.VetShrink();
+        }
+    }
+
+    public bool getVetResult()
+    {
+        int yesCount = 0, noCount = 0;
+        foreach (bool vet in vetResult)
+        {
+            if (vet)
+            {
+                yesCount++;
+            }
+            else
+            {
+                noCount++;
+            }
+        }
+        if (yesCount >= noCount)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 }
