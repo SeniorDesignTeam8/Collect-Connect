@@ -1,0 +1,92 @@
+Ace of Clubs
+Forever curious, you'll often find the Ace of Clubs person with masses of books on a variety of subjects. They seek new information, new ways of thinking and unique ideas. With a deep need for mental stimulation, the Ace of Clubs is the consummate seeker of knowledge.
+Pips\Ace\2
+Color\Black\1
+Special\Literary Character\5
+Special\Face Card\3
+Odd or Even\Odd\2
+Odd or Even\Even\2
+|
+Two of Clubs
+Gregarious and entertaining, the Two of Clubs person loves to socialize and be with others who enjoy talking and sharing ideas. Always curious, they seek to know what motivates a person, which can serve them well, whether as a counselor or even an actor.
+Pips\Two\2
+Color\Black\1
+Special\Pip Card\1
+Odd or Even\Even\2
+|
+Three of Clubs
+Blessed with mental agility, the Three of Clubs can apply their fantastic mind to just about any endeavor. They are gifted writers, teachers, inventors, computer programmers and performing artists—any profession where they can express their words and ideas. There is a deep need for mental stimulation and conversation that can be channeled into original and creative expression like no other card in the deck. Professional success is predicated on how well they are able to get organized, be focused and decisive.
+Pips\Three\2
+Color\Black\1
+Special\Pip Card\1
+Odd or Even\Odd\2
+|
+Four of Clubs
+With a thirst for knowledge and a fairly positive disposition, the Four of Clubs thrives in environments where ideas are exchanged and expanded upon. They are often forward thinkers and can be decisive in their professions, often advancing through hard work and focus.
+Pips\Four\2
+Color\Black\1
+Special\Pip Card\1
+Odd or Even\Even\2
+|
+Five of Clubs
+Learning through experience is an accurate description of the Five of Clubs, a gatherer of all life has to offer. Adventurous to the core, much is gained through discovery, exploring new places and researching new ideas. Restlessness is a common denominator of all Fives, but the Five of Clubs is perhaps the most restless of them all.
+Pips\Five\2
+Color\Black\1
+Special\Pip Card\1
+Odd or Even\Odd\2
+|
+Six of Clubs
+Finding and aligning with truth is the highest expression of the Six of Clubs. They represent the power, and the karma, of the spoken word. When they are meticulous with their words and thoughts, positive karma flows. Conversely, being less than honest brings consequences of that negative energy as well. Finding one's truth and living by it, opens limitless possibilities for constructive contribution to life. Six of Clubs people are natural way-showers, light bearers, messengers, and often feel called to share their truth with others.
+Pips\Six\2
+Color\Black\1
+Special\Pip Card\1
+Odd or Even\Even\2
+|
+Seven of Clubs
+The Sevens are the most spiritual cards of the deck, and the task of this Seven is to bring the spiritual aspect of knowledge into the mundane physical world. With such a creative, intellectual prowess, the Seven of Clubs has much to offer when aligned with a positive attitude. Highly analytical and observant, they are a natural when it comes to acquiring new information and knowledge.
+Pips\Seven\2
+Color\Black\1
+Special\Pip Card\1
+Odd or Even\Odd\2
+|
+Eight of Clubs
+Through concentrated mental focus, there is little that the Eight of Clubs person cannot accomplish. As one of the three Fixed Cards in the Cards of Life, the Eight of Clubs expresses with "fixed" determination to achieve its goals. Highly intuitive, people with this card can read a situation and intuit the next move rather easily, resulting in mental agility like no other card in the deck. Knowledge is power and they will learn all they can to achieve success.
+Pips\Eight\2
+Color\Black\1
+Special\Pip Card\1
+Odd or Even\Even\2
+|
+Nine of Clubs
+Broadminded and even shrewd at times, the Nine of Clubs brings to this lifetime unique perspectives and the ability to persevere to see them through. Maintaining a positive outlook is foundational to the success of any endeavor, particularly when it appears that the outcome it is out of one's hands. The essence of this Clubs card is the power of positive thinking coupled with the energy of completions, which a Nine represents numerologically.
+Pips\Nine\2
+Color\Black\1
+Special\Pip Card\1
+Odd or Even\Odd\2
+|
+Ten of Clubs
+Authority and dignity often accompany the Ten of Clubs. Aligned with the power that a Ten inherently has, the Ten of Clubs person often presents themselves as one of the royal court because of its placement on the Crown Line in the Master Life Script even though they are actually not a Jack, Queen or King. Their enthusiasm and confidence lends an ability to hold the attention of an audience while pouring forth knowledge on a beloved subject.
+Pips\Ten\2
+Color\Black\1
+Special\Pip Card\1
+Odd or Even\Even\2
+|
+Jack of Clubs
+One bright idea after another, the Jack of Clubs is one truly creative individual. Problem solving comes naturally to them as they enjoy the mental gymnastics of solution finding. Blessed with powerful reasoning skills and mental agility, this Jack loves learning something new and inspiring others with that knowledge.
+Pips\Jack\2
+Color\Black\1
+Special\Face Card\3
+Odd or Even\Odd\2
+|
+Queen of Clubs
+As the Queen reigning over the Clubs suit, these people usually enjoy work that involves application of the mind: communications, organizing or, on the spiritual spectrum, intuitive and psychic work. A quick study, the Queen of Clubs truly enjoys being well informed on any topic of their choosing. As a result, they often prefer to direct according to their own authority on a subject rather than follow another. Consequently, this card gravitates toward being the boss or self-employed.
+Pips\Queen\2
+Color\Black\1
+Special\Face Card\3
+Odd or Even\Even\2
+|
+King of Clubs
+Due to many lifetimes, the King of Clubs has amassed a resource of knowledge from which to draw with authority. They live this life on their own terms, from their unique perspective and have a commanding presence both physically and mentally. Preferring the leadership position, they demonstrate initiative and drive. With a brilliant mind, they can project an assuredness on any topic they choose. Information flows effortlessly through them.
+Pips\King\2
+Color\Black\1
+Special\Face Card\3
+Odd or Even\Odd\2

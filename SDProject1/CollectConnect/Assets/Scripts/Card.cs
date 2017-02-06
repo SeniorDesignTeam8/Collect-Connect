@@ -185,16 +185,19 @@ public class Card : MonoBehaviour
         switch (p.name.ToLower())
         {
             case "player1":
-                rotation = Vector3.zero;
+                //rotation = Vector3.zero;
+                rotation = new Vector3(0.0f, 0.0f, 180.0f);
                 break;
             case "player2":
-                rotation = new Vector3(0.0f, 0.0f, 90.0f);
+                //rotation = new Vector3(0.0f, 0.0f, 90.0f);
+                rotation = new Vector3(0.0f, 0.0f, 180.0f);
                 break;
             case "player3":
                 rotation = new Vector3(0.0f, 0.0f, 180.0f);
                 break;
             case "player4":
-                rotation = new Vector3(0.0f, 0.0f, -90.0f);
+                // rotation = new Vector3(0.0f, 0.0f, -90.0f);
+                rotation = new Vector3(0.0f, 0.0f, 180.0f);
                 break;
             default:
                 rotation = Vector3.zero;
@@ -226,7 +229,8 @@ public class Card : MonoBehaviour
                     changeMagnitude = -1.0f;
                     break;
                 case "player2":
-                    changeAxis = 'x';
+                    //changeAxis = 'x';
+                    changeAxis = 'y';
                     changeMagnitude = 1.0f;
                     break;
                 case "player3":
@@ -234,8 +238,10 @@ public class Card : MonoBehaviour
                     changeMagnitude = 1.0f;
                     break;
                 case "player4":
-                    changeAxis = 'x';
-                    changeMagnitude = -1.0f;
+                    //changeAxis = 'x';
+                    //changeMagnitude = -1.0f;
+                    changeAxis = 'y';
+                    changeMagnitude = 1.0f;
                     break;
                 default:
                     return;
