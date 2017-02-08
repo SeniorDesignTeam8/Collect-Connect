@@ -584,8 +584,8 @@ public class BoardManager : MonoBehaviour
             default:
                 return; // Should never reach here.
         }
-        //connection.points[0].color = _playerColors[playerIndex];
-        //connection.points[1].color = _playerColors[playerIndex];
+        connection.points[0].color = Color.black;
+        connection.points[1].color = Color.black;
     }
 
     private static Vector3 CalculatePosition(GameObject keyNode)
