@@ -809,8 +809,7 @@ public class BoardManager : MonoBehaviour
             else
             {
                Player p = _playerScriptRefs[i];
-
-               p.VetExpantion();
+                p.VetExpantion();
 
                 //TODO: need to decide how to differ between AI and human players
 

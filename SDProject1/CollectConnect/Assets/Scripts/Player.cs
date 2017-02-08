@@ -88,15 +88,22 @@ public class Player : MonoBehaviour
             if (playedCards.Size == 0)
             {
                 Debug.Log("First played card.");
-                // TODO No played cards, so must be first played card.
+                //No played cards, so must be first played card.
             }
             else
             {
+                int AIcounter = 0;
+                Card badCard = null;
                 playedCards.Shuffle(); // More organized way of choosing a random card than just picking a random index.
                 foreach (Card c in playedCards)
                 {
-
+                    AIcounter++;
                     List<Card.CardProperty> commonProps = c.FindCommonProperties(pickedCard);
+                    if (AIcounter > (BoardManager.Instance.GetPlayedCards().Size % 3))
+                    {
+                        badCard = c;
+                        break;
+                    }
                     if (commonProps.Count <= 0)
                         continue;
                     BoardManager.Instance.SelectCardOnBoard(c);
@@ -104,10 +111,10 @@ public class Player : MonoBehaviour
                     BoardManager.Instance.SelectKeyword(commonProps[0]);
                     break;
                 }
+                BoardManager.Instance.SelectCardOnBoard(badCard);
+                BoardManager.Instance.SelectKeyword(badCard.PropertyList.First());
+                AIcounter = 0;
             }
-            // TODO Select card.
-            // TODO For each placed card on the board, find a suitable keyword.
-            // TODO Place card and end turn.
         }
     }
 
@@ -195,7 +202,6 @@ public class Player : MonoBehaviour
         VetText.gameObject.GetComponent<Text>().enabled = true;
         VetYesBtn.gameObject.SetActive(true);
         VetNoBtn.gameObject.SetActive(true);
-        Debug.Log("IN PLAYER");
     }
 
     public void VetShrink()
