@@ -209,6 +209,7 @@ public class BoardManager : MonoBehaviour
                     if (cardA != null)
                     {
                         GetCurrentPlayer().IncreaseScore(cardA.GetPts(_currentKeyword));
+                        GetCurrentPlayer().PlayerScore.GetComponent<Text>().text = "" + GetCurrentPlayer().Score;
                     }
                     else
                     {
