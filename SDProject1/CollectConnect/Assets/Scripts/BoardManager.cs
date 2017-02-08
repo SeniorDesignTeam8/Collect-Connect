@@ -220,6 +220,7 @@ public class BoardManager : MonoBehaviour
                         _currentKeyword = "";
                         _isTurnOver = true;
                         vetStartBool = false;
+                        _afterVet = false;
                     }
                     else
                     {
@@ -259,6 +260,7 @@ public class BoardManager : MonoBehaviour
         _isPlayerCardSelected = false;
         _isBoardCardSelected = false;
         _playedTurn = false;
+        _afterVet = false;
     }
 
     private void PopulateKeywords()
