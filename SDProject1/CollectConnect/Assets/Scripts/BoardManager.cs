@@ -53,6 +53,7 @@ public class BoardManager : MonoBehaviour
     private Card _copyCardLeft;
     private Card _copyCardRight;
     public List<bool> vetResult;
+    private bool _noVet;
     
 
     //private readonly Color[] _playerColors =
@@ -71,10 +72,11 @@ public class BoardManager : MonoBehaviour
         _playedTurn = false;
         DisableVet();
         vetResult = new List<bool>();
+        _noVet = false;
 
         for (int i = 0; i < 4; i++) //prefill _verResult list
         {
-            vetResult.Add(false);
+            vetResult.Add(true);
         }
 
         //VetBtnLeft.onClick.AddListener(VetBtnSelected);
@@ -101,6 +103,8 @@ public class BoardManager : MonoBehaviour
             _keywordNodes = new List<GameObject>();
             PlayCardList = new List<Card>();
             _isFirstCardPlay = true;
+            VetBtnLeft.GetComponent<Button>().onClick.AddListener(() => VetBtnSelected());
+            VetBtnRight.GetComponent<Button>().onClick.AddListener(() => VetBtnSelected()); 
         }
         else if (Instance != this)
         {
@@ -195,9 +199,10 @@ public class BoardManager : MonoBehaviour
             PlayCardList.Add(cardB);
             PlayKeywordList.Add(currentPlayer.ToString());
             PlayKeywordList.Add(_currentKeyword);
-            
-            //The following line starts the vetting process before the cards are added the the board
-            StartCoroutine("TimerBeforeVet");
+
+            vetSetUp();  //set up vet visuals 
+
+            StartCoroutine("VetTimer");  //start vet timer for vetting aloud
 
             //get the vet result, true for yes/valid, false for no/invalid
 
@@ -213,17 +218,14 @@ public class BoardManager : MonoBehaviour
                     }
                     else
                     {
-                       Debug.Log("CardA is null. Null Pointer Exception.");
+                        Debug.Log("CardA is null. Null Pointer Exception.");
                     }
                     _currentKeyword = "";
                     _isTurnOver = true;
-                    
-                    //Debug.Log("Try Add Card Worked."); 
                 }
                 else
                 {
                     _currentKeyword = "";
-                    //Debug.Log("Try Add Card Failed.");
                 }
             }
             else
@@ -233,6 +235,7 @@ public class BoardManager : MonoBehaviour
                 cardA.gameObject.GetComponent<Renderer>().enabled = false;
                 PassBtnHit();
             }
+
 
         }
     }
@@ -674,7 +677,7 @@ public class BoardManager : MonoBehaviour
     public void PassBtnHit() //player hit pass button
     {
         _isTurnOver = true;
-        PlayKeywordList.Add(currentPlayer.ToString()); //add player passed
+        PlayKeywordList.Add(currentPlayer.ToString()); //add player passed  //TODO: FIX THIS!!! 
         PlayKeywordList.Add("Pass");
         LateUpdate();
     }
@@ -741,13 +744,13 @@ public void DisableVet() //diable vet screen
         VetText.gameObject.GetComponent<Text>().enabled = true;
         ConnectionBackground.gameObject.GetComponent<Renderer>().enabled = true;
         VetConnectionWordTxt.gameObject.GetComponent<Text>().enabled = true;
+
         VetBtnRight.gameObject.SetActive(true);
         VetBtnLeft.gameObject.SetActive(true);
     }
 
-    private IEnumerator TimerBeforeVet()  //timer before vet screen pops up
+    private void vetSetUp()  //timer before vet screen pops up
     {
-        yield return new WaitForSeconds(1.0f);
         EnableVet();
        
         VetConnectionWordTxt.gameObject.GetComponent<Text>().text = PlayKeywordList[++_listCount];
@@ -760,10 +763,9 @@ public void DisableVet() //diable vet screen
         _copyCardRight = (Card)Instantiate(PlayCardList[_listCount++], new Vector3(0f, 0f, 0f), Quaternion.identity);
         _copyCardRight.transform.position = VetCard2.gameObject.transform.position;
         _copyCardRight.transform.localScale = Vector3.one;
-        StartCoroutine("VetTimer"); //7 sec timer to vet if want
     }
 
-    private IEnumerator VetTimer()  //timer for players to select vet
+    private IEnumerator VetTimer() //timer for players to select vet
     {
         yield return new WaitForSeconds(5.0f);
 
@@ -771,20 +773,44 @@ public void DisableVet() //diable vet screen
         Destroy(_copyCardRight.gameObject);
 
         DisableVet();
-    }
+
+        if (_noVet == true)
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                vetResult[i] = true;
+            }
+        }
+}
+
 
     public void VetBtnSelected()
     {
-        Debug.Log("Got here 2");
-        for (int i = 1; i < 4; i++)  //CURRENTLY SKIPPING AI
+        _noVet = false;     //someone vet
+
+        Destroy(_copyCardLeft.gameObject);
+        Destroy(_copyCardRight.gameObject);
+
+        DisableVet();
+
+        for (int i = 0; i < 4; i++)  //running through players
         {
-            vetResult[i] = false; //reset all results to false
-            Player p = _playerScriptRefs[i];
-            p.VetExpantion();
+            vetResult[i] = true; //reset all results to true
 
-            //TODO: need to decide how to differ between AI and human players
+            if (i == 0) //player 1
+            {
+                vetResult[0] = true; //setting standard of top AI to true
+            }
+            else
+            {
+               Player p = _playerScriptRefs[i];
 
-            p.VetShrink();
+               p.VetExpantion();
+
+                //TODO: need to decide how to differ between AI and human players
+
+                p.VetShrink();
+            }
         }
     }
 
