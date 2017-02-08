@@ -43,8 +43,8 @@ public class Player : MonoBehaviour
         VetText.gameObject.GetComponent<Text>().enabled = false;
         VetYesBtn.gameObject.SetActive(false);
         VetNoBtn.gameObject.SetActive(false);
-        VetYesBtn.onClick.AddListener(onYesBtnHit);
-        VetNoBtn.onClick.AddListener(onNoBtnHit);
+        VetYesBtn.GetComponent<Button>().onClick.AddListener(() => onYesBtnHit());
+        VetNoBtn.GetComponent<Button>().onClick.AddListener(() => onNoBtnHit());
     }
 
     private void Update()
@@ -195,6 +195,7 @@ public class Player : MonoBehaviour
         VetText.gameObject.GetComponent<Text>().enabled = true;
         VetYesBtn.gameObject.SetActive(true);
         VetNoBtn.gameObject.SetActive(true);
+        Debug.Log("IN PLAYER");
     }
 
     public void VetShrink()
