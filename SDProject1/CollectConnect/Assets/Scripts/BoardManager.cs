@@ -53,16 +53,10 @@ public class BoardManager : MonoBehaviour
     private Card _copyCardLeft;
     private Card _copyCardRight;
     public List<bool> vetResult;
-    private bool _noVet;
-    
-
-    //private readonly Color[] _playerColors =
-    //{
-    //    Color.red, Color.blue, Color.green, Color.yellow
-    //};
-
+    private bool _afterVet;
     private readonly List<Vector3> _gridPositions = new List<Vector3>();
     private int[] _scoreboard;
+    private bool vetStartBool;
 
     private void Awake()
     {
@@ -72,15 +66,13 @@ public class BoardManager : MonoBehaviour
         _playedTurn = false;
         DisableVet();
         vetResult = new List<bool>();
-        _noVet = false;
+        _afterVet = false;
+        vetStartBool = false;
 
         for (int i = 0; i < 4; i++) //prefill _verResult list
         {
             vetResult.Add(true);
         }
-
-        //VetBtnLeft.onClick.AddListener(VetBtnSelected);
-        //VetBtnRight.onClick.AddListener(VetBtnSelected);
     }
 
     private void Start()
@@ -200,42 +192,48 @@ public class BoardManager : MonoBehaviour
             PlayKeywordList.Add(currentPlayer.ToString());
             PlayKeywordList.Add(_currentKeyword);
 
-            vetSetUp();  //set up vet visuals 
+            if (vetStartBool == false)
+            {
+                  StartCoroutine("vetSetUp");
 
-            StartCoroutine("VetTimer");  //start vet timer for vetting aloud
+                vetStartBool = true;
+            }
 
             //get the vet result, true for yes/valid, false for no/invalid
 
-            if (getVetResult())
+            if (_afterVet == true)
             {
-                //Add this connection with cardA and cardB and keyword
-                if (AddCardsToBoard(cardA, cardB, _currentKeyword))
+                if (getVetResult())
                 {
-                    if (cardA != null)
+                    //Add this connection with cardA and cardB and keyword
+                    if (AddCardsToBoard(cardA, cardB, _currentKeyword))
                     {
-                        GetCurrentPlayer().IncreaseScore(cardA.GetPts(_currentKeyword));
-                        GetCurrentPlayer().PlayerScore.GetComponent<Text>().text = "" + GetCurrentPlayer().Score;
+                        if (cardA != null)
+                        {
+                            GetCurrentPlayer().IncreaseScore(cardA.GetPts(_currentKeyword));
+                            GetCurrentPlayer().PlayerScore.GetComponent<Text>().text = "" + GetCurrentPlayer().Score;
+                        }
+                        else
+                        {
+                            Debug.Log("CardA is null. Null Pointer Exception.");
+                        }
+                        _currentKeyword = "";
+                        _isTurnOver = true;
+                        vetStartBool = false;
                     }
                     else
                     {
-                        Debug.Log("CardA is null. Null Pointer Exception.");
+                        _currentKeyword = "";
                     }
-                    _currentKeyword = "";
-                    _isTurnOver = true;
                 }
                 else
                 {
+                    //the players vetted against the connection. Reset the cards and pass. 
                     _currentKeyword = "";
+                    cardA.gameObject.GetComponent<Renderer>().enabled = false;
+                    PassBtnHit();
                 }
             }
-            else
-            {
-                //the players vetted against the connection. Reset the cards and pass. 
-                _currentKeyword = "";
-                cardA.gameObject.GetComponent<Renderer>().enabled = false;
-                PassBtnHit();
-            }
-
 
         }
     }
@@ -554,6 +552,7 @@ public class BoardManager : MonoBehaviour
         cardA.SetIsSelected(false);
         boardCard.SetIsSelected(false);
         //cardA.gameObject.AddComponent<MobileNode>();
+
         return true;
     }
 
@@ -679,7 +678,7 @@ public class BoardManager : MonoBehaviour
         _isTurnOver = true;
         PlayKeywordList.Add(currentPlayer.ToString()); //add player passed  //TODO: FIX THIS!!! 
         PlayKeywordList.Add("Pass");
-        LateUpdate();
+        //LateUpdate();
     }
 
     public Player FindOwningPlayer(Card card)
@@ -726,7 +725,7 @@ public class BoardManager : MonoBehaviour
 
 
 
-public void DisableVet() //diable vet screen
+    public void DisableVet() //diable vet screen
     {
         VetEnhance.gameObject.GetComponent<Renderer>().enabled = false;
         VetText.gameObject.GetComponent<Text>().enabled = false;
@@ -749,8 +748,10 @@ public void DisableVet() //diable vet screen
         VetBtnLeft.gameObject.SetActive(true);
     }
 
-    private void vetSetUp()  //timer before vet screen pops up
+    private IEnumerator vetSetUp()  //timer before vet screen pops up
     {
+        yield return new WaitForSeconds(1.0f);
+
         EnableVet();
        
         VetConnectionWordTxt.gameObject.GetComponent<Text>().text = PlayKeywordList[++_listCount];
@@ -760,9 +761,11 @@ public void DisableVet() //diable vet screen
         _copyCardLeft.transform.position = VetCard1.gameObject.transform.position;
         _copyCardLeft.transform.localScale = Vector3.one;
 
-        _copyCardRight = (Card)Instantiate(PlayCardList[_listCount++], new Vector3(0f, 0f, 0f), Quaternion.identity);
+        _copyCardRight = Instantiate(PlayCardList[_listCount++], new Vector3(0f, 0f, 0f), Quaternion.identity);
         _copyCardRight.transform.position = VetCard2.gameObject.transform.position;
         _copyCardRight.transform.localScale = Vector3.one;
+
+        StartCoroutine("VetTimer");  //start vet timer for vetting aloud
     }
 
     private IEnumerator VetTimer() //timer for players to select vet
@@ -774,20 +777,20 @@ public void DisableVet() //diable vet screen
 
         DisableVet();
 
-        if (_noVet == true)
-        {
-            for (int i = 0; i < 4; i++)
-            {
-                vetResult[i] = true;
-            }
-        }
-}
+        _afterVet = true;
+
+        //if (_noVet == true)
+        //{
+        //    for (int i = 0; i < 4; i++)
+        //    {
+        //        vetResult[i] = true;
+        //    }
+        //}
+   }
 
 
     public void VetBtnSelected()
     {
-        _noVet = false;     //someone vet
-
         Destroy(_copyCardLeft.gameObject);
         Destroy(_copyCardRight.gameObject);
 
