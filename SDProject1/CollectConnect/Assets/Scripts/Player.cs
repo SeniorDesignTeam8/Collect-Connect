@@ -28,6 +28,7 @@ public class Player : MonoBehaviour
     public GameObject VetText;
     public Button VetYesBtn;
     public Button VetNoBtn;
+    public bool VetDone;
 
     private void Start()
     {
@@ -43,8 +44,9 @@ public class Player : MonoBehaviour
         VetText.gameObject.GetComponent<Text>().enabled = false;
         VetYesBtn.gameObject.SetActive(false);
         VetNoBtn.gameObject.SetActive(false);
-        VetYesBtn.GetComponent<Button>().onClick.AddListener(() => onYesBtnHit());
-        VetNoBtn.GetComponent<Button>().onClick.AddListener(() => onNoBtnHit());
+        VetYesBtn.GetComponent<Button>().onClick.AddListener(() => OnYesBtnHit());
+        VetNoBtn.GetComponent<Button>().onClick.AddListener(() => OnNoBtnHit());
+        VetDone = false;
     }
 
     private void Update()
@@ -92,14 +94,14 @@ public class Player : MonoBehaviour
             }
             else
             {
-                int AIcounter = 0;
+                int aIcounter = 0;
                 Card badCard = null;
                 playedCards.Shuffle(); // More organized way of choosing a random card than just picking a random index.
                 foreach (Card c in playedCards)
                 {
-                    AIcounter++;
+                    aIcounter++;
                     List<Card.CardProperty> commonProps = c.FindCommonProperties(pickedCard);
-                    if (AIcounter > (BoardManager.Instance.GetPlayedCards().Size % 3))
+                    if (aIcounter > (BoardManager.Instance.GetPlayedCards().Size % 3))
                     {
                         badCard = c;
                         break;
@@ -113,7 +115,7 @@ public class Player : MonoBehaviour
                 }
                 BoardManager.Instance.SelectCardOnBoard(badCard);
                 BoardManager.Instance.SelectKeyword(badCard.PropertyList.First());
-                AIcounter = 0;
+                aIcounter = 0;
             }
         }
     }
@@ -202,6 +204,7 @@ public class Player : MonoBehaviour
         VetText.gameObject.GetComponent<Text>().enabled = true;
         VetYesBtn.gameObject.SetActive(true);
         VetNoBtn.gameObject.SetActive(true);
+        VetDone = false;
     }
 
     public void VetShrink()
@@ -212,13 +215,15 @@ public class Player : MonoBehaviour
         VetNoBtn.gameObject.SetActive(false);
     }
 
-    private void onYesBtnHit()
+    private void OnYesBtnHit()
     {
-        BoardManager.Instance.vetResult[BoardManager.Instance.currentPlayer] = true;
+        BoardManager.Instance.VetResult[BoardManager.Instance.currentPlayer] = true;
+        VetDone = true;
     }
 
-    private void onNoBtnHit()
+    private void OnNoBtnHit()
     {
-        BoardManager.Instance.vetResult[BoardManager.Instance.currentPlayer] = false;
+        BoardManager.Instance.VetResult[BoardManager.Instance.currentPlayer] = false;
+        VetDone = true;
     }
 }
