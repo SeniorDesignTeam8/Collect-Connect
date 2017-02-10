@@ -48,7 +48,6 @@ public class BoardManager : MonoBehaviour
     public List<String> PlayKeywordList;
     public Button VetBtnLeft;
     public Button VetBtnRight;
-    public List<bool> PlayerVetSelection; //if player agrees or disagrees with vet
     private int _listCount = 0;
     private Card _copyCardLeft;
     private Card _copyCardRight;
@@ -99,8 +98,8 @@ public class BoardManager : MonoBehaviour
             _keywordNodes = new List<GameObject>();
             PlayCardList = new List<Card>();
             _isFirstCardPlay = true;
-            VetBtnLeft.GetComponent<Button>().onClick.AddListener(() => VetBtnSelected(_playerScriptRefs));
-            VetBtnRight.GetComponent<Button>().onClick.AddListener(() => VetBtnSelected(_playerScriptRefs)); 
+            VetBtnLeft.GetComponent<Button>().onClick.AddListener(() => VetBtnSelected());
+            VetBtnRight.GetComponent<Button>().onClick.AddListener(() => VetBtnSelected()); 
         }
         else if (Instance != this)
         {
@@ -203,33 +202,54 @@ public class BoardManager : MonoBehaviour
                 _vetStartBool = true;
             }
 
-            if (_hitVetBtn == true) //rotate through vet y/n responses
+            if (_hitVetBtn == true) //rotate through vet y/n responses (yellow btn hit)
             {
-                Player p = _playerScriptRefs[_playerNumber];
-                while (p.VetDone == true)
+                Player playerClone = _playerScriptRefs[_playerNumber];
+                Debug.Log("P: " + playerClone);
+                Debug.Log("Playerclone " + playerClone.VetDone);
+
+                while (playerClone.VetDone == true) //if blue y/n btn hit
                 {
-                    _playerNumber++;
-                    p = _playerScriptRefs[_playerNumber];
-                    p.VetDone = false;
-                    p.VetExpantion();
-                    StartCoroutine("VetDecisionTimer", p);
-
-                    if (_playerNumber >= 5)  //ran through all players
+                    Debug.Log("Vet is not done!");
+                    if (playerClone.VetBtnHit == true) //if hit y/n button
                     {
-                        Destroy(_copyCardLeft.gameObject); //delete clones
-                        Destroy(_copyCardRight.gameObject);
+                        playerClone.VetShrink();
+                        VetResult[_playerNumber] = playerClone.vetResult; //pull player's result
+                        _playerNumber++;
 
-                        DisableVet(); //shrink vet visuals
-                        _afterVet = true; //individual vetting done
+                        //_playerNumber++;
+                        Debug.Log("Player number " + _playerNumber);
+
+                        //if (_playerNumber < 4)  //so don't get error referencing player
+                        //{
+                        Debug.Log("Not all players have vetted.");
+                        playerClone = _playerScriptRefs[_playerNumber];
+                        playerClone.VetExpantion(); //orange screen
+                        StartCoroutine("VetDecisionTimer", playerClone);
+                        // }
                     }
 
-                    //TODO: need to decide how to differ between AI and human players
+
+
+                    //if(playerClone.VetDone == true)
+                    //{
+                    //    Debug.Log("Getting inside");
+                    //    playerClone.VetShrink();
+                    //    Destroy(_copyCardLeft.gameObject); //delete clones
+                    //    Destroy(_copyCardRight.gameObject);
+
+                    //    DisableVet(); //shrink vet visuals
+                    //    _hitVetBtn = false; //reset
+                    //    _afterVet = true; //individual vetting done
+                    //    _hitVetBtn = false;
+                    //    Debug.Log(_playerScriptRefs[currentPlayer].name + " has ended their turn.");
+                    //}
+
+                    //TODO: need to differ between AI and human players
                 }
             }
 
-            //get the vet result, true for yes/valid, false for no/invalid
-
-            if (_afterVet == true)
+            if (_afterVet == true)  //get the vet result, true for yes/valid, false for no/invalid
             {
                 if (getVetResult())
                 {
@@ -813,8 +833,7 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-
-    private void VetBtnSelected(List<Player> _playerScriptRefs)  //someone hit vet button
+    private void VetBtnSelected()  //someone hit yellow btn
     {
         VetText.gameObject.GetComponent<Text>().enabled = false;  //disable vet text question
         VetBtnRight.gameObject.SetActive(false);    //disable vet btns
@@ -823,19 +842,28 @@ public class BoardManager : MonoBehaviour
         _hitVetBtn = true;
         _playerNumber = 0;
 
-        VetResult[_playerNumber] = true; //reset all results to true
+        //tResult[_playerNumber] = true; //reset all results to true
 
-        Player p = _playerScriptRefs[_playerNumber];
+        Player playerClone = _playerScriptRefs[_playerNumber];
 
         VetResult[0] = true;    //TODO: DONT HARDCODE FIRST AI
-        p.VetDone = true; //first AI done
+        playerClone.VetDone = true; //first AI done
+        playerClone.VetBtnHit = true;
+
     }
 
-    private IEnumerator VetDecisionTimer(Player p)
+    private IEnumerator VetDecisionTimer(Player playerClone)
     {
         yield return new WaitForSeconds(5.0f);
-        p.VetShrink();
-        p.VetDone = true;  //ran out of time
+
+        if (playerClone.VetBtnHit == false)  //if player didn't vote
+        {
+            Debug.Log("Shrinking");
+            playerClone.VetShrink();
+            playerClone.VetDone = true;
+            VetResult[_playerNumber] = true;    //auto set to agree
+        }
+        
     }
 
     public bool getVetResult()
@@ -860,5 +888,8 @@ public class BoardManager : MonoBehaviour
         {
             return false;
         }
+
+        _hitVetBtn = false; //reset
     }
 }
+

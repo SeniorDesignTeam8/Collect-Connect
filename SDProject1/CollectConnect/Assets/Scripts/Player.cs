@@ -29,6 +29,8 @@ public class Player : MonoBehaviour
     public Button VetYesBtn;
     public Button VetNoBtn;
     public bool VetDone;
+    public bool VetBtnHit;
+    public bool vetResult;
 
     private void Start()
     {
@@ -47,6 +49,9 @@ public class Player : MonoBehaviour
         VetYesBtn.GetComponent<Button>().onClick.AddListener(() => OnYesBtnHit());
         VetNoBtn.GetComponent<Button>().onClick.AddListener(() => OnNoBtnHit());
         VetDone = false;
+        VetBtnHit = false;
+        vetResult = true;
+
     }
 
     private void Update()
@@ -205,6 +210,7 @@ public class Player : MonoBehaviour
         VetYesBtn.gameObject.SetActive(true);
         VetNoBtn.gameObject.SetActive(true);
         VetDone = false;
+        VetBtnHit = false;
     }
 
     public void VetShrink()
@@ -217,13 +223,15 @@ public class Player : MonoBehaviour
 
     private void OnYesBtnHit()
     {
-        BoardManager.Instance.VetResult[BoardManager.Instance.currentPlayer] = true;
+        vetResult = true;
         VetDone = true;
+        VetBtnHit = true;
     }
 
     private void OnNoBtnHit()
     {
-        BoardManager.Instance.VetResult[BoardManager.Instance.currentPlayer] = false;
+        vetResult = false;
         VetDone = true;
+        VetBtnHit = true;
     }
 }
