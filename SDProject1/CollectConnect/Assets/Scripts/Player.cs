@@ -24,11 +24,16 @@ public class Player : MonoBehaviour
     private Vector3 _expCardPosition;
     private Vector3 _expCardScale;
     private bool _isAiControlled = false; // TODO Find a way to programatically change this.
-	public GameObject VetEnhance;
+    public GameObject VetEnhance;
     public GameObject VetText;
     public Button VetYesBtn;
     public Button VetNoBtn;
     public bool VetDone;
+
+    private static float[] _aiPassThresholds =
+    {
+        1.0f, 0.25f, 0.2f, 0.25f
+    };
 
     private void Start()
     {
@@ -101,21 +106,29 @@ public class Player : MonoBehaviour
                 {
                     aIcounter++;
                     List<Card.CardProperty> commonProps = c.FindCommonProperties(pickedCard);
-                    if (aIcounter > (BoardManager.Instance.GetPlayedCards().Size % 3))
+                    if (aIcounter > (playedCards.Size % 3))
                     {
-                        badCard = c;
-                        break;
+                        float passChance = Random.Range(0.0f, 1.0f);
+                        if (passChance <= _aiPassThresholds[BoardManager.Instance.currentPlayer])
+                        {
+                            
+                            BoardManager.Instance.PassBtnHit();
+                        }
+                        else
+                        {
+                            badCard = c;
+                            BoardManager.Instance.SelectCardOnBoard(badCard);
+                            BoardManager.Instance.SelectKeyword(badCard.PropertyList.First());
+                            break; 
+                        }
                     }
                     if (commonProps.Count <= 0)
                         continue;
                     BoardManager.Instance.SelectCardOnBoard(c);
                     ShufflePropertyList(ref commonProps);
                     BoardManager.Instance.SelectKeyword(commonProps[0]);
-                    break;
+                    return;
                 }
-                BoardManager.Instance.SelectCardOnBoard(badCard);
-                BoardManager.Instance.SelectKeyword(badCard.PropertyList.First());
-                aIcounter = 0;
             }
         }
     }
