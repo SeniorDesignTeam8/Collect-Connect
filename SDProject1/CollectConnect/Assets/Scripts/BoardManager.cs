@@ -211,6 +211,8 @@ public class BoardManager : MonoBehaviour
 
             if (_hitVetBtn == true) //rotate through vet y/n responses (yellow btn hit)
             {
+                Debug.Log("JUMPING");
+
                 if (_playerScriptRefs[_playerNumber].playerVetted == true) //if blue y/n btn hit
                 {
                     _playerScriptRefs[_playerNumber].VetShrink();
@@ -230,14 +232,15 @@ public class BoardManager : MonoBehaviour
                         Destroy(_copyCardLeft.gameObject); //delete clones
                         Destroy(_copyCardRight.gameObject);
                         DisableVet(); //shrink vet visuals
-                        _afterVet = true; //individual vetting done
+                        _afterVet = true; //all done vetting
+                        _playerNumber = 0;
                     }
 
                     //TODO: need to differ between AI and human players
                 }
             }
 
-            if (_afterVet)  //get the vet result, true for yes/valid, false for no/invalid
+            if (_afterVet == true)  //get the vet result, true for yes/valid, false for no/invalid
             {
                 if (GetVetResult())
                 {
@@ -248,6 +251,10 @@ public class BoardManager : MonoBehaviour
                         {
                             GetCurrentPlayer().IncreaseScore(cardA.GetPts(_currentKeyword));
                             GetCurrentPlayer().PlayerScore.GetComponent<Text>().text = "" + GetCurrentPlayer().Score;
+                            _isTurnOver = true;
+                            _hitVetBtn = false; //reset btn
+                            _afterVet = false;
+                            _vetStartBool = false;
                         }
                         else
                             {
@@ -271,6 +278,9 @@ public class BoardManager : MonoBehaviour
                         _currentKeyword = "";
                         cardA.gameObject.GetComponent<Renderer>().enabled = false;
                         _isTurnOver = true;
+                        _hitVetBtn = false; //reset btn
+                        _afterVet = false;
+                        _vetStartBool = false;
                     }
             }
 
@@ -298,7 +308,6 @@ public class BoardManager : MonoBehaviour
         _isPlayerCardSelected = false;
         _isBoardCardSelected = false;
         _playedTurn = false;
-        _afterVet = false;
     }
 
     private void PopulateKeywords()
@@ -988,11 +997,17 @@ public class BoardManager : MonoBehaviour
     {
         yield return new WaitForSeconds(1.0f);
         Debug.Log("Enabling vet.");
+
+        for (int i = 0; i < 4; i++)
+        {
+            VetResultList[i] = true;    //reset result list
+            _playerScriptRefs[i].playerVetted = false; //reset all player vetted
+        }
+
         EnableVet();
 
         VetConnectionWordTxt.gameObject.GetComponent<Text>().text = _playerScriptRefs[CurrentPlayer].connectionKeyword; //store card connection for vet and vote 
 
-        
         _copyCardLeft = Instantiate(_playerScriptRefs[CurrentPlayer].card1, new Vector3(0f, 0f, 0f), Quaternion.identity);
         _copyCardLeft.transform.position = VetCard1.gameObject.transform.position;
         _copyCardLeft.transform.localScale = Vector3.one;
@@ -1000,7 +1015,7 @@ public class BoardManager : MonoBehaviour
         _copyCardRight = Instantiate(_playerScriptRefs[CurrentPlayer].card2, new Vector3(0f, 0f, 0f), Quaternion.identity);
         _copyCardRight.transform.position = VetCard2.gameObject.transform.position;
         _copyCardRight.transform.localScale = Vector3.one;
-       
+
         StartCoroutine("VetTimer");  //start vet timer for vetting allowed
     }
 
@@ -1009,14 +1024,13 @@ public class BoardManager : MonoBehaviour
 
         yield return new WaitForSeconds(5.0f);
 
-        //if vet btn not hit, not in middle of vetting and finished with vetting
-        if (_hitVetBtn == false && _afterVet == false  && VetEnhance.gameObject.GetComponent<Renderer>().enabled == false) //= no one hit vet btn -> next player's turn
+        //if vet btn not hit and main vetting not visible 
+        if (_hitVetBtn == false && VetEnhance.gameObject.GetComponent<Renderer>().enabled == true) //= no one hit vet btn -> next player's turn
         {
             Destroy(_copyCardLeft.gameObject); //delete clones
             Destroy(_copyCardRight.gameObject);
             Debug.Log("Disabling vet.");
             DisableVet(); //shrink vet visuals
-
             _afterVet = true;
         }
     }
@@ -1027,10 +1041,8 @@ public class BoardManager : MonoBehaviour
         VetBtnRight.gameObject.SetActive(false);    //disable vet btns
         VetBtnLeft.gameObject.SetActive(false);
 
-        _hitVetBtn = true;
         _playerNumber = 0;
-
-        VetResultList[_playerNumber] = true; //reset vetResult
+        _hitVetBtn = true;
 
         VetResultList[0] = true;    //TODO: DONT HARDCODE FIRST AI
         _playerScriptRefs[_playerNumber].playerVetted = true; //first AI done
@@ -1067,9 +1079,6 @@ public class BoardManager : MonoBehaviour
                 noCount++;
             }
         }
-        _hitVetBtn = false; //reset btn
-        _afterVet = false;
-        _vetStartBool = false;
         return yesCount >= noCount;
     }
 }
