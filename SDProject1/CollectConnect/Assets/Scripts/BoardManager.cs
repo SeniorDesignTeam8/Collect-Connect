@@ -45,11 +45,8 @@ public class BoardManager : MonoBehaviour
     public GameObject VetCard2;
     public GameObject ConnectionBackground;
     public GameObject VetConnectionWordTxt;
-    public List<Card> PlayCardList;
-    public List<string> PlayKeywordList;
     public Button VetBtnLeft;
     public Button VetBtnRight;
-    private int _listCount;
     private Card _copyCardLeft;
     private Card _copyCardRight;
     public List<bool> VetResultList;
@@ -106,7 +103,6 @@ public class BoardManager : MonoBehaviour
             _keywordList = new List<string>();
             _scoreboard = new int[Players.Length];
             _keywordNodes = new List<GameObject>();
-            PlayCardList = new List<Card>();
             _isFirstCardPlay = true;
             VetBtnLeft.GetComponent<Button>().onClick.AddListener(VetBtnSelected);
             VetBtnRight.GetComponent<Button>().onClick.AddListener(VetBtnSelected);
@@ -200,10 +196,10 @@ public class BoardManager : MonoBehaviour
             }
 
             //after tri-select, add cards to list for vetting (currentPlayer, card1, card2, keyword)
-            PlayCardList.Add(cardA);
-            PlayCardList.Add(cardB);
-            PlayKeywordList.Add(CurrentPlayer.ToString());
-            PlayKeywordList.Add(_currentKeyword);
+            //store connection in player
+            _playerScriptRefs[CurrentPlayer].card1 = cardA;
+            _playerScriptRefs[CurrentPlayer].card2 = cardB;
+            _playerScriptRefs[CurrentPlayer].connectionKeyword = _currentKeyword;
 
             if (!_vetStartBool)
             {
@@ -215,7 +211,7 @@ public class BoardManager : MonoBehaviour
 
             if (_hitVetBtn == true) //rotate through vet y/n responses (yellow btn hit)
             {
-                while (_playerScriptRefs[_playerNumber].playerVetted == true) //if blue y/n btn hit
+                if (_playerScriptRefs[_playerNumber].playerVetted == true) //if blue y/n btn hit
                 {
                     _playerScriptRefs[_playerNumber].VetShrink();
                     VetResultList[_playerNumber] = _playerScriptRefs[_playerNumber].VetResult; //pull player's result
@@ -234,7 +230,6 @@ public class BoardManager : MonoBehaviour
                         Destroy(_copyCardLeft.gameObject); //delete clones
                         Destroy(_copyCardRight.gameObject);
                         DisableVet(); //shrink vet visuals
-                        _hitVetBtn = false; //reset
                         _afterVet = true; //individual vetting done
                     }
 
@@ -255,26 +250,28 @@ public class BoardManager : MonoBehaviour
                             GetCurrentPlayer().PlayerScore.GetComponent<Text>().text = "" + GetCurrentPlayer().Score;
                         }
                         else
-                        {
-                            Debug.Log("CardA is null. Null Pointer Exception.");
-                        }
-                        _currentKeyword = "";
-                        _isTurnOver = true;
-                        _vetStartBool = false;
-                        _afterVet = false;
+                            {
+                                Debug.Log("CardA is null. Null Pointer Exception.");
+                            }
+                                _currentKeyword = "";
                     }
                     else
-                    {
-                        _currentKeyword = "";
-                    }
+                        {
+                            _currentKeyword = "";
+                        }
                 }
                 else
-                {
-                    //the players vetted against the connection. Reset the cards and pass.
-                    _currentKeyword = "";
-                    cardA.gameObject.GetComponent<Renderer>().enabled = false;
-                    PassBtnHit();
-                }
+                    {
+                        //the players vetted against the connection. Reset the cards and pass.
+
+                        _playerScriptRefs[CurrentPlayer].card1 = null;
+                        _playerScriptRefs[CurrentPlayer].card2 = null;
+                        _playerScriptRefs[CurrentPlayer].connectionKeyword = "Vetted Against";
+
+                        _currentKeyword = "";
+                        cardA.gameObject.GetComponent<Renderer>().enabled = false;
+                        _isTurnOver = true;
+                    }
             }
 
         }
@@ -917,10 +914,11 @@ public class BoardManager : MonoBehaviour
 
     public void PassBtnHit() //player hit pass button
     {
+        _playerScriptRefs[CurrentPlayer].card1 = null;
+        _playerScriptRefs[CurrentPlayer].card2 = null;
+        _playerScriptRefs[CurrentPlayer].connectionKeyword = "Passed";
+
         _isTurnOver = true;
-        PlayKeywordList.Add(CurrentPlayer.ToString()); //add player passed  //TODO: FIX THIS!!!
-        PlayKeywordList.Add("Pass");
-        //LateUpdate();
     }
 
     public Player FindOwningPlayer(Card card)
@@ -992,17 +990,17 @@ public class BoardManager : MonoBehaviour
         Debug.Log("Enabling vet.");
         EnableVet();
 
-        VetConnectionWordTxt.gameObject.GetComponent<Text>().text = PlayKeywordList[++_listCount];
-        _listCount--;
+        VetConnectionWordTxt.gameObject.GetComponent<Text>().text = _playerScriptRefs[CurrentPlayer].connectionKeyword; //store card connection for vet and vote 
 
-        _copyCardLeft = Instantiate(PlayCardList[_listCount++], new Vector3(0f, 0f, 0f), Quaternion.identity);
+        
+        _copyCardLeft = Instantiate(_playerScriptRefs[CurrentPlayer].card1, new Vector3(0f, 0f, 0f), Quaternion.identity);
         _copyCardLeft.transform.position = VetCard1.gameObject.transform.position;
         _copyCardLeft.transform.localScale = Vector3.one;
 
-        _copyCardRight = Instantiate(PlayCardList[_listCount++], new Vector3(0f, 0f, 0f), Quaternion.identity);
+        _copyCardRight = Instantiate(_playerScriptRefs[CurrentPlayer].card2, new Vector3(0f, 0f, 0f), Quaternion.identity);
         _copyCardRight.transform.position = VetCard2.gameObject.transform.position;
         _copyCardRight.transform.localScale = Vector3.one;
-        Debug.Log("Starting vet timer.");
+       
         StartCoroutine("VetTimer");  //start vet timer for vetting allowed
     }
 
@@ -1011,7 +1009,8 @@ public class BoardManager : MonoBehaviour
 
         yield return new WaitForSeconds(5.0f);
 
-        if (!_hitVetBtn) //= no one hit vet btn -> next player's turn
+        //if vet btn not hit, not in middle of vetting and finished with vetting
+        if (_hitVetBtn == false && _afterVet == false  && VetEnhance.gameObject.GetComponent<Renderer>().enabled == false) //= no one hit vet btn -> next player's turn
         {
             Destroy(_copyCardLeft.gameObject); //delete clones
             Destroy(_copyCardRight.gameObject);
@@ -1031,7 +1030,7 @@ public class BoardManager : MonoBehaviour
         _hitVetBtn = true;
         _playerNumber = 0;
 
-        //tResult[_playerNumber] = true; //reset all results to true
+        VetResultList[_playerNumber] = true; //reset vetResult
 
         VetResultList[0] = true;    //TODO: DONT HARDCODE FIRST AI
         _playerScriptRefs[_playerNumber].playerVetted = true; //first AI done
@@ -1043,7 +1042,7 @@ public class BoardManager : MonoBehaviour
     {
         yield return new WaitForSeconds(5.0f);
 
-        if (!p.playerVetted)  //if player didn't vote
+        if (p.playerVetted == false)  //if player didn't vote
         {
             Debug.Log(p.name + " did not vote.");
             p.VetShrink();
@@ -1069,6 +1068,8 @@ public class BoardManager : MonoBehaviour
             }
         }
         _hitVetBtn = false; //reset btn
+        _afterVet = false;
+        _vetStartBool = false;
         return yesCount >= noCount;
     }
 }

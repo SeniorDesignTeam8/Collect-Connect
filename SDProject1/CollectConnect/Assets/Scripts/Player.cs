@@ -31,6 +31,10 @@ public class Player : MonoBehaviour
     public bool playerVetted;
     public bool YesNoBtnHit;
     public bool VetResult;
+    public Card card1;
+    public Card card2;
+    public String connectionKeyword;
+
 
     private static readonly float[] AiPassThresholds =
     {
