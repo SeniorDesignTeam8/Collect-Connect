@@ -213,27 +213,25 @@ public class BoardManager : MonoBehaviour
                 _vetStartBool = true;
             }
 
-            if (_hitVetBtn == true) //rotate through vet y/n responses (yellow btn hit)
+            if (_hitVetBtn) //rotate through vet y/n responses (yellow btn hit)
             {
                 Player playerClone = _playerScriptRefs[_playerNumber];
-                Debug.Log("P: " + playerClone);
-                Debug.Log("Playerclone " + playerClone.VetDone);
-
-                while (playerClone.VetDone == true) //if blue y/n btn hit
+                
+                while (playerClone.VetDone) //if blue y/n btn hit
                 {
-                    Debug.Log("Vet is not done!");
-                    if (playerClone.VetBtnHit == true) //if hit y/n button
+                   
+                    if (playerClone.VetBtnHit) //if hit y/n button
                     {
                         playerClone.VetShrink();
                         VetResult[_playerNumber] = playerClone.vetResult; //pull player's result
                         _playerNumber++;
 
                         //_playerNumber++;
-                        Debug.Log("Player number " + _playerNumber);
+                        //Debug.Log("Player number " + _playerNumber);
 
                         //if (_playerNumber < 4)  //so don't get error referencing player
                         //{
-                        Debug.Log("Not all players have vetted.");
+                   
                         playerClone = _playerScriptRefs[_playerNumber];
                         playerClone.VetExpantion(); //orange screen
                         StartCoroutine("VetDecisionTimer", playerClone);
@@ -1043,7 +1041,7 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    private void VetBtnSelected()  //someone hit yellow btn
+    private void VetBtnSelected()  //someone hit yellow btn!
     {
         VetText.gameObject.GetComponent<Text>().enabled = false;  //disable vet text question
         VetBtnRight.gameObject.SetActive(false);    //disable vet btns
@@ -1092,14 +1090,16 @@ public class BoardManager : MonoBehaviour
         }
         if (yesCount >= noCount)
         {
+            _hitVetBtn = false; //reset btn
             return true;
         }
         else
         {
+            _hitVetBtn = false; //reset btn
             return false;
         }
 
-        _hitVetBtn = false; //reset
+       
     }
 }
 
