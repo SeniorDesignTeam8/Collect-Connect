@@ -37,7 +37,7 @@ public class BoardManager : MonoBehaviour
     private bool _isPlayerCardSelected;
     private bool _isBoardCardSelected;
     private bool _isKeywordSelected;
-    public int currentPlayer;
+    public int CurrentPlayer;
     private bool _isTurnOver;
     private bool _playedTurn;
     public GameObject VetEnhance;
@@ -47,20 +47,20 @@ public class BoardManager : MonoBehaviour
     public GameObject ConnectionBackground;
     public GameObject VetConnectionWordTxt;
     public List<Card> PlayCardList;
-    public List<String> PlayKeywordList;
+    public List<string> PlayKeywordList;
     public Button VetBtnLeft;
     public Button VetBtnRight;
-    private int _listCount = 0;
+    private int _listCount;
     private Card _copyCardLeft;
     private Card _copyCardRight;
-    public List<bool> VetResult;
+    public List<bool> VetResultList;
     private bool _afterVet;
     private bool _vetStartBool;
     private bool _hitVetBtn;
     private readonly List<Vector3> _gridPositions = new List<Vector3>();
     private int[] _scoreboard;
     private int _playerNumber;
-    private static IDbConnection dbconn;
+    private static IDbConnection _dbconn;
 
 
 
@@ -72,7 +72,7 @@ public class BoardManager : MonoBehaviour
         IsDeckReady = false;
         _playedTurn = false;
         DisableVet();
-        VetResult = new List<bool>();
+        VetResultList = new List<bool>();
         _afterVet = false;
         _vetStartBool = false;
         _hitVetBtn = false;
@@ -80,7 +80,7 @@ public class BoardManager : MonoBehaviour
 
         for (int i = 0; i < 4; i++) //prefill _verResult list
         {
-            VetResult.Add(true);
+            VetResultList.Add(true);
         }
     }
 
@@ -90,8 +90,8 @@ public class BoardManager : MonoBehaviour
         {
             Debug.Log(Application.dataPath);
             string conn = "URI=file:" + Application.dataPath + "/CollectConnectDB.db"; //Path to database.
-            dbconn = (IDbConnection)new SqliteConnection(conn);
-            dbconn.Open(); //Open connection to the database.
+            _dbconn = (IDbConnection)new SqliteConnection(conn);
+            _dbconn.Open(); //Open connection to the database.
 
             Deck = new CardCollection("Deck");
             BuildDeck();
@@ -109,8 +109,8 @@ public class BoardManager : MonoBehaviour
             _keywordNodes = new List<GameObject>();
             PlayCardList = new List<Card>();
             _isFirstCardPlay = true;
-            VetBtnLeft.GetComponent<Button>().onClick.AddListener(() => VetBtnSelected());
-            VetBtnRight.GetComponent<Button>().onClick.AddListener(() => VetBtnSelected()); 
+            VetBtnLeft.GetComponent<Button>().onClick.AddListener(VetBtnSelected);
+            VetBtnRight.GetComponent<Button>().onClick.AddListener(VetBtnSelected);
         }
         else if (Instance != this)
         {
@@ -121,7 +121,7 @@ public class BoardManager : MonoBehaviour
 
     internal Player GetCurrentPlayer()
     {
-        return _playerScriptRefs[currentPlayer];
+        return _playerScriptRefs[CurrentPlayer];
     }
 
     // Update is called once per frame
@@ -157,7 +157,7 @@ public class BoardManager : MonoBehaviour
         {
             if (!_isPlayerCardSelected)
                 return;
-            foreach (Card c in _playerScriptRefs[currentPlayer].GetHand())
+            foreach (Card c in _playerScriptRefs[CurrentPlayer].GetHand())
             {
                 if (c.IsSelected())
                 {
@@ -203,27 +203,26 @@ public class BoardManager : MonoBehaviour
             //after tri-select, add cards to list for vetting (currentPlayer, card1, card2, keyword)
             PlayCardList.Add(cardA);
             PlayCardList.Add(cardB);
-            PlayKeywordList.Add(currentPlayer.ToString());
+            PlayKeywordList.Add(CurrentPlayer.ToString());
             PlayKeywordList.Add(_currentKeyword);
 
-            if (_vetStartBool == false)
+            if (!_vetStartBool)
             {
-                 StartCoroutine("vetSetUp");
+                Debug.Log("Starting vet setup.");
+                 StartCoroutine("VetSetUp");
 
                 _vetStartBool = true;
             }
 
             if (_hitVetBtn) //rotate through vet y/n responses (yellow btn hit)
             {
-                Player playerClone = _playerScriptRefs[_playerNumber];
-                
-                while (playerClone.VetDone) //if blue y/n btn hit
+                while (_playerScriptRefs[_playerNumber].VetDone) //if blue y/n btn hit
                 {
-                   
-                    if (playerClone.VetBtnHit) //if hit y/n button
+
+                    if (_playerScriptRefs[_playerNumber].VetBtnHit) //if hit y/n button
                     {
-                        playerClone.VetShrink();
-                        VetResult[_playerNumber] = playerClone.vetResult; //pull player's result
+                        _playerScriptRefs[_playerNumber].VetShrink();
+                        VetResultList[_playerNumber] = _playerScriptRefs[_playerNumber].VetResult; //pull player's result
                         _playerNumber++;
 
                         //_playerNumber++;
@@ -231,19 +230,20 @@ public class BoardManager : MonoBehaviour
 
                         //if (_playerNumber < 4)  //so don't get error referencing player
                         //{
-                   
-                        playerClone = _playerScriptRefs[_playerNumber];
-                        playerClone.VetExpantion(); //orange screen
-                        StartCoroutine("VetDecisionTimer", playerClone);
+
+                        _playerScriptRefs[_playerNumber] = _playerScriptRefs[_playerNumber];
+                        _playerScriptRefs[_playerNumber].VetExpansion(); //orange screen
+                        Debug.Log("Starting decision timer for " + _playerScriptRefs[_playerNumber].name);
+                        StartCoroutine("VetDecisionTimer", _playerScriptRefs[_playerNumber]);
                         // }
                     }
 
 
 
-                    //if(playerClone.VetDone == true)
+                    //if(p.VetDone == true)
                     //{
                     //    Debug.Log("Getting inside");
-                    //    playerClone.VetShrink();
+                    //    p.VetShrink();
                     //    Destroy(_copyCardLeft.gameObject); //delete clones
                     //    Destroy(_copyCardRight.gameObject);
 
@@ -258,9 +258,9 @@ public class BoardManager : MonoBehaviour
                 }
             }
 
-            if (_afterVet == true)  //get the vet result, true for yes/valid, false for no/invalid
+            if (_afterVet)  //get the vet result, true for yes/valid, false for no/invalid
             {
-                if (getVetResult())
+                if (GetVetResult())
                 {
                     //Add this connection with cardA and cardB and keyword
                     if (AddCardsToBoard(cardA, cardB, _currentKeyword))
@@ -286,7 +286,7 @@ public class BoardManager : MonoBehaviour
                 }
                 else
                 {
-                    //the players vetted against the connection. Reset the cards and pass. 
+                    //the players vetted against the connection. Reset the cards and pass.
                     _currentKeyword = "";
                     cardA.gameObject.GetComponent<Renderer>().enabled = false;
                     PassBtnHit();
@@ -308,9 +308,9 @@ public class BoardManager : MonoBehaviour
         if (!_isGameStarted)
             return;
         TimerScript.Timeleft = 90;
-        currentPlayer++;
-        Debug.Log("player's turn" + currentPlayer);
-        currentPlayer %= Players.Length;
+        CurrentPlayer++;
+        Debug.Log("player's turn" + CurrentPlayer);
+        CurrentPlayer %= Players.Length;
         //TODO: Set keyword list to scroll Rect
         PopulateKeywords();
         _isTurnOver = false;
@@ -446,27 +446,27 @@ public class BoardManager : MonoBehaviour
     private static void BuildDeck()
     {
 
-        IDbCommand dbcmd = dbconn.CreateCommand();
+        IDbCommand dbcmd = _dbconn.CreateCommand();
 
 
         // Load the collections.
         List<string> collectionList = new List<string>();
-        List<int> collectionIDList = new List<int>();
+        List<int> collectionIdList = new List<int>();
         try
         {
-            string sqlQuery = "SELECT * FROM sets";// get id of last card inserted into cards table
+            const string sqlQuery = "SELECT * FROM sets"; // get id of last card inserted into cards table
             dbcmd.CommandText = sqlQuery;
             IDataReader rd = dbcmd.ExecuteReader();
             while (rd.Read())
             {
-                collectionIDList.Add(rd.GetInt32(0));
+                collectionIdList.Add(rd.GetInt32(0));
                 collectionList.Add(rd.GetString(1));
             }
             rd.Close();
             rd = null;
 
             collectionList = collectionList.Distinct().ToList(); // Remove any duplicates.
-            collectionIDList = collectionIDList.Distinct().ToList(); // Remove any duplicates.
+            collectionIdList = collectionIdList.Distinct().ToList(); // Remove any duplicates.
         }
         catch (Exception e)
         {
@@ -477,9 +477,9 @@ public class BoardManager : MonoBehaviour
         foreach (string col in collectionList)
         {
             int index = collectionList.IndexOf(col);
-            int setID = collectionIDList[index];
+            int setId = collectionIdList[index];
 
-            string sqlQuery = "SELECT * FROM cards INNER JOIN sets ON cards.setID = sets.setID WHERE cards.setID = " + setID;// get id of last card inserted into cards table
+            string sqlQuery = "SELECT * FROM cards INNER JOIN sets ON cards.setID = sets.setID WHERE cards.setID = " + setId;// get id of last card inserted into cards table
             dbcmd.CommandText = sqlQuery;
             IDataReader rd = dbcmd.ExecuteReader();
             while (rd.Read())
@@ -492,10 +492,10 @@ public class BoardManager : MonoBehaviour
                 byte[] raw = (byte[])rd["cardDescription"];
                 string s = System.Text.Encoding.UTF8.GetString(raw);
                 cardComponent.SetExpInfo(s);
-                int cardID = (int)(long)rd["cardID"];
+                int cardId = (int)(long)rd["cardID"];
 
-                string keywordQuery = "SELECT * FROM attributes NATURAL JOIN parameters NATURAL JOIN cards NATURAL JOIN parameters_attributes WHERE cardID = " + cardID;
-                IDbCommand kwCmd = dbconn.CreateCommand();
+                string keywordQuery = "SELECT * FROM attributes NATURAL JOIN parameters NATURAL JOIN cards NATURAL JOIN parameters_attributes WHERE cardID = " + cardId;
+                IDbCommand kwCmd = _dbconn.CreateCommand();
                 kwCmd.CommandText = keywordQuery;
                 IDataReader kwReader = kwCmd.ExecuteReader();
                 while (kwReader.Read())
@@ -518,7 +518,7 @@ public class BoardManager : MonoBehaviour
 
 
     //    // Load the collections.
-    //    List<string> collectionList = new List<string>(); 
+    //    List<string> collectionList = new List<string>();
     //    try
     //    {
     //        using (
@@ -568,7 +568,7 @@ public class BoardManager : MonoBehaviour
 
     //                string nonQ = "INSERT into cards (cardDisplayTitle,cardDescription) VALUES ('" + cardComponent.name + "',@param)";
     //                dbcmd.CommandType = CommandType.Text;
-    //                dbcmd.CommandText = nonQ; 
+    //                dbcmd.CommandText = nonQ;
     //                dbcmd.Parameters.Add(new SqliteParameter("@param", cardComponent.GetExpInfo()));
     //                //string nonQ = "INSERT into cards (cardDisplayTitle,cardDescription) VALUES ('"+cardComponent.name+"','"+cardComponent.GetExpInfo()+"')";
     //                Debug.Log(dbcmd.CommandText);
@@ -868,7 +868,7 @@ public class BoardManager : MonoBehaviour
     {
         Debug.Log("Attempting to select hand card: " + card.name);
         bool cardFound = false;
-        foreach (Card c in _playerScriptRefs[currentPlayer].GetHand())
+        foreach (Card c in _playerScriptRefs[CurrentPlayer].GetHand())
         {
             if (c.name == card.name && !c.IsOnBoard())
             {
@@ -879,7 +879,7 @@ public class BoardManager : MonoBehaviour
         // First, check if the card is in the current player's hand.
         if (!cardFound)
             return;
-        foreach (Card c in _playerScriptRefs[currentPlayer].GetHand())
+        foreach (Card c in _playerScriptRefs[CurrentPlayer].GetHand())
         {
             if (!c.IsSelected() || c.IsOnBoard()) // Skip cards that aren't selected or are on the board.
                 continue;
@@ -934,7 +934,7 @@ public class BoardManager : MonoBehaviour
     public void PassBtnHit() //player hit pass button
     {
         _isTurnOver = true;
-        PlayKeywordList.Add(currentPlayer.ToString()); //add player passed  //TODO: FIX THIS!!! 
+        PlayKeywordList.Add(CurrentPlayer.ToString()); //add player passed  //TODO: FIX THIS!!!
         PlayKeywordList.Add("Pass");
         //LateUpdate();
     }
@@ -957,7 +957,7 @@ public class BoardManager : MonoBehaviour
     public CardCollection GetPlayersUnplayedCards()
     {
         CardCollection coll = new CardCollection("Unplayed Cards");
-        foreach (Card c in _playerScriptRefs[currentPlayer].GetHand())
+        foreach (Card c in _playerScriptRefs[CurrentPlayer].GetHand())
         {
             if (!c.IsOnBoard())
                 coll.AddCards(c);
@@ -981,9 +981,7 @@ public class BoardManager : MonoBehaviour
         return _isGameStarted;
     }
 
-
-
-    public void DisableVet() //diable vet screen
+    private void DisableVet() //disable vet screen
     {
         VetEnhance.gameObject.GetComponent<Renderer>().enabled = false;
         VetText.gameObject.GetComponent<Text>().enabled = false;
@@ -995,7 +993,7 @@ public class BoardManager : MonoBehaviour
         VetBtnLeft.gameObject.SetActive(false);
     }
 
-    public void EnableVet() //enable vet screen
+    private void EnableVet() //enable vet screen
     {
         VetEnhance.gameObject.GetComponent<Renderer>().enabled = true;
         VetText.gameObject.GetComponent<Text>().enabled = true;
@@ -1006,12 +1004,12 @@ public class BoardManager : MonoBehaviour
         VetBtnLeft.gameObject.SetActive(true);
     }
 
-    private IEnumerator vetSetUp()  //timer before vet screen pops up
+    private IEnumerator VetSetUp()  //timer before vet screen pops up
     {
         yield return new WaitForSeconds(1.0f);
-
+        Debug.Log("Enabling vet.");
         EnableVet();
-       
+
         VetConnectionWordTxt.gameObject.GetComponent<Text>().text = PlayKeywordList[++_listCount];
         _listCount--;
 
@@ -1022,19 +1020,20 @@ public class BoardManager : MonoBehaviour
         _copyCardRight = Instantiate(PlayCardList[_listCount++], new Vector3(0f, 0f, 0f), Quaternion.identity);
         _copyCardRight.transform.position = VetCard2.gameObject.transform.position;
         _copyCardRight.transform.localScale = Vector3.one;
-
-        StartCoroutine("VetTimer");  //start vet timer for vetting aloud
+        Debug.Log("Starting vet timer.");
+        StartCoroutine("VetTimer");  //start vet timer for vetting allowed
     }
 
     private IEnumerator VetTimer() //timer for players to select vet
     {
+
         yield return new WaitForSeconds(5.0f);
 
-        if (_hitVetBtn == false) //= no one hit vet btn -> next player's turn 
+        if (!_hitVetBtn) //= no one hit vet btn -> next player's turn
         {
             Destroy(_copyCardLeft.gameObject); //delete clones
             Destroy(_copyCardRight.gameObject);
-
+            Debug.Log("Disabling vet.");
             DisableVet(); //shrink vet visuals
 
             _afterVet = true;
@@ -1043,6 +1042,7 @@ public class BoardManager : MonoBehaviour
 
     private void VetBtnSelected()  //someone hit yellow btn!
     {
+        Debug.Log("Vet button selected.");
         VetText.gameObject.GetComponent<Text>().enabled = false;  //disable vet text question
         VetBtnRight.gameObject.SetActive(false);    //disable vet btns
         VetBtnLeft.gameObject.SetActive(false);
@@ -1052,32 +1052,31 @@ public class BoardManager : MonoBehaviour
 
         //tResult[_playerNumber] = true; //reset all results to true
 
-        Player playerClone = _playerScriptRefs[_playerNumber];
-
-        VetResult[0] = true;    //TODO: DONT HARDCODE FIRST AI
-        playerClone.VetDone = true; //first AI done
-        playerClone.VetBtnHit = true;
+        VetResultList[0] = true;    //TODO: DONT HARDCODE FIRST AI
+        _playerScriptRefs[_playerNumber].VetDone = true; //first AI done
+        _playerScriptRefs[_playerNumber].VetBtnHit = true;
 
     }
 
-    private IEnumerator VetDecisionTimer(Player playerClone)
+    private IEnumerator VetDecisionTimer(Player p)
     {
         yield return new WaitForSeconds(5.0f);
 
-        if (playerClone.VetBtnHit == false)  //if player didn't vote
+        if (!p.VetBtnHit)  //if player didn't vote
         {
-            Debug.Log("Shrinking");
-            playerClone.VetShrink();
-            playerClone.VetDone = true;
-            VetResult[_playerNumber] = true;    //auto set to agree
+            Debug.Log(p.name + " did not vote.");
+            p.VetShrink();
+            p.VetDone = true;
+            VetResultList[_playerNumber] = true;    //auto set to agree
         }
-        
+
     }
 
-    public bool getVetResult()
+    private bool GetVetResult()
     {
+        Debug.Log("Getting vet results.");
         int yesCount = 0, noCount = 0;
-        foreach (bool vet in VetResult)
+        foreach (bool vet in VetResultList)
         {
             if (vet)
             {
@@ -1088,18 +1087,8 @@ public class BoardManager : MonoBehaviour
                 noCount++;
             }
         }
-        if (yesCount >= noCount)
-        {
-            _hitVetBtn = false; //reset btn
-            return true;
-        }
-        else
-        {
-            _hitVetBtn = false; //reset btn
-            return false;
-        }
-
-       
+        _hitVetBtn = false; //reset btn
+        return yesCount >= noCount;
     }
 }
 

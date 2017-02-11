@@ -30,9 +30,9 @@ public class Player : MonoBehaviour
     public Button VetNoBtn;
     public bool VetDone;
     public bool VetBtnHit;
-    public bool vetResult;
+    public bool VetResult;
 
-    private static float[] _aiPassThresholds =
+    private static readonly float[] AiPassThresholds =
     {
         1.0f, 0.25f, 0.2f, 0.25f
     };
@@ -51,11 +51,11 @@ public class Player : MonoBehaviour
         VetText.gameObject.GetComponent<Text>().enabled = false;
         VetYesBtn.gameObject.SetActive(false);
         VetNoBtn.gameObject.SetActive(false);
-        VetYesBtn.GetComponent<Button>().onClick.AddListener(() => OnYesBtnHit());
-        VetNoBtn.GetComponent<Button>().onClick.AddListener(() => OnNoBtnHit());
+        VetYesBtn.GetComponent<Button>().onClick.AddListener(OnYesBtnHit);
+        VetNoBtn.GetComponent<Button>().onClick.AddListener(OnNoBtnHit);
         VetDone = false;
         VetBtnHit = false;
-        vetResult = true;
+        VetResult = true;
 
     }
 
@@ -105,26 +105,25 @@ public class Player : MonoBehaviour
             else
             {
                 int aIcounter = 0;
-                Card badCard = null;
                 playedCards.Shuffle(); // More organized way of choosing a random card than just picking a random index.
                 foreach (Card c in playedCards)
                 {
                     aIcounter++;
                     List<Card.CardProperty> commonProps = c.FindCommonProperties(pickedCard);
-                    if (aIcounter > (playedCards.Size % 3))
+                    if (aIcounter > playedCards.Size % 3)
                     {
                         float passChance = Random.Range(0.0f, 1.0f);
-                        if (passChance <= _aiPassThresholds[BoardManager.Instance.currentPlayer])
+                        if (passChance <= AiPassThresholds[BoardManager.Instance.CurrentPlayer])
                         {
-                            
+
                             BoardManager.Instance.PassBtnHit();
                         }
                         else
                         {
-                            badCard = c;
+                            Card badCard = c;
                             BoardManager.Instance.SelectCardOnBoard(badCard);
                             BoardManager.Instance.SelectKeyword(badCard.PropertyList.First());
-                            break; 
+                            break;
                         }
                     }
                     if (commonProps.Count <= 0)
@@ -216,7 +215,7 @@ public class Player : MonoBehaviour
         }
  }
 
-    public void VetExpantion()
+    public void VetExpansion()
     {
         VetEnhance.gameObject.GetComponent<Renderer>().enabled = true;
         VetText.gameObject.GetComponent<Text>().enabled = true;
@@ -236,14 +235,14 @@ public class Player : MonoBehaviour
 
     private void OnYesBtnHit()
     {
-        vetResult = true;
+        VetResult = true;
         VetDone = true;
         VetBtnHit = true;
     }
 
     private void OnNoBtnHit()
     {
-        vetResult = false;
+        VetResult = false;
         VetDone = true;
         VetBtnHit = true;
     }
