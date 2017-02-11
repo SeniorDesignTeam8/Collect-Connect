@@ -28,8 +28,8 @@ public class Player : MonoBehaviour
     public GameObject VetText;
     public Button VetYesBtn;
     public Button VetNoBtn;
-    public bool VetDone;
-    public bool VetBtnHit;
+    public bool playerVetted;
+    public bool YesNoBtnHit;
     public bool VetResult;
 
     private static readonly float[] AiPassThresholds =
@@ -53,8 +53,8 @@ public class Player : MonoBehaviour
         VetNoBtn.gameObject.SetActive(false);
         VetYesBtn.GetComponent<Button>().onClick.AddListener(OnYesBtnHit);
         VetNoBtn.GetComponent<Button>().onClick.AddListener(OnNoBtnHit);
-        VetDone = false;
-        VetBtnHit = false;
+        playerVetted = false;
+        YesNoBtnHit = false;
         VetResult = true;
 
     }
@@ -221,8 +221,8 @@ public class Player : MonoBehaviour
         VetText.gameObject.GetComponent<Text>().enabled = true;
         VetYesBtn.gameObject.SetActive(true);
         VetNoBtn.gameObject.SetActive(true);
-        VetDone = false;
-        VetBtnHit = false;
+        playerVetted = false;
+        YesNoBtnHit = false;
     }
 
     public void VetShrink()
@@ -236,14 +236,14 @@ public class Player : MonoBehaviour
     private void OnYesBtnHit()
     {
         VetResult = true;
-        VetDone = true;
-        VetBtnHit = true;
+        playerVetted = true;
+        YesNoBtnHit = true;
     }
 
     private void OnNoBtnHit()
     {
         VetResult = false;
-        VetDone = true;
-        VetBtnHit = true;
+        playerVetted = true;
+        YesNoBtnHit = true;
     }
 }
