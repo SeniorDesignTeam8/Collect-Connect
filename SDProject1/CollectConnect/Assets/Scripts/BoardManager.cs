@@ -211,8 +211,6 @@ public class BoardManager : MonoBehaviour
 
             if (_hitVetBtn == true) //rotate through vet y/n responses (yellow btn hit)
             {
-                Debug.Log("JUMPING");
-
                 if (_playerScriptRefs[_playerNumber].playerVetted == true) //if blue y/n btn hit
                 {
                     _playerScriptRefs[_playerNumber].VetShrink();

@@ -192,18 +192,15 @@ public class Card : MonoBehaviour
         switch (p.name.ToLower())
         {
             case "player1":
-                //rotation = Vector3.zero;
                 rotation = new Vector3(0.0f, 0.0f, 180.0f);
                 break;
             case "player2":
-                //rotation = new Vector3(0.0f, 0.0f, 90.0f);
                 rotation = new Vector3(0.0f, 0.0f, 180.0f);
                 break;
             case "player3":
                 rotation = new Vector3(0.0f, 0.0f, 180.0f);
                 break;
             case "player4":
-                // rotation = new Vector3(0.0f, 0.0f, -90.0f);
                 rotation = new Vector3(0.0f, 0.0f, 180.0f);
                 break;
             default:
@@ -227,37 +224,29 @@ public class Card : MonoBehaviour
         Player p = BoardManager.Instance.FindOwningPlayer(this);
         if (selected)
         {
-            char changeAxis;
-            float changeMagnitude;
-            switch (p.name.ToLower())
-            {
-                case "player1":
-                    changeAxis = 'y';
-                    changeMagnitude = -1.0f;
-                    break;
-                case "player2":
-                    //changeAxis = 'x';
-                    changeAxis = 'y';
-                    changeMagnitude = 1.0f;
-                    break;
-                case "player3":
-                    changeAxis = 'y';
-                    changeMagnitude = 1.0f;
-                    break;
-                case "player4":
-                    //changeAxis = 'x';
-                    //changeMagnitude = -1.0f;
-                    changeAxis = 'y';
-                    changeMagnitude = 1.0f;
-                    break;
-                default:
-                    return;
-            }
+            Card c = this;
             _originalPosition = transform.position;
-            if (changeAxis == 'x')
-                transform.position += new Vector3(changeMagnitude, 0.0f);
-            else
-                transform.position += new Vector3(0.0f, changeMagnitude);
+
+            if (c == p._playerHand.At(0))   //move cards to designated location on board
+            {
+                c.gameObject.transform.position = p.locationOnBoard1.transform.position;
+            }
+            else if (c == p._playerHand.At(1))
+            {
+                c.gameObject.transform.position = p.locationOnBoard2.transform.position;
+            }
+            else if (c == p._playerHand.At(2))
+            {
+                c.gameObject.transform.position = p.locationOnBoard3.transform.position;
+            }
+            else if (c == p._playerHand.At(3))
+            {
+                c.gameObject.transform.position = p.locationOnBoard4.transform.position;
+            }
+            else if (c == p._playerHand.At(4))
+            {
+                c.gameObject.transform.position = p.locationOnBoard5.transform.position;
+            }
         }
         else
         {
