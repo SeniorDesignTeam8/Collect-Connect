@@ -481,6 +481,8 @@ public class BoardManager : MonoBehaviour
                 string s = System.Text.Encoding.UTF8.GetString(raw);
                 cardComponent.SetExpInfo(s);
                 int cardId = (int)(long)rd["cardID"];
+                s = (string)rd["imageLocation"];
+                cardComponent.setImageLocation(s);
 
                 string keywordQuery = "SELECT * FROM attributes NATURAL JOIN parameters NATURAL JOIN cards NATURAL JOIN parameters_attributes WHERE cardID = " + cardId;
                 IDbCommand kwCmd = _dbconn.CreateCommand();
