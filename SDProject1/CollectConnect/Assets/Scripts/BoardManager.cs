@@ -924,8 +924,8 @@ public class BoardManager : MonoBehaviour
         {
             c.SetIsSelected(false); // Deselect any selected cards.
         }
-        PlayKeywordList.Add(CurrentPlayer.ToString()); //add player passed  //TODO: FIX THIS!!!
-        PlayKeywordList.Add("Pass");
+        //PlayKeywordList.Add(CurrentPlayer.ToString()); //add player passed  //TODO: FIX THIS!!!
+        //PlayKeywordList.Add("Pass");
         //LateUpdate();
     }
 
