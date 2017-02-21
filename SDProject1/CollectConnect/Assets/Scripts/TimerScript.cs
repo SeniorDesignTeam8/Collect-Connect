@@ -7,18 +7,18 @@ public class TimerScript : MonoBehaviour
 {
     public static int Timeleft;
     private BoardManager bM;
-    Text t;
+    private Text t;
 
     // Use this for initialization
-    void Start()
+    private void Start()
     {
         t = GetComponent<Text>();
         bM = FindObjectOfType<BoardManager>();
-        InvokeRepeating("decreaseTime", 1, 1);
+        InvokeRepeating("DecreaseTime", 1, 1);
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         if (Timeleft < 0)
         {
@@ -28,7 +28,7 @@ public class TimerScript : MonoBehaviour
         t.text = "" + Timeleft;
     }
 
-    void decreaseTime()
+    private void DecreaseTime()
     {
         Timeleft--;
     }

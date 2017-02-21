@@ -807,7 +807,7 @@ public class BoardManager : MonoBehaviour
         switch (playerIndex)
         {
             case 0:
-                connection.points[0].direction = ConnectionPoint.ConnectionDirection.North;
+                connection.points[0].direction = ConnectionPoint.ConnectionDirection.South;
                 connection.points[1].direction = ConnectionPoint.ConnectionDirection.North;
                 break;
             case 1:
@@ -851,15 +851,7 @@ public class BoardManager : MonoBehaviour
     public void SelectCardInHand(Card card)
     {
         Debug.Log("Attempting to select hand card: " + card.name);
-        bool cardFound = false;
-        foreach (Card c in _playerScriptRefs[CurrentPlayer].GetHand())
-        {
-            if (c.name == card.name && !c.IsOnBoard())
-            {
-                cardFound = true;
-                break;
-            }
-        }
+        bool cardFound = _playerScriptRefs[CurrentPlayer].GetHand().Cast<Card>().Any(c => c.name == card.name && !c.IsOnBoard());
         // First, check if the card is in the current player's hand.
         if (!cardFound)
             return;
@@ -918,6 +910,10 @@ public class BoardManager : MonoBehaviour
     public void PassBtnHit() //player hit pass button
     {
         _isTurnOver = true;
+        foreach (Card c in from p in _playerScriptRefs from Card c in p.GetHand() where c.IsSelected() select c)
+        {
+            c.SetIsSelected(false); // Deselect any selected cards.
+        }
         PlayKeywordList.Add(CurrentPlayer.ToString()); //add player passed  //TODO: FIX THIS!!!
         PlayKeywordList.Add("Pass");
         //LateUpdate();
