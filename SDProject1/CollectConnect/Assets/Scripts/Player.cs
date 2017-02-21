@@ -20,7 +20,7 @@ public class Player : MonoBehaviour
     public const int HandSize = 5;
     private bool[] _slotStatus = new bool[HandSize]; // True if taken, false if available.
     private string _playerName; // The player's name (internally).
-    private CardCollection _playerHand; // Represents the player's cards.
+    public CardCollection _playerHand; // Represents the player's cards.
     private Vector3 _expCardPosition;
     private Vector3 _expCardScale;
     private bool _isAiControlled = false; // TODO Find a way to programatically change this.
@@ -31,6 +31,14 @@ public class Player : MonoBehaviour
     public bool playerVetted;
     public bool YesNoBtnHit;
     public bool VetResult;
+    public Card card1;
+    public Card card2;
+    public String connectionKeyword;
+    public GameObject locationOnBoard1;
+    public GameObject locationOnBoard2;
+    public GameObject locationOnBoard3;
+    public GameObject locationOnBoard4;
+    public GameObject locationOnBoard5;
 
     private static readonly float[] AiPassThresholds =
     {
@@ -56,6 +64,11 @@ public class Player : MonoBehaviour
         playerVetted = false;
         YesNoBtnHit = false;
         VetResult = true;
+        locationOnBoard1.gameObject.GetComponent<Renderer>().enabled = false;
+        locationOnBoard2.gameObject.GetComponent<Renderer>().enabled = false;
+        locationOnBoard3.gameObject.GetComponent<Renderer>().enabled = false;
+        locationOnBoard4.gameObject.GetComponent<Renderer>().enabled = false;
+        locationOnBoard5.gameObject.GetComponent<Renderer>().enabled = false;
 
     }
 
@@ -185,7 +198,7 @@ public class Player : MonoBehaviour
         _expCardScale = card.gameObject.transform.localScale;
         card.gameObject.transform.position = ExpCardImage.transform.position;
         card.gameObject.transform.localScale = Vector3.one;
-        //TODO Make card appear in expand
+        //Make card appear in expand
     }
 
     public void CardShrink(Card card)  //Shrink card
@@ -196,7 +209,7 @@ public class Player : MonoBehaviour
         ExpCardInfo.gameObject.GetComponent<Text>().enabled = false;
         card.gameObject.transform.position = _expCardPosition;
         card.gameObject.transform.localScale = _expCardScale;
-        //TODO Make card disappear in expand
+        //Make card disappear in expand
     }
 
     public void SetAiControl(bool aiControlled)

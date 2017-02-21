@@ -2,6 +2,8 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
+
 
 public class Card : MonoBehaviour
 {
@@ -46,6 +48,7 @@ public class Card : MonoBehaviour
     private bool _isTimerRunning; // If true, mouse is currently held down on card.
     private string _expandedInfo; // Information to display in expanded view.
     public readonly List<CardProperty> PropertyList = new List<CardProperty>();
+    private string _imageLocation = null;
 
     // Use this for initialization
     private void Start()
@@ -92,7 +95,7 @@ public class Card : MonoBehaviour
 
     private void Update()
     {
-        if (!_isSpriteLoaded) // Wait for sprite to load before anything else.
+        if (!_isSpriteLoaded && _imageLocation != null) // Wait for sprite to load before anything else.
         {
             _isSpriteLoaded = SetSprite();
             return;
@@ -151,22 +154,45 @@ public class Card : MonoBehaviour
             .FirstOrDefault();
     }
 
+    //private bool SetSprite()
+    //{
+    //    try
+    //    {
+    //        string collectionName = PropertyList.Find(prop => prop.PropertyName == "Collection").PropertyValue;
+    //        if (string.IsNullOrEmpty(collectionName))
+    //            return false;
+    //        //string spriteName = name + ".png";
+    //        _renderer.sprite = Resources.Load<Sprite>("Sprites/" + collectionName + "/" + name);
+    //        return true;
+    //    }
+    //    catch (ArgumentNullException e)
+    //    {
+    //        Debug.Log(e);
+    //        return false;
+    //    }
+    //}
+
     private bool SetSprite()
     {
         try
         {
-            string collectionName = PropertyList.Find(prop => prop.PropertyName == "Collection").PropertyValue;
-            if (string.IsNullOrEmpty(collectionName))
-                return false;
-            //string spriteName = name + ".png";
-            _renderer.sprite = Resources.Load<Sprite>("Sprites/" + collectionName + "/" + name);
+            byte[] fileData = File.ReadAllBytes(Application.dataPath + "/pics/" + _imageLocation);
+            Texture2D tex = new Texture2D(2, 2);
+            tex.LoadImage(fileData);
+            Sprite mySprite = Sprite.Create(tex, new Rect(0.0f, 0.0f, tex.width, tex.height), new Vector2(0.5f, 0.5f), 75.0f);
+            _renderer.sprite = mySprite;
             return true;
         }
-        catch (ArgumentNullException e)
+        catch (DirectoryNotFoundException e)
         {
             Debug.Log(e);
             return false;
         }
+    }
+
+    public void setImageLocation(string loc)
+    {
+        _imageLocation = loc;
     }
 
     public void SetExpInfo(string info)
@@ -192,18 +218,15 @@ public class Card : MonoBehaviour
         switch (p.name.ToLower())
         {
             case "player1":
-                //rotation = Vector3.zero;
                 rotation = new Vector3(0.0f, 0.0f, 180.0f);
                 break;
             case "player2":
-                //rotation = new Vector3(0.0f, 0.0f, 90.0f);
                 rotation = new Vector3(0.0f, 0.0f, 180.0f);
                 break;
             case "player3":
                 rotation = new Vector3(0.0f, 0.0f, 180.0f);
                 break;
             case "player4":
-                // rotation = new Vector3(0.0f, 0.0f, -90.0f);
                 rotation = new Vector3(0.0f, 0.0f, 180.0f);
                 break;
             default:
@@ -227,37 +250,29 @@ public class Card : MonoBehaviour
         Player p = BoardManager.Instance.FindOwningPlayer(this);
         if (selected)
         {
-            char changeAxis;
-            float changeMagnitude;
-            switch (p.name.ToLower())
-            {
-                case "player1":
-                    changeAxis = 'y';
-                    changeMagnitude = -1.0f;
-                    break;
-                case "player2":
-                    //changeAxis = 'x';
-                    changeAxis = 'y';
-                    changeMagnitude = 1.0f;
-                    break;
-                case "player3":
-                    changeAxis = 'y';
-                    changeMagnitude = 1.0f;
-                    break;
-                case "player4":
-                    //changeAxis = 'x';
-                    //changeMagnitude = -1.0f;
-                    changeAxis = 'y';
-                    changeMagnitude = 1.0f;
-                    break;
-                default:
-                    return;
-            }
+            Card c = this;
             _originalPosition = transform.position;
-            if (changeAxis == 'x')
-                transform.position += new Vector3(changeMagnitude, 0.0f);
-            else
-                transform.position += new Vector3(0.0f, changeMagnitude);
+
+            if (c == p._playerHand.At(0))   //move cards to designated location on board
+            {
+                c.gameObject.transform.position = p.locationOnBoard1.transform.position;
+            }
+            else if (c == p._playerHand.At(1))
+            {
+                c.gameObject.transform.position = p.locationOnBoard2.transform.position;
+            }
+            else if (c == p._playerHand.At(2))
+            {
+                c.gameObject.transform.position = p.locationOnBoard3.transform.position;
+            }
+            else if (c == p._playerHand.At(3))
+            {
+                c.gameObject.transform.position = p.locationOnBoard4.transform.position;
+            }
+            else if (c == p._playerHand.At(4))
+            {
+                c.gameObject.transform.position = p.locationOnBoard5.transform.position;
+            }
         }
         else
         {
