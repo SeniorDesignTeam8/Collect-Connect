@@ -57,7 +57,7 @@ public class BoardManager : MonoBehaviour
     private int[] _scoreboard;
     private int _playerNumber;
     private static IDbConnection _dbconn;
-
+    private TimerScript ts;
 
 
 
@@ -106,6 +106,7 @@ public class BoardManager : MonoBehaviour
             _isFirstCardPlay = true;
             VetBtnLeft.GetComponent<Button>().onClick.AddListener(VetBtnSelected);
             VetBtnRight.GetComponent<Button>().onClick.AddListener(VetBtnSelected);
+            ts = FindObjectOfType<TimerScript>();
         }
         else if (Instance != this)
         {
@@ -213,6 +214,7 @@ public class BoardManager : MonoBehaviour
             {
                 if (_playerScriptRefs[_playerNumber].playerVetted == true) //if blue y/n btn hit
                 {
+                    ts.CancelInvoke();
                     _playerScriptRefs[_playerNumber].VetShrink();
                     VetResultList[_playerNumber] = _playerScriptRefs[_playerNumber].VetResult; //pull player's result
                     _playerNumber++;
@@ -280,6 +282,7 @@ public class BoardManager : MonoBehaviour
                         _afterVet = false;
                         _vetStartBool = false;
                     }
+                ts.InvokeRepeating("decreaseTime", 1, 1);
             }
 
         }
