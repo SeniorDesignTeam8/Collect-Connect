@@ -42,7 +42,7 @@ public class Player : MonoBehaviour
 
     private static readonly float[] AiPassThresholds =
     {
-        1.0f, 0.25f, 0.2f, 0.25f
+        0.2f, 0.25f, 0.2f, 0.25f
     };
 
     private void Start()
@@ -117,28 +117,29 @@ public class Player : MonoBehaviour
             }
             else
             {
-                //float passChance = Random.Range(0.0f, 1.0f);
-                //if (passChance <= AiPassThresholds[BoardManager.Instance.CurrentPlayer])
-                //{
-                //    Debug.Log("AI Passed.");
-                //    BoardManager.Instance.PassBtnHit();
-                //}
-                //else
+                float passChance = Random.Range(0.0f, 1.0f);
+                if (passChance <= AiPassThresholds[BoardManager.Instance.CurrentPlayer])
                 {
-                    int aIcounter = 0;
+                    Debug.Log("AI Passed.");
+                    BoardManager.Instance.PassBtnHit();
+                }
+                else
+                {
+                    
                     playedCards.Shuffle(); // More organized way of choosing a random card than just picking a random index.
                     foreach (Card c in playedCards)
                     {
-                        aIcounter++;
+                        float aiValidPlayChance = Random.Range(0.0f, 1.0f);
                         List<Card.CardProperty> commonProps = c.FindCommonProperties(pickedCard);
                         //random index to determine if valid play should happen...
-                        if (aIcounter < 20)
+                        if (aiValidPlayChance < 0.8)
                         {
                             if (commonProps.Count <= 0)
                                 continue;
                             BoardManager.Instance.SelectCardOnBoard(c);
                             ShufflePropertyList(ref commonProps);
                             BoardManager.Instance.SelectKeyword(commonProps[0]);
+                            Debug.Log("AI play valid");
                         }
                         else
                         {
@@ -146,6 +147,7 @@ public class Player : MonoBehaviour
                             Card badCard = c;
                             BoardManager.Instance.SelectCardOnBoard(badCard);
                             BoardManager.Instance.SelectKeyword(badCard.PropertyList.First());
+                            Debug.Log("AI play invalid");
                         }
                         return;
                     }
@@ -158,6 +160,7 @@ public class Player : MonoBehaviour
     public void IncreaseScore(int reward)
     {
         Score += reward;
+        Debug.Log("Score: " + reward);
     }
 
     public void ReduceScore(int penalty)

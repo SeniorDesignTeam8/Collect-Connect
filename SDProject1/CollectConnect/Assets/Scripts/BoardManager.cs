@@ -987,6 +987,7 @@ public class BoardManager : MonoBehaviour
 
     private void EnableVet() //enable vet screen
     {
+        
         VetEnhance.gameObject.GetComponent<Renderer>().enabled = true;
         ConnectionBackground.gameObject.GetComponent<Renderer>().enabled = true;
         VetConnectionWordTxt.gameObject.GetComponent<Text>().enabled = true;
