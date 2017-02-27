@@ -124,8 +124,7 @@ public class Player : MonoBehaviour
                     BoardManager.Instance.PassBtnHit();
                 }
                 else
-                {
-                    
+                {                    
                     playedCards.Shuffle(); // More organized way of choosing a random card than just picking a random index.
                     foreach (Card c in playedCards)
                     {

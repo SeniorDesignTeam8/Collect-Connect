@@ -1084,5 +1084,37 @@ public class BoardManager : MonoBehaviour
         }
         return yesCount >= noCount;
     }
+
+    private void ToggleCardsOff()
+    {
+        CardCollection playedCards = BoardManager.Instance.GetPlayedCards();
+        foreach (Player p in _playerScriptRefs)
+        {
+            foreach (Card c in p.GetHand())
+            {
+                c.gameObject.layer = 2;
+            }
+        }
+        foreach (Card c in playedCards)
+        {
+            c.gameObject.layer = 2;
+        }
+    }
+
+    private void ToggleCardsOn()
+    {
+        CardCollection playedCards = BoardManager.Instance.GetPlayedCards();
+        foreach (Player p in _playerScriptRefs)
+        {
+            foreach (Card c in p.GetHand())
+            {
+                c.gameObject.layer = 0;
+            }
+        }
+        foreach (Card c in playedCards)
+        {
+            c.gameObject.layer = 0;
+        }
+    }
 }
 
