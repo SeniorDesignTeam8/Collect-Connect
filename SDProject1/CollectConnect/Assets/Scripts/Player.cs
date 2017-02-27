@@ -92,7 +92,7 @@ public class Player : MonoBehaviour
         else
             IsDrawingCards = false;
 
-        if (_isAiControlled &&  BoardManager.Instance.GetCurrentPlayer() == this &&
+        if (_isAiControlled && BoardManager.Instance.GetCurrentPlayer() == this &&
             !BoardManager.Instance.GetIsTurnOver() && BoardManager.Instance.GetIsStarted())
         {
             Debug.Log("AI Control: " + name);
@@ -117,38 +117,42 @@ public class Player : MonoBehaviour
             }
             else
             {
-                int aIcounter = 0;
-                playedCards.Shuffle(); // More organized way of choosing a random card than just picking a random index.
-                foreach (Card c in playedCards)
+                float passChance = Random.Range(0.0f, 1.0f);
+                if (passChance <= AiPassThresholds[BoardManager.Instance.CurrentPlayer])
                 {
-                    aIcounter++;
-                    List<Card.CardProperty> commonProps = c.FindCommonProperties(pickedCard);
-                    if (aIcounter > playedCards.Size % 3)
+                    BoardManager.Instance.PassBtnHit();
+                }
+                else
+                {
+                    int aIcounter = 0;
+                    playedCards.Shuffle(); // More organized way of choosing a random card than just picking a random index.
+                    foreach (Card c in playedCards)
                     {
-                        float passChance = Random.Range(0.0f, 1.0f);
-                        if (passChance <= AiPassThresholds[BoardManager.Instance.CurrentPlayer])
+                        aIcounter++;
+                        List<Card.CardProperty> commonProps = c.FindCommonProperties(pickedCard);
+                        //random index to determine if valid play should happen...
+                        if (aIcounter < 7)
                         {
-
-                            BoardManager.Instance.PassBtnHit();
+                            if (commonProps.Count <= 0)
+                                continue;
+                            BoardManager.Instance.SelectCardOnBoard(c);
+                            ShufflePropertyList(ref commonProps);
+                            BoardManager.Instance.SelectKeyword(commonProps[0]);
                         }
                         else
                         {
+                            //...otherwise this invalid play should happen
                             Card badCard = c;
                             BoardManager.Instance.SelectCardOnBoard(badCard);
                             BoardManager.Instance.SelectKeyword(badCard.PropertyList.First());
-                            break;
                         }
+                        return;
                     }
-                    if (commonProps.Count <= 0)
-                        continue;
-                    BoardManager.Instance.SelectCardOnBoard(c);
-                    ShufflePropertyList(ref commonProps);
-                    BoardManager.Instance.SelectKeyword(commonProps[0]);
-                    return;
                 }
             }
         }
     }
+
 
     public void IncreaseScore(int reward)
     {
