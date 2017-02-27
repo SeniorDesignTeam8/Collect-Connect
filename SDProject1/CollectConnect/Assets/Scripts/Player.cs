@@ -153,6 +153,7 @@ public class Player : MonoBehaviour
     public void IncreaseScore(int reward)
     {
         Score += reward;
+        Debug.Log("Score: " + reward);
     }
 
     public void ReduceScore(int penalty)
