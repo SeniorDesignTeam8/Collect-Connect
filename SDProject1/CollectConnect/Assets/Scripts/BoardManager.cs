@@ -984,6 +984,7 @@ public class BoardManager : MonoBehaviour
 
     private void EnableVet() //enable vet screen
     {
+        
         VetEnhance.gameObject.GetComponent<Renderer>().enabled = true;
         ConnectionBackground.gameObject.GetComponent<Renderer>().enabled = true;
         VetConnectionWordTxt.gameObject.GetComponent<Text>().enabled = true;
@@ -1079,6 +1080,38 @@ public class BoardManager : MonoBehaviour
             }
         }
         return yesCount >= noCount;
+    }
+
+    private void ToggleCardsOff()
+    {
+        CardCollection playedCards = BoardManager.Instance.GetPlayedCards();
+        foreach (Player p in _playerScriptRefs)
+        {
+            foreach (Card c in p.GetHand())
+            {
+                c.gameObject.layer = 2;
+            }
+        }
+        foreach (Card c in playedCards)
+        {
+            c.gameObject.layer = 2;
+        }
+    }
+
+    private void ToggleCardsOn()
+    {
+        CardCollection playedCards = BoardManager.Instance.GetPlayedCards();
+        foreach (Player p in _playerScriptRefs)
+        {
+            foreach (Card c in p.GetHand())
+            {
+                c.gameObject.layer = 0;
+            }
+        }
+        foreach (Card c in playedCards)
+        {
+            c.gameObject.layer = 0;
+        }
     }
 }
 
