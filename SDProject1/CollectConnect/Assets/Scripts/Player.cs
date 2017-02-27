@@ -117,12 +117,13 @@ public class Player : MonoBehaviour
             }
             else
             {
-                float passChance = Random.Range(0.0f, 1.0f);
-                if (passChance <= AiPassThresholds[BoardManager.Instance.CurrentPlayer])
-                {
-                    BoardManager.Instance.PassBtnHit();
-                }
-                else
+                //float passChance = Random.Range(0.0f, 1.0f);
+                //if (passChance <= AiPassThresholds[BoardManager.Instance.CurrentPlayer])
+                //{
+                //    Debug.Log("AI Passed.");
+                //    BoardManager.Instance.PassBtnHit();
+                //}
+                //else
                 {
                     int aIcounter = 0;
                     playedCards.Shuffle(); // More organized way of choosing a random card than just picking a random index.
@@ -131,7 +132,7 @@ public class Player : MonoBehaviour
                         aIcounter++;
                         List<Card.CardProperty> commonProps = c.FindCommonProperties(pickedCard);
                         //random index to determine if valid play should happen...
-                        if (aIcounter < 7)
+                        if (aIcounter < 20)
                         {
                             if (commonProps.Count <= 0)
                                 continue;
