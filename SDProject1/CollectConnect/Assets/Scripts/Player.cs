@@ -131,7 +131,7 @@ public class Player : MonoBehaviour
                     {
                         float aiValidPlayChance = Random.Range(0.0f, 1.0f);
                         List<Card.CardProperty> commonProps = c.FindCommonProperties(pickedCard);
-                        //random index to determine if valid play should happen...
+                        //random index to determine if valid play should happen 80% of the time...
                         if (aiValidPlayChance < 0.8)
                         {
                             if (commonProps.Count <= 0)
