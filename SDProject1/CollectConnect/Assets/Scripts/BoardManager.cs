@@ -59,8 +59,6 @@ public class BoardManager : MonoBehaviour
     private static IDbConnection _dbconn;
     private TimerScript ts;
 
-
-
     private void Awake()
     {
         _isGameStarted = false;
@@ -277,6 +275,8 @@ public class BoardManager : MonoBehaviour
 
                         _currentKeyword = "";
                         cardA.gameObject.GetComponent<Renderer>().enabled = false;
+                        Destroy(cardA.gameObject);  //destroy game object
+                  
                         _isTurnOver = true;
                         _hitVetBtn = false; //reset btn
                         _afterVet = false;
@@ -927,9 +927,6 @@ public class BoardManager : MonoBehaviour
         {
             c.SetIsSelected(false); // Deselect any selected cards.
         }
-        //PlayKeywordList.Add(CurrentPlayer.ToString()); //add player passed  //TODO: FIX THIS!!!
-        //PlayKeywordList.Add("Pass");
-        //LateUpdate();
     }
 
     public Player FindOwningPlayer(Card card)
