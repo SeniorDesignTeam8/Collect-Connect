@@ -139,7 +139,7 @@ public class Card : MonoBehaviour
         PropertyList.Add(newProp);
     }
 
-    public string GetProperty(string searchName)
+    public string GetPropertyValue(string searchName)
     {
         return
             PropertyList.Where(prop => prop.PropertyName == searchName)
@@ -149,9 +149,11 @@ public class Card : MonoBehaviour
 
     public int GetPts(string searchName)
     {
-        return PropertyList.Where(prop => prop.PropertyName == searchName)
-            .Select(prop => prop._pointValue)
-            .FirstOrDefault();
+        foreach (CardProperty prop in PropertyList.Where(prop => prop.PropertyValue == GetPropertyValue(searchName)))
+        {
+            return prop._pointValue;
+        }
+        return 1;
     }
 
     //private bool SetSprite()

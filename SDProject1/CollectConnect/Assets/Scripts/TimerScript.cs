@@ -2,13 +2,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class TimerScript : MonoBehaviour
 {
     public static int Timeleft;
     private BoardManager bM;
     private Button rButton;
-    private int numOfClicks = 0;
+    private bool isPaused = false;
+    int lastButNum = -1;
+    float lastClickTime = -99;
+    const float D_CLICK_DELAY = 0.25f;
     Text t;
 
     // Use this for initialization
@@ -40,7 +44,7 @@ public class TimerScript : MonoBehaviour
 
         if(Input.GetKeyDown(KeyCode.Space))
             CancelInvoke();
-        if(Input.GetKeyUp(KeyCode.Space))
+        if (Input.GetKeyUp(KeyCode.Space))
             InvokeRepeating("decreaseTime", 1, 1);
 
         t.text = "" + Timeleft;
@@ -53,8 +57,21 @@ public class TimerScript : MonoBehaviour
 
     void resetTimer()
     {
-        numOfClicks++;
-        if (numOfClicks%3 == 0)
+        if (lastClickTime > Time.time - D_CLICK_DELAY && lastButNum == 2)
+        {
+            CancelInvoke();
             Timeleft = 90;
+            InvokeRepeating("decreaseTime", 1, 1);
+        }
+        else if (lastClickTime > Time.time - D_CLICK_DELAY && lastButNum == 1)
+        {
+            lastClickTime = Time.time;
+            lastButNum = 2;
+        }
+        else
+        {
+            lastClickTime = Time.time;
+            lastButNum = 1;
+        }
     }
 }
