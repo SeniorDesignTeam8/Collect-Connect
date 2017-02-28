@@ -326,6 +326,7 @@ public class BoardManager : MonoBehaviour
             passBtnP2.gameObject.SetActive(false);
             passBtnP3.gameObject.SetActive(false);
             passBtnP4.gameObject.SetActive(false);
+            fubar();
         }
         else if (CurrentPlayer == 1)
         {
@@ -333,6 +334,7 @@ public class BoardManager : MonoBehaviour
             passBtnP2.gameObject.SetActive(true);
             passBtnP3.gameObject.SetActive(false);
             passBtnP4.gameObject.SetActive(false);
+            fubar();
         }
         else if (CurrentPlayer == 2)
         {
@@ -340,6 +342,7 @@ public class BoardManager : MonoBehaviour
             passBtnP2.gameObject.SetActive(false);
             passBtnP3.gameObject.SetActive(true);
             passBtnP4.gameObject.SetActive(false);
+            fubar();
         }
         else if (CurrentPlayer == 3)
         {
@@ -347,6 +350,7 @@ public class BoardManager : MonoBehaviour
             passBtnP2.gameObject.SetActive(false);
             passBtnP3.gameObject.SetActive(false);
             passBtnP4.gameObject.SetActive(true);
+            fubar();
         }
 
 
@@ -985,6 +989,7 @@ public class BoardManager : MonoBehaviour
         CardCollection coll = new CardCollection("Board Cards");
         foreach (Card c in _playerScriptRefs.SelectMany(p => (from Card c in p.GetHand() where c.IsOnBoard() select c)))
         {
+            if(c.gameObject.layer == 0)
             coll.AddCards(c); // Add all cards that are on the board to the collection.
         }
         return coll;
@@ -1160,5 +1165,23 @@ public class BoardManager : MonoBehaviour
             c.gameObject.layer = 0;
         }
     }
+
+    private void fubar()
+    {
+        foreach (Button go in KeywordContainerP2.gameObject.GetComponents<Button>())
+        {
+            go.gameObject.layer = 2;
+        }
+    }
+
+    private void fobar()
+    {
+        foreach (Button go in KeywordContainerP2.gameObject.GetComponents<Button>())
+        {
+            go.gameObject.layer = 5;
+        }
+    }
+
+
 }
 
