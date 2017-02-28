@@ -51,7 +51,7 @@ public class BoardManager : MonoBehaviour
     private Card _copyCardRight;
     public List<bool> VetResultList;
     private bool _afterVet;
-    private bool _vetStartBool;
+    public bool _vetStartBool;
     private bool _hitVetBtn;
     private readonly List<Vector3> _gridPositions = new List<Vector3>();
     private int[] _scoreboard;
