@@ -216,7 +216,7 @@ public class BoardManager : MonoBehaviour
                 {
                     ts.CancelInvoke();
                     _playerScriptRefs[_playerNumber].VetShrink();
-                    VetResultList[_playerNumber] = _playerScriptRefs[_playerNumber].VetResult; //pull player's result
+                    VetResultList[_playerNumber] = _playerScriptRefs[_playerNumber].VetResult; //pull player's result 
                     _playerNumber++;
 
                     if (_playerNumber < 4) //if hit y/n button

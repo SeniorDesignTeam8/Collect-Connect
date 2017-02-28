@@ -42,7 +42,9 @@ public class Player : MonoBehaviour
 
     private static readonly float[] AiPassThresholds =
     {
-        0.2f, 0.25f, 0.2f, 0.25f
+
+
+        0.05f, 0.25f, 0.2f, 0.25f
     };
 
     private void Start()
@@ -117,11 +119,12 @@ public class Player : MonoBehaviour
             }
             else
             {
+               
                 float passChance = Random.Range(0.0f, 1.0f);
                 if (passChance <= AiPassThresholds[BoardManager.Instance.CurrentPlayer])
-                {
+                {  
                     Debug.Log("AI Passed.");
-                    BoardManager.Instance.PassBtnHit();
+                    BoardManager.Instance.PassBtnHit();  
                 }
                 else
                 {                    
@@ -139,6 +142,7 @@ public class Player : MonoBehaviour
                             ShufflePropertyList(ref commonProps);
                             BoardManager.Instance.SelectKeyword(commonProps[0]);
                             Debug.Log("AI play valid");
+                            break;
                         }
                         else
                         {
@@ -147,8 +151,9 @@ public class Player : MonoBehaviour
                             BoardManager.Instance.SelectCardOnBoard(badCard);
                             BoardManager.Instance.SelectKeyword(badCard.PropertyList.First());
                             Debug.Log("AI play invalid");
+                            break;
                         }
-                        return;
+                        
                     }
                 }
             }
