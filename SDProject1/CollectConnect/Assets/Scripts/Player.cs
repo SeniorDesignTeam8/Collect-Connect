@@ -126,9 +126,10 @@ public class Player : MonoBehaviour
                 else
                 {                    
                     playedCards.Shuffle(); // More organized way of choosing a random card than just picking a random index.
+                    float aiValidPlayChance = Random.Range(0.0f, 1.0f);
                     foreach (Card c in playedCards)
                     {
-                        float aiValidPlayChance = Random.Range(0.0f, 1.0f);
+                        
                         List<Card.CardProperty> commonProps = c.FindCommonProperties(pickedCard);
                         //random index to determine if valid play should happen 80% of the time...
                         if (aiValidPlayChance < 0.8)
@@ -139,6 +140,7 @@ public class Player : MonoBehaviour
                             ShufflePropertyList(ref commonProps);
                             BoardManager.Instance.SelectKeyword(commonProps[0]);
                             Debug.Log("AI play valid");
+                            break;
                         }
                         else
                         {
@@ -147,6 +149,7 @@ public class Player : MonoBehaviour
                             BoardManager.Instance.SelectCardOnBoard(badCard);
                             BoardManager.Instance.SelectKeyword(badCard.PropertyList.First());
                             Debug.Log("AI play invalid");
+                            break;
                         }
                     }
                 }
