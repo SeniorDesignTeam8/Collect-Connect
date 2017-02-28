@@ -59,8 +59,6 @@ public class BoardManager : MonoBehaviour
     private static IDbConnection _dbconn;
     private TimerScript ts;
 
-
-
     private void Awake()
     {
         _isGameStarted = false;
@@ -232,6 +230,7 @@ public class BoardManager : MonoBehaviour
                         Destroy(_copyCardLeft.gameObject); //delete clones
                         Destroy(_copyCardRight.gameObject);
                         DisableVet(); //shrink vet visuals
+                        ToggleCardsOn();
                         _afterVet = true; //all done vetting
                         _playerNumber = 0;
                     }
@@ -277,6 +276,8 @@ public class BoardManager : MonoBehaviour
 
                         _currentKeyword = "";
                         cardA.gameObject.GetComponent<Renderer>().enabled = false;
+                        cardA.gameObject.layer = 2;  //"destoryed" card
+
                         _isTurnOver = true;
                         _hitVetBtn = false; //reset btn
                         _afterVet = false;
@@ -927,9 +928,6 @@ public class BoardManager : MonoBehaviour
         {
             c.SetIsSelected(false); // Deselect any selected cards.
         }
-        //PlayKeywordList.Add(CurrentPlayer.ToString()); //add player passed  //TODO: FIX THIS!!!
-        //PlayKeywordList.Add("Pass");
-        //LateUpdate();
     }
 
     public Player FindOwningPlayer(Card card)
@@ -987,7 +985,6 @@ public class BoardManager : MonoBehaviour
 
     private void EnableVet() //enable vet screen
     {
-        
         VetEnhance.gameObject.GetComponent<Renderer>().enabled = true;
         ConnectionBackground.gameObject.GetComponent<Renderer>().enabled = true;
         VetConnectionWordTxt.gameObject.GetComponent<Text>().enabled = true;
@@ -1008,6 +1005,7 @@ public class BoardManager : MonoBehaviour
         }
 
         EnableVet();
+        ToggleCardsOff();
 
         VetConnectionWordTxt.gameObject.GetComponent<Text>().text = _playerScriptRefs[CurrentPlayer].connectionKeyword; //store card connection for vet and vote 
 
@@ -1034,6 +1032,7 @@ public class BoardManager : MonoBehaviour
             Destroy(_copyCardRight.gameObject);
             Debug.Log("Disabling vet.");
             DisableVet(); //shrink vet visuals
+            ToggleCardsOn();
             _afterVet = true;
         }
     }
@@ -1087,7 +1086,7 @@ public class BoardManager : MonoBehaviour
 
     private void ToggleCardsOff()
     {
-        CardCollection playedCards = BoardManager.Instance.GetPlayedCards();
+        CardCollection playedCards = GetPlayedCards();
         foreach (Player p in _playerScriptRefs)
         {
             foreach (Card c in p.GetHand())
@@ -1103,7 +1102,7 @@ public class BoardManager : MonoBehaviour
 
     private void ToggleCardsOn()
     {
-        CardCollection playedCards = BoardManager.Instance.GetPlayedCards();
+        CardCollection playedCards = GetPlayedCards();
         foreach (Player p in _playerScriptRefs)
         {
             foreach (Card c in p.GetHand())
