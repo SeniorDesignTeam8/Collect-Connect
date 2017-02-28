@@ -286,12 +286,13 @@ public class BoardManager : MonoBehaviour
                         _playerScriptRefs[CurrentPlayer].card1 = null;
                         _playerScriptRefs[CurrentPlayer].card2 = null;
                         _playerScriptRefs[CurrentPlayer].connectionKeyword = "Vetted Against";
-
                         _currentKeyword = "";
                         cardA.gameObject.GetComponent<Renderer>().enabled = false;
-                        cardA.gameObject.layer = 2;  //"destoryed" card
+                        cardA.gameObject.layer = 2;  //"destroyed"
 
-                        _isTurnOver = true;
+                        //Destroy(cardA.gameObject);
+
+                    _isTurnOver = true;
                         _hitVetBtn = false; //reset btn
                         _afterVet = false;
                         _vetStartBool = false;
@@ -319,13 +320,15 @@ public class BoardManager : MonoBehaviour
         Debug.Log("player's turn" + CurrentPlayer);
         CurrentPlayer %= Players.Length;
 
-
         if (CurrentPlayer == 0)
         {
             passBtnP1.gameObject.SetActive(true);
             passBtnP2.gameObject.SetActive(false);
             passBtnP3.gameObject.SetActive(false);
             passBtnP4.gameObject.SetActive(false);
+            KeywordContainerP2.gameObject.layer = 2;
+            KeywordContainerP3.gameObject.layer = 2;
+            KeywordContainerP4.gameObject.layer = 2;
         }
         else if (CurrentPlayer == 1)
         {
@@ -333,6 +336,9 @@ public class BoardManager : MonoBehaviour
             passBtnP2.gameObject.SetActive(true);
             passBtnP3.gameObject.SetActive(false);
             passBtnP4.gameObject.SetActive(false);
+            KeywordContainerP2.gameObject.layer = 5;
+            KeywordContainerP3.gameObject.layer = 2;
+            KeywordContainerP4.gameObject.layer = 2;
         }
         else if (CurrentPlayer == 2)
         {
@@ -340,6 +346,9 @@ public class BoardManager : MonoBehaviour
             passBtnP2.gameObject.SetActive(false);
             passBtnP3.gameObject.SetActive(true);
             passBtnP4.gameObject.SetActive(false);
+            KeywordContainerP2.gameObject.layer = 2;
+            KeywordContainerP3.gameObject.layer = 5;
+            KeywordContainerP4.gameObject.layer = 2;
         }
         else if (CurrentPlayer == 3)
         {
@@ -347,6 +356,9 @@ public class BoardManager : MonoBehaviour
             passBtnP2.gameObject.SetActive(false);
             passBtnP3.gameObject.SetActive(false);
             passBtnP4.gameObject.SetActive(true);
+            KeywordContainerP2.gameObject.layer = 2;
+            KeywordContainerP3.gameObject.layer = 2;
+            KeywordContainerP4.gameObject.layer = 5;
         }
 
 
@@ -984,7 +996,8 @@ public class BoardManager : MonoBehaviour
     {
         CardCollection coll = new CardCollection("Board Cards");
         foreach (Card c in _playerScriptRefs.SelectMany(p => (from Card c in p.GetHand() where c.IsOnBoard() select c)))
-        {
+        { 
+            if(c.gameObject.layer == 0)
             coll.AddCards(c); // Add all cards that are on the board to the collection.
         }
         return coll;

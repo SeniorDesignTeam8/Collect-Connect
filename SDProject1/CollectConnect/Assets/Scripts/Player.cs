@@ -69,7 +69,6 @@ public class Player : MonoBehaviour
         locationOnBoard3.gameObject.GetComponent<Renderer>().enabled = false;
         locationOnBoard4.gameObject.GetComponent<Renderer>().enabled = false;
         locationOnBoard5.gameObject.GetComponent<Renderer>().enabled = false;
-
     }
 
     private void Update()
