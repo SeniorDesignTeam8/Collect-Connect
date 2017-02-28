@@ -148,7 +148,6 @@ public class Player : MonoBehaviour
                             BoardManager.Instance.SelectKeyword(badCard.PropertyList.First());
                             Debug.Log("AI play invalid");
                         }
-                        return;
                     }
                 }
             }

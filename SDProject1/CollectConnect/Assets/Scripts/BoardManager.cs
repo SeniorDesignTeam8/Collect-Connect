@@ -58,6 +58,10 @@ public class BoardManager : MonoBehaviour
     private int _playerNumber;
     private static IDbConnection _dbconn;
     private TimerScript ts;
+    public Button passBtnP1;
+    public Button passBtnP2;
+    public Button passBtnP3;
+    public Button passBtnP4;
 
     private void Awake()
     {
@@ -104,6 +108,15 @@ public class BoardManager : MonoBehaviour
             _isFirstCardPlay = true;
             VetBtnLeft.GetComponent<Button>().onClick.AddListener(VetBtnSelected);
             VetBtnRight.GetComponent<Button>().onClick.AddListener(VetBtnSelected);
+            passBtnP1.GetComponent<Button>().onClick.AddListener(PassBtnHit);
+            passBtnP2.GetComponent<Button>().onClick.AddListener(PassBtnHit);
+            passBtnP3.GetComponent<Button>().onClick.AddListener(PassBtnHit);
+            passBtnP4.GetComponent<Button>().onClick.AddListener(PassBtnHit);
+            passBtnP1.gameObject.SetActive(false);
+            passBtnP2.gameObject.SetActive(false);
+            passBtnP3.gameObject.SetActive(false);
+            passBtnP4.gameObject.SetActive(false);
+
             ts = FindObjectOfType<TimerScript>();
         }
         else if (Instance != this)
@@ -302,9 +315,41 @@ public class BoardManager : MonoBehaviour
             return;
         TimerScript.Timeleft = 90;
         CurrentPlayer++;
+
         Debug.Log("player's turn" + CurrentPlayer);
         CurrentPlayer %= Players.Length;
-        //TODO: Set keyword list to scroll Rect
+
+
+        if (CurrentPlayer == 0)
+        {
+            passBtnP1.gameObject.SetActive(true);
+            passBtnP2.gameObject.SetActive(false);
+            passBtnP3.gameObject.SetActive(false);
+            passBtnP4.gameObject.SetActive(false);
+        }
+        else if (CurrentPlayer == 1)
+        {
+            passBtnP1.gameObject.SetActive(false);
+            passBtnP2.gameObject.SetActive(true);
+            passBtnP3.gameObject.SetActive(false);
+            passBtnP4.gameObject.SetActive(false);
+        }
+        else if (CurrentPlayer == 2)
+        {
+            passBtnP1.gameObject.SetActive(true);
+            passBtnP2.gameObject.SetActive(false);
+            passBtnP3.gameObject.SetActive(true);
+            passBtnP4.gameObject.SetActive(false);
+        }
+        else if (CurrentPlayer == 3)
+        {
+            passBtnP1.gameObject.SetActive(true);
+            passBtnP2.gameObject.SetActive(false);
+            passBtnP3.gameObject.SetActive(false);
+            passBtnP4.gameObject.SetActive(true);
+        }
+
+
         PopulateKeywords();
         _isTurnOver = false;
         _isPlayerCardSelected = false;
