@@ -93,7 +93,8 @@ public class Player : MonoBehaviour
             IsDrawingCards = false;
 
         if (_isAiControlled && BoardManager.Instance.GetCurrentPlayer() == this &&
-            !BoardManager.Instance.GetIsTurnOver() && BoardManager.Instance.GetIsStarted())
+            !BoardManager.Instance.GetIsTurnOver() && BoardManager.Instance.GetIsStarted()
+            && BoardManager.Instance._vetStartBool == false)
         {
             Debug.Log("AI Control: " + name);
             List<int> unplayedCardIndices = new List<int>();
