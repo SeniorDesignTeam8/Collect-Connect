@@ -1104,10 +1104,23 @@ public class BoardManager : MonoBehaviour
         _playerNumber = 0;
         _hitVetBtn = true;
 
-        VetResultList[0] = true;    //TODO: DONT HARDCODE FIRST AI
+        VetResultList[0] = CheckConnection();
+        Debug.Log("AI vetted " + VetResultList[0]);//TODO: DONT HARDCODE FIRST AI
         _playerScriptRefs[_playerNumber].playerVetted = true; //first AI done
         _playerScriptRefs[_playerNumber].YesNoBtnHit = true;
 
+    }
+
+    private bool CheckConnection()
+    {
+        bool validPlay = true , invalidPlay = false;
+
+        List<Card.CardProperty> commonProps = _copyCardRight.FindCommonProperties(_copyCardLeft);
+        if (commonProps.Count <= 0)
+            return invalidPlay;
+        else
+            return validPlay;
+        
     }
 
     private IEnumerator VetDecisionTimer(Player p)
