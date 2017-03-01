@@ -40,6 +40,13 @@ public class Player : MonoBehaviour
     public GameObject locationOnBoard4;
     public GameObject locationOnBoard5;
 
+    public GameObject VoteEnhance;
+    public GameObject VoteText;
+    public Button VoteBtnP1;
+    public Button VoteBtnP2;
+    public Button VoteBtnP3;
+    public Button VoteBtnP4;
+
     private static readonly float[] AiPassThresholds =
     {
         0.05f, 0.25f, 0.2f, 0.25f
@@ -69,6 +76,12 @@ public class Player : MonoBehaviour
         locationOnBoard3.gameObject.GetComponent<Renderer>().enabled = false;
         locationOnBoard4.gameObject.GetComponent<Renderer>().enabled = false;
         locationOnBoard5.gameObject.GetComponent<Renderer>().enabled = false;
+        VoteEnhance.gameObject.GetComponent<Renderer>().enabled = false;
+        VoteText.gameObject.GetComponent<Text>().enabled = false;
+        VoteBtnP1.gameObject.SetActive(false);
+        VoteBtnP2.gameObject.SetActive(false);
+        VoteBtnP3.gameObject.SetActive(false);
+        VoteBtnP4.gameObject.SetActive(false);
     }
 
     private void Update()
