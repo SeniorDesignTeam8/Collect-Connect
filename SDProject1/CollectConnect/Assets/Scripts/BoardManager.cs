@@ -227,6 +227,7 @@ public class BoardManager : MonoBehaviour
                 {
                     ts.CancelInvoke();
                     _playerScriptRefs[_playerNumber].VetShrink();
+                    Debug.Log("VetResultList while pulling player results = " + VetResultList[0] + ", " + VetResultList[1] + ", " + VetResultList[2] + ", " + VetResultList[3]);
                     VetResultList[_playerNumber] = _playerScriptRefs[_playerNumber].VetResult; //pull player's result 
                     _playerNumber++;
 
@@ -1113,13 +1114,12 @@ public class BoardManager : MonoBehaviour
 
     private bool CheckConnection()
     {
-        bool validPlay = true , invalidPlay = false;
-
+        
         List<Card.CardProperty> commonProps = _copyCardRight.FindCommonProperties(_copyCardLeft);
         if (commonProps.Count <= 0)
-            return invalidPlay;
+            return false;
         else
-            return validPlay;
+            return true;
         
     }
 
@@ -1152,6 +1152,7 @@ public class BoardManager : MonoBehaviour
                 noCount++;
             }
         }
+        Debug.Log("VetResultList while getting results = " + VetResultList[0] + ", " + VetResultList[1] + ", " + VetResultList[2] + ", " + VetResultList[3]);
         return yesCount >= noCount;
     }
 
