@@ -1136,13 +1136,15 @@ public class BoardManager : MonoBehaviour
 
     private bool CheckConnection()
     {
-        
+       
         List<Card.CardProperty> commonProps = _copyCardRight.FindCommonProperties(_copyCardLeft);
-        if (commonProps.Count <= 0)
-            return false;
-        else
-            return true;
-        
+        foreach (Card.CardProperty key in commonProps)
+        {
+            if (key.PropertyValue == _currentKeyword)
+                return true;
+        }
+        return false;
+
     }
 
     private IEnumerator VetDecisionTimer(Player p)
