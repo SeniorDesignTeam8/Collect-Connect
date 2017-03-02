@@ -1254,7 +1254,7 @@ public class BoardManager : MonoBehaviour
         for (int i = 0; i < 4; i++)
         {
             VoteResultsList[i] = 1;    //reset result list
-            _playerScriptRefs[i].playerVetted = false; //reset all player vetted
+            _playerScriptRefs[i].playerVoted = false; //reset all player voted
         }
 
         EnableVet();

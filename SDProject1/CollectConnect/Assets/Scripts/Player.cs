@@ -46,6 +46,7 @@ public class Player : MonoBehaviour
     public Button VoteBtnP2;
     public Button VoteBtnP3;
     public Button VoteBtnP4;
+    public bool playerVoted;
 
     private static readonly float[] AiPassThresholds =
     {
@@ -71,6 +72,7 @@ public class Player : MonoBehaviour
         playerVetted = false;
         YesNoBtnHit = false;
         VetResult = true;
+        playerVoted = false;
         locationOnBoard1.gameObject.GetComponent<Renderer>().enabled = false;
         locationOnBoard2.gameObject.GetComponent<Renderer>().enabled = false;
         locationOnBoard3.gameObject.GetComponent<Renderer>().enabled = false;
@@ -280,5 +282,31 @@ public class Player : MonoBehaviour
         VetResult = false;
         playerVetted = true;
         YesNoBtnHit = true;
+    }
+
+    public void VoteExpansion()
+    {
+        VoteEnhance.gameObject.GetComponent<Renderer>().enabled = true;
+        VoteText.gameObject.GetComponent<Text>().enabled = true;
+        VoteBtnP1.gameObject.SetActive(true);
+        VoteBtnP2.gameObject.SetActive(true);
+        VoteBtnP3.gameObject.SetActive(true);
+        VoteBtnP4.gameObject.SetActive(true);
+        playerVoted = false;    //reset
+    }
+
+    public void VoteShrink()
+    {
+        VoteEnhance.gameObject.GetComponent<Renderer>().enabled = false;
+        VoteText.gameObject.GetComponent<Text>().enabled = false;
+        VoteBtnP1.gameObject.SetActive(false);
+        VoteBtnP2.gameObject.SetActive(false);
+        VoteBtnP3.gameObject.SetActive(false);
+        VoteBtnP4.gameObject.SetActive(false);
+    }
+
+    public void OnPlayerBtnHit()
+    {
+        playerVoted = true;
     }
 }
