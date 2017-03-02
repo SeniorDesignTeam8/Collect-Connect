@@ -63,6 +63,28 @@ public class BoardManager : MonoBehaviour
     public Button passBtnP3;
     public Button passBtnP4;
 
+    public GameObject VoteEhnance;
+    public GameObject VoteP1Card1;
+    public GameObject VoteP1Card2;
+    public GameObject VoteP2Card1;
+    public GameObject VoteP2Card2;
+    public GameObject VoteP3Card1;
+    public GameObject VoteP3Card2;
+    public GameObject VoteP4Card1;
+    public GameObject VoteP4Card2;
+    public GameObject VoteP1Connection;
+    public GameObject VoteP2Connection;
+    public GameObject VoteP3Connection;
+    public GameObject VoteP4Connection;
+    public GameObject VoteP1ConnectionWordTxt;
+    public GameObject VoteP2ConnectionWordTxt;
+    public GameObject VoteP3ConnectionWordTxt;
+    public GameObject VoteP4ConnectionWordTxt;
+    public List<int> VoteResultsList;
+
+    private Card _copyCardP1Left;
+    private Card _copyCardP1Right;
+
     private void Awake()
     {
         _isGameStarted = false;
@@ -70,15 +92,17 @@ public class BoardManager : MonoBehaviour
         IsDeckReady = false;
         _playedTurn = false;
         DisableVet();
+        DiableVote();
         VetResultList = new List<bool>();
-        _afterVet = false;
+        VoteResultsList = new List<int>();
         _vetStartBool = false;
         _hitVetBtn = false;
         _playerNumber = 0;
 
-        for (int i = 0; i < 4; i++) //prefill _verResult list
+        for (int i = 0; i < 4; i++) //prefill vetResultList and voteResultList
         {
             VetResultList.Add(true);
+            VoteResultsList.Add(1);
         }
     }
 
@@ -227,7 +251,6 @@ public class BoardManager : MonoBehaviour
                 {
                     ts.CancelInvoke();
                     _playerScriptRefs[_playerNumber].VetShrink();
-                    Debug.Log("VetResultList when pulling players results = " + VetResultList[0] + " " + VetResultList[1] + " " + VetResultList[2] + " " + VetResultList[3]);
                     VetResultList[_playerNumber] = _playerScriptRefs[_playerNumber].VetResult; //pull player's result 
                     _playerNumber++;
 
@@ -317,6 +340,12 @@ public class BoardManager : MonoBehaviour
             return;
         TimerScript.Timeleft = 90;
         CurrentPlayer++;
+
+        if (CurrentPlayer == 5)
+        {
+            Debug.Log("Running Vetting");
+            //TODO run voting
+        }
 
         Debug.Log("player's turn" + CurrentPlayer);
         CurrentPlayer %= Players.Length;
@@ -1105,24 +1134,9 @@ public class BoardManager : MonoBehaviour
         _playerNumber = 0;
         _hitVetBtn = true;
 
-        VetResultList[0] = CheckConnection();
-        Debug.Log("AI vet was = " + CheckConnection() + " and VetResultList[0] is = " + VetResultList[0]);
-        //TODO: DONT HARDCODE FIRST AI
+        VetResultList[0] = false;    //TODO: DONT HARDCODE FIRST AI
         _playerScriptRefs[_playerNumber].playerVetted = true; //first AI done
         _playerScriptRefs[_playerNumber].YesNoBtnHit = true;
-        Debug.Log("AI vetted " + VetResultList[0]);
-        Debug.Log("VetResultList after AI done = " + VetResultList[0] + " " + VetResultList[1] + " " + VetResultList[2] + " " + VetResultList[3]);
-
-    }
-
-    private bool CheckConnection()
-    {
-     
-        List<Card.CardProperty> commonProps = _copyCardRight.FindCommonProperties(_copyCardLeft);
-        if (commonProps.Count <= 0)
-            return false;
-        else
-            return true;
 
     }
 
@@ -1144,7 +1158,6 @@ public class BoardManager : MonoBehaviour
     {
         Debug.Log("Getting vet results.");
         int yesCount = 0, noCount = 0;
-        Debug.Log("VetResultList before getting VetResult = " + VetResultList[0] + " " + VetResultList[1] + " " + VetResultList[2] + " " + VetResultList[3]);
         foreach (bool vet in VetResultList)
         {
             if (vet)
@@ -1156,8 +1169,6 @@ public class BoardManager : MonoBehaviour
                 noCount++;
             }
         }
-        Debug.Log("yesCount = " + yesCount + ", noCount = " + noCount);
-        Debug.Log("VetResultList after getting VetResult = " + VetResultList[0] + " " + VetResultList[1] + " " + VetResultList[2] + " " + VetResultList[3]);
         return yesCount >= noCount;
     }
 
@@ -1191,6 +1202,75 @@ public class BoardManager : MonoBehaviour
         {
             c.gameObject.layer = 0;
         }
+    }
+
+    private void DiableVote() //disable vote screen
+    {
+        VoteEhnance.gameObject.GetComponent<Renderer>().enabled = false;
+        VoteP1Card1.gameObject.GetComponent<Renderer>().enabled = false;
+        VoteP1Card2.gameObject.GetComponent<Renderer>().enabled = false;
+        VoteP2Card1.gameObject.GetComponent<Renderer>().enabled = false;
+        VoteP2Card2.gameObject.GetComponent<Renderer>().enabled = false;
+        VoteP3Card1.gameObject.GetComponent<Renderer>().enabled = false;
+        VoteP3Card2.gameObject.GetComponent<Renderer>().enabled = false;
+        VoteP4Card1.gameObject.GetComponent<Renderer>().enabled = false;
+        VoteP4Card2.gameObject.GetComponent<Renderer>().enabled = false;
+        VoteP1Connection.gameObject.GetComponent<Renderer>().enabled = false;
+        VoteP2Connection.gameObject.GetComponent<Renderer>().enabled = false;
+        VoteP3Connection.gameObject.GetComponent<Renderer>().enabled = false;
+        VoteP4Connection.gameObject.GetComponent<Renderer>().enabled = false;
+        VoteP1ConnectionWordTxt.gameObject.GetComponent<Text>().enabled = false;
+        VoteP2ConnectionWordTxt.gameObject.GetComponent<Text>().enabled = false;
+        VoteP3ConnectionWordTxt.gameObject.GetComponent<Text>().enabled = false;
+        VoteP4ConnectionWordTxt.gameObject.GetComponent<Text>().enabled = false;
+    }
+
+    private void EnableVote() //enable vote screen
+    {
+        VoteEhnance.gameObject.GetComponent<Renderer>().enabled = true;
+        VoteP1Card1.gameObject.GetComponent<Renderer>().enabled = true;
+        VoteP1Card2.gameObject.GetComponent<Renderer>().enabled = true;
+        VoteP2Card1.gameObject.GetComponent<Renderer>().enabled = true;
+        VoteP2Card2.gameObject.GetComponent<Renderer>().enabled = true;
+        VoteP3Card1.gameObject.GetComponent<Renderer>().enabled = true;
+        VoteP3Card2.gameObject.GetComponent<Renderer>().enabled = true;
+        VoteP4Card1.gameObject.GetComponent<Renderer>().enabled = true;
+        VoteP4Card2.gameObject.GetComponent<Renderer>().enabled = true;
+        VoteP1Connection.gameObject.GetComponent<Renderer>().enabled = true;
+        VoteP2Connection.gameObject.GetComponent<Renderer>().enabled = true;
+        VoteP3Connection.gameObject.GetComponent<Renderer>().enabled = true;
+        VoteP4Connection.gameObject.GetComponent<Renderer>().enabled = true;
+        VoteP1ConnectionWordTxt.gameObject.GetComponent<Text>().enabled = true;
+        VoteP2ConnectionWordTxt.gameObject.GetComponent<Text>().enabled = true;
+        VoteP3ConnectionWordTxt.gameObject.GetComponent<Text>().enabled = true;
+        VoteP4ConnectionWordTxt.gameObject.GetComponent<Text>().enabled = true;
+    }
+
+    private IEnumerator VoteSetUp()  //vote screen pops up
+    {
+        yield return new WaitForSeconds(1.0f);
+        Debug.Log("Enabling voting.");
+
+        for (int i = 0; i < 4; i++)
+        {
+            VoteResultsList[i] = 1;    //reset result list
+            _playerScriptRefs[i].playerVetted = false; //reset all player vetted
+        }
+
+        EnableVet();
+        ToggleCardsOff();
+
+        VetConnectionWordTxt.gameObject.GetComponent<Text>().text = _playerScriptRefs[CurrentPlayer].connectionKeyword; //store card connection for vet and vote 
+
+        _copyCardLeft = Instantiate(_playerScriptRefs[CurrentPlayer].card1, new Vector3(0f, 0f, 0f), Quaternion.identity);
+        _copyCardLeft.transform.position = VetCard1.gameObject.transform.position;
+        _copyCardLeft.transform.localScale = Vector3.one;
+
+        _copyCardRight = Instantiate(_playerScriptRefs[CurrentPlayer].card2, new Vector3(0f, 0f, 0f), Quaternion.identity);
+        _copyCardRight.transform.position = VetCard2.gameObject.transform.position;
+        _copyCardRight.transform.localScale = Vector3.one;
+
+        StartCoroutine("VetTimer");  //start vet timer for vetting allowed
     }
 }
 
