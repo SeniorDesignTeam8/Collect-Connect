@@ -227,6 +227,7 @@ public class BoardManager : MonoBehaviour
                 {
                     ts.CancelInvoke();
                     _playerScriptRefs[_playerNumber].VetShrink();
+                    Debug.Log("VetResultList when pulling players results = " + VetResultList[0] + " " + VetResultList[1] + " " + VetResultList[2] + " " + VetResultList[3]);
                     VetResultList[_playerNumber] = _playerScriptRefs[_playerNumber].VetResult; //pull player's result 
                     _playerNumber++;
 
@@ -1105,22 +1106,24 @@ public class BoardManager : MonoBehaviour
         _hitVetBtn = true;
 
         VetResultList[0] = CheckConnection();
-        Debug.Log("AI vetted " + VetResultList[0]);//TODO: DONT HARDCODE FIRST AI
+        Debug.Log("AI vet was = " + CheckConnection() + " and VetResultList[0] is = " + VetResultList[0]);
+        //TODO: DONT HARDCODE FIRST AI
         _playerScriptRefs[_playerNumber].playerVetted = true; //first AI done
         _playerScriptRefs[_playerNumber].YesNoBtnHit = true;
+        Debug.Log("AI vetted " + VetResultList[0]);
+        Debug.Log("VetResultList after AI done = " + VetResultList[0] + " " + VetResultList[1] + " " + VetResultList[2] + " " + VetResultList[3]);
 
     }
 
     private bool CheckConnection()
     {
-        bool validPlay = true , invalidPlay = false;
-
+     
         List<Card.CardProperty> commonProps = _copyCardRight.FindCommonProperties(_copyCardLeft);
         if (commonProps.Count <= 0)
-            return invalidPlay;
+            return false;
         else
-            return validPlay;
-        
+            return true;
+
     }
 
     private IEnumerator VetDecisionTimer(Player p)
@@ -1141,6 +1144,7 @@ public class BoardManager : MonoBehaviour
     {
         Debug.Log("Getting vet results.");
         int yesCount = 0, noCount = 0;
+        Debug.Log("VetResultList before getting VetResult = " + VetResultList[0] + " " + VetResultList[1] + " " + VetResultList[2] + " " + VetResultList[3]);
         foreach (bool vet in VetResultList)
         {
             if (vet)
@@ -1152,6 +1156,8 @@ public class BoardManager : MonoBehaviour
                 noCount++;
             }
         }
+        Debug.Log("yesCount = " + yesCount + ", noCount = " + noCount);
+        Debug.Log("VetResultList after getting VetResult = " + VetResultList[0] + " " + VetResultList[1] + " " + VetResultList[2] + " " + VetResultList[3]);
         return yesCount >= noCount;
     }
 
