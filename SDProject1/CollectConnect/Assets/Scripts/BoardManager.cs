@@ -63,28 +63,6 @@ public class BoardManager : MonoBehaviour
     public Button passBtnP3;
     public Button passBtnP4;
 
-    public GameObject VoteEhnance;
-    public GameObject VoteP1Card1;
-    public GameObject VoteP1Card2;
-    public GameObject VoteP2Card1;
-    public GameObject VoteP2Card2;
-    public GameObject VoteP3Card1;
-    public GameObject VoteP3Card2;
-    public GameObject VoteP4Card1;
-    public GameObject VoteP4Card2;
-    public GameObject VoteP1Connection;
-    public GameObject VoteP2Connection;
-    public GameObject VoteP3Connection;
-    public GameObject VoteP4Connection;
-    public GameObject VoteP1ConnectionWordTxt;
-    public GameObject VoteP2ConnectionWordTxt;
-    public GameObject VoteP3ConnectionWordTxt;
-    public GameObject VoteP4ConnectionWordTxt;
-    public List<int> VoteResultsList;
-
-    private Card _copyCardP1Left;
-    private Card _copyCardP1Right;
-
     private void Awake()
     {
         _isGameStarted = false;
@@ -92,17 +70,15 @@ public class BoardManager : MonoBehaviour
         IsDeckReady = false;
         _playedTurn = false;
         DisableVet();
-        DiableVote();
         VetResultList = new List<bool>();
-        VoteResultsList = new List<int>();
+        _afterVet = false;
         _vetStartBool = false;
         _hitVetBtn = false;
         _playerNumber = 0;
 
-        for (int i = 0; i < 4; i++) //prefill vetResultList and voteResultList
+        for (int i = 0; i < 4; i++) //prefill _verResult list
         {
             VetResultList.Add(true);
-            VoteResultsList.Add(1);
         }
     }
 
@@ -340,12 +316,6 @@ public class BoardManager : MonoBehaviour
             return;
         TimerScript.Timeleft = 90;
         CurrentPlayer++;
-
-        if (CurrentPlayer == 5)
-        {
-            Debug.Log("Running Vetting");
-            //TODO run voting
-        }
 
         Debug.Log("player's turn" + CurrentPlayer);
         CurrentPlayer %= Players.Length;
@@ -1134,10 +1104,23 @@ public class BoardManager : MonoBehaviour
         _playerNumber = 0;
         _hitVetBtn = true;
 
-        VetResultList[0] = false;    //TODO: DONT HARDCODE FIRST AI
+        VetResultList[0] = CheckConnection();
+        Debug.Log("AI vetted " + VetResultList[0]);//TODO: DONT HARDCODE FIRST AI
         _playerScriptRefs[_playerNumber].playerVetted = true; //first AI done
         _playerScriptRefs[_playerNumber].YesNoBtnHit = true;
 
+    }
+
+    private bool CheckConnection()
+    {
+        bool validPlay = true , invalidPlay = false;
+
+        List<Card.CardProperty> commonProps = _copyCardRight.FindCommonProperties(_copyCardLeft);
+        if (commonProps.Count <= 0)
+            return invalidPlay;
+        else
+            return validPlay;
+        
     }
 
     private IEnumerator VetDecisionTimer(Player p)
@@ -1254,7 +1237,7 @@ public class BoardManager : MonoBehaviour
         for (int i = 0; i < 4; i++)
         {
             VoteResultsList[i] = 1;    //reset result list
-            _playerScriptRefs[i].playerVoted = false; //reset all player voted
+            _playerScriptRefs[i].playerVetted = false; //reset all player vetted
         }
 
         EnableVet();
