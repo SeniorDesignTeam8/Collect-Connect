@@ -1131,6 +1131,7 @@ public class BoardManager : MonoBehaviour
         Debug.Log("AI vetted " + VetResultList[0]);//TODO: DONT HARDCODE FIRST AI
         _playerScriptRefs[_playerNumber].playerVetted = true; //first AI done
         _playerScriptRefs[_playerNumber].YesNoBtnHit = true;
+        _playerScriptRefs[_playerNumber].VetResult = VetResultList[0];
 
     }
 
