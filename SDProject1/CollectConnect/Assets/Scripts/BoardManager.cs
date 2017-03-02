@@ -1187,5 +1187,74 @@ public class BoardManager : MonoBehaviour
             c.gameObject.layer = 0;
         }
     }
+
+    private void DiableVote() //disable vote screen
+    {
+        VoteEhnance.gameObject.GetComponent<Renderer>().enabled = false;
+        VoteP1Card1.gameObject.GetComponent<Renderer>().enabled = false;
+        VoteP1Card2.gameObject.GetComponent<Renderer>().enabled = false;
+        VoteP2Card1.gameObject.GetComponent<Renderer>().enabled = false;
+        VoteP2Card2.gameObject.GetComponent<Renderer>().enabled = false;
+        VoteP3Card1.gameObject.GetComponent<Renderer>().enabled = false;
+        VoteP3Card2.gameObject.GetComponent<Renderer>().enabled = false;
+        VoteP4Card1.gameObject.GetComponent<Renderer>().enabled = false;
+        VoteP4Card2.gameObject.GetComponent<Renderer>().enabled = false;
+        VoteP1Connection.gameObject.GetComponent<Renderer>().enabled = false;
+        VoteP2Connection.gameObject.GetComponent<Renderer>().enabled = false;
+        VoteP3Connection.gameObject.GetComponent<Renderer>().enabled = false;
+        VoteP4Connection.gameObject.GetComponent<Renderer>().enabled = false;
+        VoteP1ConnectionWordTxt.gameObject.GetComponent<Text>().enabled = false;
+        VoteP2ConnectionWordTxt.gameObject.GetComponent<Text>().enabled = false;
+        VoteP3ConnectionWordTxt.gameObject.GetComponent<Text>().enabled = false;
+        VoteP4ConnectionWordTxt.gameObject.GetComponent<Text>().enabled = false;
+    }
+
+    private void EnableVote() //enable vote screen
+    {
+        VoteEhnance.gameObject.GetComponent<Renderer>().enabled = true;
+        VoteP1Card1.gameObject.GetComponent<Renderer>().enabled = true;
+        VoteP1Card2.gameObject.GetComponent<Renderer>().enabled = true;
+        VoteP2Card1.gameObject.GetComponent<Renderer>().enabled = true;
+        VoteP2Card2.gameObject.GetComponent<Renderer>().enabled = true;
+        VoteP3Card1.gameObject.GetComponent<Renderer>().enabled = true;
+        VoteP3Card2.gameObject.GetComponent<Renderer>().enabled = true;
+        VoteP4Card1.gameObject.GetComponent<Renderer>().enabled = true;
+        VoteP4Card2.gameObject.GetComponent<Renderer>().enabled = true;
+        VoteP1Connection.gameObject.GetComponent<Renderer>().enabled = true;
+        VoteP2Connection.gameObject.GetComponent<Renderer>().enabled = true;
+        VoteP3Connection.gameObject.GetComponent<Renderer>().enabled = true;
+        VoteP4Connection.gameObject.GetComponent<Renderer>().enabled = true;
+        VoteP1ConnectionWordTxt.gameObject.GetComponent<Text>().enabled = true;
+        VoteP2ConnectionWordTxt.gameObject.GetComponent<Text>().enabled = true;
+        VoteP3ConnectionWordTxt.gameObject.GetComponent<Text>().enabled = true;
+        VoteP4ConnectionWordTxt.gameObject.GetComponent<Text>().enabled = true;
+    }
+
+    private IEnumerator VoteSetUp()  //vote screen pops up
+    {
+        yield return new WaitForSeconds(1.0f);
+        Debug.Log("Enabling voting.");
+
+        for (int i = 0; i < 4; i++)
+        {
+            VoteResultsList[i] = 1;    //reset result list
+            _playerScriptRefs[i].playerVetted = false; //reset all player vetted
+        }
+
+        EnableVet();
+        ToggleCardsOff();
+
+        VetConnectionWordTxt.gameObject.GetComponent<Text>().text = _playerScriptRefs[CurrentPlayer].connectionKeyword; //store card connection for vet and vote 
+
+        _copyCardLeft = Instantiate(_playerScriptRefs[CurrentPlayer].card1, new Vector3(0f, 0f, 0f), Quaternion.identity);
+        _copyCardLeft.transform.position = VetCard1.gameObject.transform.position;
+        _copyCardLeft.transform.localScale = Vector3.one;
+
+        _copyCardRight = Instantiate(_playerScriptRefs[CurrentPlayer].card2, new Vector3(0f, 0f, 0f), Quaternion.identity);
+        _copyCardRight.transform.position = VetCard2.gameObject.transform.position;
+        _copyCardRight.transform.localScale = Vector3.one;
+
+        StartCoroutine("VetTimer");  //start vet timer for vetting allowed
+    }
 }
 
