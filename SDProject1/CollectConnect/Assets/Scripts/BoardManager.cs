@@ -63,6 +63,25 @@ public class BoardManager : MonoBehaviour
     public Button passBtnP3;
     public Button passBtnP4;
 
+    public GameObject VoteEhnance;
+    public GameObject VoteP1Card1;
+    public GameObject VoteP1Card2;
+    public GameObject VoteP2Card1;
+    public GameObject VoteP2Card2;
+    public GameObject VoteP3Card1;
+    public GameObject VoteP3Card2;
+    public GameObject VoteP4Card1;
+    public GameObject VoteP4Card2;
+    public GameObject VoteP1Connection;
+    public GameObject VoteP2Connection;
+    public GameObject VoteP3Connection;
+    public GameObject VoteP4Connection;
+    public GameObject VoteP1ConnectionWordTxt;
+    public GameObject VoteP2ConnectionWordTxt;
+    public GameObject VoteP3ConnectionWordTxt;
+    public GameObject VoteP4ConnectionWordTxt;
+    public List<int> VoteResultsList;
+
     private void Awake()
     {
         _isGameStarted = false;
@@ -70,15 +89,18 @@ public class BoardManager : MonoBehaviour
         IsDeckReady = false;
         _playedTurn = false;
         DisableVet();
+        DisableVote();
         VetResultList = new List<bool>();
+        VoteResultsList = new List<int>();
         _afterVet = false;
         _vetStartBool = false;
         _hitVetBtn = false;
         _playerNumber = 0;
 
-        for (int i = 0; i < 4; i++) //prefill _verResult list
+        for (int i = 0; i < 4; i++) //prefill vetResultList and voteResultList
         {
             VetResultList.Add(true);
+            VoteResultsList.Add(1);
         }
     }
 
@@ -1188,7 +1210,7 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    private void DiableVote() //disable vote screen
+    private void DisableVote() //disable vote screen
     {
         VoteEhnance.gameObject.GetComponent<Renderer>().enabled = false;
         VoteP1Card1.gameObject.GetComponent<Renderer>().enabled = false;
