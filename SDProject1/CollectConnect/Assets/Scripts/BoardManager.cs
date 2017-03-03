@@ -1124,18 +1124,20 @@ public class BoardManager : MonoBehaviour
         VetBtnRight.gameObject.SetActive(false);    //disable vet btns
         VetBtnLeft.gameObject.SetActive(false);
 
+
         _playerNumber = 0;
         _hitVetBtn = true;
-
+         
         VetResultList[0] = CheckConnection();
         Debug.Log("AI vetted " + VetResultList[0]);//TODO: DONT HARDCODE FIRST AI
-        _playerScriptRefs[_playerNumber].playerVetted = true; //first AI done
+        _playerScriptRefs[_playerNumber].playerVetted = true; //first AI done 
         _playerScriptRefs[_playerNumber].YesNoBtnHit = true;
         _playerScriptRefs[_playerNumber].VetResult = VetResultList[0];
 
     }
 
     private bool CheckConnection()
+
     {
        
         List<Card.CardProperty> commonProps = _copyCardRight.FindCommonProperties(_copyCardLeft);
@@ -1280,6 +1282,48 @@ public class BoardManager : MonoBehaviour
         _copyCardRight.transform.localScale = Vector3.one;
 
         StartCoroutine("VetTimer");  //start vet timer for vetting allowed
+    }
+
+    private void UpdateScoring()
+    {
+        int Tier1 = 2;
+        int Tier2 = 4;
+        int Tier3 = 6;
+
+
+        foreach (Card C in Deck)
+        {
+            //check if card is in player hand not just in deck
+            int CommonCounter = 0;
+            foreach (Card.CardProperty card in C.PropertyList)
+            {
+                foreach (String keyword in _keywordList)
+                {
+                    if (card.PropertyValue == keyword)
+                    {
+                        CommonCounter++;
+                    }
+                  
+                }
+                //set cards pt values based on occurance
+                if (CommonCounter >= 10)
+                {
+                    //Tier 1 = 2 pts
+
+                }
+                if (CommonCounter < 10 && CommonCounter > 4)
+                {
+                    //Tier 2 = 4 pts
+
+                }
+                if (CommonCounter >= 0 && CommonCounter <= 4)
+                {
+                    //Tier 3 = 6 pts
+
+                }
+            }
+        }
+
     }
 }
 
