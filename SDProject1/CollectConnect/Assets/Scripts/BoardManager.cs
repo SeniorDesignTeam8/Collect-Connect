@@ -52,6 +52,7 @@ public class BoardManager : MonoBehaviour
     private Card _copyCardRight;
     public List<bool> VetResultList;
     private bool _afterVet;
+    private bool isFirstListGen = true;
     public bool VetStartBool;
     private bool _hitVetBtn;
     private readonly List<Vector3> _gridPositions = new List<Vector3>();
@@ -116,6 +117,7 @@ public class BoardManager : MonoBehaviour
 
             Deck = new CardCollection("Deck");
             BuildDeck();
+
             if (Deck == null)
                 Deck = new CardCollection("Deck");
             Deck.Shuffle();
@@ -175,6 +177,15 @@ public class BoardManager : MonoBehaviour
                 // TODO: Might place a first card at center of the board.
                 _keywordList = _keywordList.Distinct().ToList();
                 PopulateKeywords();
+
+                Debug.Log("Gonna freeze now.");
+                if (isFirstListGen)
+                {
+                    Debug.Log("Like, freeze now.");
+                    UpdateScoring();
+                    Debug.Log("Frozen");
+                    isFirstListGen = false;
+                }
                 _isGameStarted = true;
             }
 
@@ -196,6 +207,7 @@ public class BoardManager : MonoBehaviour
                     c.SetIsSelected(false);
 
                     PlayPlace();
+
                     // c.gameObject.AddComponent<NodeMovement>();
                     _isPlayerCardSelected = false;
                     _isFirstCardPlay = false;
@@ -285,7 +297,10 @@ public class BoardManager : MonoBehaviour
                     {
                         if (cardA != null)
                         {
-                            GetCurrentPlayer().IncreaseScore(cardA.GetPts(_currentKeyword));
+                            Debug.Log(cardA);
+                            Card.CardProperty prop = cardA.GetPropertyFromKeyword(_currentKeyword);
+                            Debug.Log("Prop's value: " + prop.PropertyValue);
+                            GetCurrentPlayer().IncreaseScore(cardA.GetPts(prop));
                             GetCurrentPlayer().PlayerScore.GetComponent<Text>().text = "" + GetCurrentPlayer().Score;
                             _isTurnOver = true;
                             _hitVetBtn = false; //reset btn
@@ -366,7 +381,7 @@ public class BoardManager : MonoBehaviour
         }
         else if (CurrentPlayer == 2)
         {
-            PassBtnP1.gameObject.SetActive(true);
+            PassBtnP1.gameObject.SetActive(false);
             PassBtnP2.gameObject.SetActive(false);
             PassBtnP3.gameObject.SetActive(true);
             PassBtnP4.gameObject.SetActive(false);
@@ -376,7 +391,7 @@ public class BoardManager : MonoBehaviour
         }
         else if (CurrentPlayer == 3)
         {
-            PassBtnP1.gameObject.SetActive(true);
+            PassBtnP1.gameObject.SetActive(false);
             PassBtnP2.gameObject.SetActive(false);
             PassBtnP3.gameObject.SetActive(false);
             PassBtnP4.gameObject.SetActive(true);
@@ -396,6 +411,7 @@ public class BoardManager : MonoBehaviour
     private void PopulateKeywords()
     {
         Debug.Log("Populating keywords");
+
         //Clear and (re?)populate the word banks.
         foreach (Player p in _playerScriptRefs)
         {
@@ -403,6 +419,7 @@ public class BoardManager : MonoBehaviour
         }
         _keywordList = _keywordList.Distinct().ToList();
         _keywordList.Sort();
+
         // clear the list
         // TODO Possibly combine KeywordContainers into an array?
         foreach (Transform child in KeywordContainerP1.transform)
@@ -513,6 +530,7 @@ public class BoardManager : MonoBehaviour
 
             //Debug.Log(str);
         }
+
     }
 
 
@@ -583,7 +601,9 @@ public class BoardManager : MonoBehaviour
             }
             rd.Close();
             rd = null;
+            
         }
+        
     }
     //populates db from text files
     //private static void BuildDeck()
@@ -1289,81 +1309,89 @@ public class BoardManager : MonoBehaviour
     {
         public string KeywordName;
         public int KeywordFreqs;
+        public bool IsProcessed;
 
         public KeywordFreq(string keyword, int freq = 0)
         {
             KeywordName = keyword;
             KeywordFreqs = freq;
+            IsProcessed = false;
         }
 
         public void IncreaseFreq()
         {
             KeywordFreqs++;
         }
+
+        public void SetIsProcessed(bool processed)
+        {
+            IsProcessed = processed;
+        }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     private void UpdateScoring()
     {
-        const int tier1 = 2;
-        const int tier2 = 4;
-        const int tier3 = 6;
+        Debug.Log("Blah");
+        int tier1 = 2;
+        int tier2 = 4;
+        int tier3 = 6;
         List<KeywordFreq> scoring = new List<KeywordFreq>();
 
-        foreach (Card c in Deck)
+        foreach (string keywordValue in _keywordList)
         {
-            //check if card is in player hand not just in deck
-            if (c.IsOnBoard())
+            KeywordFreq freq = new KeywordFreq(keywordValue);
+
+            foreach (Player p in _playerScriptRefs)
             {
-                foreach (Card.CardProperty prop in c.PropertyList)
+                foreach (Card c in p._playerHand)
                 {
-                    foreach (string keywordValue in _keywordList)
+                    foreach (Card.CardProperty prop in c.PropertyList)
                     {
                         if (prop.PropertyValue == keywordValue)
                         {
-                            bool isAlreadyInList = false;
-                            foreach (KeywordFreq freq in scoring)
-                            {
-                                if (freq.KeywordName == keywordValue)
-                                {
-                                    isAlreadyInList = true;
-                                    freq.IncreaseFreq();
-                                    break;
-                                }
-                            }
-                            if (!isAlreadyInList)
-                            {
-                                scoring.Add(new KeywordFreq(keywordValue, 1));
-                            }
-
+                            freq.IncreaseFreq();
                         }
-                    }
-                } 
-            }
-         
-        }
-
-        foreach (Card c in Deck)
-        {
-            //check if card is in player hand not just in deck
-            foreach (Card.CardProperty prop in c.PropertyList)
-            {
-                foreach (KeywordFreq freq in scoring)
-                {
-                    //set cards pt values based on occurance
-                    if (freq.KeywordFreqs >= 10)
-                    {
-                        prop.SetPointValue(tier1);
-                    }
-                    if (freq.KeywordFreqs < 10 && freq.KeywordFreqs > 4)
-                    {
-                        prop.SetPointValue(tier2);
-                    }
-                    if (freq.KeywordFreqs >= 0 && freq.KeywordFreqs <= 4)
-                    {
-                        prop.SetPointValue(tier3);
                     }
                 }
             }
+            scoring.Add(freq);
+        }
+        //check if card is in player hand not just in deck
+        Debug.Log(scoring.Count);
+        foreach (KeywordFreq freq in scoring)
+        {
+            //if (!freq.IsProcessed)
+           // {
+                foreach (Player p in _playerScriptRefs)
+                {
+                    //check if card is in player hand not just in deck
+                    foreach (Card c in p._playerHand)
+                    {
+                        foreach (Card.CardProperty prop in c.PropertyList.Where(prop => prop.PropertyValue == freq.KeywordName))
+                        {
+                            Debug.Log("Checking " + freq.KeywordName);
+                            //set cards pt values based on occurance
+                            if (freq.KeywordFreqs >= 10)
+                            {
+                                prop.SetPointValue(tier1);
+                            }
+                            if (freq.KeywordFreqs < 10 && freq.KeywordFreqs > 4)
+                            {
+                                prop.SetPointValue(tier2);
+                            }
+                            if (freq.KeywordFreqs >= 0 && freq.KeywordFreqs <= 4)
+                            {
+                                prop.SetPointValue(tier3);
+                            }
+                            //freq.SetIsProcessed(true);
+                        }
+                    }
+                } 
+            //}
+            Debug.Log(freq.KeywordName + " " + freq.KeywordFreqs + " is processed!");
         }
     }
 }
