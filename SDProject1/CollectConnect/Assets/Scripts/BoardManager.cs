@@ -52,17 +52,17 @@ public class BoardManager : MonoBehaviour
     private Card _copyCardRight;
     public List<bool> VetResultList;
     private bool _afterVet;
-    public bool _vetStartBool;
+    public bool VetStartBool;
     private bool _hitVetBtn;
     private readonly List<Vector3> _gridPositions = new List<Vector3>();
     private int[] _scoreboard;
     private int _playerNumber;
     private static IDbConnection _dbconn;
-    private TimerScript ts;
-    public Button passBtnP1;
-    public Button passBtnP2;
-    public Button passBtnP3;
-    public Button passBtnP4;
+    private TimerScript _ts;
+    public Button PassBtnP1;
+    public Button PassBtnP2;
+    public Button PassBtnP3;
+    public Button PassBtnP4;
 
     public GameObject VoteEhnance;
     public GameObject VoteP1Card1;
@@ -94,7 +94,7 @@ public class BoardManager : MonoBehaviour
         VetResultList = new List<bool>();
         VoteResultsList = new List<int>();
         _afterVet = false;
-        _vetStartBool = false;
+        VetStartBool = false;
         _hitVetBtn = false;
         _playerNumber = 0;
 
@@ -131,16 +131,16 @@ public class BoardManager : MonoBehaviour
             _isFirstCardPlay = true;
             VetBtnLeft.GetComponent<Button>().onClick.AddListener(VetBtnSelected);
             VetBtnRight.GetComponent<Button>().onClick.AddListener(VetBtnSelected);
-            passBtnP1.GetComponent<Button>().onClick.AddListener(PassBtnHit);
-            passBtnP2.GetComponent<Button>().onClick.AddListener(PassBtnHit);
-            passBtnP3.GetComponent<Button>().onClick.AddListener(PassBtnHit);
-            passBtnP4.GetComponent<Button>().onClick.AddListener(PassBtnHit);
-            passBtnP1.gameObject.SetActive(false);
-            passBtnP2.gameObject.SetActive(false);
-            passBtnP3.gameObject.SetActive(false);
-            passBtnP4.gameObject.SetActive(false);
+            PassBtnP1.GetComponent<Button>().onClick.AddListener(PassBtnHit);
+            PassBtnP2.GetComponent<Button>().onClick.AddListener(PassBtnHit);
+            PassBtnP3.GetComponent<Button>().onClick.AddListener(PassBtnHit);
+            PassBtnP4.GetComponent<Button>().onClick.AddListener(PassBtnHit);
+            PassBtnP1.gameObject.SetActive(false);
+            PassBtnP2.gameObject.SetActive(false);
+            PassBtnP3.gameObject.SetActive(false);
+            PassBtnP4.gameObject.SetActive(false);
 
-            ts = FindObjectOfType<TimerScript>();
+            _ts = FindObjectOfType<TimerScript>();
         }
         else if (Instance != this)
         {
@@ -236,19 +236,19 @@ public class BoardManager : MonoBehaviour
             _playerScriptRefs[CurrentPlayer].card2 = cardB;
             _playerScriptRefs[CurrentPlayer].connectionKeyword = _currentKeyword;
 
-            if (!_vetStartBool)
+            if (!VetStartBool)
             {
                 Debug.Log("Starting vet setup.");
                  StartCoroutine("VetSetUp");
 
-                _vetStartBool = true;
+                VetStartBool = true;
             }
 
             if (_hitVetBtn == true) //rotate through vet y/n responses (yellow btn hit)
             {
                 if (_playerScriptRefs[_playerNumber].playerVetted == true) //if blue y/n btn hit
                 {
-                    ts.CancelInvoke();
+                    _ts.CancelInvoke();
                     _playerScriptRefs[_playerNumber].VetShrink();
                     Debug.Log("VetResultList while pulling player results = " + VetResultList[0] + ", " + VetResultList[1] + ", " + VetResultList[2] + ", " + VetResultList[3]);
                     VetResultList[_playerNumber] = _playerScriptRefs[_playerNumber].VetResult; //pull player's result 
@@ -290,7 +290,7 @@ public class BoardManager : MonoBehaviour
                             _isTurnOver = true;
                             _hitVetBtn = false; //reset btn
                             _afterVet = false;
-                            _vetStartBool = false;
+                            VetStartBool = false;
                         }
                         else
                             {
@@ -319,9 +319,9 @@ public class BoardManager : MonoBehaviour
                     _isTurnOver = true;
                         _hitVetBtn = false; //reset btn
                         _afterVet = false;
-                        _vetStartBool = false;
+                        VetStartBool = false;
                     }
-                ts.InvokeRepeating("decreaseTime", 1, 1);
+                _ts.InvokeRepeating("decreaseTime", 1, 1);
             }
 
         }
@@ -346,40 +346,40 @@ public class BoardManager : MonoBehaviour
 
         if (CurrentPlayer == 0)
         {
-            passBtnP1.gameObject.SetActive(true);
-            passBtnP2.gameObject.SetActive(false);
-            passBtnP3.gameObject.SetActive(false);
-            passBtnP4.gameObject.SetActive(false);
+            PassBtnP1.gameObject.SetActive(true);
+            PassBtnP2.gameObject.SetActive(false);
+            PassBtnP3.gameObject.SetActive(false);
+            PassBtnP4.gameObject.SetActive(false);
             KeywordContainerP2.gameObject.layer = 2;
             KeywordContainerP3.gameObject.layer = 2;
             KeywordContainerP4.gameObject.layer = 2;
         }
         else if (CurrentPlayer == 1)
         {
-            passBtnP1.gameObject.SetActive(false);
-            passBtnP2.gameObject.SetActive(true);
-            passBtnP3.gameObject.SetActive(false);
-            passBtnP4.gameObject.SetActive(false);
+            PassBtnP1.gameObject.SetActive(false);
+            PassBtnP2.gameObject.SetActive(true);
+            PassBtnP3.gameObject.SetActive(false);
+            PassBtnP4.gameObject.SetActive(false);
             KeywordContainerP2.gameObject.layer = 5;
             KeywordContainerP3.gameObject.layer = 2;
             KeywordContainerP4.gameObject.layer = 2;
         }
         else if (CurrentPlayer == 2)
         {
-            passBtnP1.gameObject.SetActive(true);
-            passBtnP2.gameObject.SetActive(false);
-            passBtnP3.gameObject.SetActive(true);
-            passBtnP4.gameObject.SetActive(false);
+            PassBtnP1.gameObject.SetActive(true);
+            PassBtnP2.gameObject.SetActive(false);
+            PassBtnP3.gameObject.SetActive(true);
+            PassBtnP4.gameObject.SetActive(false);
             KeywordContainerP2.gameObject.layer = 2;
             KeywordContainerP3.gameObject.layer = 5;
             KeywordContainerP4.gameObject.layer = 2;
         }
         else if (CurrentPlayer == 3)
         {
-            passBtnP1.gameObject.SetActive(true);
-            passBtnP2.gameObject.SetActive(false);
-            passBtnP3.gameObject.SetActive(false);
-            passBtnP4.gameObject.SetActive(true);
+            PassBtnP1.gameObject.SetActive(true);
+            PassBtnP2.gameObject.SetActive(false);
+            PassBtnP3.gameObject.SetActive(false);
+            PassBtnP4.gameObject.SetActive(true);
             KeywordContainerP2.gameObject.layer = 2;
             KeywordContainerP3.gameObject.layer = 2;
             KeywordContainerP4.gameObject.layer = 5;
@@ -1287,65 +1287,80 @@ public class BoardManager : MonoBehaviour
 
     private struct KeywordFreq
     {
-        public String keywordName;
-        public int keywordFreqs;
+        public string KeywordName;
+        public int KeywordFreqs;
 
-        public KeywordFreq(String keyword, int freq)
+        public KeywordFreq(string keyword, int freq = 0)
         {
-            keywordName = keyword;
-            keywordFreqs = freq;
+            KeywordName = keyword;
+            KeywordFreqs = freq;
         }
 
         public void IncreaseFreq()
         {
-            keywordFreqs++;
+            KeywordFreqs++;
         }
     }
 
     private void UpdateScoring()
     {
-        int Tier1 = 2;
-        int Tier2 = 4;
-        int Tier3 = 6;
-        List<KeywordFreq> Scoring = new List<KeywordFreq>();
+        const int tier1 = 2;
+        const int tier2 = 4;
+        const int tier3 = 6;
+        List<KeywordFreq> scoring = new List<KeywordFreq>();
 
-        foreach (Card C in Deck)
+        foreach (Card c in Deck)
         {
             //check if card is in player hand not just in deck
-            foreach (Card.CardProperty card in C.PropertyList)
+            if (c.IsOnBoard())
             {
-                foreach (String keywordValue in _keywordList)
+                foreach (Card.CardProperty prop in c.PropertyList)
                 {
-                    KeywordFreq stuff = new KeywordFreq(keywordValue,0);
-                    if (card.PropertyValue == keywordValue)
+                    foreach (string keywordValue in _keywordList)
                     {
-                        stuff.IncreaseFreq();
+                        if (prop.PropertyValue == keywordValue)
+                        {
+                            bool isAlreadyInList = false;
+                            foreach (KeywordFreq freq in scoring)
+                            {
+                                if (freq.KeywordName == keywordValue)
+                                {
+                                    isAlreadyInList = true;
+                                    freq.IncreaseFreq();
+                                    break;
+                                }
+                            }
+                            if (!isAlreadyInList)
+                            {
+                                scoring.Add(new KeywordFreq(keywordValue, 1));
+                            }
+
+                        }
                     }
-                    Scoring.Add(stuff);
                 } 
             }
          
         }
 
-        foreach (Card C in Deck)
+        foreach (Card c in Deck)
         {
             //check if card is in player hand not just in deck
-            foreach (Card.CardProperty card in C.PropertyList)
+            foreach (Card.CardProperty prop in c.PropertyList)
             {
-                foreach (KeywordFreq k in Scoring)
+                foreach (KeywordFreq freq in scoring)
                 {
                     //set cards pt values based on occurance
-                    if (k.keywordFreqs >= 10)
+                    if (freq.KeywordFreqs >= 10)
                     {
-                        card.SetPointValue(Tier1);
+                        prop.SetPointValue(tier1);
                     }
-                    if (k.keywordFreqs < 10 && k.keywordFreqs > 4)
+                    if (freq.KeywordFreqs < 10 && freq.KeywordFreqs > 4)
                     {
-                        card.SetPointValue(Tier2);
+                        prop.SetPointValue(tier2);
                     }
-                    if (k.keywordFreqs >= 0 && k.keywordFreqs <= 4)
+                    if (freq.KeywordFreqs >= 0 && freq.KeywordFreqs <= 4)
                     {
-                        card.SetPointValue(Tier3);
+                        prop.SetPointValue(tier3);
                     }
                 }
             }
