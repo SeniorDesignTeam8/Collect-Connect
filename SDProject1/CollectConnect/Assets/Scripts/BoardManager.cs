@@ -8,6 +8,7 @@ using System.Xml;
 using System.Collections;
 using Mono.Data.Sqlite;
 using System.Data;
+using System.Runtime.InteropServices;
 
 public class BoardManager : MonoBehaviour
 {
@@ -1284,46 +1285,71 @@ public class BoardManager : MonoBehaviour
         StartCoroutine("VetTimer");  //start vet timer for vetting allowed
     }
 
+    private struct KeywordFreq
+    {
+        public String keywordName;
+        public int keywordFreqs;
+
+        public KeywordFreq(String keyword, int freq)
+        {
+            keywordName = keyword;
+            keywordFreqs = freq;
+        }
+
+        public void IncreaseFreq()
+        {
+            keywordFreqs++;
+        }
+    }
+
     private void UpdateScoring()
     {
         int Tier1 = 2;
         int Tier2 = 4;
         int Tier3 = 6;
-
+        List<KeywordFreq> Scoring = new List<KeywordFreq>();
 
         foreach (Card C in Deck)
         {
             //check if card is in player hand not just in deck
-            int CommonCounter = 0;
             foreach (Card.CardProperty card in C.PropertyList)
             {
-                foreach (String keyword in _keywordList)
+                foreach (String keywordValue in _keywordList)
                 {
-                    if (card.PropertyValue == keyword)
+                    KeywordFreq stuff = new KeywordFreq(keywordValue,0);
+                    if (card.PropertyValue == keywordValue)
                     {
-                        CommonCounter++;
+                        stuff.IncreaseFreq();
                     }
-                  
-                }
-                //set cards pt values based on occurance
-                if (CommonCounter >= 10)
-                {
-                    //Tier 1 = 2 pts
+                    Scoring.Add(stuff);
+                } 
+            }
+         
+        }
 
-                }
-                if (CommonCounter < 10 && CommonCounter > 4)
+        foreach (Card C in Deck)
+        {
+            //check if card is in player hand not just in deck
+            foreach (Card.CardProperty card in C.PropertyList)
+            {
+                foreach (KeywordFreq k in Scoring)
                 {
-                    //Tier 2 = 4 pts
-
-                }
-                if (CommonCounter >= 0 && CommonCounter <= 4)
-                {
-                    //Tier 3 = 6 pts
-
+                    //set cards pt values based on occurance
+                    if (k.keywordFreqs >= 10)
+                    {
+                        card.SetPointValue(Tier1);
+                    }
+                    if (k.keywordFreqs < 10 && k.keywordFreqs > 4)
+                    {
+                        card.SetPointValue(Tier2);
+                    }
+                    if (k.keywordFreqs >= 0 && k.keywordFreqs <= 4)
+                    {
+                        card.SetPointValue(Tier3);
+                    }
                 }
             }
         }
-
     }
 }
 
