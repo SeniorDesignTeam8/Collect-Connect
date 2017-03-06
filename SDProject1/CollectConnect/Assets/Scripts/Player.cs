@@ -48,6 +48,15 @@ public class Player : MonoBehaviour
     public Button VoteBtnP4;
     public bool playerVoted;
 
+    public GameObject VoteCardLeft;
+    public GameObject VoteCardRight;
+    public GameObject VoteKeywordTxt;
+    public GameObject VoteConnection;
+    public int VotedForWho;
+    public Card CopyCardLeft;
+    public Card CopyCardRight;
+    private bool _postVote;
+
     private static readonly float[] AiPassThresholds =
     {
         0.05f, 0.25f, 0.2f, 0.25f
@@ -56,14 +65,15 @@ public class Player : MonoBehaviour
     private void Start()
     {
         IsDrawingCards = true;
-        _playerName = gameObject.name.Replace(" ", "").ToLower(); // Remove spaces and change to all lowercase to standardize.
+        _playerName = gameObject.name.Replace(" ", "").ToLower();
+            // Remove spaces and change to all lowercase to standardize.
         _playerHand = new CardCollection(gameObject.name + "'s Hand");
         PlayerScore.GetComponent<Text>();
-        ExpCardPlace.gameObject.GetComponent<Renderer>().enabled = false;  //make card expansion invisible to user
+        ExpCardPlace.gameObject.GetComponent<Renderer>().enabled = false; //make card expansion invisible to user
         ExpCardImage.gameObject.GetComponent<Renderer>().enabled = false;
         ExpCardTitle.gameObject.GetComponent<Text>().enabled = false;
         ExpCardInfo.gameObject.GetComponent<Text>().enabled = false;
- 		VetEnhance.gameObject.GetComponent<Renderer>().enabled = false;
+        VetEnhance.gameObject.GetComponent<Renderer>().enabled = false;
         VetText.gameObject.GetComponent<Text>().enabled = false;
         VetYesBtn.gameObject.SetActive(false);
         VetNoBtn.gameObject.SetActive(false);
@@ -84,6 +94,11 @@ public class Player : MonoBehaviour
         VoteBtnP2.gameObject.SetActive(false);
         VoteBtnP3.gameObject.SetActive(false);
         VoteBtnP4.gameObject.SetActive(false);
+        VoteBtnP1.GetComponent<Button>().onClick.AddListener(VotePlayer1);
+        VoteBtnP2.GetComponent<Button>().onClick.AddListener(VotePlayer2);
+        VoteBtnP3.GetComponent<Button>().onClick.AddListener(VotePlayer3);
+        VoteBtnP4.GetComponent<Button>().onClick.AddListener(VotePlayer4);
+        VotedForWho = 0;
     }
 
     private void Update()
@@ -106,7 +121,7 @@ public class Player : MonoBehaviour
         else
             IsDrawingCards = false;
 
-        if (_isAiControlled && BoardManager.Instance.GetCurrentPlayer() == this &&
+      if (_isAiControlled && BoardManager.Instance.GetCurrentPlayer() == this &&
             !BoardManager.Instance.GetIsTurnOver() && BoardManager.Instance.GetIsStarted()
             && BoardManager.Instance._vetStartBool == false)
         {
@@ -139,12 +154,13 @@ public class Player : MonoBehaviour
                     BoardManager.Instance.PassBtnHit();
                 }
                 else
-                {                    
-                    playedCards.Shuffle(); // More organized way of choosing a random card than just picking a random index.
+                {
+                    playedCards.Shuffle();
+                        // More organized way of choosing a random card than just picking a random index.
                     float aiValidPlayChance = Random.Range(0.0f, 1.0f);
                     foreach (Card c in playedCards)
                     {
-                        
+
                         List<Card.CardProperty> commonProps = c.FindCommonProperties(pickedCard);
                         //random index to determine if valid play should happen 80% of the time...
                         if (aiValidPlayChance < 0.8)
@@ -200,7 +216,8 @@ public class Player : MonoBehaviour
     public IEnumerable<string> GetKeywords()
     {
         // Get the property value string from the property list in each card.
-        List<string> keywords = (from Card c in _playerHand from prop in c.PropertyList select prop.PropertyValue).ToList();
+        List<string> keywords =
+            (from Card c in _playerHand from prop in c.PropertyList select prop.PropertyValue).ToList();
         // Remove any duplicates and return.
         return keywords.Distinct().ToList();
     }
@@ -210,7 +227,7 @@ public class Player : MonoBehaviour
         return _playerHand;
     }
 
-    public void CardExpansion(Card card)  //Expand card
+    public void CardExpansion(Card card) //Expand card
     {
         ExpCardPlace.gameObject.GetComponent<Renderer>().enabled = true;
         ExpCardImage.gameObject.GetComponent<Renderer>().enabled = true;
@@ -225,7 +242,7 @@ public class Player : MonoBehaviour
         //Make card appear in expand
     }
 
-    public void CardShrink(Card card)  //Shrink card
+    public void CardShrink(Card card) //Shrink card
     {
         ExpCardPlace.gameObject.GetComponent<Renderer>().enabled = false;
         ExpCardImage.gameObject.GetComponent<Renderer>().enabled = false;
@@ -250,7 +267,7 @@ public class Player : MonoBehaviour
             propList[i] = propList[randIndex];
             propList[randIndex] = temp;
         }
- }
+    }
 
     public void VetExpansion()
     {
@@ -284,7 +301,7 @@ public class Player : MonoBehaviour
         YesNoBtnHit = true;
     }
 
-    public void VoteExpansion()
+    public void PlayerVoteExpansion()
     {
         VoteEnhance.gameObject.GetComponent<Renderer>().enabled = true;
         VoteText.gameObject.GetComponent<Text>().enabled = true;
@@ -292,10 +309,10 @@ public class Player : MonoBehaviour
         VoteBtnP2.gameObject.SetActive(true);
         VoteBtnP3.gameObject.SetActive(true);
         VoteBtnP4.gameObject.SetActive(true);
-        playerVoted = false;    //reset
+        playerVoted = false; //reset
     }
 
-    public void VoteShrink()
+    public void PlayerVoteShrink()
     {
         VoteEnhance.gameObject.GetComponent<Renderer>().enabled = false;
         VoteText.gameObject.GetComponent<Text>().enabled = false;
@@ -305,8 +322,45 @@ public class Player : MonoBehaviour
         VoteBtnP4.gameObject.SetActive(false);
     }
 
-    public void OnPlayerBtnHit()
+    public void VoteMainExpansion()
+    {
+        VoteCardLeft.gameObject.GetComponent<Renderer>().enabled = true;
+        VoteCardRight.gameObject.GetComponent<Renderer>().enabled = true;
+        VoteKeywordTxt.gameObject.GetComponent<Text>().enabled = true;
+        VoteConnection.gameObject.GetComponent<Renderer>().enabled = true;
+    }
+
+    public void VoteMainShrink()
+    {
+        VoteCardLeft.gameObject.GetComponent<Renderer>().enabled = false;
+        VoteCardRight.gameObject.GetComponent<Renderer>().enabled = false;
+        VoteKeywordTxt.gameObject.GetComponent<Text>().enabled = false;
+        VoteConnection.gameObject.GetComponent<Renderer>().enabled = false;
+        //_postVote = true;
+    }
+
+    public void VotePlayer1()
     {
         playerVoted = true;
+        VotedForWho = 1;
     }
+
+    public void VotePlayer2()
+    {
+        playerVoted = true;
+        VotedForWho = 2;
+    }
+
+    public void VotePlayer3()
+    {
+        playerVoted = true;
+        VotedForWho = 3;
+    }
+
+    public void VotePlayer4()
+    {
+        playerVoted = true;
+        VotedForWho = 4;
+    }
+
 }

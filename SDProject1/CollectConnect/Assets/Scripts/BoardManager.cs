@@ -64,23 +64,8 @@ public class BoardManager : MonoBehaviour
     public Button passBtnP4;
 
     public GameObject VoteEhnance;
-    public GameObject VoteP1Card1;
-    public GameObject VoteP1Card2;
-    public GameObject VoteP2Card1;
-    public GameObject VoteP2Card2;
-    public GameObject VoteP3Card1;
-    public GameObject VoteP3Card2;
-    public GameObject VoteP4Card1;
-    public GameObject VoteP4Card2;
-    public GameObject VoteP1Connection;
-    public GameObject VoteP2Connection;
-    public GameObject VoteP3Connection;
-    public GameObject VoteP4Connection;
-    public GameObject VoteP1ConnectionWordTxt;
-    public GameObject VoteP2ConnectionWordTxt;
-    public GameObject VoteP3ConnectionWordTxt;
-    public GameObject VoteP4ConnectionWordTxt;
     public List<int> VoteResultsList;
+    private bool _voteStartBool; 
 
     private void Awake()
     {
@@ -88,14 +73,13 @@ public class BoardManager : MonoBehaviour
         _isTurnOver = false;
         IsDeckReady = false;
         _playedTurn = false;
-        DisableVet();
-        DisableVote();
         VetResultList = new List<bool>();
         VoteResultsList = new List<int>();
         _afterVet = false;
         _vetStartBool = false;
         _hitVetBtn = false;
         _playerNumber = 0;
+        _voteStartBool = false;
 
         for (int i = 0; i < 4; i++) //prefill vetResultList and voteResultList
         {
@@ -139,12 +123,16 @@ public class BoardManager : MonoBehaviour
             passBtnP3.gameObject.SetActive(false);
             passBtnP4.gameObject.SetActive(false);
 
+            DisableVet();
+            DisableVote();
+
             ts = FindObjectOfType<TimerScript>();
         }
         else if (Instance != this)
         {
             Destroy(gameObject);
         }
+
         DontDestroyOnLoad(gameObject);
     }
 
@@ -171,12 +159,11 @@ public class BoardManager : MonoBehaviour
                     _keywordList.AddRange(t.GetComponent<Player>().GetKeywords());
                 }
                 // Remove any duplicates, then we're ready to start.
-                // TODO: Might place a first card at center of the board.
+                
                 _keywordList = _keywordList.Distinct().ToList();
                 PopulateKeywords();
                 _isGameStarted = true;
             }
-
         }
 
         if (Deck.Size == 0)
@@ -195,6 +182,10 @@ public class BoardManager : MonoBehaviour
                     c.SetIsSelected(false);
 
                     PlayPlace();
+
+                    //first card played by AI
+                    _playerScriptRefs[CurrentPlayer].connectionKeyword = "First Card Played";
+
                     // c.gameObject.AddComponent<NodeMovement>();
                     _isPlayerCardSelected = false;
                     _isFirstCardPlay = false;
@@ -206,7 +197,7 @@ public class BoardManager : MonoBehaviour
         {
             _isGameStarted = false;
         }
-        else
+        else if (_voteStartBool == false)
         {
             //tri select check
             Card cardA = null, cardB = null;
@@ -238,7 +229,7 @@ public class BoardManager : MonoBehaviour
             if (!_vetStartBool)
             {
                 Debug.Log("Starting vet setup.");
-                 StartCoroutine("VetSetUp");
+                StartCoroutine("VetSetUp");
 
                 _vetStartBool = true;
             }
@@ -249,15 +240,16 @@ public class BoardManager : MonoBehaviour
                 {
                     ts.CancelInvoke();
                     _playerScriptRefs[_playerNumber].VetShrink();
-                    Debug.Log("VetResultList while pulling player results = " + VetResultList[0] + ", " + VetResultList[1] + ", " + VetResultList[2] + ", " + VetResultList[3]);
+                    Debug.Log("VetResultList while pulling player results = " + VetResultList[0] + ", " +
+                              VetResultList[1] + ", " + VetResultList[2] + ", " + VetResultList[3]);
                     VetResultList[_playerNumber] = _playerScriptRefs[_playerNumber].VetResult; //pull player's result 
                     _playerNumber++;
 
                     if (_playerNumber < 4) //if hit y/n button
-                       {
+                    {
                         _playerScriptRefs[_playerNumber].VetExpansion(); //orange screen
                         StartCoroutine("VetDecisionTimer", _playerScriptRefs[_playerNumber]);
-                       }
+                    }
 
                     if (_playerScriptRefs[3].playerVetted == true)
                     {
@@ -275,7 +267,7 @@ public class BoardManager : MonoBehaviour
                 }
             }
 
-            if (_afterVet == true)  //get the vet result, true for yes/valid, false for no/invalid
+            if (_afterVet == true) //get the vet result, true for yes/valid, false for no/invalid
             {
                 if (GetVetResult())
                 {
@@ -292,37 +284,80 @@ public class BoardManager : MonoBehaviour
                             _vetStartBool = false;
                         }
                         else
-                            {
-                                Debug.Log("CardA is null. Null Pointer Exception.");
-                            }
-                                _currentKeyword = "";
+                        {
+                            Debug.Log("CardA is null. Null Pointer Exception.");
+                        }
+                        _currentKeyword = "";
                     }
                     else
-                        {
-                            _currentKeyword = "";
-                        }
+                    {
+                        _currentKeyword = "";
+                    }
                 }
                 else
-                    {
-                        //the players vetted against the connection. Reset the cards and pass.
+                {
+                    //the players vetted against the connection. Reset the cards and pass.
 
-                        _playerScriptRefs[CurrentPlayer].card1 = null;
-                        _playerScriptRefs[CurrentPlayer].card2 = null;
-                        _playerScriptRefs[CurrentPlayer].connectionKeyword = "Vetted Against";
-                        _currentKeyword = "";
-                        cardA.gameObject.GetComponent<Renderer>().enabled = false;
-                        cardA.gameObject.layer = 2;  //"destroyed"
+                    _playerScriptRefs[CurrentPlayer].card1 = null;
+                    _playerScriptRefs[CurrentPlayer].card2 = null;
+                    _playerScriptRefs[CurrentPlayer].connectionKeyword = "Vetted Against";
+                    _currentKeyword = "";
+                    cardA.gameObject.GetComponent<Renderer>().enabled = false;
+                    cardA.gameObject.layer = 2; //"destroyed"
 
-                        //Destroy(cardA.gameObject);
+                    //Destroy(cardA.gameObject);
 
                     _isTurnOver = true;
-                        _hitVetBtn = false; //reset btn
-                        _afterVet = false;
-                        _vetStartBool = false;
-                    }
+                    _hitVetBtn = false; //reset btn
+                    _afterVet = false;
+                    _vetStartBool = false;
+                }
                 ts.InvokeRepeating("decreaseTime", 1, 1);
             }
+        }
+        else //if _voteStartBool == true --> in voting
+        {
+            Debug.Log("GETTING INTO VOTING");
 
+            //run voting
+            if (_playerScriptRefs[_playerNumber].playerVoted == true) //if player voted
+            {
+                ts.CancelInvoke();
+                _playerScriptRefs[_playerNumber].PlayerVoteShrink();
+                _playerNumber++;
+
+                if (_playerNumber < 4) //if hit y/n button
+                {
+                    _playerScriptRefs[_playerNumber].PlayerVoteExpansion();
+                    StartCoroutine("VoteDecisionTimer", _playerScriptRefs[_playerNumber]);
+                        //start vote timer for each player
+                }
+
+                if (_playerScriptRefs[3].playerVoted == true)
+                {
+                    _playerScriptRefs[3].PlayerVoteShrink();
+                    ToggleCardsOn();
+                    DisableVote();
+                    _playerNumber = 0;
+                    _voteStartBool = false;
+                    CurrentPlayer = 0;    //start round after voting
+
+                    foreach (Player p in _playerScriptRefs)
+                    {
+                        if (p.CopyCardLeft != null )
+                        {
+                            Destroy(p.CopyCardLeft.gameObject);
+                        }
+
+                        if (p.CopyCardRight != null)
+                        {
+                            Destroy(p.CopyCardRight.gameObject);
+                        }
+                    }
+
+                    ts.InvokeRepeating("decreaseTime", 1, 1);
+                }
+            }
         }
     }
 
@@ -338,58 +373,69 @@ public class BoardManager : MonoBehaviour
         if (!_isGameStarted)
             return;
         TimerScript.Timeleft = 90;
-        CurrentPlayer++;
 
-        Debug.Log("player's turn" + CurrentPlayer);
-        CurrentPlayer %= Players.Length;
+        if (_voteStartBool == false)
+        {
+            CurrentPlayer++;
 
-        if (CurrentPlayer == 0)
-        {
-            passBtnP1.gameObject.SetActive(true);
-            passBtnP2.gameObject.SetActive(false);
-            passBtnP3.gameObject.SetActive(false);
-            passBtnP4.gameObject.SetActive(false);
-            KeywordContainerP2.gameObject.layer = 2;
-            KeywordContainerP3.gameObject.layer = 2;
-            KeywordContainerP4.gameObject.layer = 2;
-        }
-        else if (CurrentPlayer == 1)
-        {
-            passBtnP1.gameObject.SetActive(false);
-            passBtnP2.gameObject.SetActive(true);
-            passBtnP3.gameObject.SetActive(false);
-            passBtnP4.gameObject.SetActive(false);
-            KeywordContainerP2.gameObject.layer = 5;
-            KeywordContainerP3.gameObject.layer = 2;
-            KeywordContainerP4.gameObject.layer = 2;
-        }
-        else if (CurrentPlayer == 2)
-        {
-            passBtnP1.gameObject.SetActive(true);
-            passBtnP2.gameObject.SetActive(false);
-            passBtnP3.gameObject.SetActive(true);
-            passBtnP4.gameObject.SetActive(false);
-            KeywordContainerP2.gameObject.layer = 2;
-            KeywordContainerP3.gameObject.layer = 5;
-            KeywordContainerP4.gameObject.layer = 2;
-        }
-        else if (CurrentPlayer == 3)
-        {
-            passBtnP1.gameObject.SetActive(true);
-            passBtnP2.gameObject.SetActive(false);
-            passBtnP3.gameObject.SetActive(false);
-            passBtnP4.gameObject.SetActive(true);
-            KeywordContainerP2.gameObject.layer = 2;
-            KeywordContainerP3.gameObject.layer = 2;
-            KeywordContainerP4.gameObject.layer = 5;
-        }
+            if (CurrentPlayer >= 4 && _voteStartBool == false)
+            {
+                //TODO run voting here
+                _voteStartBool = true;
+                StartCoroutine("VoteSetUp");
+                CurrentPlayer--;
+            }
 
+            Debug.Log("player's turn" + CurrentPlayer);
+            CurrentPlayer %= Players.Length;
 
-        PopulateKeywords();
-        _isTurnOver = false;
-        _isPlayerCardSelected = false;
-        _isBoardCardSelected = false;
-        _playedTurn = false;
+            if (CurrentPlayer == 0)
+            {
+                passBtnP1.gameObject.SetActive(true);
+                passBtnP2.gameObject.SetActive(false);
+                passBtnP3.gameObject.SetActive(false);
+                passBtnP4.gameObject.SetActive(false);
+                KeywordContainerP2.gameObject.layer = 2;
+                KeywordContainerP3.gameObject.layer = 2;
+                KeywordContainerP4.gameObject.layer = 2;
+            }
+            else if (CurrentPlayer == 1)
+            {
+                passBtnP1.gameObject.SetActive(false);
+                passBtnP2.gameObject.SetActive(true);
+                passBtnP3.gameObject.SetActive(false);
+                passBtnP4.gameObject.SetActive(false);
+                KeywordContainerP2.gameObject.layer = 5;
+                KeywordContainerP3.gameObject.layer = 2;
+                KeywordContainerP4.gameObject.layer = 2;
+            }
+            else if (CurrentPlayer == 2)
+            {
+                passBtnP1.gameObject.SetActive(false);
+                passBtnP2.gameObject.SetActive(false);
+                passBtnP3.gameObject.SetActive(true);
+                passBtnP4.gameObject.SetActive(false);
+                KeywordContainerP2.gameObject.layer = 2;
+                KeywordContainerP3.gameObject.layer = 5;
+                KeywordContainerP4.gameObject.layer = 2;
+            }
+            else if (CurrentPlayer == 3)
+            {
+                passBtnP1.gameObject.SetActive(false);
+                passBtnP2.gameObject.SetActive(false);
+                passBtnP3.gameObject.SetActive(false);
+                passBtnP4.gameObject.SetActive(true);
+                KeywordContainerP2.gameObject.layer = 2;
+                KeywordContainerP3.gameObject.layer = 2;
+                KeywordContainerP4.gameObject.layer = 5;
+            }
+
+            PopulateKeywords();
+            _isTurnOver = false;
+            _isPlayerCardSelected = false;
+            _isBoardCardSelected = false;
+            _playedTurn = false;
+        }
     }
 
     private void PopulateKeywords()
@@ -1004,6 +1050,7 @@ public class BoardManager : MonoBehaviour
         _playerScriptRefs[CurrentPlayer].connectionKeyword = "Passed";
 
         _isTurnOver = true;
+
         foreach (Card c in from p in _playerScriptRefs from Card c in p.GetHand() where c.IsSelected() select c)
         {
             c.SetIsSelected(false); // Deselect any selected cards.
@@ -1136,8 +1183,7 @@ public class BoardManager : MonoBehaviour
     }
 
     private bool CheckConnection()
-    {
-       
+    { 
         List<Card.CardProperty> commonProps = _copyCardRight.FindCommonProperties(_copyCardLeft);
         foreach (Card.CardProperty key in commonProps)
         {
@@ -1145,7 +1191,6 @@ public class BoardManager : MonoBehaviour
                 return true;
         }
         return false;
-
     }
 
     private IEnumerator VetDecisionTimer(Player p)
@@ -1216,43 +1261,21 @@ public class BoardManager : MonoBehaviour
     private void DisableVote() //disable vote screen
     {
         VoteEhnance.gameObject.GetComponent<Renderer>().enabled = false;
-        VoteP1Card1.gameObject.GetComponent<Renderer>().enabled = false;
-        VoteP1Card2.gameObject.GetComponent<Renderer>().enabled = false;
-        VoteP2Card1.gameObject.GetComponent<Renderer>().enabled = false;
-        VoteP2Card2.gameObject.GetComponent<Renderer>().enabled = false;
-        VoteP3Card1.gameObject.GetComponent<Renderer>().enabled = false;
-        VoteP3Card2.gameObject.GetComponent<Renderer>().enabled = false;
-        VoteP4Card1.gameObject.GetComponent<Renderer>().enabled = false;
-        VoteP4Card2.gameObject.GetComponent<Renderer>().enabled = false;
-        VoteP1Connection.gameObject.GetComponent<Renderer>().enabled = false;
-        VoteP2Connection.gameObject.GetComponent<Renderer>().enabled = false;
-        VoteP3Connection.gameObject.GetComponent<Renderer>().enabled = false;
-        VoteP4Connection.gameObject.GetComponent<Renderer>().enabled = false;
-        VoteP1ConnectionWordTxt.gameObject.GetComponent<Text>().enabled = false;
-        VoteP2ConnectionWordTxt.gameObject.GetComponent<Text>().enabled = false;
-        VoteP3ConnectionWordTxt.gameObject.GetComponent<Text>().enabled = false;
-        VoteP4ConnectionWordTxt.gameObject.GetComponent<Text>().enabled = false;
+
+        foreach (Player p in _playerScriptRefs) //shrink main voting pieces 
+        {
+            p.VoteMainShrink();
+        }
     }
 
     private void EnableVote() //enable vote screen
     {
         VoteEhnance.gameObject.GetComponent<Renderer>().enabled = true;
-        VoteP1Card1.gameObject.GetComponent<Renderer>().enabled = true;
-        VoteP1Card2.gameObject.GetComponent<Renderer>().enabled = true;
-        VoteP2Card1.gameObject.GetComponent<Renderer>().enabled = true;
-        VoteP2Card2.gameObject.GetComponent<Renderer>().enabled = true;
-        VoteP3Card1.gameObject.GetComponent<Renderer>().enabled = true;
-        VoteP3Card2.gameObject.GetComponent<Renderer>().enabled = true;
-        VoteP4Card1.gameObject.GetComponent<Renderer>().enabled = true;
-        VoteP4Card2.gameObject.GetComponent<Renderer>().enabled = true;
-        VoteP1Connection.gameObject.GetComponent<Renderer>().enabled = true;
-        VoteP2Connection.gameObject.GetComponent<Renderer>().enabled = true;
-        VoteP3Connection.gameObject.GetComponent<Renderer>().enabled = true;
-        VoteP4Connection.gameObject.GetComponent<Renderer>().enabled = true;
-        VoteP1ConnectionWordTxt.gameObject.GetComponent<Text>().enabled = true;
-        VoteP2ConnectionWordTxt.gameObject.GetComponent<Text>().enabled = true;
-        VoteP3ConnectionWordTxt.gameObject.GetComponent<Text>().enabled = true;
-        VoteP4ConnectionWordTxt.gameObject.GetComponent<Text>().enabled = true;
+
+        foreach (Player p in _playerScriptRefs)//expand main voting pieces 
+        {
+            p.VoteMainExpansion();
+        }
     }
 
     private IEnumerator VoteSetUp()  //vote screen pops up
@@ -1260,26 +1283,65 @@ public class BoardManager : MonoBehaviour
         yield return new WaitForSeconds(1.0f);
         Debug.Log("Enabling voting.");
 
+        EnableVote();
+        ToggleCardsOff();
+
         for (int i = 0; i < 4; i++)
         {
-            VoteResultsList[i] = 1;    //reset result list
+            VoteResultsList[i] = 1; //reset result list
             _playerScriptRefs[i].playerVetted = false; //reset all player vetted
         }
 
-        EnableVet();
-        ToggleCardsOff();
+        foreach (Player p in _playerScriptRefs)
+        {
+            p.VoteKeywordTxt.gameObject.GetComponent<Text>().text = p.connectionKeyword;
 
-        VetConnectionWordTxt.gameObject.GetComponent<Text>().text = _playerScriptRefs[CurrentPlayer].connectionKeyword; //store card connection for vet and vote 
+            if (p.connectionKeyword != "Passed" && p.connectionKeyword != "Vetted Against" && p.connectionKeyword != "First Card Played")
+            {
+                //don't display cards if player passed or vetted against or if first card
+                //don't allow players to vote for this play
+                p.VoteKeywordTxt.gameObject.GetComponent<Text>().text = p.connectionKeyword;
 
-        _copyCardLeft = Instantiate(_playerScriptRefs[CurrentPlayer].card1, new Vector3(0f, 0f, 0f), Quaternion.identity);
-        _copyCardLeft.transform.position = VetCard1.gameObject.transform.position;
-        _copyCardLeft.transform.localScale = Vector3.one;
+                p.CopyCardLeft = Instantiate(p.card1, new Vector3(0f, 0f, 0f), Quaternion.identity);
+                p.CopyCardLeft.transform.position = p.VoteCardLeft.gameObject.transform.position;
+                p.CopyCardLeft.transform.localScale = Vector3.one;
+                p.VoteCardLeft.gameObject.GetComponent<Renderer>().enabled = false;
 
-        _copyCardRight = Instantiate(_playerScriptRefs[CurrentPlayer].card2, new Vector3(0f, 0f, 0f), Quaternion.identity);
-        _copyCardRight.transform.position = VetCard2.gameObject.transform.position;
-        _copyCardRight.transform.localScale = Vector3.one;
+                p.CopyCardRight = Instantiate(p.card2, new Vector3(0f, 0f, 0f), Quaternion.identity);
+                p.CopyCardRight.transform.position = p.VoteCardRight.gameObject.transform.position;
+                p.CopyCardRight.transform.localScale = Vector3.one;
+                p.VoteCardRight.gameObject.GetComponent<Renderer>().enabled = false;
+            }
+            else
+            {
+                //TODO disable voting for that particular player
+ 
+                //don't display card holders
+                p.VoteCardLeft.gameObject.GetComponent<Renderer>().enabled = false;
+                p.VoteCardRight.gameObject.GetComponent<Renderer>().enabled = false;
+            }
+        }
+        _playerNumber = 0; //reset
 
-        StartCoroutine("VetTimer");  //start vet timer for vetting allowed
+        StartCoroutine("VoteDecisionTimer", _playerScriptRefs[_playerNumber]); //start for AI
+        _playerScriptRefs[_playerNumber].PlayerVoteExpansion();
+        VoteResultsList[0] = 1; //preset for AI TODO have AI pick randomly 
+        _playerScriptRefs[_playerNumber].playerVoted = true;
     }
+
+    private IEnumerator VoteDecisionTimer(Player p)
+    {
+        yield return new WaitForSeconds(5.0f);
+
+        if (p.playerVoted == false)  //if player didn't vote
+        {
+            Debug.Log(p.name + " did not vote.");
+            p.PlayerVoteShrink();
+            p.playerVetted = true;
+            VetResultList[_playerNumber] = true;    //auto set to agree
+        }
+
+    }
+
 }
 
