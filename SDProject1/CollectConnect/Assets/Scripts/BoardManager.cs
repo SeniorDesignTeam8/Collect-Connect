@@ -129,7 +129,7 @@ public class BoardManager : MonoBehaviour
             DisableVet();
             DisableVote();
 
-            ts = FindObjectOfType<TimerScript>();
+            _ts = FindObjectOfType<TimerScript>();
         }
         else if (Instance != this)
         {
@@ -325,9 +325,9 @@ public class BoardManager : MonoBehaviour
                     _isTurnOver = true;
                     _hitVetBtn = false; //reset btn
                     _afterVet = false;
-                    _vetStartBool = false;
+                    VetStartBool = false;
                 }
-                ts.InvokeRepeating("decreaseTime", 1, 1);
+                _ts.InvokeRepeating("decreaseTime", 1, 1);
             }
         }
         else //if _voteStartBool == true --> in voting
@@ -337,7 +337,7 @@ public class BoardManager : MonoBehaviour
             //run voting
             if (_playerScriptRefs[_playerNumber].playerVoted == true) //if player voted
             {
-                ts.CancelInvoke();
+                _ts.CancelInvoke();
                 _playerScriptRefs[_playerNumber].PlayerVoteShrink();
                 _playerNumber++;
 
@@ -370,7 +370,7 @@ public class BoardManager : MonoBehaviour
                         }
                     }
 
-                    ts.InvokeRepeating("decreaseTime", 1, 1);
+                    _ts.InvokeRepeating("decreaseTime", 1, 1);
                 }
             }
         }
@@ -406,40 +406,40 @@ public class BoardManager : MonoBehaviour
 
             if (CurrentPlayer == 0)
             {
-                passBtnP1.gameObject.SetActive(true);
-                passBtnP2.gameObject.SetActive(false);
-                passBtnP3.gameObject.SetActive(false);
-                passBtnP4.gameObject.SetActive(false);
+                PassBtnP1.gameObject.SetActive(true);
+                PassBtnP2.gameObject.SetActive(false);
+                PassBtnP3.gameObject.SetActive(false);
+                PassBtnP4.gameObject.SetActive(false);
                 KeywordContainerP2.gameObject.layer = 2;
                 KeywordContainerP3.gameObject.layer = 2;
                 KeywordContainerP4.gameObject.layer = 2;
             }
             else if (CurrentPlayer == 1)
             {
-                passBtnP1.gameObject.SetActive(false);
-                passBtnP2.gameObject.SetActive(true);
-                passBtnP3.gameObject.SetActive(false);
-                passBtnP4.gameObject.SetActive(false);
+                PassBtnP1.gameObject.SetActive(false);
+                PassBtnP2.gameObject.SetActive(true);
+                PassBtnP3.gameObject.SetActive(false);
+                PassBtnP4.gameObject.SetActive(false);
                 KeywordContainerP2.gameObject.layer = 5;
                 KeywordContainerP3.gameObject.layer = 2;
                 KeywordContainerP4.gameObject.layer = 2;
             }
             else if (CurrentPlayer == 2)
             {
-                passBtnP1.gameObject.SetActive(false);
-                passBtnP2.gameObject.SetActive(false);
-                passBtnP3.gameObject.SetActive(true);
-                passBtnP4.gameObject.SetActive(false);
+                PassBtnP1.gameObject.SetActive(false);
+                PassBtnP2.gameObject.SetActive(false);
+                PassBtnP3.gameObject.SetActive(true);
+                PassBtnP4.gameObject.SetActive(false);
                 KeywordContainerP2.gameObject.layer = 2;
                 KeywordContainerP3.gameObject.layer = 5;
                 KeywordContainerP4.gameObject.layer = 2;
             }
             else if (CurrentPlayer == 3)
             {
-                passBtnP1.gameObject.SetActive(false);
-                passBtnP2.gameObject.SetActive(false);
-                passBtnP3.gameObject.SetActive(false);
-                passBtnP4.gameObject.SetActive(true);
+                PassBtnP1.gameObject.SetActive(false);
+                PassBtnP2.gameObject.SetActive(false);
+                PassBtnP3.gameObject.SetActive(false);
+                PassBtnP4.gameObject.SetActive(true);
                 KeywordContainerP2.gameObject.layer = 2;
                 KeywordContainerP3.gameObject.layer = 2;
                 KeywordContainerP4.gameObject.layer = 5;
