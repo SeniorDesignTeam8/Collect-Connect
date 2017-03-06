@@ -285,6 +285,7 @@ public class BoardManager : MonoBehaviour
                     }
 
                     //TODO: need to differ between AI and human players
+                    _ts.InvokeRepeating("decreaseTime", 1, 1);
                 }
             }
 
@@ -336,7 +337,6 @@ public class BoardManager : MonoBehaviour
                         _afterVet = false;
                         VetStartBool = false;
                     }
-                _ts.InvokeRepeating("decreaseTime", 1, 1);
             }
 
         }
