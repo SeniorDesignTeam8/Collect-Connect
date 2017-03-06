@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
+using System.Text;
 
 
 public class Card : MonoBehaviour
@@ -28,6 +29,7 @@ public class Card : MonoBehaviour
 
         public void SetPointValue(int newValue)
         {
+            Debug.Log("Setting point value to " + newValue);
             _pointValue = newValue;
         }
     }
@@ -141,21 +143,40 @@ public class Card : MonoBehaviour
 
     public string GetPropertyValue(string searchName)
     {
-        return
-            PropertyList.Where(prop => prop.PropertyName == searchName)
-                .Select(prop => prop.PropertyValue)
-                .FirstOrDefault();
+        foreach (CardProperty prop in PropertyList)
+        {
+            if (prop.PropertyName == searchName)
+            {
+                string s = prop.PropertyValue;
+                return s;
+            }
+        }
+        return null;
     }
 
-    public int GetPts(string searchName)
+    public int GetPts(CardProperty searchProperty)
     {
-        foreach (CardProperty prop in PropertyList.Where(prop => prop.PropertyValue == GetPropertyValue(searchName)))
+        Debug.Log("Getting points for " + searchProperty.PropertyValue);
+        //Debug.Log(searchProperty.PropertyName);
+        foreach (CardProperty property in PropertyList)
         {
-            return prop._pointValue;
+            Debug.Log(property.PropertyName);
+            if (property.PropertyValue == searchProperty.PropertyValue)
+                return property._pointValue;
         }
         return 1;
     }
 
+    public CardProperty GetPropertyFromKeyword(string keyword)
+    {
+        Debug.Log("Getting property for " + keyword);
+        foreach (CardProperty prop in PropertyList)
+        {
+            if (prop.PropertyValue.Equals(keyword))
+                return prop;
+        }
+        return new CardProperty("WRONG", "WRONG");
+    }
     //private bool SetSprite()
     //{
     //    try

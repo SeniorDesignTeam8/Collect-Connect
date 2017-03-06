@@ -123,9 +123,9 @@ public class Player : MonoBehaviour
 
       if (_isAiControlled && BoardManager.Instance.GetCurrentPlayer() == this &&
             !BoardManager.Instance.GetIsTurnOver() && BoardManager.Instance.GetIsStarted()
-            && BoardManager.Instance._vetStartBool == false)
+            && BoardManager.Instance.VetStartBool == false)
         {
-            Debug.Log("AI Control: " + name);
+            //Debug.Log("AI Control: " + name);
             List<int> unplayedCardIndices = new List<int>();
             foreach (Card c in BoardManager.Instance.GetPlayersUnplayedCards())
             {
@@ -142,7 +142,7 @@ public class Player : MonoBehaviour
             CardCollection playedCards = BoardManager.Instance.GetPlayedCards();
             if (playedCards.Size == 0)
             {
-                Debug.Log("First played card.");
+                //Debug.Log("First played card.");
                 //No played cards, so must be first played card.
             }
             else

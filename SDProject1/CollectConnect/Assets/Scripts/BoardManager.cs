@@ -8,6 +8,7 @@ using System.Xml;
 using System.Collections;
 using Mono.Data.Sqlite;
 using System.Data;
+using System.Runtime.InteropServices;
 
 public class BoardManager : MonoBehaviour
 {
@@ -51,17 +52,18 @@ public class BoardManager : MonoBehaviour
     private Card _copyCardRight;
     public List<bool> VetResultList;
     private bool _afterVet;
-    public bool _vetStartBool;
+    private bool isFirstListGen = true;
+    public bool VetStartBool;
     private bool _hitVetBtn;
     private readonly List<Vector3> _gridPositions = new List<Vector3>();
     private int[] _scoreboard;
     private int _playerNumber;
     private static IDbConnection _dbconn;
-    private TimerScript ts;
-    public Button passBtnP1;
-    public Button passBtnP2;
-    public Button passBtnP3;
-    public Button passBtnP4;
+    private TimerScript _ts;
+    public Button PassBtnP1;
+    public Button PassBtnP2;
+    public Button PassBtnP3;
+    public Button PassBtnP4;
 
     public GameObject VoteEhnance;
     public List<int> VoteResultsList;
@@ -76,7 +78,7 @@ public class BoardManager : MonoBehaviour
         VetResultList = new List<bool>();
         VoteResultsList = new List<int>();
         _afterVet = false;
-        _vetStartBool = false;
+        VetStartBool = false;
         _hitVetBtn = false;
         _playerNumber = 0;
         _voteStartBool = false;
@@ -99,6 +101,7 @@ public class BoardManager : MonoBehaviour
 
             Deck = new CardCollection("Deck");
             BuildDeck();
+
             if (Deck == null)
                 Deck = new CardCollection("Deck");
             Deck.Shuffle();
@@ -114,14 +117,14 @@ public class BoardManager : MonoBehaviour
             _isFirstCardPlay = true;
             VetBtnLeft.GetComponent<Button>().onClick.AddListener(VetBtnSelected);
             VetBtnRight.GetComponent<Button>().onClick.AddListener(VetBtnSelected);
-            passBtnP1.GetComponent<Button>().onClick.AddListener(PassBtnHit);
-            passBtnP2.GetComponent<Button>().onClick.AddListener(PassBtnHit);
-            passBtnP3.GetComponent<Button>().onClick.AddListener(PassBtnHit);
-            passBtnP4.GetComponent<Button>().onClick.AddListener(PassBtnHit);
-            passBtnP1.gameObject.SetActive(false);
-            passBtnP2.gameObject.SetActive(false);
-            passBtnP3.gameObject.SetActive(false);
-            passBtnP4.gameObject.SetActive(false);
+            PassBtnP1.GetComponent<Button>().onClick.AddListener(PassBtnHit);
+            PassBtnP2.GetComponent<Button>().onClick.AddListener(PassBtnHit);
+            PassBtnP3.GetComponent<Button>().onClick.AddListener(PassBtnHit);
+            PassBtnP4.GetComponent<Button>().onClick.AddListener(PassBtnHit);
+            PassBtnP1.gameObject.SetActive(false);
+            PassBtnP2.gameObject.SetActive(false);
+            PassBtnP3.gameObject.SetActive(false);
+            PassBtnP4.gameObject.SetActive(false);
 
             DisableVet();
             DisableVote();
@@ -132,7 +135,6 @@ public class BoardManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-
         DontDestroyOnLoad(gameObject);
     }
 
@@ -162,6 +164,15 @@ public class BoardManager : MonoBehaviour
                 
                 _keywordList = _keywordList.Distinct().ToList();
                 PopulateKeywords();
+
+                Debug.Log("Gonna freeze now.");
+                if (isFirstListGen)
+                {
+                    Debug.Log("Like, freeze now.");
+                    UpdateScoring();
+                    Debug.Log("Frozen");
+                    isFirstListGen = false;
+                }
                 _isGameStarted = true;
             }
         }
@@ -226,19 +237,19 @@ public class BoardManager : MonoBehaviour
             _playerScriptRefs[CurrentPlayer].card2 = cardB;
             _playerScriptRefs[CurrentPlayer].connectionKeyword = _currentKeyword;
 
-            if (!_vetStartBool)
+            if (!VetStartBool)
             {
                 Debug.Log("Starting vet setup.");
                 StartCoroutine("VetSetUp");
 
-                _vetStartBool = true;
+                VetStartBool = true;
             }
 
             if (_hitVetBtn == true) //rotate through vet y/n responses (yellow btn hit)
             {
                 if (_playerScriptRefs[_playerNumber].playerVetted == true) //if blue y/n btn hit
                 {
-                    ts.CancelInvoke();
+                    _ts.CancelInvoke();
                     _playerScriptRefs[_playerNumber].VetShrink();
                     Debug.Log("VetResultList while pulling player results = " + VetResultList[0] + ", " +
                               VetResultList[1] + ", " + VetResultList[2] + ", " + VetResultList[3]);
@@ -264,6 +275,7 @@ public class BoardManager : MonoBehaviour
                     }
 
                     //TODO: need to differ between AI and human players
+                    _ts.InvokeRepeating("decreaseTime", 1, 1);
                 }
             }
 
@@ -276,12 +288,15 @@ public class BoardManager : MonoBehaviour
                     {
                         if (cardA != null)
                         {
-                            GetCurrentPlayer().IncreaseScore(cardA.GetPts(_currentKeyword));
+                            Debug.Log(cardA);
+                            Card.CardProperty prop = cardA.GetPropertyFromKeyword(_currentKeyword);
+                            Debug.Log("Prop's value: " + prop.PropertyValue);
+                            GetCurrentPlayer().IncreaseScore(cardA.GetPts(prop));
                             GetCurrentPlayer().PlayerScore.GetComponent<Text>().text = "" + GetCurrentPlayer().Score;
                             _isTurnOver = true;
                             _hitVetBtn = false; //reset btn
                             _afterVet = false;
-                            _vetStartBool = false;
+                            VetStartBool = false;
                         }
                         else
                         {
@@ -441,6 +456,7 @@ public class BoardManager : MonoBehaviour
     private void PopulateKeywords()
     {
         Debug.Log("Populating keywords");
+
         //Clear and (re?)populate the word banks.
         foreach (Player p in _playerScriptRefs)
         {
@@ -448,6 +464,7 @@ public class BoardManager : MonoBehaviour
         }
         _keywordList = _keywordList.Distinct().ToList();
         _keywordList.Sort();
+
         // clear the list
         // TODO Possibly combine KeywordContainers into an array?
         foreach (Transform child in KeywordContainerP1.transform)
@@ -558,6 +575,7 @@ public class BoardManager : MonoBehaviour
 
             //Debug.Log(str);
         }
+
     }
 
 
@@ -628,7 +646,9 @@ public class BoardManager : MonoBehaviour
             }
             rd.Close();
             rd = null;
+            
         }
+        
     }
     //populates db from text files
     //private static void BuildDeck()
@@ -1171,19 +1191,22 @@ public class BoardManager : MonoBehaviour
         VetBtnRight.gameObject.SetActive(false);    //disable vet btns
         VetBtnLeft.gameObject.SetActive(false);
 
+
         _playerNumber = 0;
         _hitVetBtn = true;
-
+         
         VetResultList[0] = CheckConnection();
         Debug.Log("AI vetted " + VetResultList[0]);//TODO: DONT HARDCODE FIRST AI
-        _playerScriptRefs[_playerNumber].playerVetted = true; //first AI done
+        _playerScriptRefs[_playerNumber].playerVetted = true; //first AI done 
         _playerScriptRefs[_playerNumber].YesNoBtnHit = true;
         _playerScriptRefs[_playerNumber].VetResult = VetResultList[0];
 
     }
 
     private bool CheckConnection()
-    { 
+
+    {
+       
         List<Card.CardProperty> commonProps = _copyCardRight.FindCommonProperties(_copyCardLeft);
         foreach (Card.CardProperty key in commonProps)
         {
@@ -1343,5 +1366,94 @@ public class BoardManager : MonoBehaviour
 
     }
 
+    private struct KeywordFreq
+    {
+        public string KeywordName;
+        public int KeywordFreqs;
+        public bool IsProcessed;
+
+        public KeywordFreq(string keyword, int freq = 0)
+        {
+            KeywordName = keyword;
+            KeywordFreqs = freq;
+            IsProcessed = false;
+        }
+
+        public void IncreaseFreq()
+        {
+            KeywordFreqs++;
+        }
+
+        public void SetIsProcessed(bool processed)
+        {
+            IsProcessed = processed;
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    private void UpdateScoring()
+    {
+        Debug.Log("Blah");
+        int tier1 = 2;
+        int tier2 = 4;
+        int tier3 = 6;
+        List<KeywordFreq> scoring = new List<KeywordFreq>();
+
+        foreach (string keywordValue in _keywordList)
+        {
+            KeywordFreq freq = new KeywordFreq(keywordValue);
+
+            foreach (Player p in _playerScriptRefs)
+            {
+                foreach (Card c in p._playerHand)
+                {
+                    foreach (Card.CardProperty prop in c.PropertyList)
+                    {
+                        if (prop.PropertyValue == keywordValue)
+                        {
+                            freq.IncreaseFreq();
+                        }
+                    }
+                }
+            }
+            scoring.Add(freq);
+        }
+        //check if card is in player hand not just in deck
+        Debug.Log(scoring.Count);
+        foreach (KeywordFreq freq in scoring)
+        {
+            //if (!freq.IsProcessed)
+           // {
+                foreach (Player p in _playerScriptRefs)
+                {
+                    //check if card is in player hand not just in deck
+                    foreach (Card c in p._playerHand)
+                    {
+                        foreach (Card.CardProperty prop in c.PropertyList.Where(prop => prop.PropertyValue == freq.KeywordName))
+                        {
+                            Debug.Log("Checking " + freq.KeywordName);
+                            //set cards pt values based on occurance
+                            if (freq.KeywordFreqs >= 10)
+                            {
+                                prop.SetPointValue(tier1);
+                            }
+                            if (freq.KeywordFreqs < 10 && freq.KeywordFreqs > 4)
+                            {
+                                prop.SetPointValue(tier2);
+                            }
+                            if (freq.KeywordFreqs >= 0 && freq.KeywordFreqs <= 4)
+                            {
+                                prop.SetPointValue(tier3);
+                            }
+                            //freq.SetIsProcessed(true);
+                        }
+                    }
+                } 
+            //}
+            Debug.Log(freq.KeywordName + " " + freq.KeywordFreqs + " is processed!");
+        }
+    }
 }
 
