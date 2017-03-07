@@ -312,7 +312,6 @@ public class BoardManager : MonoBehaviour
                 else
                 {
                     //the players vetted against the connection. Reset the cards and pass.
-
                     _playerScriptRefs[CurrentPlayer].card1 = null;
                     _playerScriptRefs[CurrentPlayer].card2 = null;
                     _playerScriptRefs[CurrentPlayer].connectionKeyword = "Vetted Against";
@@ -332,32 +331,31 @@ public class BoardManager : MonoBehaviour
         }
         else //if _voteStartBool == true --> in voting
         {
-            Debug.Log("GETTING INTO VOTING");
-
             //run voting
+            Debug.Log("VOTE " + _playerNumber);
             if (_playerScriptRefs[_playerNumber].playerVoted == true) //if player voted
             {
                 _ts.CancelInvoke();
                 _playerScriptRefs[_playerNumber].PlayerVoteShrink();
                 _playerNumber++;
 
-                if (_playerNumber < 4) //if hit y/n button
+                if (_playerNumber < 4) 
                 {
+                    //expand next player's voting
                     _playerScriptRefs[_playerNumber].PlayerVoteExpansion();
                     StartCoroutine("VoteDecisionTimer", _playerScriptRefs[_playerNumber]);
-                        //start vote timer for each player
                 }
 
-                if (_playerScriptRefs[3].playerVoted == true)
+                if (_playerScriptRefs[3].playerVoted == true) //last player to vote
                 {
                     _playerScriptRefs[3].PlayerVoteShrink();
                     ToggleCardsOn();
                     DisableVote();
                     _playerNumber = 0;
                     _voteStartBool = false;
-                    CurrentPlayer = 0;    //start round after voting
+                    CurrentPlayer = 0;    //start round after voting (for late update)
 
-                    foreach (Player p in _playerScriptRefs)
+                    foreach (Player p in _playerScriptRefs)  //destroy main player cards
                     {
                         if (p.CopyCardLeft != null )
                         {
