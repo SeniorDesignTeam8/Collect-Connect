@@ -331,8 +331,7 @@ public class BoardManager : MonoBehaviour
         }
         else //if _voteStartBool == true --> in voting
         {
-            //run voting
-            Debug.Log("VOTE " + _playerNumber);
+            //RUN VOTING
             if (_playerScriptRefs[_playerNumber].playerVoted == true) //if player voted
             {
                 _ts.CancelInvoke();
@@ -1358,8 +1357,8 @@ public class BoardManager : MonoBehaviour
         {
             Debug.Log(p.name + " did not vote.");
             p.PlayerVoteShrink();
-            p.playerVetted = true;
-            VetResultList[_playerNumber] = true;    //auto set to agree
+            p.playerVoted = true;
+            VoteResultsList[_playerNumber] = 1; //auto set to agree with AI
         }
 
     }
