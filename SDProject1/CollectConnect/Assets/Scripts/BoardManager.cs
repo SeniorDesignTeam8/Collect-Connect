@@ -67,7 +67,8 @@ public class BoardManager : MonoBehaviour
 
     public GameObject VoteEhnance;
     public List<int> VoteResultsList;
-    private bool _voteStartBool; 
+    private bool _voteStartBool;
+    public List<bool> cantVotePlayerList;
 
     private void Awake()
     {
@@ -77,16 +78,18 @@ public class BoardManager : MonoBehaviour
         _playedTurn = false;
         VetResultList = new List<bool>();
         VoteResultsList = new List<int>();
+        cantVotePlayerList = new List<bool>();
         _afterVet = false;
         VetStartBool = false;
         _hitVetBtn = false;
         _playerNumber = 0;
         _voteStartBool = false;
 
-        for (int i = 0; i < 4; i++) //prefill vetResultList and voteResultList
+        for (int i = 0; i < 4; i++) //prefill lists
         {
             VetResultList.Add(true);
             VoteResultsList.Add(1);
+            cantVotePlayerList.Add(false);
         }
     }
 
@@ -365,6 +368,11 @@ public class BoardManager : MonoBehaviour
                         {
                             Destroy(p.CopyCardRight.gameObject);
                         }
+                    }
+
+                    for (int i = 0; i < 4; i++) //rest listing
+                    {
+                        cantVotePlayerList[i] = false;
                     }
 
                     _ts.InvokeRepeating("decreaseTime", 1, 1);
@@ -1292,7 +1300,7 @@ public class BoardManager : MonoBehaviour
     {
         VoteEhnance.gameObject.GetComponent<Renderer>().enabled = true;
 
-        foreach (Player p in _playerScriptRefs)//expand main voting pieces 
+        foreach (Player p in _playerScriptRefs) //expand main voting pieces 
         {
             p.VoteMainExpansion();
         }
@@ -1312,6 +1320,7 @@ public class BoardManager : MonoBehaviour
             _playerScriptRefs[i].playerVetted = false; //reset all player vetted
         }
 
+        _playerNumber = 0; //reset for voting below
         foreach (Player p in _playerScriptRefs)
         {
             p.VoteKeywordTxt.gameObject.GetComponent<Text>().text = p.connectionKeyword;
@@ -1331,11 +1340,14 @@ public class BoardManager : MonoBehaviour
                 p.CopyCardRight.transform.position = p.VoteCardRight.gameObject.transform.position;
                 p.CopyCardRight.transform.localScale = Vector3.one;
                 p.VoteCardRight.gameObject.GetComponent<Renderer>().enabled = false;
+                _playerNumber++;
             }
             else
             {
-                //TODO disable voting for that particular player
- 
+                //disable voting buttons for those players
+                cantVotePlayerList[_playerNumber] = true;  
+                _playerNumber++;
+
                 //don't display card holders
                 p.VoteCardLeft.gameObject.GetComponent<Renderer>().enabled = false;
                 p.VoteCardRight.gameObject.GetComponent<Renderer>().enabled = false;

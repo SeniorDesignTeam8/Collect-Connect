@@ -310,6 +310,18 @@ public class Player : MonoBehaviour
         VoteBtnP3.gameObject.SetActive(true);
         VoteBtnP4.gameObject.SetActive(true);
         playerVoted = false; //reset
+
+        if (BoardManager.Instance.cantVotePlayerList[0] == true)  //cant vote on "invalid" moves
+            VoteBtnP1.gameObject.SetActive(false);
+
+        if (BoardManager.Instance.cantVotePlayerList[1] == true)
+            VoteBtnP2.gameObject.SetActive(false);
+
+        if (BoardManager.Instance.cantVotePlayerList[2] == true)
+            VoteBtnP3.gameObject.SetActive(false);
+
+        if (BoardManager.Instance.cantVotePlayerList[3] == true)
+            VoteBtnP4.gameObject.SetActive(false);
     }
 
     public void PlayerVoteShrink()
