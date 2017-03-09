@@ -57,6 +57,8 @@ public class Player : MonoBehaviour
     public Card CopyCardRight;
     private bool _postVote;
 
+    public GameObject VotePlayerPiece;
+
     private static readonly float[] AiPassThresholds =
     {
         0.05f, 0.25f, 0.2f, 0.25f
@@ -99,6 +101,7 @@ public class Player : MonoBehaviour
         VoteBtnP3.GetComponent<Button>().onClick.AddListener(VotePlayer3);
         VoteBtnP4.GetComponent<Button>().onClick.AddListener(VotePlayer4);
         VotedForWho = 0;
+        VotePlayerPiece.gameObject.GetComponent<Renderer>().enabled = false;
     }
 
     private void Update()
@@ -340,6 +343,7 @@ public class Player : MonoBehaviour
         VoteCardRight.gameObject.GetComponent<Renderer>().enabled = true;
         VoteKeywordTxt.gameObject.GetComponent<Text>().enabled = true;
         VoteConnection.gameObject.GetComponent<Renderer>().enabled = true;
+        VotePlayerPiece.gameObject.GetComponent<Renderer>().enabled = true;
     }
 
     public void VoteMainShrink()
@@ -348,6 +352,7 @@ public class Player : MonoBehaviour
         VoteCardRight.gameObject.GetComponent<Renderer>().enabled = false;
         VoteKeywordTxt.gameObject.GetComponent<Text>().enabled = false;
         VoteConnection.gameObject.GetComponent<Renderer>().enabled = false;
+        VotePlayerPiece.gameObject.GetComponent<Renderer>().enabled = false;
         //_postVote = true;
     }
 
