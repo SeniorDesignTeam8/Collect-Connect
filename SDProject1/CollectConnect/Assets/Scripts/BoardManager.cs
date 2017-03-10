@@ -253,9 +253,9 @@ public class BoardManager : MonoBehaviour
 
             if (_hitVetBtn == true) //rotate through vet y/n responses (yellow btn hit)
             {
+                _ts.CancelInvoke();
                 if (_playerScriptRefs[_playerNumber].playerVetted == true) //if blue y/n btn hit
                 {
-                    _ts.CancelInvoke();
                     _playerScriptRefs[_playerNumber].VetShrink();
                     Debug.Log("VetResultList while pulling player results = " + VetResultList[0] + ", " +
                               VetResultList[1] + ", " + VetResultList[2] + ", " + VetResultList[3]);
@@ -281,8 +281,8 @@ public class BoardManager : MonoBehaviour
                     }
 
                     //TODO: need to differ between AI and human players
-                    _ts.InvokeRepeating("decreaseTime", 1, 1);
                 }
+                _ts.InvokeRepeating("decreaseTime", 1, 1);
             }
 
             if (_afterVet == true) //get the vet result, true for yes/valid, false for no/invalid
@@ -666,190 +666,7 @@ public class BoardManager : MonoBehaviour
         }
         
     }
-    //populates db from text files
-    //private static void BuildDeck()
-    //{
-
-    //    IDbCommand dbcmd = dbconn.CreateCommand();
-
-
-    //    // Load the collections.
-    //    List<string> collectionList = new List<string>();
-    //    try
-    //    {
-    //        using (
-    //            StreamReader reader =
-    //                new StreamReader(new FileStream(Application.dataPath + "/TextFiles/Collections.txt",
-    //                    FileMode.OpenOrCreate)))
-    //        {
-    //            while (!reader.EndOfStream)
-    //            {
-    //                collectionList.Add(reader.ReadLine());
-
-    //            }
-    //        }
-    //        collectionList = collectionList.Distinct().ToList(); // Remove any duplicates.
-    //    }
-    //    catch (Exception e)
-    //    {
-    //        Debug.LogException(e);
-    //        throw;
-    //    }
-    //    // Load the artifacts from each collection to make cards from them. Then add them to their respective lists.
-    //    foreach (string col in collectionList)
-    //    {
-    //        using (
-    //            StreamReader reader =
-    //                new StreamReader(
-    //                    new FileStream(Application.dataPath + "/TextFiles/Collections/" + col + ".txt",
-    //                        FileMode.OpenOrCreate)))
-    //        {
-    //            while (!reader.EndOfStream)
-    //            {
-    //                GameObject c = Instantiate(GameObject.Find("Card"));
-    //                c.AddComponent<Card>();
-    //                Card cardComponent = c.GetComponent<Card>();
-    //                cardComponent.name = reader.ReadLine();
-    //                cardComponent.AddProperty("Collection", col, "1");
-    //                string s = reader.ReadLine();
-    //                cardComponent.SetExpInfo(s);
-    //                s = reader.ReadLine();
-    //                while (s != @"|" && s != null)
-    //                {
-    //                    string[] separated = s.Split('\\');
-    //                    cardComponent.AddProperty(separated[0], separated[1], separated[2]);
-    //                    s = reader.ReadLine();
-    //                }
-    //                Deck.AddCards(cardComponent);
-
-    //                string nonQ = "INSERT into cards (cardDisplayTitle,cardDescription) VALUES ('" + cardComponent.name + "',@param)";
-    //                dbcmd.CommandType = CommandType.Text;
-    //                dbcmd.CommandText = nonQ;
-    //                dbcmd.Parameters.Add(new SqliteParameter("@param", cardComponent.GetExpInfo()));
-    //                //string nonQ = "INSERT into cards (cardDisplayTitle,cardDescription) VALUES ('"+cardComponent.name+"','"+cardComponent.GetExpInfo()+"')";
-    //                Debug.Log(dbcmd.CommandText);
-    //                dbcmd.ExecuteNonQuery();
-
-    //                string sqlQuery = "SELECT last_insert_rowid()";// get id of last card inserted into cards table
-    //                dbcmd.CommandText = sqlQuery;
-    //                IDataReader rd = dbcmd.ExecuteReader();
-    //                int cardID = -1;
-    //                while (rd.Read())
-    //                {
-    //                    cardID = rd.GetInt32(0);
-
-    //                    Debug.Log("lastRow= " + cardID);
-    //                }
-    //                rd.Close();
-    //                rd = null;
-
-    //                foreach(Card.CardProperty prop in cardComponent.PropertyList)
-    //                {
-    //                    int paramID = -1;
-    //                    int attributeID = -1;
-
-    //                    string q = "INSERT into parameters (parameter) VALUES ('" + prop.PropertyName + "')";
-    //                    dbcmd.CommandType = CommandType.Text;
-    //                    dbcmd.CommandText = q;
-    //                    dbcmd.ExecuteNonQuery();
-
-    //                    sqlQuery = "SELECT last_insert_rowid()";// get id of last card inserted into cards table
-    //                    dbcmd.CommandText = sqlQuery;
-    //                    rd = dbcmd.ExecuteReader();
-    //                    while (rd.Read())
-    //                    {
-    //                        paramID = rd.GetInt32(0);
-    //                    }
-    //                    rd.Close();
-    //                    rd = null;
-
-    //                    q = "INSERT into attributes (attribute) VALUES ('" + prop.PropertyValue + "')";
-    //                    dbcmd.CommandType = CommandType.Text;
-    //                    dbcmd.CommandText = q;
-    //                    dbcmd.ExecuteNonQuery();
-
-    //                    sqlQuery = "SELECT last_insert_rowid()";// get id of last card inserted into cards table
-    //                    dbcmd.CommandText = sqlQuery;
-    //                    rd = dbcmd.ExecuteReader();
-    //                    while (rd.Read())
-    //                    {
-    //                        attributeID = rd.GetInt32(0);
-    //                    }
-    //                    rd.Close();
-    //                    rd = null;
-
-    //                    q = "INSERT into parameters_attributes (cardID,parameterID,attributeID,pointValue) VALUES (@param1,@param2,@param3,@param4)";
-    //                    dbcmd.CommandType = CommandType.Text;
-    //                    dbcmd.CommandText = q;
-    //                    dbcmd.Parameters.Add(new SqliteParameter("@param1", cardID));
-    //                    dbcmd.Parameters.Add(new SqliteParameter("@param2", paramID));
-    //                    dbcmd.Parameters.Add(new SqliteParameter("@param3", attributeID));
-    //                    dbcmd.Parameters.Add(new SqliteParameter("@param4", prop._pointValue));
-    //                    dbcmd.ExecuteNonQuery();
-
-    //                }
-
-    //            }
-    //        }
-    //    }
-    //    dbcmd.Dispose();
-    //    dbcmd = null;
-    //}
-
-    // original
-    //private static void BuildDeck()
-    //{
-    //    // Load the collections.
-    //    List<string> collectionList = new List<string>();
-    //    try
-    //    {
-    //        using (
-    //            StreamReader reader =
-    //                new StreamReader(new FileStream(Application.dataPath + "/TextFiles/Collections.txt",
-    //                    FileMode.OpenOrCreate)))
-    //        {
-    //            while (!reader.EndOfStream)
-    //            {
-    //                collectionList.Add(reader.ReadLine());
-    //            }
-    //        }
-    //        collectionList = collectionList.Distinct().ToList(); // Remove any duplicates.
-    //    }
-    //    catch (Exception e)
-    //    {
-    //        Debug.LogException(e);
-    //        throw;
-    //    }
-    //    // Load the artifacts from each collection to make cards from them. Then add them to their respective lists.
-    //    foreach (string col in collectionList)
-    //    {
-    //        using (
-    //            StreamReader reader =
-    //                new StreamReader(
-    //                    new FileStream(Application.dataPath + "/TextFiles/Collections/" + col + ".txt",
-    //                        FileMode.OpenOrCreate)))
-    //        {
-    //            while (!reader.EndOfStream)
-    //            {
-    //                GameObject c = Instantiate(GameObject.Find("Card"));
-    //                c.AddComponent<Card>();
-    //                Card cardComponent = c.GetComponent<Card>();
-    //                cardComponent.name = reader.ReadLine();
-    //                cardComponent.AddProperty("Collection", col, "1");
-    //                string s = reader.ReadLine();
-    //                cardComponent.SetExpInfo(s);
-    //                s = reader.ReadLine();
-    //                while (s != @"|" && s != null)
-    //                {
-    //                    string[] separated = s.Split('\\');
-    //                    cardComponent.AddProperty(separated[0], separated[1], separated[2]);
-    //                    s = reader.ReadLine();
-    //                }
-    //                Deck.AddCards(cardComponent);
-    //            }
-    //        }
-    //    }
-    //}
+    
 
     private void PlaySelect()
     {
@@ -1451,21 +1268,32 @@ public class BoardManager : MonoBehaviour
                     //check if card is in player hand not just in deck
                     foreach (Card c in p._playerHand)
                     {
-                        foreach (Card.CardProperty prop in c.PropertyList.Where(prop => prop.PropertyValue == freq.KeywordName))
+                       // foreach (Card.CardProperty prop in c.PropertyList.Where(prop => prop.PropertyValue == freq.KeywordName))
+                      //  {
+                        for (int i = 0; i < c.PropertyList.Count; i++)
                         {
-                            Debug.Log("Checking " + freq.KeywordName);
-                            //set cards pt values based on occurance
-                            if (freq.KeywordFreqs >= 10)
+                            if (c.PropertyList[i].PropertyValue == freq.KeywordName)
                             {
-                                prop.SetPointValue(tier1);
-                            }
-                            if (freq.KeywordFreqs < 10 && freq.KeywordFreqs > 4)
-                            {
-                                prop.SetPointValue(tier2);
-                            }
-                            if (freq.KeywordFreqs >= 0 && freq.KeywordFreqs <= 4)
-                            {
-                                prop.SetPointValue(tier3);
+                                Card.CardProperty temp = c.PropertyList[i];
+
+                                Debug.Log("Checking " + freq.KeywordName);
+                                //set cards pt values based on occurance
+                                if (freq.KeywordFreqs >= 10)
+                                {
+                                    //prop.SetPointValue(tier1);
+                                    temp._pointValue = tier1;
+                                }
+                                if (freq.KeywordFreqs < 10 && freq.KeywordFreqs > 4)
+                                {
+                                    //prop.SetPointValue(tier2);
+                                    temp._pointValue = tier2;
+                                }
+                                if (freq.KeywordFreqs >= 0 && freq.KeywordFreqs <= 4)
+                                {
+                                    //prop.SetPointValue(tier3);
+                                    temp._pointValue = tier3;
+                                }
+                                c.PropertyList[i] = temp;
                             }
                             //freq.SetIsProcessed(true);
                         }
