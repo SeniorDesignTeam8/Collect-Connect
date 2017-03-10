@@ -49,7 +49,7 @@ public class Card : MonoBehaviour
     private bool _isSelected; // Specifies if this card is selected.
     private bool _isTimerRunning; // If true, mouse is currently held down on card.
     private string _expandedInfo; // Information to display in expanded view.
-    public readonly List<CardProperty> PropertyList = new List<CardProperty>();
+    public List<CardProperty> PropertyList = new List<CardProperty>();
     private string _imageLocation = null;
 
     // Use this for initialization
@@ -111,11 +111,7 @@ public class Card : MonoBehaviour
         _isExpanded = true;
     }
 
-    private void ChangeCardProp(int a)
-    {
-        
-    }
-
+    
     private void OnMouseDrag()
     {
         if (_isOnBoard && Vector3.Distance(_pointerDownPosition, Input.mousePosition) >
