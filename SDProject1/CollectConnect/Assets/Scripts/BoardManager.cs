@@ -66,23 +66,9 @@ public class BoardManager : MonoBehaviour
     public Button PassBtnP4;
 
     public GameObject VoteEhnance;
-    public GameObject VoteP1Card1;
-    public GameObject VoteP1Card2;
-    public GameObject VoteP2Card1;
-    public GameObject VoteP2Card2;
-    public GameObject VoteP3Card1;
-    public GameObject VoteP3Card2;
-    public GameObject VoteP4Card1;
-    public GameObject VoteP4Card2;
-    public GameObject VoteP1Connection;
-    public GameObject VoteP2Connection;
-    public GameObject VoteP3Connection;
-    public GameObject VoteP4Connection;
-    public GameObject VoteP1ConnectionWordTxt;
-    public GameObject VoteP2ConnectionWordTxt;
-    public GameObject VoteP3ConnectionWordTxt;
-    public GameObject VoteP4ConnectionWordTxt;
     public List<int> VoteResultsList;
+    private bool _voteStartBool;
+    public List<bool> cantVotePlayerList;
 
     private void Awake()
     {
@@ -90,19 +76,20 @@ public class BoardManager : MonoBehaviour
         _isTurnOver = false;
         IsDeckReady = false;
         _playedTurn = false;
-        DisableVet();
-        DisableVote();
         VetResultList = new List<bool>();
         VoteResultsList = new List<int>();
+        cantVotePlayerList = new List<bool>();
         _afterVet = false;
         VetStartBool = false;
         _hitVetBtn = false;
         _playerNumber = 0;
+        _voteStartBool = false;
 
-        for (int i = 0; i < 4; i++) //prefill vetResultList and voteResultList
+        for (int i = 0; i < 4; i++) //prefill lists
         {
             VetResultList.Add(true);
             VoteResultsList.Add(1);
+            cantVotePlayerList.Add(false);
         }
     }
 
@@ -142,6 +129,9 @@ public class BoardManager : MonoBehaviour
             PassBtnP3.gameObject.SetActive(false);
             PassBtnP4.gameObject.SetActive(false);
 
+            DisableVet();
+            DisableVote();
+
             _ts = FindObjectOfType<TimerScript>();
         }
         else if (Instance != this)
@@ -174,7 +164,7 @@ public class BoardManager : MonoBehaviour
                     _keywordList.AddRange(t.GetComponent<Player>().GetKeywords());
                 }
                 // Remove any duplicates, then we're ready to start.
-                // TODO: Might place a first card at center of the board.
+                
                 _keywordList = _keywordList.Distinct().ToList();
                 PopulateKeywords();
 
@@ -188,7 +178,6 @@ public class BoardManager : MonoBehaviour
                 }
                 _isGameStarted = true;
             }
-
         }
 
         if (Deck.Size == 0)
@@ -208,6 +197,9 @@ public class BoardManager : MonoBehaviour
 
                     PlayPlace();
 
+                    //first card played by AI
+                    _playerScriptRefs[CurrentPlayer].connectionKeyword = "First Card Played";
+
                     // c.gameObject.AddComponent<NodeMovement>();
                     _isPlayerCardSelected = false;
                     _isFirstCardPlay = false;
@@ -219,7 +211,7 @@ public class BoardManager : MonoBehaviour
         {
             _isGameStarted = false;
         }
-        else
+        else if (_voteStartBool == false)
         {
             //tri select check
             Card cardA = null, cardB = null;
@@ -251,7 +243,7 @@ public class BoardManager : MonoBehaviour
             if (!VetStartBool)
             {
                 Debug.Log("Starting vet setup.");
-                 StartCoroutine("VetSetUp");
+                StartCoroutine("VetSetUp");
 
                 VetStartBool = true;
             }
@@ -262,15 +254,16 @@ public class BoardManager : MonoBehaviour
                 if (_playerScriptRefs[_playerNumber].playerVetted == true) //if blue y/n btn hit
                 {
                     _playerScriptRefs[_playerNumber].VetShrink();
-                    Debug.Log("VetResultList while pulling player results = " + VetResultList[0] + ", " + VetResultList[1] + ", " + VetResultList[2] + ", " + VetResultList[3]);
+                    Debug.Log("VetResultList while pulling player results = " + VetResultList[0] + ", " +
+                              VetResultList[1] + ", " + VetResultList[2] + ", " + VetResultList[3]);
                     VetResultList[_playerNumber] = _playerScriptRefs[_playerNumber].VetResult; //pull player's result 
                     _playerNumber++;
 
                     if (_playerNumber < 4) //if hit y/n button
-                       {
+                    {
                         _playerScriptRefs[_playerNumber].VetExpansion(); //orange screen
                         StartCoroutine("VetDecisionTimer", _playerScriptRefs[_playerNumber]);
-                       }
+                    }
 
                     if (_playerScriptRefs[3].playerVetted == true)
                     {
@@ -289,7 +282,7 @@ public class BoardManager : MonoBehaviour
                 _ts.InvokeRepeating("decreaseTime", 1, 1);
             }
 
-            if (_afterVet == true)  //get the vet result, true for yes/valid, false for no/invalid
+            if (_afterVet == true) //get the vet result, true for yes/valid, false for no/invalid
             {
                 if (GetVetResult())
                 {
@@ -309,36 +302,82 @@ public class BoardManager : MonoBehaviour
                             VetStartBool = false;
                         }
                         else
-                            {
-                                Debug.Log("CardA is null. Null Pointer Exception.");
-                            }
-                                _currentKeyword = "";
+                        {
+                            Debug.Log("CardA is null. Null Pointer Exception.");
+                        }
+                        _currentKeyword = "";
                     }
                     else
-                        {
-                            _currentKeyword = "";
-                        }
+                    {
+                        _currentKeyword = "";
+                    }
                 }
                 else
-                    {
-                        //the players vetted against the connection. Reset the cards and pass.
+                {
+                    //the players vetted against the connection. Reset the cards and pass.
+                    _playerScriptRefs[CurrentPlayer].card1 = null;
+                    _playerScriptRefs[CurrentPlayer].card2 = null;
+                    _playerScriptRefs[CurrentPlayer].connectionKeyword = "Vetted Against";
+                    _currentKeyword = "";
+                    cardA.gameObject.GetComponent<Renderer>().enabled = false;
+                    cardA.gameObject.layer = 2; //"destroyed"
 
-                        _playerScriptRefs[CurrentPlayer].card1 = null;
-                        _playerScriptRefs[CurrentPlayer].card2 = null;
-                        _playerScriptRefs[CurrentPlayer].connectionKeyword = "Vetted Against";
-                        _currentKeyword = "";
-                        cardA.gameObject.GetComponent<Renderer>().enabled = false;
-                        cardA.gameObject.layer = 2;  //"destroyed"
-
-                        //Destroy(cardA.gameObject);
+                    //Destroy(cardA.gameObject);
 
                     _isTurnOver = true;
-                        _hitVetBtn = false; //reset btn
-                        _afterVet = false;
-                        VetStartBool = false;
-                    }
+                    _hitVetBtn = false; //reset btn
+                    _afterVet = false;
+                    VetStartBool = false;
+                }
+                _ts.InvokeRepeating("decreaseTime", 1, 1);
             }
+        }
+        else //if _voteStartBool == true --> in voting
+        {
+            //RUN VOTING
+            if (_playerScriptRefs[_playerNumber].playerVoted == true) //if player voted
+            {
+                _ts.CancelInvoke();
+                _playerScriptRefs[_playerNumber].PlayerVoteShrink();
+                _playerNumber++;
 
+                if (_playerNumber < 4) 
+                {
+                    //expand next player's voting
+                    _playerScriptRefs[_playerNumber].PlayerVoteExpansion();
+                    StartCoroutine("VoteDecisionTimer", _playerScriptRefs[_playerNumber]);
+                }
+
+                if (_playerScriptRefs[3].playerVoted == true) //last player to vote
+                {
+                    _playerScriptRefs[3].PlayerVoteShrink();
+                    ToggleCardsOn();
+                    DisableVote();
+                    _playerNumber = 0;
+                    _voteStartBool = false;
+                    CurrentPlayer = 0;    //start round after voting (for late update)
+
+                    foreach (Player p in _playerScriptRefs)  //destroy main player cards
+                    {
+                        if (p.CopyCardLeft != null )
+                        {
+                            Destroy(p.CopyCardLeft.gameObject);
+                        }
+
+                        if (p.CopyCardRight != null)
+                        {
+                            Destroy(p.CopyCardRight.gameObject);
+                        }
+                    }
+
+                    for (int i = 0; i < 4; i++) //rest listing
+                    {
+                        cantVotePlayerList[i] = false;
+                    }
+
+                    _ts.InvokeRepeating("decreaseTime", 1, 1);
+                }
+            }
         }
     }
 
@@ -354,58 +393,69 @@ public class BoardManager : MonoBehaviour
         if (!_isGameStarted)
             return;
         TimerScript.Timeleft = 90;
-        CurrentPlayer++;
 
-        Debug.Log("player's turn" + CurrentPlayer);
-        CurrentPlayer %= Players.Length;
+        if (_voteStartBool == false)
+        {
+            CurrentPlayer++;
 
-        if (CurrentPlayer == 0)
-        {
-            PassBtnP1.gameObject.SetActive(true);
-            PassBtnP2.gameObject.SetActive(false);
-            PassBtnP3.gameObject.SetActive(false);
-            PassBtnP4.gameObject.SetActive(false);
-            KeywordContainerP2.gameObject.layer = 2;
-            KeywordContainerP3.gameObject.layer = 2;
-            KeywordContainerP4.gameObject.layer = 2;
-        }
-        else if (CurrentPlayer == 1)
-        {
-            PassBtnP1.gameObject.SetActive(false);
-            PassBtnP2.gameObject.SetActive(true);
-            PassBtnP3.gameObject.SetActive(false);
-            PassBtnP4.gameObject.SetActive(false);
-            KeywordContainerP2.gameObject.layer = 5;
-            KeywordContainerP3.gameObject.layer = 2;
-            KeywordContainerP4.gameObject.layer = 2;
-        }
-        else if (CurrentPlayer == 2)
-        {
-            PassBtnP1.gameObject.SetActive(false);
-            PassBtnP2.gameObject.SetActive(false);
-            PassBtnP3.gameObject.SetActive(true);
-            PassBtnP4.gameObject.SetActive(false);
-            KeywordContainerP2.gameObject.layer = 2;
-            KeywordContainerP3.gameObject.layer = 5;
-            KeywordContainerP4.gameObject.layer = 2;
-        }
-        else if (CurrentPlayer == 3)
-        {
-            PassBtnP1.gameObject.SetActive(false);
-            PassBtnP2.gameObject.SetActive(false);
-            PassBtnP3.gameObject.SetActive(false);
-            PassBtnP4.gameObject.SetActive(true);
-            KeywordContainerP2.gameObject.layer = 2;
-            KeywordContainerP3.gameObject.layer = 2;
-            KeywordContainerP4.gameObject.layer = 5;
-        }
+            if (CurrentPlayer >= 4 && _voteStartBool == false)
+            {
+                //TODO run voting here
+                _voteStartBool = true;
+                StartCoroutine("VoteSetUp");
+                CurrentPlayer--;
+            }
 
+            Debug.Log("player's turn" + CurrentPlayer);
+            CurrentPlayer %= Players.Length;
 
-        PopulateKeywords();
-        _isTurnOver = false;
-        _isPlayerCardSelected = false;
-        _isBoardCardSelected = false;
-        _playedTurn = false;
+            if (CurrentPlayer == 0)
+            {
+                PassBtnP1.gameObject.SetActive(true);
+                PassBtnP2.gameObject.SetActive(false);
+                PassBtnP3.gameObject.SetActive(false);
+                PassBtnP4.gameObject.SetActive(false);
+                KeywordContainerP2.gameObject.layer = 2;
+                KeywordContainerP3.gameObject.layer = 2;
+                KeywordContainerP4.gameObject.layer = 2;
+            }
+            else if (CurrentPlayer == 1)
+            {
+                PassBtnP1.gameObject.SetActive(false);
+                PassBtnP2.gameObject.SetActive(true);
+                PassBtnP3.gameObject.SetActive(false);
+                PassBtnP4.gameObject.SetActive(false);
+                KeywordContainerP2.gameObject.layer = 5;
+                KeywordContainerP3.gameObject.layer = 2;
+                KeywordContainerP4.gameObject.layer = 2;
+            }
+            else if (CurrentPlayer == 2)
+            {
+                PassBtnP1.gameObject.SetActive(false);
+                PassBtnP2.gameObject.SetActive(false);
+                PassBtnP3.gameObject.SetActive(true);
+                PassBtnP4.gameObject.SetActive(false);
+                KeywordContainerP2.gameObject.layer = 2;
+                KeywordContainerP3.gameObject.layer = 5;
+                KeywordContainerP4.gameObject.layer = 2;
+            }
+            else if (CurrentPlayer == 3)
+            {
+                PassBtnP1.gameObject.SetActive(false);
+                PassBtnP2.gameObject.SetActive(false);
+                PassBtnP3.gameObject.SetActive(false);
+                PassBtnP4.gameObject.SetActive(true);
+                KeywordContainerP2.gameObject.layer = 2;
+                KeywordContainerP3.gameObject.layer = 2;
+                KeywordContainerP4.gameObject.layer = 5;
+            }
+
+            PopulateKeywords();
+            _isTurnOver = false;
+            _isPlayerCardSelected = false;
+            _isBoardCardSelected = false;
+            _playedTurn = false;
+        }
     }
 
     private void PopulateKeywords()
@@ -605,190 +655,7 @@ public class BoardManager : MonoBehaviour
         }
         
     }
-    //populates db from text files
-    //private static void BuildDeck()
-    //{
-
-    //    IDbCommand dbcmd = dbconn.CreateCommand();
-
-
-    //    // Load the collections.
-    //    List<string> collectionList = new List<string>();
-    //    try
-    //    {
-    //        using (
-    //            StreamReader reader =
-    //                new StreamReader(new FileStream(Application.dataPath + "/TextFiles/Collections.txt",
-    //                    FileMode.OpenOrCreate)))
-    //        {
-    //            while (!reader.EndOfStream)
-    //            {
-    //                collectionList.Add(reader.ReadLine());
-
-    //            }
-    //        }
-    //        collectionList = collectionList.Distinct().ToList(); // Remove any duplicates.
-    //    }
-    //    catch (Exception e)
-    //    {
-    //        Debug.LogException(e);
-    //        throw;
-    //    }
-    //    // Load the artifacts from each collection to make cards from them. Then add them to their respective lists.
-    //    foreach (string col in collectionList)
-    //    {
-    //        using (
-    //            StreamReader reader =
-    //                new StreamReader(
-    //                    new FileStream(Application.dataPath + "/TextFiles/Collections/" + col + ".txt",
-    //                        FileMode.OpenOrCreate)))
-    //        {
-    //            while (!reader.EndOfStream)
-    //            {
-    //                GameObject c = Instantiate(GameObject.Find("Card"));
-    //                c.AddComponent<Card>();
-    //                Card cardComponent = c.GetComponent<Card>();
-    //                cardComponent.name = reader.ReadLine();
-    //                cardComponent.AddProperty("Collection", col, "1");
-    //                string s = reader.ReadLine();
-    //                cardComponent.SetExpInfo(s);
-    //                s = reader.ReadLine();
-    //                while (s != @"|" && s != null)
-    //                {
-    //                    string[] separated = s.Split('\\');
-    //                    cardComponent.AddProperty(separated[0], separated[1], separated[2]);
-    //                    s = reader.ReadLine();
-    //                }
-    //                Deck.AddCards(cardComponent);
-
-    //                string nonQ = "INSERT into cards (cardDisplayTitle,cardDescription) VALUES ('" + cardComponent.name + "',@param)";
-    //                dbcmd.CommandType = CommandType.Text;
-    //                dbcmd.CommandText = nonQ;
-    //                dbcmd.Parameters.Add(new SqliteParameter("@param", cardComponent.GetExpInfo()));
-    //                //string nonQ = "INSERT into cards (cardDisplayTitle,cardDescription) VALUES ('"+cardComponent.name+"','"+cardComponent.GetExpInfo()+"')";
-    //                Debug.Log(dbcmd.CommandText);
-    //                dbcmd.ExecuteNonQuery();
-
-    //                string sqlQuery = "SELECT last_insert_rowid()";// get id of last card inserted into cards table
-    //                dbcmd.CommandText = sqlQuery;
-    //                IDataReader rd = dbcmd.ExecuteReader();
-    //                int cardID = -1;
-    //                while (rd.Read())
-    //                {
-    //                    cardID = rd.GetInt32(0);
-
-    //                    Debug.Log("lastRow= " + cardID);
-    //                }
-    //                rd.Close();
-    //                rd = null;
-
-    //                foreach(Card.CardProperty prop in cardComponent.PropertyList)
-    //                {
-    //                    int paramID = -1;
-    //                    int attributeID = -1;
-
-    //                    string q = "INSERT into parameters (parameter) VALUES ('" + prop.PropertyName + "')";
-    //                    dbcmd.CommandType = CommandType.Text;
-    //                    dbcmd.CommandText = q;
-    //                    dbcmd.ExecuteNonQuery();
-
-    //                    sqlQuery = "SELECT last_insert_rowid()";// get id of last card inserted into cards table
-    //                    dbcmd.CommandText = sqlQuery;
-    //                    rd = dbcmd.ExecuteReader();
-    //                    while (rd.Read())
-    //                    {
-    //                        paramID = rd.GetInt32(0);
-    //                    }
-    //                    rd.Close();
-    //                    rd = null;
-
-    //                    q = "INSERT into attributes (attribute) VALUES ('" + prop.PropertyValue + "')";
-    //                    dbcmd.CommandType = CommandType.Text;
-    //                    dbcmd.CommandText = q;
-    //                    dbcmd.ExecuteNonQuery();
-
-    //                    sqlQuery = "SELECT last_insert_rowid()";// get id of last card inserted into cards table
-    //                    dbcmd.CommandText = sqlQuery;
-    //                    rd = dbcmd.ExecuteReader();
-    //                    while (rd.Read())
-    //                    {
-    //                        attributeID = rd.GetInt32(0);
-    //                    }
-    //                    rd.Close();
-    //                    rd = null;
-
-    //                    q = "INSERT into parameters_attributes (cardID,parameterID,attributeID,pointValue) VALUES (@param1,@param2,@param3,@param4)";
-    //                    dbcmd.CommandType = CommandType.Text;
-    //                    dbcmd.CommandText = q;
-    //                    dbcmd.Parameters.Add(new SqliteParameter("@param1", cardID));
-    //                    dbcmd.Parameters.Add(new SqliteParameter("@param2", paramID));
-    //                    dbcmd.Parameters.Add(new SqliteParameter("@param3", attributeID));
-    //                    dbcmd.Parameters.Add(new SqliteParameter("@param4", prop._pointValue));
-    //                    dbcmd.ExecuteNonQuery();
-
-    //                }
-
-    //            }
-    //        }
-    //    }
-    //    dbcmd.Dispose();
-    //    dbcmd = null;
-    //}
-
-    // original
-    //private static void BuildDeck()
-    //{
-    //    // Load the collections.
-    //    List<string> collectionList = new List<string>();
-    //    try
-    //    {
-    //        using (
-    //            StreamReader reader =
-    //                new StreamReader(new FileStream(Application.dataPath + "/TextFiles/Collections.txt",
-    //                    FileMode.OpenOrCreate)))
-    //        {
-    //            while (!reader.EndOfStream)
-    //            {
-    //                collectionList.Add(reader.ReadLine());
-    //            }
-    //        }
-    //        collectionList = collectionList.Distinct().ToList(); // Remove any duplicates.
-    //    }
-    //    catch (Exception e)
-    //    {
-    //        Debug.LogException(e);
-    //        throw;
-    //    }
-    //    // Load the artifacts from each collection to make cards from them. Then add them to their respective lists.
-    //    foreach (string col in collectionList)
-    //    {
-    //        using (
-    //            StreamReader reader =
-    //                new StreamReader(
-    //                    new FileStream(Application.dataPath + "/TextFiles/Collections/" + col + ".txt",
-    //                        FileMode.OpenOrCreate)))
-    //        {
-    //            while (!reader.EndOfStream)
-    //            {
-    //                GameObject c = Instantiate(GameObject.Find("Card"));
-    //                c.AddComponent<Card>();
-    //                Card cardComponent = c.GetComponent<Card>();
-    //                cardComponent.name = reader.ReadLine();
-    //                cardComponent.AddProperty("Collection", col, "1");
-    //                string s = reader.ReadLine();
-    //                cardComponent.SetExpInfo(s);
-    //                s = reader.ReadLine();
-    //                while (s != @"|" && s != null)
-    //                {
-    //                    string[] separated = s.Split('\\');
-    //                    cardComponent.AddProperty(separated[0], separated[1], separated[2]);
-    //                    s = reader.ReadLine();
-    //                }
-    //                Deck.AddCards(cardComponent);
-    //            }
-    //        }
-    //    }
-    //}
+    
 
     private void PlaySelect()
     {
@@ -1025,6 +892,7 @@ public class BoardManager : MonoBehaviour
         _playerScriptRefs[CurrentPlayer].connectionKeyword = "Passed";
 
         _isTurnOver = true;
+
         foreach (Card c in from p in _playerScriptRefs from Card c in p.GetHand() where c.IsSelected() select c)
         {
             c.SetIsSelected(false); // Deselect any selected cards.
@@ -1168,7 +1036,6 @@ public class BoardManager : MonoBehaviour
                 return true;
         }
         return false;
-
     }
 
     private IEnumerator VetDecisionTimer(Player p)
@@ -1239,43 +1106,21 @@ public class BoardManager : MonoBehaviour
     private void DisableVote() //disable vote screen
     {
         VoteEhnance.gameObject.GetComponent<Renderer>().enabled = false;
-        VoteP1Card1.gameObject.GetComponent<Renderer>().enabled = false;
-        VoteP1Card2.gameObject.GetComponent<Renderer>().enabled = false;
-        VoteP2Card1.gameObject.GetComponent<Renderer>().enabled = false;
-        VoteP2Card2.gameObject.GetComponent<Renderer>().enabled = false;
-        VoteP3Card1.gameObject.GetComponent<Renderer>().enabled = false;
-        VoteP3Card2.gameObject.GetComponent<Renderer>().enabled = false;
-        VoteP4Card1.gameObject.GetComponent<Renderer>().enabled = false;
-        VoteP4Card2.gameObject.GetComponent<Renderer>().enabled = false;
-        VoteP1Connection.gameObject.GetComponent<Renderer>().enabled = false;
-        VoteP2Connection.gameObject.GetComponent<Renderer>().enabled = false;
-        VoteP3Connection.gameObject.GetComponent<Renderer>().enabled = false;
-        VoteP4Connection.gameObject.GetComponent<Renderer>().enabled = false;
-        VoteP1ConnectionWordTxt.gameObject.GetComponent<Text>().enabled = false;
-        VoteP2ConnectionWordTxt.gameObject.GetComponent<Text>().enabled = false;
-        VoteP3ConnectionWordTxt.gameObject.GetComponent<Text>().enabled = false;
-        VoteP4ConnectionWordTxt.gameObject.GetComponent<Text>().enabled = false;
+
+        foreach (Player p in _playerScriptRefs) //shrink main voting pieces 
+        {
+            p.VoteMainShrink();
+        }
     }
 
     private void EnableVote() //enable vote screen
     {
         VoteEhnance.gameObject.GetComponent<Renderer>().enabled = true;
-        VoteP1Card1.gameObject.GetComponent<Renderer>().enabled = true;
-        VoteP1Card2.gameObject.GetComponent<Renderer>().enabled = true;
-        VoteP2Card1.gameObject.GetComponent<Renderer>().enabled = true;
-        VoteP2Card2.gameObject.GetComponent<Renderer>().enabled = true;
-        VoteP3Card1.gameObject.GetComponent<Renderer>().enabled = true;
-        VoteP3Card2.gameObject.GetComponent<Renderer>().enabled = true;
-        VoteP4Card1.gameObject.GetComponent<Renderer>().enabled = true;
-        VoteP4Card2.gameObject.GetComponent<Renderer>().enabled = true;
-        VoteP1Connection.gameObject.GetComponent<Renderer>().enabled = true;
-        VoteP2Connection.gameObject.GetComponent<Renderer>().enabled = true;
-        VoteP3Connection.gameObject.GetComponent<Renderer>().enabled = true;
-        VoteP4Connection.gameObject.GetComponent<Renderer>().enabled = true;
-        VoteP1ConnectionWordTxt.gameObject.GetComponent<Text>().enabled = true;
-        VoteP2ConnectionWordTxt.gameObject.GetComponent<Text>().enabled = true;
-        VoteP3ConnectionWordTxt.gameObject.GetComponent<Text>().enabled = true;
-        VoteP4ConnectionWordTxt.gameObject.GetComponent<Text>().enabled = true;
+
+        foreach (Player p in _playerScriptRefs) //expand main voting pieces 
+        {
+            p.VoteMainExpansion();
+        }
     }
 
     private IEnumerator VoteSetUp()  //vote screen pops up
@@ -1283,26 +1128,68 @@ public class BoardManager : MonoBehaviour
         yield return new WaitForSeconds(1.0f);
         Debug.Log("Enabling voting.");
 
+        EnableVote();
+        ToggleCardsOff();
+
         for (int i = 0; i < 4; i++)
         {
-            VoteResultsList[i] = 1;    //reset result list
+            VoteResultsList[i] = 1; //reset result list
             _playerScriptRefs[i].playerVetted = false; //reset all player vetted
         }
 
-        EnableVet();
-        ToggleCardsOff();
+        _playerNumber = 0; //reset for voting below
+        foreach (Player p in _playerScriptRefs)
+        {
+            p.VoteKeywordTxt.gameObject.GetComponent<Text>().text = p.connectionKeyword;
 
-        VetConnectionWordTxt.gameObject.GetComponent<Text>().text = _playerScriptRefs[CurrentPlayer].connectionKeyword; //store card connection for vet and vote 
+            if (p.connectionKeyword != "Passed" && p.connectionKeyword != "Vetted Against" && p.connectionKeyword != "First Card Played")
+            {
+                //don't display cards if player passed or vetted against or if first card
+                //don't allow players to vote for this play
+                p.VoteKeywordTxt.gameObject.GetComponent<Text>().text = p.connectionKeyword;
 
-        _copyCardLeft = Instantiate(_playerScriptRefs[CurrentPlayer].card1, new Vector3(0f, 0f, 0f), Quaternion.identity);
-        _copyCardLeft.transform.position = VetCard1.gameObject.transform.position;
-        _copyCardLeft.transform.localScale = Vector3.one;
+                p.CopyCardLeft = Instantiate(p.card1, new Vector3(0f, 0f, 0f), Quaternion.identity);
+                p.CopyCardLeft.transform.position = p.VoteCardLeft.gameObject.transform.position;
+                p.CopyCardLeft.transform.localScale = Vector3.one;
+                p.VoteCardLeft.gameObject.GetComponent<Renderer>().enabled = false;
 
-        _copyCardRight = Instantiate(_playerScriptRefs[CurrentPlayer].card2, new Vector3(0f, 0f, 0f), Quaternion.identity);
-        _copyCardRight.transform.position = VetCard2.gameObject.transform.position;
-        _copyCardRight.transform.localScale = Vector3.one;
+                p.CopyCardRight = Instantiate(p.card2, new Vector3(0f, 0f, 0f), Quaternion.identity);
+                p.CopyCardRight.transform.position = p.VoteCardRight.gameObject.transform.position;
+                p.CopyCardRight.transform.localScale = Vector3.one;
+                p.VoteCardRight.gameObject.GetComponent<Renderer>().enabled = false;
+                _playerNumber++;
+            }
+            else
+            {
+                //disable voting buttons for those players
+                cantVotePlayerList[_playerNumber] = true;  
+                _playerNumber++;
 
-        StartCoroutine("VetTimer");  //start vet timer for vetting allowed
+                //don't display card holders
+                p.VoteCardLeft.gameObject.GetComponent<Renderer>().enabled = false;
+                p.VoteCardRight.gameObject.GetComponent<Renderer>().enabled = false;
+            }
+        }
+        _playerNumber = 0; //reset
+
+        StartCoroutine("VoteDecisionTimer", _playerScriptRefs[_playerNumber]); //start for AI
+        _playerScriptRefs[_playerNumber].PlayerVoteExpansion();
+        VoteResultsList[0] = 1; //preset for AI TODO have AI pick randomly 
+        _playerScriptRefs[_playerNumber].playerVoted = true;
+    }
+
+    private IEnumerator VoteDecisionTimer(Player p)
+    {
+        yield return new WaitForSeconds(5.0f);
+
+        if (p.playerVoted == false)  //if player didn't vote
+        {
+            Debug.Log(p.name + " did not vote.");
+            p.PlayerVoteShrink();
+            p.playerVoted = true;
+            VoteResultsList[_playerNumber] = 1; //auto set to agree with AI
+        }
+
     }
 
     private struct KeywordFreq
@@ -1370,21 +1257,32 @@ public class BoardManager : MonoBehaviour
                     //check if card is in player hand not just in deck
                     foreach (Card c in p._playerHand)
                     {
-                        foreach (Card.CardProperty prop in c.PropertyList.Where(prop => prop.PropertyValue == freq.KeywordName))
+                       // foreach (Card.CardProperty prop in c.PropertyList.Where(prop => prop.PropertyValue == freq.KeywordName))
+                      //  {
+                        for (int i = 0; i < c.PropertyList.Count; i++)
                         {
-                            Debug.Log("Checking " + freq.KeywordName);
-                            //set cards pt values based on occurance
-                            if (freq.KeywordFreqs >= 10)
+                            if (c.PropertyList[i].PropertyValue == freq.KeywordName)
                             {
-                                prop.SetPointValue(tier1);
-                            }
-                            if (freq.KeywordFreqs < 10 && freq.KeywordFreqs > 4)
-                            {
-                                prop.SetPointValue(tier2);
-                            }
-                            if (freq.KeywordFreqs >= 0 && freq.KeywordFreqs <= 4)
-                            {
-                                prop.SetPointValue(tier3);
+                                Card.CardProperty temp = c.PropertyList[i];
+
+                                Debug.Log("Checking " + freq.KeywordName);
+                                //set cards pt values based on occurance
+                                if (freq.KeywordFreqs >= 10)
+                                {
+                                    //prop.SetPointValue(tier1);
+                                    temp._pointValue = tier1;
+                                }
+                                if (freq.KeywordFreqs < 10 && freq.KeywordFreqs > 4)
+                                {
+                                    //prop.SetPointValue(tier2);
+                                    temp._pointValue = tier2;
+                                }
+                                if (freq.KeywordFreqs >= 0 && freq.KeywordFreqs <= 4)
+                                {
+                                    //prop.SetPointValue(tier3);
+                                    temp._pointValue = tier3;
+                                }
+                                c.PropertyList[i] = temp;
                             }
                             //freq.SetIsProcessed(true);
                         }
