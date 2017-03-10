@@ -258,9 +258,9 @@ public class BoardManager : MonoBehaviour
 
             if (_hitVetBtn == true) //rotate through vet y/n responses (yellow btn hit)
             {
+                _ts.CancelInvoke();
                 if (_playerScriptRefs[_playerNumber].playerVetted == true) //if blue y/n btn hit
                 {
-                    _ts.CancelInvoke();
                     _playerScriptRefs[_playerNumber].VetShrink();
                     Debug.Log("VetResultList while pulling player results = " + VetResultList[0] + ", " + VetResultList[1] + ", " + VetResultList[2] + ", " + VetResultList[3]);
                     VetResultList[_playerNumber] = _playerScriptRefs[_playerNumber].VetResult; //pull player's result 
@@ -285,8 +285,8 @@ public class BoardManager : MonoBehaviour
                     }
 
                     //TODO: need to differ between AI and human players
-                    _ts.InvokeRepeating("decreaseTime", 1, 1);
                 }
+                _ts.InvokeRepeating("decreaseTime", 1, 1);
             }
 
             if (_afterVet == true)  //get the vet result, true for yes/valid, false for no/invalid
