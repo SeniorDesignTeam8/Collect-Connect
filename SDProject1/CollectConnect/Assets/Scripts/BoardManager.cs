@@ -354,12 +354,14 @@ public class BoardManager : MonoBehaviour
                 if (_playerScriptRefs[3].playerVoted == true) //last player to vote
                 {
                     _playerScriptRefs[3].PlayerVoteShrink();
+                    GetVoteResult();
+                    //pts
                     ToggleCardsOn();
                     DisableVote();
                     _playerNumber = 0;
                     _voteStartBool = false;
                     CurrentPlayer = 0;    //start round after voting (for late update)
-
+                    
                     foreach (Player p in _playerScriptRefs)  //destroy main player cards
                     {
                         if (p.CopyCardLeft != null )
@@ -1080,6 +1082,50 @@ public class BoardManager : MonoBehaviour
         }
         Debug.Log("VetResultList while getting results = " + VetResultList[0] + ", " + VetResultList[1] + ", " + VetResultList[2] + ", " + VetResultList[3]);
         return yesCount >= noCount;
+    }
+
+    private void GetVoteResult()
+    {
+        Debug.Log("Getting vote results.");
+      
+        foreach (Player p in _playerScriptRefs)
+        {
+            if (p.VotedForWho == 1)
+            {
+                VoteResultsList.Add(1);
+            }
+            if (p.VotedForWho == 2)
+            {
+                VoteResultsList.Add(2);
+            }
+            if (p.VotedForWho == 3)
+            {
+                VoteResultsList.Add(3);
+            }
+            if (p.VotedForWho == 4)
+            {
+                VoteResultsList.Add(4);
+            }
+        }
+        foreach (int vote in VoteResultsList)
+        {
+            if (vote == 1)
+            {
+                _playerScriptRefs[0].IncreaseScore(1);
+            }
+            if (vote == 2)
+            {
+                _playerScriptRefs[1].IncreaseScore(1);
+            }
+            if (vote == 3)
+            {
+                _playerScriptRefs[2].IncreaseScore(1);
+            }
+            if (vote == 4)
+            {
+                _playerScriptRefs[3].IncreaseScore(1);
+            }
+        }
     }
 
     private void ToggleCardsOff()
