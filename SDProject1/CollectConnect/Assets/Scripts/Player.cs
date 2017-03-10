@@ -34,6 +34,9 @@ public class Player : MonoBehaviour
     public Card card1;
     public Card card2;
     public String connectionKeyword;
+
+    public GameObject playerPiece;
+
     public GameObject locationOnBoard1;
     public GameObject locationOnBoard2;
     public GameObject locationOnBoard3;
@@ -102,6 +105,7 @@ public class Player : MonoBehaviour
         VoteBtnP4.GetComponent<Button>().onClick.AddListener(VotePlayer4);
         VotedForWho = 0;
         VotePlayerPiece.gameObject.GetComponent<Renderer>().enabled = false;
+        playerPiece.GetComponent<Renderer>().enabled = false;
     }
 
     private void Update()
@@ -378,6 +382,16 @@ public class Player : MonoBehaviour
     {
         playerVoted = true;
         VotedForWho = 4;
+    }
+
+    public void playerTurnPieceExpansion()  //display turn player piece
+    {
+        playerPiece.gameObject.GetComponent<Renderer>().enabled = true;
+    }
+
+    public void playerTurnPieceShrink()  //shrink turn player piece
+    {
+        playerPiece.gameObject.GetComponent<Renderer>().enabled = false;
     }
 
 }

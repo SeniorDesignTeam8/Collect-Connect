@@ -185,6 +185,9 @@ public class BoardManager : MonoBehaviour
         // Play turn like normal.
         if (_isFirstCardPlay)
         {
+            //display first player's piece
+            _playerScriptRefs[CurrentPlayer].playerTurnPieceExpansion();
+
             if (!_isPlayerCardSelected)
                 return;
             foreach (Card c in _playerScriptRefs[CurrentPlayer].GetHand())
@@ -396,6 +399,9 @@ public class BoardManager : MonoBehaviour
 
         if (_voteStartBool == false)
         {
+            //expand player piece
+            _playerScriptRefs[CurrentPlayer].playerTurnPieceShrink();
+
             CurrentPlayer++;
 
             if (CurrentPlayer >= 4 && _voteStartBool == false)
@@ -404,6 +410,11 @@ public class BoardManager : MonoBehaviour
                 _voteStartBool = true;
                 StartCoroutine("VoteSetUp");
                 CurrentPlayer--;
+            }
+            else
+            {
+                //shrink player piece
+                _playerScriptRefs[CurrentPlayer].playerTurnPieceExpansion();
             }
 
             Debug.Log("player's turn" + CurrentPlayer);
