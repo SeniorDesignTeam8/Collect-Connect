@@ -10,9 +10,10 @@ public class Card : MonoBehaviour
 {
     public struct CardProperty
     {
+
         public readonly string PropertyName;
         public readonly string PropertyValue;
-        internal int _pointValue;
+        public int _pointValue;
 
         public CardProperty(string name, string value, string pointString = "0")
         {

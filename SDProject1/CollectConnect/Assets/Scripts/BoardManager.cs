@@ -1257,21 +1257,32 @@ public class BoardManager : MonoBehaviour
                     //check if card is in player hand not just in deck
                     foreach (Card c in p._playerHand)
                     {
-                        foreach (Card.CardProperty prop in c.PropertyList.Where(prop => prop.PropertyValue == freq.KeywordName))
+                       // foreach (Card.CardProperty prop in c.PropertyList.Where(prop => prop.PropertyValue == freq.KeywordName))
+                      //  {
+                        for (int i = 0; i < c.PropertyList.Count; i++)
                         {
-                            Debug.Log("Checking " + freq.KeywordName);
-                            //set cards pt values based on occurance
-                            if (freq.KeywordFreqs >= 10)
+                            if (c.PropertyList[i].PropertyValue == freq.KeywordName)
                             {
-                                prop.SetPointValue(tier1);
-                            }
-                            if (freq.KeywordFreqs < 10 && freq.KeywordFreqs > 4)
-                            {
-                                prop.SetPointValue(tier2);
-                            }
-                            if (freq.KeywordFreqs >= 0 && freq.KeywordFreqs <= 4)
-                            {
-                                prop.SetPointValue(tier3);
+                                Card.CardProperty temp = c.PropertyList[i];
+
+                                Debug.Log("Checking " + freq.KeywordName);
+                                //set cards pt values based on occurance
+                                if (freq.KeywordFreqs >= 10)
+                                {
+                                    //prop.SetPointValue(tier1);
+                                    temp._pointValue = tier1;
+                                }
+                                if (freq.KeywordFreqs < 10 && freq.KeywordFreqs > 4)
+                                {
+                                    //prop.SetPointValue(tier2);
+                                    temp._pointValue = tier2;
+                                }
+                                if (freq.KeywordFreqs >= 0 && freq.KeywordFreqs <= 4)
+                                {
+                                    //prop.SetPointValue(tier3);
+                                    temp._pointValue = tier3;
+                                }
+                                c.PropertyList[i] = temp;
                             }
                             //freq.SetIsProcessed(true);
                         }
