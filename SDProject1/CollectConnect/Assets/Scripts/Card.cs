@@ -111,6 +111,11 @@ public class Card : MonoBehaviour
         _isExpanded = true;
     }
 
+    private void ChangeCardProp(int a)
+    {
+        
+    }
+
     private void OnMouseDrag()
     {
         if (_isOnBoard && Vector3.Distance(_pointerDownPosition, Input.mousePosition) >
