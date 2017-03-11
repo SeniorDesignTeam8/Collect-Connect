@@ -435,7 +435,7 @@ public class BoardManager : MonoBehaviour
                 KeywordContainerP3.gameObject.layer = 2;
                 KeywordContainerP4.gameObject.layer = 2;
             }
-            else if (CurrentPlayer == 1)
+            else if (CurrentPlayer == 1 && _playerScriptRefs[CurrentPlayer].isAiControlled == false)
             {
                 PassBtnP1.gameObject.SetActive(false);
                 PassBtnP2.gameObject.SetActive(true);
@@ -455,7 +455,7 @@ public class BoardManager : MonoBehaviour
                 KeywordContainerP3.gameObject.layer = 5;
                 KeywordContainerP4.gameObject.layer = 2;
             }
-            else if (CurrentPlayer == 3)
+            else if (CurrentPlayer == 3 && _playerScriptRefs[CurrentPlayer].isAiControlled == false)
             {
                 PassBtnP1.gameObject.SetActive(false);
                 PassBtnP2.gameObject.SetActive(false);

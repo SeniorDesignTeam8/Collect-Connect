@@ -23,7 +23,7 @@ public class Player : MonoBehaviour
     public CardCollection _playerHand; // Represents the player's cards.
     private Vector3 _expCardPosition;
     private Vector3 _expCardScale;
-    private bool _isAiControlled = false; // TODO Find a way to programatically change this.
+    public bool isAiControlled = false; // TODO Find a way to programatically change this.
     public GameObject VetEnhance;
     public GameObject VetEnhanceShadow;
     public GameObject VetText;
@@ -114,6 +114,7 @@ public class Player : MonoBehaviour
         VotePlayerPiece.gameObject.GetComponent<Renderer>().enabled = false;
         MainplayerPiece.gameObject.GetComponent<Renderer>().enabled = false;
         blockOff.gameObject.GetComponent<Renderer>().enabled = false;
+        JoinGameBtn.gameObject.SetActive(false);
         VetPieceShrink();
         
     }
@@ -138,7 +139,7 @@ public class Player : MonoBehaviour
         else
             IsDrawingCards = false;
 
-      if (_isAiControlled && BoardManager.Instance.GetCurrentPlayer() == this &&
+      if (isAiControlled && BoardManager.Instance.GetCurrentPlayer() == this &&
             !BoardManager.Instance.GetIsTurnOver() && BoardManager.Instance.GetIsStarted()
             && BoardManager.Instance.VetStartBool == false)
         {
@@ -272,7 +273,7 @@ public class Player : MonoBehaviour
 
     public void SetAiControl(bool aiControlled)
     {
-        _isAiControlled = aiControlled;
+        isAiControlled = aiControlled;
     }
 
     private static void ShufflePropertyList(ref List<Card.CardProperty> propList)
@@ -324,12 +325,17 @@ public class Player : MonoBehaviour
     {
         Debug.Log("leave btn hit");
         blockOff.gameObject.GetComponent<Renderer>().enabled = true;
+        JoinGameBtn.gameObject.SetActive(true);
+        LeaveGameBtn.gameObject.SetActive(false);
         SetAiControl(true);
     }
 
     private void OnJoinBtnHit()
     {
         Debug.Log("Join btn hit");
+        blockOff.gameObject.GetComponent<Renderer>().enabled = false;
+        JoinGameBtn.gameObject.SetActive(false);
+        LeaveGameBtn.gameObject.SetActive(true);
         SetAiControl(false);
     }
 
