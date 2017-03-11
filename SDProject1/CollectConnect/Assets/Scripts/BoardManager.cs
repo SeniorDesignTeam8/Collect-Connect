@@ -435,12 +435,18 @@ public class BoardManager : MonoBehaviour
                 KeywordContainerP3.gameObject.layer = 2;
                 KeywordContainerP4.gameObject.layer = 2;
             }
-            else if (CurrentPlayer == 1 && _playerScriptRefs[CurrentPlayer].isAiControlled == false)
+            else if (CurrentPlayer == 1)
             {
                 PassBtnP1.gameObject.SetActive(false);
                 PassBtnP2.gameObject.SetActive(true);
                 PassBtnP3.gameObject.SetActive(false);
                 PassBtnP4.gameObject.SetActive(false);
+
+                if (_playerScriptRefs[CurrentPlayer].isAiControlled == false)
+                {
+                    PassBtnP2.gameObject.SetActive(false);
+                }
+
                 KeywordContainerP2.gameObject.layer = 5;
                 KeywordContainerP3.gameObject.layer = 2;
                 KeywordContainerP4.gameObject.layer = 2;
@@ -455,12 +461,18 @@ public class BoardManager : MonoBehaviour
                 KeywordContainerP3.gameObject.layer = 5;
                 KeywordContainerP4.gameObject.layer = 2;
             }
-            else if (CurrentPlayer == 3 && _playerScriptRefs[CurrentPlayer].isAiControlled == false)
+            else if (CurrentPlayer == 3)
             {
                 PassBtnP1.gameObject.SetActive(false);
                 PassBtnP2.gameObject.SetActive(false);
                 PassBtnP3.gameObject.SetActive(false);
                 PassBtnP4.gameObject.SetActive(true);
+
+                if (_playerScriptRefs[CurrentPlayer].isAiControlled == false)
+                {
+                    PassBtnP4.gameObject.SetActive(false);
+                }
+
                 KeywordContainerP2.gameObject.layer = 2;
                 KeywordContainerP3.gameObject.layer = 2;
                 KeywordContainerP4.gameObject.layer = 5;
