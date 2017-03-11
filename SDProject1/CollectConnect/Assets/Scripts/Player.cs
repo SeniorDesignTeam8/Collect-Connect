@@ -29,6 +29,7 @@ public class Player : MonoBehaviour
     public GameObject VetText;
     public Button VetYesBtn;
     public Button VetNoBtn;
+    public Button LeaveGameBtn;
     public bool playerVetted;
     public bool YesNoBtnHit;
     public bool VetResult;
@@ -86,6 +87,7 @@ public class Player : MonoBehaviour
         VetNoBtn.gameObject.SetActive(false);
         VetYesBtn.GetComponent<Button>().onClick.AddListener(OnYesBtnHit);
         VetNoBtn.GetComponent<Button>().onClick.AddListener(OnNoBtnHit);
+        LeaveGameBtn.GetComponent<Button>().onClick.AddListener(OnLeaveBtnHit);
         playerVetted = false;
         YesNoBtnHit = false;
         VetResult = true;
@@ -310,6 +312,12 @@ public class Player : MonoBehaviour
         VetResult = false;
         playerVetted = true;
         YesNoBtnHit = true;
+    }
+
+    private void OnLeaveBtnHit()
+    {
+        Debug.Log("leave btn hit");
+        SetAiControl(true);
     }
 
     public void PlayerVoteExpansion()
