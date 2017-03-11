@@ -37,7 +37,7 @@ public class Player : MonoBehaviour
     public Card card2;
     public String connectionKeyword;
 
-    public GameObject playerPiece;
+    public GameObject MainplayerPiece;
 
     public GameObject locationOnBoard1;
     public GameObject locationOnBoard2;
@@ -61,8 +61,9 @@ public class Player : MonoBehaviour
     public Card CopyCardLeft;
     public Card CopyCardRight;
     private bool _postVote;
-
+    public GameObject blockOff;
     public GameObject VotePlayerPiece;
+    public GameObject VetPlayerPiece;
 
     private static readonly float[] AiPassThresholds =
     {
@@ -109,7 +110,10 @@ public class Player : MonoBehaviour
         VoteBtnP4.GetComponent<Button>().onClick.AddListener(VotePlayer4);
         VotedForWho = 0;
         VotePlayerPiece.gameObject.GetComponent<Renderer>().enabled = false;
-        playerPiece.GetComponent<Renderer>().enabled = false;
+        MainplayerPiece.gameObject.GetComponent<Renderer>().enabled = false;
+        blockOff.gameObject.GetComponent<Renderer>().enabled = false;
+        VetPieceShrink();
+        
     }
 
     private void Update()
@@ -317,6 +321,7 @@ public class Player : MonoBehaviour
     private void OnLeaveBtnHit()
     {
         Debug.Log("leave btn hit");
+        blockOff.gameObject.GetComponent<Renderer>().enabled = true;
         SetAiControl(true);
     }
 
@@ -396,14 +401,25 @@ public class Player : MonoBehaviour
         VotedForWho = 4;
     }
 
-    public void playerTurnPieceExpansion()  //display turn player piece
+    public void VetPieceExpansion()  //display turn player piece
     {
-        playerPiece.gameObject.GetComponent<Renderer>().enabled = true;
+        VetPlayerPiece.gameObject.GetComponent<Renderer>().enabled = true;
     }
 
-    public void playerTurnPieceShrink()  //shrink turn player piece
+    public void VetPieceShrink()  //shrink turn player piece
     {
-        playerPiece.gameObject.GetComponent<Renderer>().enabled = false;
+        VetPlayerPiece.gameObject.GetComponent<Renderer>().enabled = false;
     }
+
+    public void MainPieceExpansion()  //display turn player piece
+    {
+        MainplayerPiece.gameObject.GetComponent<Renderer>().enabled = true;
+    }
+
+    public void MainPieceShrink()  //shrink turn player piece
+    {
+        MainplayerPiece.gameObject.GetComponent<Renderer>().enabled = false;
+    }
+
 
 }

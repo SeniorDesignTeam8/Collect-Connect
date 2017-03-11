@@ -47,6 +47,7 @@ public class BoardManager : MonoBehaviour
     public GameObject VetCard2;
     public GameObject ConnectionBackground;
     public GameObject VetConnectionWordTxt;
+    public GameObject VetText;
     public Button VetBtnLeft;
     public Button VetBtnRight;
     private Card _copyCardLeft;
@@ -188,7 +189,7 @@ public class BoardManager : MonoBehaviour
         if (_isFirstCardPlay)
         {
             //display first player's piece
-            _playerScriptRefs[CurrentPlayer].playerTurnPieceExpansion();
+            _playerScriptRefs[CurrentPlayer].MainPieceExpansion();
 
             if (!_isPlayerCardSelected)
                 return;
@@ -404,7 +405,7 @@ public class BoardManager : MonoBehaviour
         if (_voteStartBool == false)
         {
             //expand player piece
-            _playerScriptRefs[CurrentPlayer].playerTurnPieceShrink();
+            _playerScriptRefs[CurrentPlayer].MainPieceShrink();
 
             CurrentPlayer++;
 
@@ -418,7 +419,7 @@ public class BoardManager : MonoBehaviour
             else
             {
                 //shrink player piece
-                _playerScriptRefs[CurrentPlayer].playerTurnPieceExpansion();
+                _playerScriptRefs[CurrentPlayer].MainPieceExpansion();
             }
 
             Debug.Log("player's turn" + CurrentPlayer);
@@ -965,8 +966,10 @@ public class BoardManager : MonoBehaviour
         VetCard2.gameObject.GetComponent<Renderer>().enabled = false;
         ConnectionBackground.gameObject.GetComponent<Renderer>().enabled = false;
         VetConnectionWordTxt.gameObject.GetComponent<Text>().enabled = false;
+        VetText.gameObject.GetComponent<Text>().enabled = false;
         VetBtnRight.gameObject.SetActive(false);
         VetBtnLeft.gameObject.SetActive(false);
+        _playerScriptRefs[CurrentPlayer].VetPieceShrink();
     }
 
     private void EnableVet() //enable vet screen
@@ -975,6 +978,8 @@ public class BoardManager : MonoBehaviour
         VetEnhanceShadow.gameObject.GetComponent<Renderer>().enabled = true;
         ConnectionBackground.gameObject.GetComponent<Renderer>().enabled = true;
         VetConnectionWordTxt.gameObject.GetComponent<Text>().enabled = true;
+        VetText.gameObject.GetComponent<Text>().enabled = true;
+        _playerScriptRefs[CurrentPlayer].VetPieceExpansion();
 
         VetBtnRight.gameObject.SetActive(true);
         VetBtnLeft.gameObject.SetActive(true);
