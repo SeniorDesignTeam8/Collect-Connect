@@ -25,6 +25,7 @@ public class Player : MonoBehaviour
     private Vector3 _expCardScale;
     private bool _isAiControlled = false; // TODO Find a way to programatically change this.
     public GameObject VetEnhance;
+    public GameObject VetEnhanceShadow;
     public GameObject VetText;
     public Button VetYesBtn;
     public Button VetNoBtn;
@@ -79,6 +80,7 @@ public class Player : MonoBehaviour
         ExpCardTitle.gameObject.GetComponent<Text>().enabled = false;
         ExpCardInfo.gameObject.GetComponent<Text>().enabled = false;
         VetEnhance.gameObject.GetComponent<Renderer>().enabled = false;
+        VetEnhanceShadow.gameObject.GetComponent<Renderer>().enabled = false;
         VetText.gameObject.GetComponent<Text>().enabled = false;
         VetYesBtn.gameObject.SetActive(false);
         VetNoBtn.gameObject.SetActive(false);
@@ -279,6 +281,7 @@ public class Player : MonoBehaviour
     public void VetExpansion()
     {
         VetEnhance.gameObject.GetComponent<Renderer>().enabled = true;
+        VetEnhanceShadow.gameObject.GetComponent<Renderer>().enabled = true;
         VetText.gameObject.GetComponent<Text>().enabled = true;
         VetYesBtn.gameObject.SetActive(true);
         VetNoBtn.gameObject.SetActive(true);
@@ -289,6 +292,7 @@ public class Player : MonoBehaviour
     public void VetShrink()
     {
         VetEnhance.gameObject.GetComponent<Renderer>().enabled = false;
+        VetEnhanceShadow.gameObject.GetComponent<Renderer>().enabled = false;
         VetText.gameObject.GetComponent<Text>().enabled = false;
         VetYesBtn.gameObject.SetActive(false);
         VetNoBtn.gameObject.SetActive(false);

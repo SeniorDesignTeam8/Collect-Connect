@@ -42,6 +42,7 @@ public class BoardManager : MonoBehaviour
     private bool _isTurnOver;
     private bool _playedTurn;
     public GameObject VetEnhance;
+    public GameObject VetEnhanceShadow;
     public GameObject VetCard1;
     public GameObject VetCard2;
     public GameObject ConnectionBackground;
@@ -65,7 +66,8 @@ public class BoardManager : MonoBehaviour
     public Button PassBtnP3;
     public Button PassBtnP4;
 
-    public GameObject VoteEhnance;
+    public GameObject VoteEnhance;
+    public GameObject VoteEnhanceShadow; 
     public List<int> VoteResultsList;
     private bool _voteStartBool;
     public List<bool> cantVotePlayerList;
@@ -956,6 +958,7 @@ public class BoardManager : MonoBehaviour
     private void DisableVet() //disable vet screen
     {
         VetEnhance.gameObject.GetComponent<Renderer>().enabled = false;
+        VetEnhanceShadow.gameObject.GetComponent<Renderer>().enabled = false;
         VetCard1.gameObject.GetComponent<Renderer>().enabled = false;
         VetCard2.gameObject.GetComponent<Renderer>().enabled = false;
         ConnectionBackground.gameObject.GetComponent<Renderer>().enabled = false;
@@ -967,6 +970,7 @@ public class BoardManager : MonoBehaviour
     private void EnableVet() //enable vet screen
     {
         VetEnhance.gameObject.GetComponent<Renderer>().enabled = true;
+        VetEnhanceShadow.gameObject.GetComponent<Renderer>().enabled = true;
         ConnectionBackground.gameObject.GetComponent<Renderer>().enabled = true;
         VetConnectionWordTxt.gameObject.GetComponent<Text>().enabled = true;
 
@@ -1116,7 +1120,8 @@ public class BoardManager : MonoBehaviour
 
     private void DisableVote() //disable vote screen
     {
-        VoteEhnance.gameObject.GetComponent<Renderer>().enabled = false;
+        VoteEnhance.gameObject.GetComponent<Renderer>().enabled = false;
+        VoteEnhanceShadow.gameObject.GetComponent<Renderer>().enabled = false;
 
         foreach (Player p in _playerScriptRefs) //shrink main voting pieces 
         {
@@ -1126,7 +1131,8 @@ public class BoardManager : MonoBehaviour
 
     private void EnableVote() //enable vote screen
     {
-        VoteEhnance.gameObject.GetComponent<Renderer>().enabled = true;
+        VoteEnhance.gameObject.GetComponent<Renderer>().enabled = true;
+        VoteEnhanceShadow.gameObject.GetComponent<Renderer>().enabled = true;
 
         foreach (Player p in _playerScriptRefs) //expand main voting pieces 
         {
