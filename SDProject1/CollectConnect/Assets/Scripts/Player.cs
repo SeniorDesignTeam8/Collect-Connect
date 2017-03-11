@@ -30,6 +30,7 @@ public class Player : MonoBehaviour
     public Button VetYesBtn;
     public Button VetNoBtn;
     public Button LeaveGameBtn;
+    public Button JoinGameBtn;
     public bool playerVetted;
     public bool YesNoBtnHit;
     public bool VetResult;
@@ -88,6 +89,7 @@ public class Player : MonoBehaviour
         VetYesBtn.GetComponent<Button>().onClick.AddListener(OnYesBtnHit);
         VetNoBtn.GetComponent<Button>().onClick.AddListener(OnNoBtnHit);
         LeaveGameBtn.GetComponent<Button>().onClick.AddListener(OnLeaveBtnHit);
+        JoinGameBtn.GetComponent<Button>().onClick.AddListener(OnJoinBtnHit);
         playerVetted = false;
         YesNoBtnHit = false;
         VetResult = true;
@@ -318,6 +320,12 @@ public class Player : MonoBehaviour
     {
         Debug.Log("leave btn hit");
         SetAiControl(true);
+    }
+
+    private void OnJoinBtnHit()
+    {
+        Debug.Log("Join btn hit");
+        SetAiControl(false);
     }
 
     public void PlayerVoteExpansion()
