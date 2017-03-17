@@ -153,7 +153,10 @@ public class Player : MonoBehaviour
                 }
             }
             if (unplayedCardIndices.Count == 0)
+            {
+                BoardManager.Instance.PassBtnHit();
                 return;
+            }
             int randomIndex = Random.Range(0, unplayedCardIndices.Count);
             Card pickedCard = _playerHand.At(unplayedCardIndices[randomIndex]);
             BoardManager.Instance.SelectCardInHand(pickedCard);
