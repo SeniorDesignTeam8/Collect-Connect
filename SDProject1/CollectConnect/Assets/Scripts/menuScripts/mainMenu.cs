@@ -1,36 +1,32 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine.Networking.NetworkSystem;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
-public class mainMenu : MonoBehaviour {
-
-    public Texture BackgroundTexture;
-    public Texture TitleText;
-    public GUIStyle Btn;
-    public AudioClip ButtonClickSound;
-    public AudioSource MenuSoundSource;
+public class mainMenu : MonoBehaviour
+{
+    public Button PlayBtn;
+    public Button AboutBtn;
 
     private void Start()
     {
-        MenuSoundSource.clip = ButtonClickSound;
+        PlayBtn.GetComponent<Button>().onClick.AddListener(PlayGameTransition);
+        AboutBtn.GetComponent<Button>().onClick.AddListener(AboutGameTransition);
+        PlayBtn.gameObject.SetActive(true);
+        AboutBtn.gameObject.SetActive(true);
     }
 
-    private void OnGUI()
+    public void PlayGameTransition()
     {
-        //display background texture
-        GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), BackgroundTexture);
-
-        GUI.DrawTexture(new Rect(Screen.width / 4, Screen.height - Screen.height, Screen.width * 0.5f, Screen.height * 0.5f), TitleText);
-
-        //display buttons (without GUI Outline)
-        if (GUI.Button(new Rect(Screen.width * 0.35f, Screen.height * 0.65f, Screen.width * 0.3f, Screen.height * 0.2f), "", Btn))
-        {
-            OnMouseDown();
-        }
+        SceneManager.LoadScene("Game");
     }
 
-    private void OnMouseDown()
+    public void AboutGameTransition()
     {
-        MenuSoundSource.Play();
-        SceneManager.LoadScene("MainScene");
+        SceneManager.LoadScene("About");
     }
 }

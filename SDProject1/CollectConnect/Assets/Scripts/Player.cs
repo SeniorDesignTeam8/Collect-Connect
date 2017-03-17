@@ -24,8 +24,8 @@ public class Player : MonoBehaviour
     private Vector3 _expCardPosition;
     private Vector3 _expCardScale;
     public bool isAiControlled = false; // TODO Find a way to programatically change this.
-    public GameObject VetEnhance;
-    public GameObject VetEnhanceShadow;
+    public GameObject PlayerPopUpEnhance;
+    public GameObject PlayerPopUpEnhanceShadow;
     public GameObject VetText;
     public Button VetYesBtn;
     public Button VetNoBtn;
@@ -46,7 +46,6 @@ public class Player : MonoBehaviour
     public GameObject locationOnBoard4;
     public GameObject locationOnBoard5;
 
-    public GameObject VoteEnhance;
     public GameObject VoteText;
     public Button VoteBtnP1;
     public Button VoteBtnP2;
@@ -82,8 +81,8 @@ public class Player : MonoBehaviour
         ExpCardImage.gameObject.GetComponent<Renderer>().enabled = false;
         ExpCardTitle.gameObject.GetComponent<Text>().enabled = false;
         ExpCardInfo.gameObject.GetComponent<Text>().enabled = false;
-        VetEnhance.gameObject.GetComponent<Renderer>().enabled = false;
-        VetEnhanceShadow.gameObject.GetComponent<Renderer>().enabled = false;
+        PlayerPopUpEnhance.gameObject.GetComponent<Renderer>().enabled = false;
+        PlayerPopUpEnhanceShadow.gameObject.GetComponent<Renderer>().enabled = false;
         VetText.gameObject.GetComponent<Text>().enabled = false;
         VetYesBtn.gameObject.SetActive(false);
         VetNoBtn.gameObject.SetActive(false);
@@ -100,7 +99,6 @@ public class Player : MonoBehaviour
         locationOnBoard3.gameObject.GetComponent<Renderer>().enabled = false;
         locationOnBoard4.gameObject.GetComponent<Renderer>().enabled = false;
         locationOnBoard5.gameObject.GetComponent<Renderer>().enabled = false;
-        VoteEnhance.gameObject.GetComponent<Renderer>().enabled = false;
         VoteText.gameObject.GetComponent<Text>().enabled = false;
         VoteBtnP1.gameObject.SetActive(false);
         VoteBtnP2.gameObject.SetActive(false);
@@ -292,8 +290,8 @@ public class Player : MonoBehaviour
 
     public void VetExpansion()
     {
-        VetEnhance.gameObject.GetComponent<Renderer>().enabled = true;
-        VetEnhanceShadow.gameObject.GetComponent<Renderer>().enabled = true;
+        PlayerPopUpEnhance.gameObject.GetComponent<Renderer>().enabled = true;
+        PlayerPopUpEnhanceShadow.gameObject.GetComponent<Renderer>().enabled = true;
         VetText.gameObject.GetComponent<Text>().enabled = true;
         VetYesBtn.gameObject.SetActive(true);
         VetNoBtn.gameObject.SetActive(true);
@@ -303,8 +301,8 @@ public class Player : MonoBehaviour
 
     public void VetShrink()
     {
-        VetEnhance.gameObject.GetComponent<Renderer>().enabled = false;
-        VetEnhanceShadow.gameObject.GetComponent<Renderer>().enabled = false;
+        PlayerPopUpEnhance.gameObject.GetComponent<Renderer>().enabled = false;
+        PlayerPopUpEnhanceShadow.gameObject.GetComponent<Renderer>().enabled = false;
         VetText.gameObject.GetComponent<Text>().enabled = false;
         VetYesBtn.gameObject.SetActive(false);
         VetNoBtn.gameObject.SetActive(false);
@@ -344,7 +342,8 @@ public class Player : MonoBehaviour
 
     public void PlayerVoteExpansion()
     {
-        VoteEnhance.gameObject.GetComponent<Renderer>().enabled = true;
+        PlayerPopUpEnhance.gameObject.GetComponent<Renderer>().enabled = true;
+        PlayerPopUpEnhanceShadow.gameObject.GetComponent<Renderer>().enabled = true;
         VoteText.gameObject.GetComponent<Text>().enabled = true;
         VoteBtnP1.gameObject.SetActive(true);
         VoteBtnP2.gameObject.SetActive(true);
@@ -367,7 +366,8 @@ public class Player : MonoBehaviour
 
     public void PlayerVoteShrink()
     {
-        VoteEnhance.gameObject.GetComponent<Renderer>().enabled = false;
+        PlayerPopUpEnhance.gameObject.GetComponent<Renderer>().enabled = false;
+        PlayerPopUpEnhanceShadow.gameObject.GetComponent<Renderer>().enabled = false;
         VoteText.gameObject.GetComponent<Text>().enabled = false;
         VoteBtnP1.gameObject.SetActive(false);
         VoteBtnP2.gameObject.SetActive(false);
