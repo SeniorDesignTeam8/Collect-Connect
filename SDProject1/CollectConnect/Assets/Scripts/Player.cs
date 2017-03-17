@@ -68,7 +68,7 @@ public class Player : MonoBehaviour
 
     private static readonly float[] AiPassThresholds =
     {
-        0.05f, 0.25f, 0.2f, 0.25f
+        0.05f, 0.05f, 0.05f, 0.05f
     };
 
     private void Start()
