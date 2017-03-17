@@ -171,12 +171,10 @@ public class BoardManager : MonoBehaviour
                 _keywordList = _keywordList.Distinct().ToList();
                 PopulateKeywords();
 
-                Debug.Log("Gonna freeze now.");
+               
                 if (isFirstListGen)
                 {
-                    Debug.Log("Like, freeze now.");
-                    UpdateScoring();
-                    Debug.Log("Frozen");
+                    UpdateScoring();     
                     isFirstListGen = false;
                 }
                 _isGameStarted = true;
