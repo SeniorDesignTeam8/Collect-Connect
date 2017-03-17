@@ -32,7 +32,7 @@ public class BoardManager : MonoBehaviour
     private List<string> _keywordList;
     private string _currentKeyword;
     private List<GameObject> _keywordNodes;
-    private List<Player> _playerScriptRefs;
+    public List<Player> _playerScriptRefs { get; private set; }
     private bool _isGameStarted;
     private bool _isFirstCardPlay;
     private bool _isPlayerCardSelected;
