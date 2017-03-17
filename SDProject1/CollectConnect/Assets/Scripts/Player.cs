@@ -68,7 +68,7 @@ public class Player : MonoBehaviour
 
     private static readonly float[] AiPassThresholds =
     {
-        0.05f, 0.25f, 0.2f, 0.25f
+        0.05f, 0.05f, 0.05f, 0.05f
     };
 
     private void Start()
@@ -153,7 +153,10 @@ public class Player : MonoBehaviour
                 }
             }
             if (unplayedCardIndices.Count == 0)
+            {
+                BoardManager.Instance.PassBtnHit();
                 return;
+            }
             int randomIndex = Random.Range(0, unplayedCardIndices.Count);
             Card pickedCard = _playerHand.At(unplayedCardIndices[randomIndex]);
             BoardManager.Instance.SelectCardInHand(pickedCard);
