@@ -8,7 +8,8 @@ using System.Xml;
 using System.Collections;
 using Mono.Data.Sqlite;
 using System.Data;
-using System.Runtime.InteropServices; 
+using System.Runtime.InteropServices;
+using UnityEngine.SceneManagement;
 
 public class BoardManager : MonoBehaviour
 {
@@ -355,13 +356,11 @@ public class BoardManager : MonoBehaviour
                 if (_playerScriptRefs[3].playerVoted == true) //last player to vote
                 {
                     _playerScriptRefs[3].PlayerVoteShrink();
-                    GetVoteResult();
-                    //pts
-                    ToggleCardsOn();
-                    DisableVote();
+                    GetVoteResult();    //distribute points
+                    ToggleCardsOn();    //enable card movement
+                    DisableVote();      //shrink voting screen
                     _playerNumber = 0;
                     _voteStartBool = false;
-                    CurrentPlayer = 0;    //start round after voting (for late update)
                     
                     foreach (Player p in _playerScriptRefs)  //destroy main player cards
                     {
@@ -381,6 +380,8 @@ public class BoardManager : MonoBehaviour
                         cantVotePlayerList[i] = false;
                     }
 
+                    CurrentPlayer = 0;    //start round after voting (for late update)
+                    //SceneManager.LoadScene("EndGame");  //using for testing
                     _ts.InvokeRepeating("decreaseTime", 1, 1);
                 }
             }
@@ -1058,9 +1059,7 @@ public class BoardManager : MonoBehaviour
     }
 
     private bool CheckConnection()
-
-    {
-       
+    {  
         List<Card.CardProperty> commonProps = _copyCardRight.FindCommonProperties(_copyCardLeft);
         foreach (Card.CardProperty key in commonProps)
         {
@@ -1076,7 +1075,7 @@ public class BoardManager : MonoBehaviour
 
         if (p.playerVetted == false)  //if player didn't vote
         {
-            Debug.Log(p.name + " did not vote.");
+            Debug.Log(p.name + " did not vet.");
             p.VetShrink();
             p.playerVetted = true;
             VetResultList[_playerNumber] = true;    //auto set to agree
@@ -1212,7 +1211,6 @@ public class BoardManager : MonoBehaviour
         for (int i = 0; i < 4; i++)
         {
             VoteResultsList[i] = 1; //reset result list
-            _playerScriptRefs[i].playerVetted = false; //reset all player vetted
         }
 
         _playerNumber = 0; //reset for voting below

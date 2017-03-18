@@ -212,6 +212,7 @@ public class Player : MonoBehaviour
     {
         Score += reward;
         Debug.Log("Score: " + reward);
+        PlayerScore.gameObject.GetComponent<Text>().text = Score.ToString(); //display score
     }
 
     public void ReduceScore(int penalty)
@@ -394,25 +395,25 @@ public class Player : MonoBehaviour
         //_postVote = true;
     }
 
-    public void VotePlayer1()
+    private void VotePlayer1()
     {
         playerVoted = true;
         VotedForWho = 1;
     }
 
-    public void VotePlayer2()
+    private void VotePlayer2()
     {
         playerVoted = true;
         VotedForWho = 2;
     }
 
-    public void VotePlayer3()
+    private void VotePlayer3()
     {
         playerVoted = true;
         VotedForWho = 3;
     }
 
-    public void VotePlayer4()
+    private void VotePlayer4()
     {
         playerVoted = true;
         VotedForWho = 4;

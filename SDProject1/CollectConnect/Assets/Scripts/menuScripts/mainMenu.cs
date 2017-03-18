@@ -20,12 +20,12 @@ public class mainMenu : MonoBehaviour
         AboutBtn.gameObject.SetActive(true);
     }
 
-    public void PlayGameTransition()
+    private void PlayGameTransition()
     {
         SceneManager.LoadScene("MainScene");
     }
 
-    public void AboutGameTransition()
+    private void AboutGameTransition()
     {
         SceneManager.LoadScene("About");
     }
