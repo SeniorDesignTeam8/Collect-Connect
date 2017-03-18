@@ -32,7 +32,7 @@ public class BoardManager : MonoBehaviour
     private List<string> _keywordList;
     private string _currentKeyword;
     private List<GameObject> _keywordNodes;
-    private List<Player> _playerScriptRefs;
+    public List<Player> _playerScriptRefs { get; private set; }
     private bool _isGameStarted;
     private bool _isFirstCardPlay;
     private bool _isPlayerCardSelected;
@@ -171,12 +171,10 @@ public class BoardManager : MonoBehaviour
                 _keywordList = _keywordList.Distinct().ToList();
                 PopulateKeywords();
 
-                Debug.Log("Gonna freeze now.");
+               
                 if (isFirstListGen)
                 {
-                    Debug.Log("Like, freeze now.");
-                    UpdateScoring();
-                    Debug.Log("Frozen");
+                    UpdateScoring();     
                     isFirstListGen = false;
                 }
                 _isGameStarted = true;
