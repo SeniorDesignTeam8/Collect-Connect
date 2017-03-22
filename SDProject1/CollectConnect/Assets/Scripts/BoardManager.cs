@@ -1015,11 +1015,11 @@ public class BoardManager : MonoBehaviour
 
         _copyCardLeft = Instantiate(_playerScriptRefs[CurrentPlayer].card1, new Vector3(0f, 0f, 0f), Quaternion.identity);
         _copyCardLeft.transform.position = VetCard1.gameObject.transform.position;
-        _copyCardLeft.transform.localScale = Vector3.one;
+        _copyCardLeft.transform.localScale = VetCard1.gameObject.GetComponent<Renderer>().bounds.extents;
 
         _copyCardRight = Instantiate(_playerScriptRefs[CurrentPlayer].card2, new Vector3(0f, 0f, 0f), Quaternion.identity);
         _copyCardRight.transform.position = VetCard2.gameObject.transform.position;
-        _copyCardRight.transform.localScale = Vector3.one;
+        _copyCardRight.transform.localScale = VetCard2.gameObject.GetComponent<Renderer>().bounds.extents;
 
         StartCoroutine("VetTimer");  //start vet timer for vetting allowed
     }
