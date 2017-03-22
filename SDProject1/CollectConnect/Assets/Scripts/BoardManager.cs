@@ -71,7 +71,7 @@ public class BoardManager : MonoBehaviour
     public GameObject VoteEnhance;
     public GameObject VoteEnhanceShadow; 
     public List<int> VoteResultsList;
-    private bool _voteStartBool;
+    public bool VoteStartBool;
     public List<bool> cantVotePlayerList;
 
     private void Awake()
@@ -87,7 +87,7 @@ public class BoardManager : MonoBehaviour
         VetStartBool = false;
         _hitVetBtn = false;
         _playerNumber = 0;
-        _voteStartBool = false;
+        VoteStartBool = false;
 
         for (int i = 0; i < 4; i++) //prefill lists
         {
@@ -188,7 +188,7 @@ public class BoardManager : MonoBehaviour
         if (_isFirstCardPlay)
         {
             //display first player's piece
-            _playerScriptRefs[CurrentPlayer].MainPieceExpansion();
+            _playerScriptRefs[CurrentPlayer].PlayerPieceExpansion();
 
             if (!_isPlayerCardSelected)
                 return;
@@ -205,7 +205,7 @@ public class BoardManager : MonoBehaviour
                     //first card played by AI
                     _playerScriptRefs[CurrentPlayer].connectionKeyword = "First Card Played";
 
-                    // c.gameObject.AddComponent<NodeMovement>();
+                    //c.gameObject.AddComponent<NodeMovement>();
                     _isPlayerCardSelected = false;
                     _isFirstCardPlay = false;
                     _isTurnOver = true;
@@ -216,7 +216,7 @@ public class BoardManager : MonoBehaviour
         {
             _isGameStarted = false;
         }
-        else if (_voteStartBool == false)
+        else if (VoteStartBool == false)
         {
             //tri select check
             Card cardA = null, cardB = null;
@@ -259,8 +259,6 @@ public class BoardManager : MonoBehaviour
                 if (_playerScriptRefs[_playerNumber].playerVetted == true) //if blue y/n btn hit
                 {
                     _playerScriptRefs[_playerNumber].VetShrink();
-                    //Debug.Log("VetResultList while pulling player results = " + VetResultList[0] + ", " +
-                              //VetResultList[1] + ", " + VetResultList[2] + ", " + VetResultList[3]);
                     VetResultList[_playerNumber] = _playerScriptRefs[_playerNumber].VetResult; //pull player's result 
                     _playerNumber++;
 
@@ -338,7 +336,7 @@ public class BoardManager : MonoBehaviour
             }
             _ts.InvokeRepeating("decreaseTime", 1, 1);
         }
-        else //if _voteStartBool == true --> in voting
+        else //if VoteStartBool == true --> in voting
         {
             //RUN VOTING
             if (_playerScriptRefs[_playerNumber].playerVoted == true) //if player voted
@@ -361,7 +359,7 @@ public class BoardManager : MonoBehaviour
                     ToggleCardsOn();    //enable card movement
                     DisableVote();      //shrink voting screen
                     _playerNumber = 0;
-                    _voteStartBool = false;
+                    //VoteStartBool = false;
                     
                     foreach (Player p in _playerScriptRefs)  //destroy main player cards
                     {
@@ -382,6 +380,7 @@ public class BoardManager : MonoBehaviour
                     }
 
                     CurrentPlayer = 0;    //start round after voting (for late update)
+                    VoteStartBool = false;
                     //SceneManager.LoadScene("EndGame");  //using for testing
                     _ts.InvokeRepeating("decreaseTime", 1, 1);
                 }
@@ -402,28 +401,28 @@ public class BoardManager : MonoBehaviour
             return;
         TimerScript.Timeleft = 90;
 
-        if (_voteStartBool == false)
+        if (VoteStartBool == false)
         {
-            //expand player piece
-            _playerScriptRefs[CurrentPlayer].MainPieceShrink();
+            //shrink player piece
+            _playerScriptRefs[CurrentPlayer].PlayerPieceShrink();
 
             CurrentPlayer++;
 
-            if (CurrentPlayer >= 4 && _voteStartBool == false)
+            if (CurrentPlayer == 4) //all players have played in round 
             {
-                //TODO run voting here
-                _voteStartBool = true;
+                //Run voting
+                VoteStartBool = true;
                 StartCoroutine("VoteSetUp");
                 CurrentPlayer--;
             }
             else
-            {
-                //shrink player piece
-                _playerScriptRefs[CurrentPlayer].MainPieceExpansion();
-            }
+                {
+                    Debug.Log("player's turn" + CurrentPlayer);
+                    CurrentPlayer %= Players.Length;
 
-            Debug.Log("player's turn" + CurrentPlayer);
-            CurrentPlayer %= Players.Length;
+                    //expand player piece
+                    _playerScriptRefs[CurrentPlayer].PlayerPieceExpansion();
+                }
 
             if (CurrentPlayer == 0)
             {
@@ -468,7 +467,8 @@ public class BoardManager : MonoBehaviour
                 PassBtnP3.gameObject.SetActive(false);
                 PassBtnP4.gameObject.SetActive(true);
 
-                if (_playerScriptRefs[CurrentPlayer].isAiControlled == true)
+                if (_playerScriptRefs[CurrentPlayer].isAiControlled == true ||
+                        VoteStartBool == true)
                 {
                     PassBtnP4.gameObject.SetActive(false);
                 }
@@ -1100,7 +1100,6 @@ public class BoardManager : MonoBehaviour
                 noCount++;
             }
         }
-        Debug.Log("VetResultList while getting results = " + VetResultList[0] + ", " + VetResultList[1] + ", " + VetResultList[2] + ", " + VetResultList[3]);
         return yesCount >= noCount;
     }
 

@@ -38,7 +38,7 @@ public class Player : MonoBehaviour
     public Card card2;
     public String connectionKeyword;
 
-    public GameObject MainplayerPiece;
+    public GameObject PlayerPiece;
 
     public GameObject locationOnBoard1;
     public GameObject locationOnBoard2;
@@ -110,7 +110,7 @@ public class Player : MonoBehaviour
         VoteBtnP4.GetComponent<Button>().onClick.AddListener(VotePlayer4);
         VotedForWho = 0;
         VotePlayerPiece.gameObject.GetComponent<Renderer>().enabled = false;
-        MainplayerPiece.gameObject.GetComponent<Renderer>().enabled = false;
+        PlayerPiece.gameObject.GetComponent<Renderer>().enabled = false;
         blockOff.gameObject.GetComponent<Renderer>().enabled = false;
         JoinGameBtn.gameObject.SetActive(false);
         VetPieceShrink();
@@ -139,6 +139,7 @@ public class Player : MonoBehaviour
 
       if (isAiControlled && BoardManager.Instance.GetCurrentPlayer() == this &&
             !BoardManager.Instance.GetIsTurnOver() && BoardManager.Instance.GetIsStarted()
+            && BoardManager.Instance.VoteStartBool == false 
             && BoardManager.Instance.VetStartBool == false)
         {
             //Debug.Log("AI Control: " + name);
@@ -319,6 +320,8 @@ public class Player : MonoBehaviour
         VetText.gameObject.GetComponent<Text>().enabled = false;
         VetYesBtn.gameObject.SetActive(false);
         VetNoBtn.gameObject.SetActive(false);
+        //playerVetted = false;
+        //YesNoBtnHit = false;
 
         if (isAiControlled == true) //after vet over display leave or join buttons
         {
@@ -416,6 +419,7 @@ public class Player : MonoBehaviour
         VoteKeywordTxt.gameObject.GetComponent<Text>().enabled = false;
         VoteConnection.gameObject.GetComponent<Renderer>().enabled = false;
         VotePlayerPiece.gameObject.GetComponent<Renderer>().enabled = false;
+        playerVoted = false; //reset
 
         if (isAiControlled == true) //after vet over display leave or join buttons
         {
@@ -462,14 +466,14 @@ public class Player : MonoBehaviour
         VetPlayerPiece.gameObject.GetComponent<Renderer>().enabled = false;
     }
 
-    public void MainPieceExpansion()  //display turn player piece
+    public void PlayerPieceExpansion()  //display turn player piece
     {
-        MainplayerPiece.gameObject.GetComponent<Renderer>().enabled = true;
+        PlayerPiece.gameObject.GetComponent<Renderer>().enabled = true;
     }
 
-    public void MainPieceShrink()  //shrink turn player piece
+    public void PlayerPieceShrink()  //shrink turn player piece
     {
-        MainplayerPiece.gameObject.GetComponent<Renderer>().enabled = false;
+        PlayerPiece.gameObject.GetComponent<Renderer>().enabled = false;
     }
 
 
