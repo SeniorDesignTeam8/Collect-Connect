@@ -887,7 +887,7 @@ public class BoardManager : MonoBehaviour
         Debug.Log("Attempting to select board card: " + card.name);
         Player p = FindOwningPlayer(card);
         bool cardFound =
-            p.GetHand().Cast<Card>().Any(c => c.IsOnBoard() && c.name == card.name && c.gameObject.layer != 2);
+            p.GetHand().Cast<Card>().Any(c => c.IsOnBoard() && c.name == card.name);
         if (!cardFound)
             return;
         foreach (Player player in _playerScriptRefs)
