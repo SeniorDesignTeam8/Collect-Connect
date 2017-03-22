@@ -13,7 +13,7 @@ public class Player : MonoBehaviour
 
     public GameObject[] CardPlaceholders;
     public GameObject PlayerScore;
-    public GameObject ExpCardPlace; // The expanded card placeholder.
+    public GameObject ExpCardBackground; // The expanded card placeholder.
     public GameObject ExpCardImage; // Expand card Image
     public GameObject ExpCardTitle; // Title of expanded card.
     public GameObject ExpCardInfo; // Extended info of expanded card.
@@ -67,7 +67,7 @@ public class Player : MonoBehaviour
 
     private static readonly float[] AiPassThresholds =
     {
-        0.05f, 0.05f, 0.05f, 0.05f
+        0.00f, 0.05f, 0.05f, 0.05f
     };
 
     private void Start()
@@ -77,7 +77,7 @@ public class Player : MonoBehaviour
             // Remove spaces and change to all lowercase to standardize.
         _playerHand = new CardCollection(gameObject.name + "'s Hand");
         PlayerScore.GetComponent<Text>();
-        ExpCardPlace.gameObject.GetComponent<Renderer>().enabled = false; //make card expansion invisible to user
+        ExpCardBackground.gameObject.GetComponent<Renderer>().enabled = false; //make card expansion invisible to user
         ExpCardImage.gameObject.GetComponent<Renderer>().enabled = false;
         ExpCardTitle.gameObject.GetComponent<Text>().enabled = false;
         ExpCardInfo.gameObject.GetComponent<Text>().enabled = false;
@@ -159,6 +159,18 @@ public class Player : MonoBehaviour
             Card pickedCard = _playerHand.At(unplayedCardIndices[randomIndex]);
             BoardManager.Instance.SelectCardInHand(pickedCard);
             CardCollection playedCards = BoardManager.Instance.GetPlayedCards();
+           
+            //for (int i = 0; i < playedCards.Size; i++)
+            //{
+            //    Debug.Log("Testing layer of card: " + playedCards.At(i).name + " Layer = " + playedCards.At(i).gameObject.layer);
+            //    if (playedCards.At(i).gameObject.layer == 2)
+            //    {
+
+            //        Debug.Log("Removed card: " + playedCards.At(i).name);
+            //        playedCards.RemoveAt(i);     
+            //    }    
+            //}
+
             if (playedCards.Size == 0)
             {
                 //Debug.Log("First played card.");
@@ -195,12 +207,11 @@ public class Player : MonoBehaviour
                         else
                         {
                             //...otherwise this invalid play should happen
-                            Card badCard = c;
-                            BoardManager.Instance.SelectCardOnBoard(badCard);
-                            BoardManager.Instance.SelectKeyword(badCard.PropertyList.First());
+                            BoardManager.Instance.SelectCardOnBoard(c);
+                            BoardManager.Instance.SelectKeyword(c.PropertyList.First());
                             Debug.Log("AI play invalid");
                             break;
-                        }
+                        }   
                     }
                 }
             }
@@ -249,7 +260,7 @@ public class Player : MonoBehaviour
 
     public void CardExpansion(Card card) //Expand card
     {
-        ExpCardPlace.gameObject.GetComponent<Renderer>().enabled = true;
+        ExpCardBackground.gameObject.GetComponent<Renderer>().enabled = true;
         ExpCardImage.gameObject.GetComponent<Renderer>().enabled = true;
         ExpCardTitle.gameObject.GetComponent<Text>().text = card.name;
         ExpCardInfo.gameObject.GetComponent<Text>().text = card.GetExpInfo();
@@ -258,13 +269,13 @@ public class Player : MonoBehaviour
         _expCardPosition = card.gameObject.transform.position;
         _expCardScale = card.gameObject.transform.localScale;
         card.gameObject.transform.position = ExpCardImage.transform.position;
-        card.gameObject.transform.localScale = Vector3.one;
+        card.gameObject.transform.localScale = ExpCardImage.gameObject.GetComponent<Renderer>().bounds.extents;
         //Make card appear in expand
     }
 
     public void CardShrink(Card card) //Shrink card
     {
-        ExpCardPlace.gameObject.GetComponent<Renderer>().enabled = false;
+        ExpCardBackground.gameObject.GetComponent<Renderer>().enabled = false;
         ExpCardImage.gameObject.GetComponent<Renderer>().enabled = false;
         ExpCardTitle.gameObject.GetComponent<Text>().enabled = false;
         ExpCardInfo.gameObject.GetComponent<Text>().enabled = false;

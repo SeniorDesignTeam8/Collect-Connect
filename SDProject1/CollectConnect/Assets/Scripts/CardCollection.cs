@@ -20,6 +20,11 @@ public class CardCollection : IEnumerable
         _cardList = new List<Card>();
     }
 
+    public void RemoveAt(int index)
+    {
+        _cardList.RemoveAt(index);
+    }
+
     public void AddCards(params Card[] cards)
     {
         _cardList.AddRange(cards);
