@@ -128,10 +128,10 @@ public class BoardManager : MonoBehaviour
             PassBtnP2.GetComponent<Button>().onClick.AddListener(PassBtnHit);
             PassBtnP3.GetComponent<Button>().onClick.AddListener(PassBtnHit);
             PassBtnP4.GetComponent<Button>().onClick.AddListener(PassBtnHit);
-            PassBtnP1.gameObject.SetActive(false);
-            PassBtnP2.gameObject.SetActive(false);
-            PassBtnP3.gameObject.SetActive(false);
-            PassBtnP4.gameObject.SetActive(false);
+            PassBtnP1.gameObject.SetActive(true);
+            PassBtnP2.gameObject.SetActive(true);
+            PassBtnP3.gameObject.SetActive(true);
+            PassBtnP4.gameObject.SetActive(true);
 
             DisableVet();
             DisableVote();
@@ -259,14 +259,14 @@ public class BoardManager : MonoBehaviour
                 if (_playerScriptRefs[_playerNumber].playerVetted == true) //if blue y/n btn hit
                 {
                     _playerScriptRefs[_playerNumber].VetShrink();
-                    Debug.Log("VetResultList while pulling player results = " + VetResultList[0] + ", " +
-                              VetResultList[1] + ", " + VetResultList[2] + ", " + VetResultList[3]);
+                    //Debug.Log("VetResultList while pulling player results = " + VetResultList[0] + ", " +
+                              //VetResultList[1] + ", " + VetResultList[2] + ", " + VetResultList[3]);
                     VetResultList[_playerNumber] = _playerScriptRefs[_playerNumber].VetResult; //pull player's result 
                     _playerNumber++;
 
                     if (_playerNumber < 4) //if hit y/n button
                     {
-                        _playerScriptRefs[_playerNumber].VetExpansion(); //orange screen
+                        _playerScriptRefs[_playerNumber].VetExpansion(); //individual player screens 
                         StartCoroutine("VetDecisionTimer", _playerScriptRefs[_playerNumber]);
                     }
 
@@ -441,7 +441,7 @@ public class BoardManager : MonoBehaviour
                 PassBtnP3.gameObject.SetActive(false);
                 PassBtnP4.gameObject.SetActive(false);
 
-                if (_playerScriptRefs[CurrentPlayer].isAiControlled == false)
+                if (_playerScriptRefs[CurrentPlayer].isAiControlled == true)
                 {
                     PassBtnP2.gameObject.SetActive(false);
                 }
@@ -467,7 +467,7 @@ public class BoardManager : MonoBehaviour
                 PassBtnP3.gameObject.SetActive(false);
                 PassBtnP4.gameObject.SetActive(true);
 
-                if (_playerScriptRefs[CurrentPlayer].isAiControlled == false)
+                if (_playerScriptRefs[CurrentPlayer].isAiControlled == true)
                 {
                     PassBtnP4.gameObject.SetActive(false);
                 }
