@@ -136,11 +136,12 @@ public class Player : MonoBehaviour
         }
         else
             IsDrawingCards = false;
-
+       
       if (isAiControlled && BoardManager.Instance.GetCurrentPlayer() == this &&
             !BoardManager.Instance.GetIsTurnOver() && BoardManager.Instance.GetIsStarted()
             && BoardManager.Instance.VetStartBool == false)
-        {
+      {
+          
             //Debug.Log("AI Control: " + name);
             List<int> unplayedCardIndices = new List<int>();
             foreach (Card c in BoardManager.Instance.GetPlayersUnplayedCards())
@@ -170,14 +171,15 @@ public class Player : MonoBehaviour
             //        playedCards.RemoveAt(i);     
             //    }    
             //}
-
-            if (playedCards.Size == 0)
+            Debug.Log("AI trying to play...  ");
+            //if (playedCards.Size == 0)
+            //{
+            //    //Debug.Log("First played card.");
+            //    //No played cards, so must be first played card.
+            //}
+            //else
             {
-                //Debug.Log("First played card.");
-                //No played cards, so must be first played card.
-            }
-            else
-            {
+                
                 float passChance = Random.Range(0.0f, 1.0f);
                 if (passChance <= AiPassThresholds[BoardManager.Instance.CurrentPlayer])
                 {

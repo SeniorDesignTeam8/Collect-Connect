@@ -422,7 +422,7 @@ public class BoardManager : MonoBehaviour
                 _playerScriptRefs[CurrentPlayer].MainPieceExpansion();
             }
 
-            Debug.Log("player's turn" + CurrentPlayer);
+            Debug.Log("player's turn: " + CurrentPlayer);
             CurrentPlayer %= Players.Length;
 
             if (CurrentPlayer == 0)
