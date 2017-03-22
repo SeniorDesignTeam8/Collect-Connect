@@ -324,6 +324,7 @@ public class BoardManager : MonoBehaviour
                     _playerScriptRefs[CurrentPlayer].connectionKeyword = "Vetted Against";
                     _currentKeyword = "";
                     cardA.gameObject.GetComponent<Renderer>().enabled = false;
+                    //cardB.SetIsOnBoard(false);
                     cardA.SetIsOnBoard(false);
                     cardA.gameObject.layer = 2; //"destroyed"
 

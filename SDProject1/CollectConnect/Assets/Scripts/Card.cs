@@ -162,7 +162,7 @@ public class Card : MonoBehaviour
         //Debug.Log(searchProperty.PropertyName);
         foreach (CardProperty property in PropertyList)
         {
-            Debug.Log(property.PropertyName);
+            //Debug.Log(property.PropertyName);
             if (property.PropertyValue == searchProperty.PropertyValue)
                 return property._pointValue;
         }
