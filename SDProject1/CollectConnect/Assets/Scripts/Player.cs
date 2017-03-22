@@ -309,6 +309,8 @@ public class Player : MonoBehaviour
         VetNoBtn.gameObject.SetActive(true);
         playerVetted = false;
         YesNoBtnHit = false;
+        JoinGameBtn.gameObject.SetActive(false);    //turn off joining and leaving game
+        LeaveGameBtn.gameObject.SetActive(false);
     }
 
     public void VetShrink()
@@ -318,6 +320,15 @@ public class Player : MonoBehaviour
         VetText.gameObject.GetComponent<Text>().enabled = false;
         VetYesBtn.gameObject.SetActive(false);
         VetNoBtn.gameObject.SetActive(false);
+
+        if (isAiControlled == true) //after vet over display leave or join buttons
+        {
+            JoinGameBtn.gameObject.SetActive(true);
+        }
+        else
+        {
+            LeaveGameBtn.gameObject.SetActive(true);
+        }
     }
 
     private void OnYesBtnHit()
@@ -394,6 +405,9 @@ public class Player : MonoBehaviour
         VoteKeywordTxt.gameObject.GetComponent<Text>().enabled = true;
         VoteConnection.gameObject.GetComponent<Renderer>().enabled = true;
         VotePlayerPiece.gameObject.GetComponent<Renderer>().enabled = true;
+
+        JoinGameBtn.gameObject.SetActive(false);    //turn off joining and leaving game
+        LeaveGameBtn.gameObject.SetActive(false);
     }
 
     public void VoteMainShrink()
@@ -403,6 +417,15 @@ public class Player : MonoBehaviour
         VoteKeywordTxt.gameObject.GetComponent<Text>().enabled = false;
         VoteConnection.gameObject.GetComponent<Renderer>().enabled = false;
         VotePlayerPiece.gameObject.GetComponent<Renderer>().enabled = false;
+
+        if (isAiControlled == true) //after vet over display leave or join buttons
+        {
+            JoinGameBtn.gameObject.SetActive(true);
+        }
+        else
+        {
+            LeaveGameBtn.gameObject.SetActive(true);
+        }
         //_postVote = true;
     }
 
