@@ -136,12 +136,13 @@ public class Player : MonoBehaviour
         }
         else
             IsDrawingCards = false;
-
+       
       if (isAiControlled && BoardManager.Instance.GetCurrentPlayer() == this &&
             !BoardManager.Instance.GetIsTurnOver() && BoardManager.Instance.GetIsStarted()
             && BoardManager.Instance.VoteStartBool == false 
             && BoardManager.Instance.VetStartBool == false)
-        {
+      {
+          
             //Debug.Log("AI Control: " + name);
             List<int> unplayedCardIndices = new List<int>();
             foreach (Card c in BoardManager.Instance.GetPlayersUnplayedCards())
@@ -171,14 +172,15 @@ public class Player : MonoBehaviour
             //        playedCards.RemoveAt(i);     
             //    }    
             //}
-
-            if (playedCards.Size == 0)
+            Debug.Log("AI trying to play...  ");
+            //if (playedCards.Size == 0)
+            //{
+            //    //Debug.Log("First played card.");
+            //    //No played cards, so must be first played card.
+            //}
+            //else
             {
-                //Debug.Log("First played card.");
-                //No played cards, so must be first played card.
-            }
-            else
-            {
+                
                 float passChance = Random.Range(0.0f, 1.0f);
                 if (passChance <= AiPassThresholds[BoardManager.Instance.CurrentPlayer])
                 {
@@ -192,12 +194,16 @@ public class Player : MonoBehaviour
                     float aiValidPlayChance = Random.Range(0.0f, 1.0f);
                     foreach (Card c in playedCards)
                     {
+                       // Card c = playedCards.At(0);
                         List<Card.CardProperty> commonProps = c.FindCommonProperties(pickedCard);
                         //random index to determine if valid play should happen 80% of the time...
                         if (aiValidPlayChance < 0.8)
                         {
                             if (commonProps.Count <= 0)
+                            {
+                                //c = playedCards.At(2);
                                 continue;
+                            }
                             BoardManager.Instance.SelectCardOnBoard(c);
                             ShufflePropertyList(ref commonProps);
                             BoardManager.Instance.SelectKeyword(commonProps[0]);
@@ -211,7 +217,7 @@ public class Player : MonoBehaviour
                             BoardManager.Instance.SelectKeyword(c.PropertyList.First());
                             Debug.Log("AI play invalid");
                             break;
-                        }   
+                        }
                     }
                 }
             }

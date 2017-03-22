@@ -416,13 +416,13 @@ public class BoardManager : MonoBehaviour
                 CurrentPlayer--;
             }
             else
-                {
-                    Debug.Log("player's turn" + CurrentPlayer);
-                    CurrentPlayer %= Players.Length;
+            {
+                //shrink player piece
+                _playerScriptRefs[CurrentPlayer].MainPieceExpansion();
+            }
 
-                    //expand player piece
-                    _playerScriptRefs[CurrentPlayer].PlayerPieceExpansion();
-                }
+            Debug.Log("player's turn: " + CurrentPlayer);
+            CurrentPlayer %= Players.Length;
 
             if (CurrentPlayer == 0)
             {
