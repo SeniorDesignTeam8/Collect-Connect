@@ -253,9 +253,9 @@ public class BoardManager : MonoBehaviour
                 VetStartBool = true;
             }
 
+            _ts.CancelInvoke();
             if (_hitVetBtn == true) //rotate through vet y/n responses (yellow btn hit)
             {
-                _ts.CancelInvoke();
                 if (_playerScriptRefs[_playerNumber].playerVetted == true) //if blue y/n btn hit
                 {
                     _playerScriptRefs[_playerNumber].VetShrink();
@@ -284,7 +284,6 @@ public class BoardManager : MonoBehaviour
 
                     //TODO: need to differ between AI and human players
                 }
-                _ts.InvokeRepeating("decreaseTime", 1, 1);
             }
 
             if (_afterVet == true) //get the vet result, true for yes/valid, false for no/invalid
@@ -334,9 +333,9 @@ public class BoardManager : MonoBehaviour
                     _hitVetBtn = false; //reset btn
                     _afterVet = false;
                     VetStartBool = false;
-                }
-                _ts.InvokeRepeating("decreaseTime", 1, 1);
+                }               
             }
+            _ts.InvokeRepeating("decreaseTime", 1, 1);
         }
         else //if _voteStartBool == true --> in voting
         {
