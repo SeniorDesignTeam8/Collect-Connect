@@ -67,7 +67,7 @@ public class Player : MonoBehaviour
 
     private static readonly float[] AiPassThresholds =
     {
-        0.05f, 0.05f, 0.05f, 0.05f
+        0.00f, 0.05f, 0.05f, 0.05f
     };
 
     private void Start()
@@ -159,6 +159,18 @@ public class Player : MonoBehaviour
             Card pickedCard = _playerHand.At(unplayedCardIndices[randomIndex]);
             BoardManager.Instance.SelectCardInHand(pickedCard);
             CardCollection playedCards = BoardManager.Instance.GetPlayedCards();
+           
+            //for (int i = 0; i < playedCards.Size; i++)
+            //{
+            //    Debug.Log("Testing layer of card: " + playedCards.At(i).name + " Layer = " + playedCards.At(i).gameObject.layer);
+            //    if (playedCards.At(i).gameObject.layer == 2)
+            //    {
+
+            //        Debug.Log("Removed card: " + playedCards.At(i).name);
+            //        playedCards.RemoveAt(i);     
+            //    }    
+            //}
+
             if (playedCards.Size == 0)
             {
                 //Debug.Log("First played card.");
@@ -195,12 +207,11 @@ public class Player : MonoBehaviour
                         else
                         {
                             //...otherwise this invalid play should happen
-                            Card badCard = c;
-                            BoardManager.Instance.SelectCardOnBoard(badCard);
-                            BoardManager.Instance.SelectKeyword(badCard.PropertyList.First());
+                            BoardManager.Instance.SelectCardOnBoard(c);
+                            BoardManager.Instance.SelectKeyword(c.PropertyList.First());
                             Debug.Log("AI play invalid");
                             break;
-                        }
+                        }   
                     }
                 }
             }

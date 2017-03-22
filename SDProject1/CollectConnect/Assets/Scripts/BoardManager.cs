@@ -40,7 +40,7 @@ public class BoardManager : MonoBehaviour
     private bool _isBoardCardSelected;
     private bool _isKeywordSelected;
     public int CurrentPlayer;
-    private bool _isTurnOver;
+    public bool _isTurnOver;
     private bool _playedTurn;
     public GameObject VetEnhance;
     public GameObject VetEnhanceShadow;
@@ -325,6 +325,7 @@ public class BoardManager : MonoBehaviour
                     _playerScriptRefs[CurrentPlayer].connectionKeyword = "Vetted Against";
                     _currentKeyword = "";
                     cardA.gameObject.GetComponent<Renderer>().enabled = false;
+                    cardA.SetIsOnBoard(false);
                     cardA.gameObject.layer = 2; //"destroyed"
 
                     //Destroy(cardA.gameObject);
@@ -885,7 +886,8 @@ public class BoardManager : MonoBehaviour
     {
         Debug.Log("Attempting to select board card: " + card.name);
         Player p = FindOwningPlayer(card);
-        bool cardFound = p.GetHand().Cast<Card>().Any(c => c.IsOnBoard() && c.name == card.name);
+        bool cardFound =
+            p.GetHand().Cast<Card>().Any(c => c.IsOnBoard() && c.name == card.name);
         if (!cardFound)
             return;
         foreach (Player player in _playerScriptRefs)
