@@ -10,6 +10,7 @@ using Mono.Data.Sqlite;
 using System.Data;
 using System.Runtime.InteropServices;
 using UnityEngine.SceneManagement;
+using Random = UnityEngine.Random;
 
 public class BoardManager : MonoBehaviour
 {
@@ -267,10 +268,26 @@ public class BoardManager : MonoBehaviour
                     VetResultList[_playerNumber] = _playerScriptRefs[_playerNumber].VetResult; //pull player's result 
                     _playerNumber++;
 
+
                     if (_playerNumber < 4) //if hit y/n button
                     {
-                        _playerScriptRefs[_playerNumber].VetExpansion(); //individual player screens 
-                        StartCoroutine("VetDecisionTimer", _playerScriptRefs[_playerNumber]);
+                        if (_playerScriptRefs[_playerNumber].isAiControlled == true)
+                        {
+                            int Rindex = Random.Range(0, 101);
+                            bool AIVet = false;
+                            if (Rindex > 50)
+                                AIVet = true;
+                            VetResultList[_playerNumber] = AIVet;
+                        }
+                        else
+                        {
+                            _playerScriptRefs[_playerNumber].VetExpansion(); //individual player screens 
+                            StartCoroutine("VetDecisionTimer", _playerScriptRefs[_playerNumber]);
+                        }
+                    }
+                    else
+                    {
+
                     }
 
                     if (_playerScriptRefs[3].playerVetted == true)
@@ -1113,7 +1130,7 @@ public class BoardManager : MonoBehaviour
         _playerScriptRefs[_playerNumber].playerVetted = true; //first AI done 
         _playerScriptRefs[_playerNumber].YesNoBtnHit = true;
         _playerScriptRefs[_playerNumber].VetResult = VetResultList[0];
-
+        
     }
 
     private bool CheckConnection()
