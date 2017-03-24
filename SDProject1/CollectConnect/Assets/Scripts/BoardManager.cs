@@ -216,10 +216,6 @@ public class BoardManager : MonoBehaviour
                     _isFirstCardPlay = false;
                     _isTurnOver = true;
                 }
-                else
-                {
-                   
-                }
             }
         }
         else if (AllCardsPlayed())
@@ -240,13 +236,12 @@ public class BoardManager : MonoBehaviour
                     {
                         //This is the card on the game board
                         cardB = c;
-                        
                     }
                     else if (c.IsSelected())
-                    {
-                        //This is the card in the players hand
-                        cardA = c;
-                    }
+                        {
+                            //This is the card in the players hand
+                            cardA = c;
+                        }
                 }
             }
 
@@ -1052,6 +1047,11 @@ public class BoardManager : MonoBehaviour
 
         VetBtnRight.gameObject.SetActive(true);
         VetBtnLeft.gameObject.SetActive(true);
+
+        PassBtnP1.gameObject.SetActive(false);
+        PassBtnP2.gameObject.SetActive(false);
+        PassBtnP3.gameObject.SetActive(false);
+        PassBtnP4.gameObject.SetActive(false);
     }
 
     private IEnumerator VetSetUp()  //timer before vet screen pops up
@@ -1103,8 +1103,7 @@ public class BoardManager : MonoBehaviour
         Debug.Log("Vet button selected.");
         VetBtnRight.gameObject.SetActive(false);    //disable vet btns
         VetBtnLeft.gameObject.SetActive(false);
-
-
+       
         _playerNumber = 0;
         _hitVetBtn = true;
          
