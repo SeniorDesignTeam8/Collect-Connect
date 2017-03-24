@@ -144,6 +144,7 @@ public class Player : MonoBehaviour
       {
           
             //Debug.Log("AI Control: " + name);
+          bool alreadyPlayed = false;
             List<int> unplayedCardIndices = new List<int>();
             foreach (Card c in BoardManager.Instance.GetPlayersUnplayedCards())
             {
@@ -178,8 +179,8 @@ public class Player : MonoBehaviour
             //    //Debug.Log("First played card.");
             //    //No played cards, so must be first played card.
             //}
-            //else
-            {
+            //else//{
+            
                 
                 float passChance = Random.Range(0.0f, 1.0f);
                 if (passChance <= AiPassThresholds[BoardManager.Instance.CurrentPlayer])
@@ -195,18 +196,21 @@ public class Player : MonoBehaviour
                     foreach (Card c in playedCards)
                     {
                        // Card c = playedCards.At(0);
+                       Debug.Log("trying a card in hand...");
                         List<Card.CardProperty> commonProps = c.FindCommonProperties(pickedCard);
                         //random index to determine if valid play should happen 80% of the time...
                         if (aiValidPlayChance < 0.8)
                         {
                             if (commonProps.Count <= 0)
                             {
+                                Debug.Log("no common props");
                                 //c = playedCards.At(2);
                                 continue;
                             }
                             BoardManager.Instance.SelectCardOnBoard(c);
                             ShufflePropertyList(ref commonProps);
                             BoardManager.Instance.SelectKeyword(commonProps[0]);
+                            alreadyPlayed = true;
                             Debug.Log("AI play valid");
                             break;
                         }
@@ -215,12 +219,22 @@ public class Player : MonoBehaviour
                             //...otherwise this invalid play should happen
                             BoardManager.Instance.SelectCardOnBoard(c);
                             BoardManager.Instance.SelectKeyword(c.PropertyList.First());
-                            Debug.Log("AI play invalid");
+                        alreadyPlayed = true;
+                        Debug.Log("AI play invalid");
                             break;
                         }
-                    }
                 }
-            }
+                    if (!alreadyPlayed)
+                    {
+                        //...otherwise this invalid play should happen
+                        int Randomindex = Random.Range(0, playedCards.Size);
+                        BoardManager.Instance.SelectCardOnBoard(playedCards.At(Randomindex));
+                        BoardManager.Instance.SelectKeyword(playedCards.At(Randomindex).PropertyList.First());
+                        Debug.Log("AI play invalid after");
+                        //break;
+                    }
+
+                }
         }
     }
 
