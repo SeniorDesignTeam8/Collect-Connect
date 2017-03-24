@@ -278,6 +278,7 @@ public class BoardManager : MonoBehaviour
                             if (Rindex > 50)
                                 AIVet = true;
                             VetResultList[_playerNumber] = AIVet;
+                            _playerScriptRefs[_playerNumber].playerVetted = true;
                         }
                         else
                         {
