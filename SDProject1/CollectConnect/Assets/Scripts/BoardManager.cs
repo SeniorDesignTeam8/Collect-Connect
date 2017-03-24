@@ -63,6 +63,7 @@ public class BoardManager : MonoBehaviour
     private int _playerNumber;
     private static IDbConnection _dbconn;
     private TimerScript _ts;
+
     public Button PassBtnP1;
     public Button PassBtnP2;
     public Button PassBtnP3;
@@ -73,6 +74,8 @@ public class BoardManager : MonoBehaviour
     public List<int> VoteResultsList;
     public bool VoteStartBool;
     public List<bool> cantVotePlayerList;
+
+    public GameObject Glow;
 
     private void Awake()
     {
@@ -132,6 +135,7 @@ public class BoardManager : MonoBehaviour
             PassBtnP2.gameObject.SetActive(true);
             PassBtnP3.gameObject.SetActive(true);
             PassBtnP4.gameObject.SetActive(true);
+            Glow.GetComponent<Renderer>().enabled = false;
 
             DisableVet();
             DisableVote();
@@ -199,8 +203,10 @@ public class BoardManager : MonoBehaviour
                     //ConnectionManager.CreateConnection(c.GetComponent<RectTransform>());
                     c.SetIsOnBoard(true);
                     c.SetIsSelected(false);
+
                     //c.GlowOn();
-                    
+                    Glow.GetComponent<Renderer>().enabled = true;
+                    Glow.transform.position = c.gameObject.transform.position;
 
                     PlayPlace();
 
@@ -215,6 +221,8 @@ public class BoardManager : MonoBehaviour
                 else
                 {
                     //c.GlowOff();    //DONT KNOW IF WILL WORK
+
+                    Glow.GetComponent<Renderer>().enabled = false;
                 }
             }
         }
@@ -236,6 +244,8 @@ public class BoardManager : MonoBehaviour
                     {
                         //This is the card on the game board
                         //c.GlowOn();
+                        Glow.GetComponent<Renderer>().enabled = true;
+                        Glow.transform.position = c.gameObject.transform.position;
                         cardB = c;
                         
                     }
@@ -243,6 +253,8 @@ public class BoardManager : MonoBehaviour
                     {
                         //This is the card in the players hand
                         //c.GlowOn();
+                        Glow.GetComponent<Renderer>().enabled = true;
+                        Glow.transform.position = c.gameObject.transform.position;
                         cardA = c;
                     }
                 }
@@ -331,10 +343,10 @@ public class BoardManager : MonoBehaviour
                     _playerScriptRefs[CurrentPlayer].connectionKeyword = "Vetted Against";
                     _currentKeyword = "";
                     cardA.gameObject.GetComponent<Renderer>().enabled = false;
-                    //cardB.SetIsOnBoard(false);
-                    cardA.SetIsOnBoard(false);
+                    cardA.SetIsOnBoard(false);  
+                    cardA.SetIsSelected(false);
                     cardA.gameObject.layer = 2; //"destroyed"
-
+                 
                     //Destroy(cardA.gameObject);
 
                     _isTurnOver = true;
@@ -757,8 +769,10 @@ public class BoardManager : MonoBehaviour
         bool validPlay = true;
         if (cardA.gameObject.GetComponent<GraphNode>() == null)
             cardA.gameObject.AddComponent<GraphNode>();
+
         if (!cardA.DoesPropertyExist(keyword) || !boardCard.DoesPropertyExist(keyword))
             validPlay = false;
+
         foreach (GameObject keyNode in _keywordNodes)
         {
             if (keyNode.transform.FindChild("Text").gameObject.GetComponent<Text>().text != keyword)
@@ -875,6 +889,7 @@ public class BoardManager : MonoBehaviour
             if (!c.IsSelected() || c.IsOnBoard()) // Skip cards that aren't selected or are on the board.
             {
                 //c.GlowOff();
+                Glow.GetComponent<Renderer>().enabled = false;
                 continue;
             }
                 
@@ -910,6 +925,7 @@ public class BoardManager : MonoBehaviour
                 if (!c.IsOnBoard() || !c.IsSelected())
                 {
                     //c.GlowOff();
+                    Glow.GetComponent<Renderer>().enabled = false;
                     continue;
                 }
 
@@ -942,6 +958,7 @@ public class BoardManager : MonoBehaviour
         foreach (Card c in from p in _playerScriptRefs from Card c in p.GetHand() where c.IsSelected() select c)
         {
             //c.GlowOff();
+            Glow.GetComponent<Renderer>().enabled = false;
             c.SetIsSelected(false); // Deselect any selected cards.
         }
     }
