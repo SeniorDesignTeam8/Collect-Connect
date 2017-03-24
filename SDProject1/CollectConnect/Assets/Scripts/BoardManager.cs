@@ -269,9 +269,8 @@ public class BoardManager : MonoBehaviour
             if (!VetStartBool)
             {
                 Debug.Log("Starting vet setup.");
-                StartCoroutine("VetSetUp");
-
                 VetStartBool = true;
+                StartCoroutine("VetSetUp");
             }
 
             _ts.CancelInvoke();
