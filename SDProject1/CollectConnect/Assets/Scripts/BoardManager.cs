@@ -416,6 +416,10 @@ public class BoardManager : MonoBehaviour
             //shrink player piece
             _playerScriptRefs[CurrentPlayer].PlayerPieceShrink();
 
+            //turn glows off
+            OnBoardGlow.gameObject.GetComponent<Renderer>().enabled = false;
+            InHandGlow.gameObject.GetComponent<Renderer>().enabled = false;
+
             CurrentPlayer++;
 
             if (CurrentPlayer == 4) //all players have played in round 
