@@ -334,6 +334,7 @@ public class BoardManager : MonoBehaviour
                     cardA.gameObject.GetComponent<Renderer>().enabled = false;
                     cardA.SetIsOnBoard(false);  
                     cardA.SetIsSelected(false);
+                    
                     cardA.gameObject.layer = 2; //"destroyed"
                  
                     //Destroy(cardA.gameObject);
