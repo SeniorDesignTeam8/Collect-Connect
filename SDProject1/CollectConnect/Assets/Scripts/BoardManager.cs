@@ -259,9 +259,8 @@ public class BoardManager : MonoBehaviour
             if (!VetStartBool)
             {
                 Debug.Log("Starting vet setup.");
-                StartCoroutine("VetSetUp");
-
                 VetStartBool = true;
+                StartCoroutine("VetSetUp");
             }
 
             _ts.CancelInvoke();
@@ -1159,46 +1158,26 @@ public class BoardManager : MonoBehaviour
     private void GetVoteResult()
     {
         Debug.Log("Getting vote results.");
-      
+        //VoteResultsList.Clear();
         foreach (Player p in _playerScriptRefs)
         {
             if (p.VotedForWho == 1)
             {
-                VoteResultsList.Add(1);
+                _playerScriptRefs[0].IncreaseScore(1);
             }
             if (p.VotedForWho == 2)
             {
-                VoteResultsList.Add(2);
+                _playerScriptRefs[1].IncreaseScore(1);
             }
             if (p.VotedForWho == 3)
             {
-                VoteResultsList.Add(3);
+                _playerScriptRefs[2].IncreaseScore(1);
             }
             if (p.VotedForWho == 4)
             {
-                VoteResultsList.Add(4);
-            }
-        }
-        foreach (int vote in VoteResultsList)
-        {
-            if (vote == 1)
-            {
-                _playerScriptRefs[0].IncreaseScore(1);
-            }
-            if (vote == 2)
-            {
-                _playerScriptRefs[1].IncreaseScore(1);
-            }
-            if (vote == 3)
-            {
-                _playerScriptRefs[2].IncreaseScore(1);
-            }
-            if (vote == 4)
-            {
                 _playerScriptRefs[3].IncreaseScore(1);
             }
-        }
-        VoteResultsList.Clear();
+        }    
     }
 
     private void ToggleCardsOff()

@@ -108,7 +108,7 @@ public class Player : MonoBehaviour
         VoteBtnP2.GetComponent<Button>().onClick.AddListener(VotePlayer2);
         VoteBtnP3.GetComponent<Button>().onClick.AddListener(VotePlayer3);
         VoteBtnP4.GetComponent<Button>().onClick.AddListener(VotePlayer4);
-        VotedForWho = 0;
+        VotedForWho = 1;
         VotePlayerPiece.gameObject.GetComponent<Renderer>().enabled = false;
         PlayerPiece.gameObject.GetComponent<Renderer>().enabled = false;
         blockOff.gameObject.GetComponent<Renderer>().enabled = false;
