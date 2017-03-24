@@ -866,11 +866,17 @@ public class BoardManager : MonoBehaviour
     public void SelectCardInHand(Card card)
     {
         Debug.Log("Attempting to select hand card: " + card.name);
-        bool cardFound = _playerScriptRefs[CurrentPlayer].GetHand().Cast<Card>().Any(c => c.name == card.name && !c.IsOnBoard());
+        bool cardFound =
+            _playerScriptRefs[CurrentPlayer].GetHand().Cast<Card>().Any(c => c.name == card.name && !c.IsOnBoard());
         // First, check if the card is in the current player's hand.
         if (!cardFound)
+        {
+            Debug.Log("Card not found");
             return;
-        foreach (Card c in _playerScriptRefs[CurrentPlayer].GetHand())
+        }
+    foreach (
+
+    Card c in _playerScriptRefs[CurrentPlayer].GetHand())
         {
             if (!c.IsSelected() || c.IsOnBoard()) // Skip cards that aren't selected or are on the board.
             {
