@@ -1147,7 +1147,7 @@ public class BoardManager : MonoBehaviour
     private void GetVoteResult()
     {
         Debug.Log("Getting vote results.");
-      
+        VoteResultsList.Clear();
         foreach (Player p in _playerScriptRefs)
         {
             if (p.VotedForWho == 1)
@@ -1186,7 +1186,7 @@ public class BoardManager : MonoBehaviour
                 _playerScriptRefs[3].IncreaseScore(1);
             }
         }
-        VoteResultsList.Clear();
+        
     }
 
     private void ToggleCardsOff()
