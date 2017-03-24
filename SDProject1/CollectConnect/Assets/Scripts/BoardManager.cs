@@ -1170,6 +1170,7 @@ public class BoardManager : MonoBehaviour
                 _playerScriptRefs[3].IncreaseScore(1);
             }
         }
+        VoteResultsList.Clear();
     }
 
     private void ToggleCardsOff()
