@@ -148,7 +148,7 @@ public class Player : MonoBehaviour
             List<int> unplayedCardIndices = new List<int>();
             foreach (Card c in BoardManager.Instance.GetPlayersUnplayedCards())
             {
-                if (!c.IsOnBoard() && _playerHand.IndexOf(c) != -1)
+				if (!c.IsOnBoard() && _playerHand.IndexOf(c) != -1 && c.GetComponent<Renderer>().enabled)
                 {
                     unplayedCardIndices.Add(_playerHand.IndexOf(c));
                 }

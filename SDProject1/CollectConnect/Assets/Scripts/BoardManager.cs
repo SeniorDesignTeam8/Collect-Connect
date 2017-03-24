@@ -11,6 +11,7 @@ using System.Data;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using UnityEngine.SceneManagement;
+using Random = UnityEngine.Random;
 
 public class BoardManager : MonoBehaviour
 {
@@ -270,10 +271,27 @@ public class BoardManager : MonoBehaviour
                     VetResultList[_playerNumber] = _playerScriptRefs[_playerNumber].VetResult; //pull player's result 
                     _playerNumber++;
 
+
                     if (_playerNumber < 4) //if hit y/n button
                     {
-                        _playerScriptRefs[_playerNumber].VetExpansion(); //individual player screens 
-                        StartCoroutine("VetDecisionTimer", _playerScriptRefs[_playerNumber]);
+                        if (_playerScriptRefs[_playerNumber].isAiControlled == true)
+                        {
+                            int Rindex = Random.Range(0, 101);
+                            bool AIVet = false;
+                            if (Rindex > 50)
+                                AIVet = true;
+                            VetResultList[_playerNumber] = AIVet;
+                            _playerScriptRefs[_playerNumber].playerVetted = true;
+                        }
+                        else
+                        {
+                            _playerScriptRefs[_playerNumber].VetExpansion(); //individual player screens 
+                            StartCoroutine("VetDecisionTimer", _playerScriptRefs[_playerNumber]);
+                        }
+                    }
+                    else
+                    {
+
                     }
 
                     if (_playerScriptRefs[3].playerVetted == true)
@@ -332,6 +350,7 @@ public class BoardManager : MonoBehaviour
                     cardA.gameObject.GetComponent<Renderer>().enabled = false;
                     cardA.SetIsOnBoard(false);  
                     cardA.SetIsSelected(false);
+                    
                     cardA.gameObject.layer = 2; //"destroyed"
                  
                     //Destroy(cardA.gameObject);
@@ -1129,7 +1148,7 @@ public class BoardManager : MonoBehaviour
         _playerScriptRefs[_playerNumber].playerVetted = true; //first AI done 
         _playerScriptRefs[_playerNumber].YesNoBtnHit = true;
         _playerScriptRefs[_playerNumber].VetResult = VetResultList[0];
-
+        
     }
 
     private bool CheckConnection()
