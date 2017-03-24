@@ -199,6 +199,8 @@ public class BoardManager : MonoBehaviour
                     //ConnectionManager.CreateConnection(c.GetComponent<RectTransform>());
                     c.SetIsOnBoard(true);
                     c.SetIsSelected(false);
+                    //c.GlowOn();
+                    
 
                     PlayPlace();
 
@@ -209,6 +211,10 @@ public class BoardManager : MonoBehaviour
                     _isPlayerCardSelected = false;
                     _isFirstCardPlay = false;
                     _isTurnOver = true;
+                }
+                else
+                {
+                    //c.GlowOff();    //DONT KNOW IF WILL WORK
                 }
             }
         }
@@ -229,11 +235,14 @@ public class BoardManager : MonoBehaviour
                     if (c.IsOnBoard() && c.IsSelected())
                     {
                         //This is the card on the game board
+                        //c.GlowOn();
                         cardB = c;
+                        
                     }
                     else if (c.IsSelected())
                     {
                         //This is the card in the players hand
+                        //c.GlowOn();
                         cardA = c;
                     }
                 }
@@ -418,7 +427,7 @@ public class BoardManager : MonoBehaviour
             else
             {
                 //shrink player piece
-                _playerScriptRefs[CurrentPlayer].MainPieceExpansion();
+                _playerScriptRefs[CurrentPlayer].PlayerPieceExpansion();
             }
 
             Debug.Log("player's turn: " + CurrentPlayer);
@@ -864,7 +873,11 @@ public class BoardManager : MonoBehaviour
         foreach (Card c in _playerScriptRefs[CurrentPlayer].GetHand())
         {
             if (!c.IsSelected() || c.IsOnBoard()) // Skip cards that aren't selected or are on the board.
+            {
+                //c.GlowOff();
                 continue;
+            }
+                
             if (c.name == card.name) // Is the card already selected?
             {
                 card.SetIsSelected(false); // If so, deselect the card
@@ -895,7 +908,11 @@ public class BoardManager : MonoBehaviour
             foreach (Card c in player.GetHand())
             {
                 if (!c.IsOnBoard() || !c.IsSelected())
+                {
+                    //c.GlowOff();
                     continue;
+                }
+
                 if (c.name == card.name)
                 {
                     c.SetIsSelected(false);
@@ -924,6 +941,7 @@ public class BoardManager : MonoBehaviour
 
         foreach (Card c in from p in _playerScriptRefs from Card c in p.GetHand() where c.IsSelected() select c)
         {
+            //c.GlowOff();
             c.SetIsSelected(false); // Deselect any selected cards.
         }
     }

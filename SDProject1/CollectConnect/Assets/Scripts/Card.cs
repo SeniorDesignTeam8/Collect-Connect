@@ -52,6 +52,7 @@ public class Card : MonoBehaviour
     private string _expandedInfo; // Information to display in expanded view.
     public List<CardProperty> PropertyList = new List<CardProperty>();
     private string _imageLocation = null;
+    //public GameObject CardGlow;
 
     // Use this for initialization
     private void Start()
@@ -59,6 +60,7 @@ public class Card : MonoBehaviour
         _collider = GetComponent<BoxCollider2D>();
         _renderer = GetComponent<SpriteRenderer>();
         LineList = new List<LineRenderer>();
+        //CardGlow.GetComponent<Renderer>().enabled = false;
     }
 
     private void OnMouseDown()
@@ -321,4 +323,14 @@ public class Card : MonoBehaviour
     {
         return other.PropertyList.Where(prop => DoesPropertyExist(prop.PropertyValue, prop.PropertyName)).Distinct().ToList();
     }
+
+    //public void GlowOn()
+    //{
+    //    CardGlow.GetComponent<Renderer>().enabled = true;
+    //}
+
+    //public void GlowOff()
+    //{
+    //    CardGlow.GetComponent<Renderer>().enabled = false;
+    //}
 }
