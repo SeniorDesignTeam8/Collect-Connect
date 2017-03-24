@@ -1147,7 +1147,7 @@ public class BoardManager : MonoBehaviour
     private void GetVoteResult()
     {
         Debug.Log("Getting vote results.");
-        VoteResultsList.Clear();
+        //VoteResultsList.Clear();
         foreach (Player p in _playerScriptRefs)
         {
             if (p.VotedForWho == 1)
