@@ -9,6 +9,7 @@ using System.Collections;
 using Mono.Data.Sqlite;
 using System.Data;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using UnityEngine.SceneManagement;
 
 public class BoardManager : MonoBehaviour
@@ -74,6 +75,7 @@ public class BoardManager : MonoBehaviour
     public List<int> VoteResultsList;
     public bool VoteStartBool;
     public List<bool> cantVotePlayerList;
+    public List<int> legalVotePlayerList;
 
     public GameObject InHandGlow;
     public GameObject OnBoardGlow;
@@ -87,6 +89,7 @@ public class BoardManager : MonoBehaviour
         VetResultList = new List<bool>();
         VoteResultsList = new List<int>();
         cantVotePlayerList = new List<bool>();
+        legalVotePlayerList = new List<int>();
         _afterVet = false;
         VetStartBool = false;
         _hitVetBtn = false;
@@ -259,9 +262,9 @@ public class BoardManager : MonoBehaviour
             }
 
             _ts.CancelInvoke();
-            if (_hitVetBtn == true) //rotate through vet y/n responses (yellow btn hit)
+            if (_hitVetBtn == true) //rotate through vet y/n responses (organge btn hit)
             {
-                if (_playerScriptRefs[_playerNumber].playerVetted == true) //if blue y/n btn hit
+                if (_playerScriptRefs[_playerNumber].playerVetted == true) //individual buttons
                 {
                     _playerScriptRefs[_playerNumber].VetShrink();
                     VetResultList[_playerNumber] = _playerScriptRefs[_playerNumber].VetResult; //pull player's result 
@@ -344,7 +347,7 @@ public class BoardManager : MonoBehaviour
         else //if VoteStartBool == true --> in voting
         {
             //RUN VOTING
-            if (_playerScriptRefs[_playerNumber].playerVoted == true) //if player voted
+           if (_playerScriptRefs[_playerNumber].playerVoted == true) //if player voted
             {
                 _ts.CancelInvoke();
                 _playerScriptRefs[_playerNumber].PlayerVoteShrink();
@@ -352,9 +355,23 @@ public class BoardManager : MonoBehaviour
 
                 if (_playerNumber < 4) 
                 {
-                    //expand next player's voting
+                    if (_playerScriptRefs[_playerNumber].isAiControlled == true)    //if AI controlled 
+                    {
+                        if (legalVotePlayerList.Count != 0)
+                        {
+                            var random = new System.Random();
+                            int playerSelection = random.Next(legalVotePlayerList.Count);
+                            _playerScriptRefs[_playerNumber].VotedForWho = playerSelection;
+                        }
+
+                        _playerScriptRefs[_playerNumber].playerVoted = true;    //move to next player
+                    }
+                    else
+                    {
+                        //expand next player's voting
                     _playerScriptRefs[_playerNumber].PlayerVoteExpansion();
                     StartCoroutine("VoteDecisionTimer", _playerScriptRefs[_playerNumber]);
+                    }
                 }
 
                 if (_playerScriptRefs[3].playerVoted == true) //last player to vote
@@ -1108,7 +1125,7 @@ public class BoardManager : MonoBehaviour
         _hitVetBtn = true;
          
         VetResultList[0] = CheckConnection();
-        Debug.Log("AI vetted " + VetResultList[0]);//TODO: DONT HARDCODE FIRST AI
+        Debug.Log("AI vetted " + VetResultList[0]);
         _playerScriptRefs[_playerNumber].playerVetted = true; //first AI done 
         _playerScriptRefs[_playerNumber].YesNoBtnHit = true;
         _playerScriptRefs[_playerNumber].VetResult = VetResultList[0];
@@ -1219,6 +1236,7 @@ public class BoardManager : MonoBehaviour
     {
         VoteEnhance.gameObject.GetComponent<Renderer>().enabled = false;
         VoteEnhanceShadow.gameObject.GetComponent<Renderer>().enabled = false;
+        legalVotePlayerList.Clear();    //clear player voting list for AI voting
 
         foreach (Player p in _playerScriptRefs) //shrink main voting pieces 
         {
@@ -1271,6 +1289,7 @@ public class BoardManager : MonoBehaviour
                 p.CopyCardRight.transform.localScale = Vector3.one;
                 p.VoteCardRight.gameObject.GetComponent<Renderer>().enabled = false;
                 _playerNumber++;
+                legalVotePlayerList.Add(_playerNumber++); //add valid players to list for AI voting
             }
             else
             {
