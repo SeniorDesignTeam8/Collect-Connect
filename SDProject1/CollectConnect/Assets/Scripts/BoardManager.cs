@@ -75,7 +75,8 @@ public class BoardManager : MonoBehaviour
     public bool VoteStartBool;
     public List<bool> cantVotePlayerList;
 
-    public GameObject Glow;
+    public GameObject InHandGlow;
+    public GameObject OnBoardGlow;
 
     private void Awake()
     {
@@ -135,7 +136,8 @@ public class BoardManager : MonoBehaviour
             PassBtnP2.gameObject.SetActive(true);
             PassBtnP3.gameObject.SetActive(true);
             PassBtnP4.gameObject.SetActive(true);
-            Glow.GetComponent<Renderer>().enabled = false;
+            InHandGlow.GetComponent<Renderer>().enabled = false;
+            OnBoardGlow.GetComponent<Renderer>().enabled = false;
 
             DisableVet();
             DisableVote();
@@ -199,14 +201,10 @@ public class BoardManager : MonoBehaviour
             foreach (Card c in _playerScriptRefs[CurrentPlayer].GetHand())
             {
                 if (c.IsSelected())
-                {
+                { 
                     //ConnectionManager.CreateConnection(c.GetComponent<RectTransform>());
                     c.SetIsOnBoard(true);
                     c.SetIsSelected(false);
-
-                    //c.GlowOn();
-                    Glow.GetComponent<Renderer>().enabled = true;
-                    Glow.transform.position = c.gameObject.transform.position;
 
                     PlayPlace();
 
@@ -220,9 +218,7 @@ public class BoardManager : MonoBehaviour
                 }
                 else
                 {
-                    //c.GlowOff();    //DONT KNOW IF WILL WORK
-
-                    Glow.GetComponent<Renderer>().enabled = false;
+                   
                 }
             }
         }
@@ -243,18 +239,12 @@ public class BoardManager : MonoBehaviour
                     if (c.IsOnBoard() && c.IsSelected())
                     {
                         //This is the card on the game board
-                        //c.GlowOn();
-                        Glow.GetComponent<Renderer>().enabled = true;
-                        Glow.transform.position = c.gameObject.transform.position;
                         cardB = c;
                         
                     }
                     else if (c.IsSelected())
                     {
                         //This is the card in the players hand
-                        //c.GlowOn();
-                        Glow.GetComponent<Renderer>().enabled = true;
-                        Glow.transform.position = c.gameObject.transform.position;
                         cardA = c;
                     }
                 }
@@ -882,38 +872,50 @@ public class BoardManager : MonoBehaviour
         Debug.Log("Attempting to select hand card: " + card.name);
         bool cardFound =
             _playerScriptRefs[CurrentPlayer].GetHand().Cast<Card>().Any(c => c.name == card.name && !c.IsOnBoard());
+
         // First, check if the card is in the current player's hand.
         if (!cardFound)
         {
             Debug.Log("Card not found");
             return;
         }
-    foreach (
 
-    Card c in _playerScriptRefs[CurrentPlayer].GetHand())
-        {
-            if (!c.IsSelected() || c.IsOnBoard()) // Skip cards that aren't selected or are on the board.
+        foreach (Card c in _playerScriptRefs[CurrentPlayer].GetHand())
             {
-                //c.GlowOff();
-                Glow.GetComponent<Renderer>().enabled = false;
-                continue;
-            }
+                if (!c.IsSelected() || c.IsOnBoard()) // Skip cards that aren't selected or are on the board.
+                {
+                    continue;
+                }
                 
-            if (c.name == card.name) // Is the card already selected?
-            {
-                card.SetIsSelected(false); // If so, deselect the card
-                PlayDeselect();
-                _isPlayerCardSelected = false;
-                return;
+                if (c.name == card.name) // Is the card already selected?
+                {
+                    card.SetIsSelected(false); // If so, deselect the card
+                    PlayDeselect();
+
+                    //turn glow off
+                    InHandGlow.GetComponent<Renderer>().enabled = false;
+
+                    _isPlayerCardSelected = false;
+                    return;
+                }
+                c.SetIsSelected(false); // Deselect the other card, then select this one.
+                card.SetIsSelected(true);
+                PlaySelect();
+
+            //glow on
+            InHandGlow.GetComponent<Renderer>().enabled = true;
+            InHandGlow.transform.position = card.gameObject.transform.position;
+
+            return;
             }
-            c.SetIsSelected(false); // Deselect the other card, then select this one.
             card.SetIsSelected(true);
             PlaySelect();
-            return;
-        }
-        card.SetIsSelected(true);
-        PlaySelect();
+       
         _isPlayerCardSelected = true;
+
+        //glow on
+        InHandGlow.GetComponent<Renderer>().enabled = true;
+        InHandGlow.transform.position = card.gameObject.transform.position;
     }
 
     public void SelectCardOnBoard(Card card)
@@ -922,6 +924,7 @@ public class BoardManager : MonoBehaviour
         Player p = FindOwningPlayer(card);
         bool cardFound =
             p.GetHand().Cast<Card>().Any(c => c.IsOnBoard() && c.name == card.name);
+
         if (!cardFound)
             return;
         foreach (Player player in _playerScriptRefs)
@@ -930,8 +933,6 @@ public class BoardManager : MonoBehaviour
             {
                 if (!c.IsOnBoard() || !c.IsSelected())
                 {
-                    //c.GlowOff();
-                    Glow.GetComponent<Renderer>().enabled = false;
                     continue;
                 }
 
@@ -940,17 +941,30 @@ public class BoardManager : MonoBehaviour
                     c.SetIsSelected(false);
                     PlayDeselect();
                     _isBoardCardSelected = false;
+
+                    //turn glow off
+                    OnBoardGlow.GetComponent<Renderer>().enabled = false;
+
                     return;
                 }
                 c.SetIsSelected(false);
                 card.SetIsSelected(true);
                 PlaySelect();
+
+                //glow on
+                OnBoardGlow.GetComponent<Renderer>().enabled = true;
+                OnBoardGlow.transform.position = card.gameObject.transform.position;
+
                 return;
             }
         }
         card.SetIsSelected(true);
         PlaySelect();
         _isBoardCardSelected = true;
+
+        //glow on
+        OnBoardGlow.GetComponent<Renderer>().enabled = true;
+        OnBoardGlow.transform.position = card.gameObject.transform.position;
     }
 
     public void PassBtnHit() //player hit pass button
@@ -963,8 +977,6 @@ public class BoardManager : MonoBehaviour
 
         foreach (Card c in from p in _playerScriptRefs from Card c in p.GetHand() where c.IsSelected() select c)
         {
-            //c.GlowOff();
-            Glow.GetComponent<Renderer>().enabled = false;
             c.SetIsSelected(false); // Deselect any selected cards.
         }
     }
