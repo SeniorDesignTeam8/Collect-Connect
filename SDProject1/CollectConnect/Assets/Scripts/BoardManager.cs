@@ -289,10 +289,6 @@ public class BoardManager : MonoBehaviour
                             StartCoroutine("VetDecisionTimer", _playerScriptRefs[_playerNumber]);
                         }
                     }
-                    else
-                    {
-
-                    }
 
                     if (_playerScriptRefs[3].playerVetted == true)
                     {
@@ -305,8 +301,6 @@ public class BoardManager : MonoBehaviour
                         _afterVet = true; //all done vetting
                         _playerNumber = 0;
                     }
-
-                    //TODO: need to differ between AI and human players
                 }
             }
 
@@ -1309,6 +1303,7 @@ public class BoardManager : MonoBehaviour
                 p.VoteCardRight.gameObject.GetComponent<Renderer>().enabled = false;
                 _playerNumber++;
                 legalVotePlayerList.Add(_playerNumber++); //add valid players to list for AI voting
+                _playerNumber--;
             }
             else
             {
