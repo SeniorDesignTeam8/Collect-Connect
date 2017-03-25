@@ -65,9 +65,14 @@ public class Player : MonoBehaviour
     public GameObject VotePlayerPiece;
     public GameObject VetPlayerPiece;
 
+    public static bool[] PassArray =
+    {
+        false, false, false, false
+    };
+
     private static readonly float[] AiPassThresholds =
     {
-        0.00f, 0.05f, 0.05f, 0.05f
+        0.05f, 0.05f, 0.05f, 0.05f
     };
 
     private void Start()

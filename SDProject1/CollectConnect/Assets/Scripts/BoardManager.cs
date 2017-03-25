@@ -185,7 +185,7 @@ public class BoardManager : MonoBehaviour
                
                 if (isFirstListGen)
                 {
-                    UpdateScoring();     
+                    UpdateScoring();
                     isFirstListGen = false;
                 }
                 _isGameStarted = true;
@@ -225,6 +225,9 @@ public class BoardManager : MonoBehaviour
         else if (AllCardsPlayed())
         {
             _isGameStarted = false;
+            // TODO Go to end game screen here.
+            SceneManager.LoadScene("EndGame");  //using for testing
+
         }
         else if (VoteStartBool == false)
         {
@@ -277,9 +280,7 @@ public class BoardManager : MonoBehaviour
                         if (_playerScriptRefs[_playerNumber].isAiControlled == true)
                         {
                             int Rindex = Random.Range(0, 101);
-                            bool AIVet = false;
-                            if (Rindex > 50)
-                                AIVet = true;
+                            bool AIVet = Rindex > 50;
                             VetResultList[_playerNumber] = AIVet;
                             _playerScriptRefs[_playerNumber].playerVetted = true;
                         }
@@ -317,6 +318,7 @@ public class BoardManager : MonoBehaviour
                     //Add this connection with cardA and cardB and keyword
                     if (AddCardsToBoard(cardA, cardB, _currentKeyword))
                     {
+                        ResetPassArray();
                         if (cardA != null)
                         {
                             Debug.Log(cardA);
@@ -343,6 +345,7 @@ public class BoardManager : MonoBehaviour
                 else
                 {
                     //the players vetted against the connection. Reset the cards and pass.
+                    ResetPassArray();
                     _playerScriptRefs[CurrentPlayer].card1 = null;
                     _playerScriptRefs[CurrentPlayer].card2 = null;
                     _playerScriptRefs[CurrentPlayer].connectionKeyword = "Vetted Against";
@@ -422,7 +425,6 @@ public class BoardManager : MonoBehaviour
 
                     CurrentPlayer = 0;    //start round after voting (for late update)
                     VoteStartBool = false;
-                    //SceneManager.LoadScene("EndGame");  //using for testing
                     _ts.InvokeRepeating("decreaseTime", 1, 1);
                 }
             }
@@ -818,6 +820,7 @@ public class BoardManager : MonoBehaviour
             cardA.SetIsSelected(false);
             boardCard.SetIsSelected(false);
             //cardA.gameObject.AddComponent<MobileNode>();
+            ResetPassArray();
             return true;
         }
         // Couldn't find the keyword in an existing node. Add it and connect both cards to it.
@@ -849,6 +852,14 @@ public class BoardManager : MonoBehaviour
         //cardA.gameObject.AddComponent<MobileNode>();
 
         return true;
+    }
+
+    private static void ResetPassArray()
+    {
+        for (int i = 0; i < Player.PassArray.Length; i++)
+        {
+            Player.PassArray[i] = false;
+        }
     }
 
     private void SetDirectionsAndColor(Connection connection)
@@ -1006,13 +1017,22 @@ public class BoardManager : MonoBehaviour
         _playerScriptRefs[CurrentPlayer].card1 = null;
         _playerScriptRefs[CurrentPlayer].card2 = null;
         _playerScriptRefs[CurrentPlayer].connectionKeyword = "Passed";
-
+        Player.PassArray[CurrentPlayer] = true;
         _isTurnOver = true;
 
         foreach (Card c in from p in _playerScriptRefs from Card c in p.GetHand() where c.IsSelected() select c)
         {
             c.SetIsSelected(false); // Deselect any selected cards.
         }
+        foreach (bool b in Player.PassArray)
+        {
+            if (!b)
+                return;
+        }
+        _isGameStarted = false;
+        // TODO Go to end game screen here.
+        SceneManager.LoadScene("EndGame");  //using for testing
+
     }
 
     public Player FindOwningPlayer(Card card)
