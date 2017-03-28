@@ -115,6 +115,6 @@ public class endGame : MonoBehaviour
 
     private void ReturntoMain()
     {
-        SceneManager.LoadScene("mainMenu");
+        SceneManager.LoadScene("MainMenu");
     }
 }
