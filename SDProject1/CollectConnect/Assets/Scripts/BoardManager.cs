@@ -131,12 +131,13 @@ public class BoardManager : MonoBehaviour
                 _playerScriptRefs.Add(player.GetComponent<Player>());
             _playerScriptRefs[0].SetAiControl(true);    //set first player to be AI controlled
 
-            if (PlayerPrefs.GetInt("PlayerNumber") == 1)
+            //using Globalvar for out Playernumbers as well
+            if (GlobalVar.instance.PlayerNumber == 1)
             {
                 _playerScriptRefs[1].OnLeaveBtnHit();
                 _playerScriptRefs[3].OnLeaveBtnHit();
             }
-            else if (PlayerPrefs.GetInt("PlayerNumber") == 2)
+            else if (GlobalVar.instance.PlayerNumber == 2)
             {
                 _playerScriptRefs[3].OnLeaveBtnHit();
             }
@@ -242,10 +243,11 @@ public class BoardManager : MonoBehaviour
             _isGameStarted = false;
             // TODO Go to end game screen here.
             //collect player scores for end game screen
+            //GlobalVar obtains the instances of each player scores
             GlobalVar.instance.score1 = _playerScriptRefs[0].Score;
             GlobalVar.instance.score2 = _playerScriptRefs[1].Score;
             GlobalVar.instance.score3 = _playerScriptRefs[2].Score;
-            GlobalVar.instance.score4 = _playerScriptRefs[2].Score;
+            GlobalVar.instance.score4 = _playerScriptRefs[3].Score;
 
             SceneManager.LoadScene("EndGame");  //using for testing
 
@@ -1049,10 +1051,11 @@ public class BoardManager : MonoBehaviour
         _isGameStarted = false;
         // TODO Go to end game screen here.
         //collect player scores for end game screen
+        //GlobalVar obtains the instances of each player scores
         GlobalVar.instance.score1 = _playerScriptRefs[0].Score;
         GlobalVar.instance.score2 = _playerScriptRefs[1].Score;
         GlobalVar.instance.score3 = _playerScriptRefs[2].Score;
-        GlobalVar.instance.score4 = _playerScriptRefs[2].Score;
+        GlobalVar.instance.score4 = _playerScriptRefs[3].Score;
         SceneManager.LoadScene("EndGame");  //using for testing
 
     }
