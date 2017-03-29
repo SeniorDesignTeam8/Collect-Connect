@@ -61,13 +61,22 @@ public class Player : MonoBehaviour
     public Card CopyCardLeft;
     public Card CopyCardRight;
     private bool _postVote;
-    public GameObject blockOff;
+    public GameObject BlockOff;
     public GameObject VotePlayerPiece;
     public GameObject VetPlayerPiece;
 
+    private String _vetHumanText;
+    private String _AIText;
+    private String _voteHumanText;
+
+    public static bool[] PassArray =
+    {
+        false, false, false, false
+    };
+
     private static readonly float[] AiPassThresholds =
     {
-        0.00f, 0.05f, 0.05f, 0.05f
+        0.05f, 0.05f, 0.05f, 0.05f
     };
 
     private void Start()
@@ -111,8 +120,11 @@ public class Player : MonoBehaviour
         VotedForWho = 0;
         VotePlayerPiece.gameObject.GetComponent<Renderer>().enabled = false;
         PlayerPiece.gameObject.GetComponent<Renderer>().enabled = false;
-        blockOff.gameObject.GetComponent<Renderer>().enabled = false;
+        BlockOff.gameObject.GetComponent<Renderer>().enabled = false;
         JoinGameBtn.gameObject.SetActive(false);
+        _AIText = "AI is thinking...";
+        _vetHumanText = "Do you agree with this connection?";
+        _voteHumanText = "Select the most interesting connection:";
         VetPieceShrink();
         
     }
@@ -324,9 +336,20 @@ public class Player : MonoBehaviour
     {
         PlayerPopUpEnhance.gameObject.GetComponent<Renderer>().enabled = true;
         PlayerPopUpEnhanceShadow.gameObject.GetComponent<Renderer>().enabled = true;
-        VetText.gameObject.GetComponent<Text>().enabled = true;
-        VetYesBtn.gameObject.SetActive(true);
-        VetNoBtn.gameObject.SetActive(true);
+
+        if (isAiControlled != true) //if human is playing
+        {
+            VetText.gameObject.GetComponent<Text>().text = _vetHumanText;
+            VetText.gameObject.GetComponent<Text>().enabled = true;
+            VetYesBtn.gameObject.SetActive(true);
+            VetNoBtn.gameObject.SetActive(true);
+        }
+        else //if AI is playing
+        {
+            VetText.gameObject.GetComponent<Text>().text = _AIText;
+            VetText.gameObject.GetComponent<Text>().enabled = true;
+        }
+        
         playerVetted = false;
         YesNoBtnHit = false;
         JoinGameBtn.gameObject.SetActive(false);    //turn off joining and leaving game
@@ -367,10 +390,10 @@ public class Player : MonoBehaviour
         YesNoBtnHit = true;
     }
 
-    private void OnLeaveBtnHit()
+    public void OnLeaveBtnHit()
     {
         Debug.Log("leave btn hit");
-        blockOff.gameObject.GetComponent<Renderer>().enabled = true;
+        BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
         JoinGameBtn.gameObject.SetActive(true);
         LeaveGameBtn.gameObject.SetActive(false);
         SetAiControl(true);
@@ -379,7 +402,7 @@ public class Player : MonoBehaviour
     private void OnJoinBtnHit()
     {
         Debug.Log("Join btn hit");
-        blockOff.gameObject.GetComponent<Renderer>().enabled = false;
+        BlockOff.gameObject.GetComponent<Renderer>().enabled = false;
         JoinGameBtn.gameObject.SetActive(false);
         LeaveGameBtn.gameObject.SetActive(true);
         SetAiControl(false);
@@ -387,14 +410,24 @@ public class Player : MonoBehaviour
 
     public void PlayerVoteExpansion()
     {
+        playerVoted = false; //reset
         PlayerPopUpEnhance.gameObject.GetComponent<Renderer>().enabled = true;
         PlayerPopUpEnhanceShadow.gameObject.GetComponent<Renderer>().enabled = true;
-        VoteText.gameObject.GetComponent<Text>().enabled = true;
-        VoteBtnP1.gameObject.SetActive(true);
-        VoteBtnP2.gameObject.SetActive(true);
-        VoteBtnP3.gameObject.SetActive(true);
-        VoteBtnP4.gameObject.SetActive(true);
-        playerVoted = false; //reset
+
+        if (isAiControlled != true) //if human is playing
+        {
+            VoteText.gameObject.GetComponent<Text>().text = _voteHumanText;
+            VoteText.gameObject.GetComponent<Text>().enabled = true;
+            VoteBtnP1.gameObject.SetActive(true);
+            VoteBtnP2.gameObject.SetActive(true);
+            VoteBtnP3.gameObject.SetActive(true);
+            VoteBtnP4.gameObject.SetActive(true);
+        }
+        else //if AI is playing
+        {
+            VoteText.gameObject.GetComponent<Text>().text = _AIText;
+            VoteText.gameObject.GetComponent<Text>().enabled = true;
+        }
 
         if (BoardManager.Instance.cantVotePlayerList[0] == true)  //cant vote on "invalid" moves
             VoteBtnP1.gameObject.SetActive(false);
