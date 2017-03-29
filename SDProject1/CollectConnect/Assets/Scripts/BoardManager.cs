@@ -226,6 +226,10 @@ public class BoardManager : MonoBehaviour
         {
             _isGameStarted = false;
             // TODO Go to end game screen here.
+            GlobalVar.instance.score1 = _playerScriptRefs[0].Score;
+            GlobalVar.instance.score2 = _playerScriptRefs[1].Score;
+            GlobalVar.instance.score3 = _playerScriptRefs[2].Score;
+            GlobalVar.instance.score4 = _playerScriptRefs[3].Score;
             SceneManager.LoadScene("EndGame");  //using for testing
 
         }
@@ -1025,6 +1029,10 @@ public class BoardManager : MonoBehaviour
         }
         _isGameStarted = false;
         // TODO Go to end game screen here.
+        GlobalVar.instance.score1 = _playerScriptRefs[0].Score;
+        GlobalVar.instance.score2 = _playerScriptRefs[1].Score;
+        GlobalVar.instance.score3 = _playerScriptRefs[2].Score;
+        GlobalVar.instance.score4 = _playerScriptRefs[3].Score;
         SceneManager.LoadScene("EndGame");  //using for testing
 
     }
