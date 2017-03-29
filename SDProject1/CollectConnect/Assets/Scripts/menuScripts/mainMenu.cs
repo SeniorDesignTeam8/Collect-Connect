@@ -22,7 +22,7 @@ public class mainMenu : MonoBehaviour
 
     private void PlayGameTransition()
     {
-        SceneManager.LoadScene("MainScene");
+        SceneManager.LoadScene("PlayerSelection");
     }
 
     private void AboutGameTransition()
