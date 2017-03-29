@@ -81,6 +81,9 @@ public class BoardManager : MonoBehaviour
     public GameObject InHandGlow;
     public GameObject OnBoardGlow;
 
+    private bool AIThinkingDone;
+    private PlayerSelection playerSelection;
+
     private void Awake()
     {
         _isGameStarted = false;
@@ -96,6 +99,7 @@ public class BoardManager : MonoBehaviour
         _hitVetBtn = false;
         _playerNumber = 0;
         VoteStartBool = false;
+        AIThinkingDone = false;
 
         for (int i = 0; i < 4; i++) //prefill lists
         {
@@ -125,7 +129,18 @@ public class BoardManager : MonoBehaviour
             _playerScriptRefs = new List<Player>();
             foreach (GameObject player in Players)
                 _playerScriptRefs.Add(player.GetComponent<Player>());
-            _playerScriptRefs[0].SetAiControl(true);
+            _playerScriptRefs[0].SetAiControl(true);    //set first player to be AI controlled
+
+            if (PlayerPrefs.GetInt("PlayerNumber") == 1)
+            {
+                _playerScriptRefs[1].OnLeaveBtnHit();
+                _playerScriptRefs[3].OnLeaveBtnHit();
+            }
+            else if (PlayerPrefs.GetInt("PlayerNumber") == 2)
+            {
+                _playerScriptRefs[3].OnLeaveBtnHit();
+            }
+
             _keywordList = new List<string>();
             _scoreboard = new int[Players.Length];
             _keywordNodes = new List<GameObject>();
@@ -226,6 +241,12 @@ public class BoardManager : MonoBehaviour
         {
             _isGameStarted = false;
             // TODO Go to end game screen here.
+            //collect player scores for end game screen
+            PlayerPrefs.SetInt("Player1Score", _playerScriptRefs[0].Score);
+            PlayerPrefs.SetInt("Player2Score", _playerScriptRefs[1].Score);
+            PlayerPrefs.SetInt("Player3Score", _playerScriptRefs[2].Score);
+            PlayerPrefs.SetInt("Player4Score", _playerScriptRefs[3].Score);
+
             SceneManager.LoadScene("EndGame");  //using for testing
 
         }
@@ -266,29 +287,34 @@ public class BoardManager : MonoBehaviour
             }
 
             _ts.CancelInvoke();
-            if (_hitVetBtn == true) //rotate through vet y/n responses (organge btn hit)
+            if (_hitVetBtn == true) //main organge btn(s) hit
             {
-                if (_playerScriptRefs[_playerNumber].playerVetted == true) //individual buttons
+                if (_playerScriptRefs[_playerNumber].playerVetted == true) //individual buttons (yes/no)
                 {
                     _playerScriptRefs[_playerNumber].VetShrink();
                     VetResultList[_playerNumber] = _playerScriptRefs[_playerNumber].VetResult; //pull player's result 
                     _playerNumber++;
 
-
                     if (_playerNumber < 4) //if hit y/n button
                     {
                         if (_playerScriptRefs[_playerNumber].isAiControlled == true)
                         {
-                            int Rindex = Random.Range(0, 101);
-                            bool AIVet = Rindex > 50;
-                            VetResultList[_playerNumber] = AIVet;
-                            _playerScriptRefs[_playerNumber].playerVetted = true;
+                            if (AIThinkingDone == false)
+                            {
+                                _playerScriptRefs[_playerNumber].VetExpansion(); //individual player screens
+                                StartCoroutine("VetAIDecision"); //start AI decision timer
+                                AIThinkingDone = true;
+                            }
+                            else if (AIThinkingDone == true)
+                            {  
+                                Debug.Log("Doing nothing"); //leave in here do not delete!! It's needed
+                            }  
                         }
                         else
-                        {
-                            _playerScriptRefs[_playerNumber].VetExpansion(); //individual player screens 
-                            StartCoroutine("VetDecisionTimer", _playerScriptRefs[_playerNumber]);
-                        }
+                            {
+                                _playerScriptRefs[_playerNumber].VetExpansion(); //individual player screens 
+                                StartCoroutine("VetDecisionTimer", _playerScriptRefs[_playerNumber]);
+                            }
                     }
 
                     if (_playerScriptRefs[3].playerVetted == true)
@@ -301,6 +327,7 @@ public class BoardManager : MonoBehaviour
                         ToggleCardsOn();
                         _afterVet = true; //all done vetting
                         _playerNumber = 0;
+                        AIThinkingDone = false; //reset
                     }
                 }
             }
@@ -371,25 +398,20 @@ public class BoardManager : MonoBehaviour
 
                 if (_playerNumber < 4) 
                 {
-                    if (_playerScriptRefs[_playerNumber].isAiControlled == true)    //if AI controlled 
+                    if (_playerScriptRefs[_playerNumber].isAiControlled == true) //if AI controlled 
                     {
-                        if (legalVotePlayerList.Count != 0)
-                        {
-                            var random = new System.Random();
-                            int playerSelection = random.Next(legalVotePlayerList.Count);
-                            _playerScriptRefs[_playerNumber].VotedForWho = playerSelection;
-                        }
-
-                        _playerScriptRefs[_playerNumber].playerVoted = true;    //move to next player
+                        _playerScriptRefs[_playerNumber].PlayerVoteExpansion();
+                        StartCoroutine("VoteAIDecision"); //start AI decision timer
+                        AIThinkingDone = true;
                     }
                     else
                     {
                         //expand next player's voting
-                    _playerScriptRefs[_playerNumber].PlayerVoteExpansion();
-                    StartCoroutine("VoteDecisionTimer", _playerScriptRefs[_playerNumber]);
+                        _playerScriptRefs[_playerNumber].PlayerVoteExpansion();
+                        StartCoroutine("VoteDecisionTimer", _playerScriptRefs[_playerNumber]);
                     }
                 }
-
+                   
                 if (_playerScriptRefs[3].playerVoted == true) //last player to vote
                 {
                     _playerScriptRefs[3].PlayerVoteShrink();
@@ -397,8 +419,20 @@ public class BoardManager : MonoBehaviour
                     ToggleCardsOn();    //enable card movement
                     DisableVote();      //shrink voting screen
                     _playerNumber = 0;
+                    AIThinkingDone = false; //reset
                     //VoteStartBool = false;
-                    
+
+                    //////////////////////////////////////////////////////////////////////////////////////////////////
+                    // TODO Go to end game screen here.
+                    //collect player scores for end game screen
+                    PlayerPrefs.SetInt("Player1Score", _playerScriptRefs[0].Score);
+                    PlayerPrefs.SetInt("Player2Score", _playerScriptRefs[1].Score);
+                    PlayerPrefs.SetInt("Player3Score", _playerScriptRefs[2].Score);
+                    PlayerPrefs.SetInt("Player4Score", _playerScriptRefs[3].Score);
+
+                    SceneManager.LoadScene("EndGame");  //using for testing
+
+
                     foreach (Player p in _playerScriptRefs)  //destroy main player cards
                     {
                         if (p.CopyCardLeft != null )
@@ -1025,6 +1059,11 @@ public class BoardManager : MonoBehaviour
         }
         _isGameStarted = false;
         // TODO Go to end game screen here.
+        //collect player scores for end game screen
+        PlayerPrefs.SetInt("Player1Score", _playerScriptRefs[0].Score);
+        PlayerPrefs.SetInt("Player2Score", _playerScriptRefs[1].Score);
+        PlayerPrefs.SetInt("Player3Score", _playerScriptRefs[2].Score);
+        PlayerPrefs.SetInt("Player4Score", _playerScriptRefs[3].Score);
         SceneManager.LoadScene("EndGame");  //using for testing
 
     }
@@ -1134,7 +1173,7 @@ public class BoardManager : MonoBehaviour
     private IEnumerator VetTimer() //timer for players to select vet
     {
 
-        yield return new WaitForSeconds(5.0f);
+        yield return new WaitForSeconds(10.0f);
 
         //if vet btn not hit and main vetting not visible 
         if (_hitVetBtn == false && VetEnhance.gameObject.GetComponent<Renderer>().enabled == true) //= no one hit vet btn -> next player's turn
@@ -1165,20 +1204,9 @@ public class BoardManager : MonoBehaviour
         
     }
 
-    private bool CheckConnection()
-    {  
-        List<Card.CardProperty> commonProps = _copyCardRight.FindCommonProperties(_copyCardLeft);
-        foreach (Card.CardProperty key in commonProps)
-        {
-            if (key.PropertyValue == _currentKeyword)
-                return true;
-        }
-        return false;
-    }
-
     private IEnumerator VetDecisionTimer(Player p)
     {
-        yield return new WaitForSeconds(5.0f);
+        yield return new WaitForSeconds(7.0f);
 
         if (p.playerVetted == false)  //if player didn't vote
         {
@@ -1188,6 +1216,17 @@ public class BoardManager : MonoBehaviour
             VetResultList[_playerNumber] = true;    //auto set to agree
         }
 
+    }
+
+    private IEnumerator VetAIDecision() //timer for AI to "think"
+    {
+        yield return new WaitForSeconds(4.0f);
+       
+        int rindex = Random.Range(0, 101);
+        bool AIVet = rindex > 50;
+        VetResultList[_playerNumber] = AIVet;
+        _playerScriptRefs[_playerNumber].playerVetted = true;
+        AIThinkingDone = false; //reset
     }
 
     private bool GetVetResult()
@@ -1208,32 +1247,7 @@ public class BoardManager : MonoBehaviour
         return yesCount >= noCount;
     }
 
-    private void GetVoteResult()
-    {
-        Debug.Log("Getting vote results.");
-        //VoteResultsList.Clear();
-        foreach (Player p in _playerScriptRefs)
-        {
-            if (p.VotedForWho == 1)
-            {
-                _playerScriptRefs[0].IncreaseScore(1);
-            }
-            if (p.VotedForWho == 2)
-            {
-                _playerScriptRefs[1].IncreaseScore(1);
-            }
-            if (p.VotedForWho == 3)
-            {
-                _playerScriptRefs[2].IncreaseScore(1);
-            }
-            if (p.VotedForWho == 4)
-            {
-                _playerScriptRefs[3].IncreaseScore(1);
-            }
-        }    
-    }
-
-    private void ToggleCardsOff()
+   private void ToggleCardsOff()
     {
         CardCollection playedCards = GetPlayedCards();
         foreach (Player p in _playerScriptRefs)
@@ -1346,7 +1360,7 @@ public class BoardManager : MonoBehaviour
 
     private IEnumerator VoteDecisionTimer(Player p)
     {
-        yield return new WaitForSeconds(5.0f);
+        yield return new WaitForSeconds(7.0f);
 
         if (p.playerVoted == false)  //if player didn't vote
         {
@@ -1356,6 +1370,42 @@ public class BoardManager : MonoBehaviour
             VoteResultsList[_playerNumber] = 1; //auto set to agree with AI
         }
 
+    }
+
+    private void GetVoteResult()
+    {
+        Debug.Log("Getting vote results.");
+        //VoteResultsList.Clear();
+        foreach (Player p in _playerScriptRefs)
+        {
+            if (p.VotedForWho == 1)
+            {
+                _playerScriptRefs[0].IncreaseScore(1);
+            }
+            if (p.VotedForWho == 2)
+            {
+                _playerScriptRefs[1].IncreaseScore(1);
+            }
+            if (p.VotedForWho == 3)
+            {
+                _playerScriptRefs[2].IncreaseScore(1);
+            }
+            if (p.VotedForWho == 4)
+            {
+                _playerScriptRefs[3].IncreaseScore(1);
+            }
+        }
+    }
+
+    private bool CheckConnection()
+    {
+        List<Card.CardProperty> commonProps = _copyCardRight.FindCommonProperties(_copyCardLeft);
+        foreach (Card.CardProperty key in commonProps)
+        {
+            if (key.PropertyValue == _currentKeyword)
+                return true;
+        }
+        return false;
     }
 
     private struct KeywordFreq
@@ -1382,9 +1432,6 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
     private void UpdateScoring()
     {
         Debug.Log("Blah");
@@ -1457,6 +1504,19 @@ public class BoardManager : MonoBehaviour
             //}
             Debug.Log(freq.KeywordName + " " + freq.KeywordFreqs + " is processed!");
         }
+    }
+
+    private IEnumerator VoteAIDecision() //timer for AI to "think"
+    {
+        yield return new WaitForSeconds(4.0f);
+
+        if (legalVotePlayerList.Count != 0) //something to vote on 
+        {
+            var random = new System.Random();
+            int playerSelection = random.Next(legalVotePlayerList.Count);
+            _playerScriptRefs[_playerNumber].VotedForWho = playerSelection;
+        }
+        _playerScriptRefs[_playerNumber].playerVoted = true;    //move to next player
     }
 }
 
