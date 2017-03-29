@@ -241,6 +241,12 @@ public class BoardManager : MonoBehaviour
         {
             _isGameStarted = false;
             // TODO Go to end game screen here.
+            //collect player scores for end game screen
+            PlayerPrefs.SetInt("Player1Score", _playerScriptRefs[0].Score);
+            PlayerPrefs.SetInt("Player2Score", _playerScriptRefs[1].Score);
+            PlayerPrefs.SetInt("Player3Score", _playerScriptRefs[2].Score);
+            PlayerPrefs.SetInt("Player4Score", _playerScriptRefs[3].Score);
+
             SceneManager.LoadScene("EndGame");  //using for testing
 
         }
@@ -415,6 +421,17 @@ public class BoardManager : MonoBehaviour
                     _playerNumber = 0;
                     AIThinkingDone = false; //reset
                     //VoteStartBool = false;
+
+                    //////////////////////////////////////////////////////////////////////////////////////////////////
+                    // TODO Go to end game screen here.
+                    //collect player scores for end game screen
+                    PlayerPrefs.SetInt("Player1Score", _playerScriptRefs[0].Score);
+                    PlayerPrefs.SetInt("Player2Score", _playerScriptRefs[1].Score);
+                    PlayerPrefs.SetInt("Player3Score", _playerScriptRefs[2].Score);
+                    PlayerPrefs.SetInt("Player4Score", _playerScriptRefs[3].Score);
+
+                    SceneManager.LoadScene("EndGame");  //using for testing
+
 
                     foreach (Player p in _playerScriptRefs)  //destroy main player cards
                     {
@@ -1042,6 +1059,11 @@ public class BoardManager : MonoBehaviour
         }
         _isGameStarted = false;
         // TODO Go to end game screen here.
+        //collect player scores for end game screen
+        PlayerPrefs.SetInt("Player1Score", _playerScriptRefs[0].Score);
+        PlayerPrefs.SetInt("Player2Score", _playerScriptRefs[1].Score);
+        PlayerPrefs.SetInt("Player3Score", _playerScriptRefs[2].Score);
+        PlayerPrefs.SetInt("Player4Score", _playerScriptRefs[3].Score);
         SceneManager.LoadScene("EndGame");  //using for testing
 
     }
