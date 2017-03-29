@@ -82,7 +82,6 @@ public class BoardManager : MonoBehaviour
     public GameObject OnBoardGlow;
 
     private bool AIThinkingDone;
-    private PlayerSelection playerSelection;
 
     private void Awake()
     {
@@ -242,10 +241,10 @@ public class BoardManager : MonoBehaviour
             _isGameStarted = false;
             // TODO Go to end game screen here.
             //collect player scores for end game screen
-            PlayerPrefs.SetInt("Player1Score", _playerScriptRefs[0].Score);
-            PlayerPrefs.SetInt("Player2Score", _playerScriptRefs[1].Score);
-            PlayerPrefs.SetInt("Player3Score", _playerScriptRefs[2].Score);
-            PlayerPrefs.SetInt("Player4Score", _playerScriptRefs[3].Score);
+            GlobalVar.instance.score1 = _playerScriptRefs[0].Score;
+            GlobalVar.instance.score2 = _playerScriptRefs[1].Score;
+            GlobalVar.instance.score3 = _playerScriptRefs[2].Score;
+            GlobalVar.instance.score4 = _playerScriptRefs[3].Score;
 
             SceneManager.LoadScene("EndGame");  //using for testing
 
@@ -425,10 +424,10 @@ public class BoardManager : MonoBehaviour
                     //////////////////////////////////////////////////////////////////////////////////////////////////
                     // TODO Go to end game screen here.
                     //collect player scores for end game screen
-                    PlayerPrefs.SetInt("Player1Score", _playerScriptRefs[0].Score);
-                    PlayerPrefs.SetInt("Player2Score", _playerScriptRefs[1].Score);
-                    PlayerPrefs.SetInt("Player3Score", _playerScriptRefs[2].Score);
-                    PlayerPrefs.SetInt("Player4Score", _playerScriptRefs[3].Score);
+                    GlobalVar.instance.score1 = _playerScriptRefs[0].Score;
+                    GlobalVar.instance.score2 = _playerScriptRefs[1].Score;
+                    GlobalVar.instance.score3 = _playerScriptRefs[2].Score;
+                    GlobalVar.instance.score4 = _playerScriptRefs[3].Score;
 
                     SceneManager.LoadScene("EndGame");  //using for testing
 
@@ -1060,10 +1059,10 @@ public class BoardManager : MonoBehaviour
         _isGameStarted = false;
         // TODO Go to end game screen here.
         //collect player scores for end game screen
-        PlayerPrefs.SetInt("Player1Score", _playerScriptRefs[0].Score);
-        PlayerPrefs.SetInt("Player2Score", _playerScriptRefs[1].Score);
-        PlayerPrefs.SetInt("Player3Score", _playerScriptRefs[2].Score);
-        PlayerPrefs.SetInt("Player4Score", _playerScriptRefs[3].Score);
+        GlobalVar.instance.score1 = _playerScriptRefs[0].Score;
+        GlobalVar.instance.score2 = _playerScriptRefs[1].Score;
+        GlobalVar.instance.score3 = _playerScriptRefs[2].Score;
+        GlobalVar.instance.score4 = _playerScriptRefs[3].Score;
         SceneManager.LoadScene("EndGame");  //using for testing
 
     }
