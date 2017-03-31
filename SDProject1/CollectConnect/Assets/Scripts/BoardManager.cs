@@ -893,7 +893,7 @@ public class BoardManager : MonoBehaviour
                 break;
             case 1:
                 connection.points[0].direction = ConnectionPoint.ConnectionDirection.North;
-                connection.points[1].direction = ConnectionPoint.ConnectionDirection.West;
+                connection.points[1].direction = ConnectionPoint.ConnectionDirection.East;
                 break;
             case 2:
                 connection.points[0].direction = ConnectionPoint.ConnectionDirection.North;
@@ -901,7 +901,7 @@ public class BoardManager : MonoBehaviour
                 break;
             case 3:
                 connection.points[0].direction = ConnectionPoint.ConnectionDirection.North;
-                connection.points[1].direction = ConnectionPoint.ConnectionDirection.East;
+                connection.points[1].direction = ConnectionPoint.ConnectionDirection.West;
                 break;
             default:
                 return; // Should never reach here.
