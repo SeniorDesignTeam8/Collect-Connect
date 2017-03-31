@@ -1,78 +1,99 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Xml.Schema;
 using UnityEngine;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine.Networking.NetworkSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
-public class endGame : MonoBehaviour
+public class EndGame2 : MonoBehaviour
 {
     public Button MainMenuBtn;
-    public GameObject first, second, third, fourth;
-    public GameObject piece1, piece2, piece3, piece4;
-    public GameObject holder1, holder2, holder3, holder4;
-    public string[,] playerscores;
+    public GameObject P1Piece;
+    public GameObject P2Piece;
+    public GameObject P3Piece;
+    public GameObject P4Piece;
+    public GameObject FirstPlaceHolder;
+    public GameObject SecondPlaceHolder;
+    public GameObject ThirdPlaceHolder;
+    public GameObject FourthPlaceHolder;
+    public string[,] PlayerScores;
     public List<GameObject> PlayerPieces;
+    public GameObject FirstPlaceScoreTxt;
+    public GameObject SecondPlaceScoreTxt;
+    public GameObject ThirdPlaceScoreTxt;
+    public GameObject FourthPlaceScoreTxt;
 
-    void Start()
+    private void Start()
     {
-        MainMenuBtn.GetComponent<Button>().onClick.AddListener(ReturntoMain);
+        MainMenuBtn.GetComponent<Button>().onClick.AddListener(MainMenuTransition);
         MainMenuBtn.gameObject.SetActive(true);
 
-        playerscores = new string[4, 2];
+        PlayerScores = new string[4, 2];
         PlayerPieces = new List<GameObject>();
 
-        for(int i = 0; i < 4; i++)
+        for (int i = 0; i < 4; i++) //prefill
         {
-            playerscores[i, 0] = "";
-            playerscores[i, 0] = "0";
-        }
-        PlayerPieces.Add(piece1);
-        PlayerPieces.Add(piece2);
-        PlayerPieces.Add(piece3);
-        PlayerPieces.Add(piece4);
+            PlayerScores[i, 0] = "";   //prefill blanks for player
+            PlayerScores[i, 1] = "0";  //prefill 0 for scores
 
-        getScores();
+            PlayerPieces.Add(P1Piece); //prefill player pieces
+        }
+
+        Scoring();  //calculate scoring
     }
 
-    private void getScores()
+    private void MainMenuTransition()    //go back to main menu
     {
-        int count = 0;
-        int one = 0;
-        int two = 0;
-        string temp = "";
+        SceneManager.LoadScene("mainMenu");
+    }
 
-        playerscores[0, 0] = "Player 1";
-        playerscores[1, 0] = "Player 2";
-        playerscores[2, 0] = "Player 3";
-        playerscores[3, 0] = "Player 4";
-        playerscores[0, 1] = GlobalVar.instance.score1.ToString();
-        playerscores[1, 1] = GlobalVar.instance.score2.ToString();
-        playerscores[2, 1] = GlobalVar.instance.score3.ToString();
-        playerscores[3, 1] = GlobalVar.instance.score4.ToString();
+    private void Scoring()
+    {
+        int score1 = 0;
+        int score2 = 0;
+        string tempName = "";
 
-        for (int i = 0; i < 4; i++)
+        //get players and scores
+        PlayerScores[0, 0] = "PLAYER1";
+        PlayerScores[1, 0] = "PLAYER2";
+        PlayerScores[2, 0] = "PLAYER3";
+        PlayerScores[3, 0] = "PLAYER4";
+        PlayerScores[0, 1] = PlayerPrefs.GetInt("Player1Score").ToString();
+        PlayerScores[1, 1] = PlayerPrefs.GetInt("Player2Score").ToString();
+        PlayerScores[2, 1] = PlayerPrefs.GetInt("Player3Score").ToString();
+        PlayerScores[3, 1] = PlayerPrefs.GetInt("Player4Score").ToString();
+
+
+        for (int b = 0; b < 4; b++)
+        {
+            Debug.Log(PlayerScores[b, 0]);
+            Debug.Log(PlayerScores[b, 1]);
+        }
+
+
+        for (int i = 0; i < 4; i++) //find top score
         {
             for (int j = 0; j < 4; j++)
             {
-                if (j < 3)
+                if (j < 3)  //not end of list
                 {
-                    Int32.TryParse(playerscores[j, 1], out one); //convert string to int
-                    Int32.TryParse(playerscores[j + 1, 1], out two);
+                    Int32.TryParse(PlayerScores[j, 1], out score1); //convert string to int
+                    Int32.TryParse(PlayerScores[j + 1, 1], out score2);
 
-                    Debug.Log("Score 1: " + one);
-                    Debug.Log("Score 2: " + two);
+                    Debug.Log("Score 1: " + score1);
+                    Debug.Log("Score2: " + score2);
 
 
-                    if (one < two) //if the second score is larger than the first
+                    if (score1 < score2) //if the second score is larger than the first
                     {
-                        playerscores[j, 1] = two.ToString(); //flip scores
-                        playerscores[j + 1, 1] = one.ToString();
+                        PlayerScores[j, 1] = score2.ToString(); //flip scores
+                        PlayerScores[j + 1, 1] = score1.ToString();
 
-                        temp = playerscores[j, 0]; //flip player names
-                        playerscores[j, 0] = playerscores[j + 1, 0];
-                        playerscores[j + 1, 0] = temp;
+                        tempName = PlayerScores[j, 0]; //flip player names
+                        PlayerScores[j, 0] = PlayerScores[j + 1, 0];
+                        PlayerScores[j + 1, 0] = tempName;
                     }
                 }
             }
@@ -80,43 +101,43 @@ public class endGame : MonoBehaviour
 
         for (int k = 0; k < 4; k++)    //making a list of player pieces to align with scores
         {
-            if (playerscores[k, 0] == "Player 1")
+            if (PlayerScores[k, 0] == "PLAYER1")
             {
-                PlayerPieces[k] = piece1;
+                PlayerPieces[k] = P1Piece;
             }
-            else if (playerscores[k, 0] == "Player 2")
+            else if (PlayerScores[k, 0] == "PLAYER2")
             {
-                PlayerPieces[k] = piece2;
+                PlayerPieces[k] = P2Piece;
             }
-            else if (playerscores[k, 0] == "Player 3")
+            else if (PlayerScores[k, 0] == "PLAYER3")
             {
-                PlayerPieces[k] = piece3;
+                PlayerPieces[k] = P3Piece;
             }
-            else if (playerscores[k, 0] == "Player 4")
+            else if (PlayerScores[k, 0] == "PLAYER4")
             {
-                PlayerPieces[k] = piece4;
+                PlayerPieces[k] = P4Piece;
             }
         }
 
-        PlayerPieces[0].transform.position = holder1.transform.position;
-        first.gameObject.GetComponent<Text>().text = playerscores[0, 1];
-        holder1.gameObject.GetComponent<Renderer>().enabled = false;
+        //card.gameObject.transform.position = ExpCardImage.transform.position;
+        //card.gameObject.transform.localScale = ExpCardImage.gameObject.GetComponent<Renderer>().bounds.extents;
 
-        PlayerPieces[1].transform.position = holder2.transform.position;
-        second.gameObject.GetComponent<Text>().text = playerscores[1, 1];
-        holder2.gameObject.GetComponent<Renderer>().enabled = false;
+        //set leaderboard
+        PlayerPieces[0].transform.position = FirstPlaceHolder.transform.position;
+        FirstPlaceScoreTxt.gameObject.GetComponent<Text>().text = PlayerScores[0, 1];
+        FirstPlaceHolder.gameObject.GetComponent<Renderer>().enabled = false;
 
-        PlayerPieces[2].transform.position = holder3.transform.position;
-        third.gameObject.GetComponent<Text>().text = playerscores[2, 1];
-        holder3.gameObject.GetComponent<Renderer>().enabled = false;
+        PlayerPieces[1].transform.position = SecondPlaceHolder.transform.position;
+        SecondPlaceScoreTxt.gameObject.GetComponent<Text>().text = PlayerScores[1, 1];
+        SecondPlaceHolder.gameObject.GetComponent<Renderer>().enabled = false;
 
-        PlayerPieces[3].transform.position = holder4.transform.position;
-        fourth.gameObject.GetComponent<Text>().text = playerscores[3, 1];
-        holder4.gameObject.GetComponent<Renderer>().enabled = false;
-    }
+        PlayerPieces[2].transform.position = ThirdPlaceHolder.transform.position;
+        ThirdPlaceScoreTxt.gameObject.GetComponent<Text>().text = PlayerScores[2, 1];
+        ThirdPlaceHolder.gameObject.GetComponent<Renderer>().enabled = false;
 
-    private void ReturntoMain()
-    {
-        SceneManager.LoadScene("MainMenu");
+        PlayerPieces[3].transform.position = FourthPlaceHolder.transform.position;
+        FourthPlaceScoreTxt.gameObject.GetComponent<Text>().text = PlayerScores[3, 1];
+        FourthPlaceHolder.gameObject.GetComponent<Renderer>().enabled = false;
     }
 }
+ 

@@ -14,6 +14,11 @@ public class PlayerSelection : MonoBehaviour
     public Button TwoPlayersBtn;
     public Button ThreePlayersBtn;
 
+    private void Awake()
+    {
+        DontDestroyOnLoad(this);
+    }
+
     private void Start()
     {
         BackBtn.GetComponent<Button>().onClick.AddListener(BackBtnTransition);
@@ -34,22 +39,21 @@ public class PlayerSelection : MonoBehaviour
         SceneManager.LoadScene("About");
     }
 
-    //using Globalvar for out Playernumbers as well
     private void OnePlayerFunction()
     {
-        GlobalVar.instance.PlayerNumber = 1;
+        PlayerPrefs.SetInt("PlayerNumber", 1);
         SceneManager.LoadScene("MainScene");
     }
 
     private void TwoPlayersFunction()
     {
-        GlobalVar.instance.PlayerNumber = 2;
+        PlayerPrefs.SetInt("PlayerNumber", 2);
         SceneManager.LoadScene("MainScene");
     }
 
     private void ThreePlayersFunction()
     {
-        GlobalVar.instance.PlayerNumber = 3;
+        PlayerPrefs.SetInt("PlayerNumber", 3);
         SceneManager.LoadScene("MainScene");
     }
 }

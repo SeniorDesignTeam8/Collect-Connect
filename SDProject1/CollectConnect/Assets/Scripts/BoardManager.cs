@@ -72,7 +72,7 @@ public class BoardManager : MonoBehaviour
     public Button PassBtnP4;
 
     public GameObject VoteEnhance;
-    public GameObject VoteEnhanceShadow; 
+    public GameObject VoteEnhanceShadow;
     public List<int> VoteResultsList;
     public bool VoteStartBool;
     public List<bool> cantVotePlayerList;
@@ -131,13 +131,12 @@ public class BoardManager : MonoBehaviour
                 _playerScriptRefs.Add(player.GetComponent<Player>());
             _playerScriptRefs[0].SetAiControl(true);    //set first player to be AI controlled
 
-            //using Globalvar for out Playernumbers as well
-            if (GlobalVar.instance.PlayerNumber == 1)
+            if (PlayerPrefs.GetInt("PlayerNumber") == 1)
             {
                 _playerScriptRefs[1].OnLeaveBtnHit();
                 _playerScriptRefs[3].OnLeaveBtnHit();
             }
-            else if (GlobalVar.instance.PlayerNumber == 2)
+            else if (PlayerPrefs.GetInt("PlayerNumber") == 2)
             {
                 _playerScriptRefs[3].OnLeaveBtnHit();
             }
@@ -194,11 +193,11 @@ public class BoardManager : MonoBehaviour
                     _keywordList.AddRange(t.GetComponent<Player>().GetKeywords());
                 }
                 // Remove any duplicates, then we're ready to start.
-                
+
                 _keywordList = _keywordList.Distinct().ToList();
                 PopulateKeywords();
 
-               
+
                 if (isFirstListGen)
                 {
                     UpdateScoring();
@@ -221,7 +220,7 @@ public class BoardManager : MonoBehaviour
             foreach (Card c in _playerScriptRefs[CurrentPlayer].GetHand())
             {
                 if (c.IsSelected())
-                { 
+                {
                     //ConnectionManager.CreateConnection(c.GetComponent<RectTransform>());
                     c.SetIsOnBoard(true);
                     c.SetIsSelected(false);
@@ -243,11 +242,10 @@ public class BoardManager : MonoBehaviour
             _isGameStarted = false;
             // TODO Go to end game screen here.
             //collect player scores for end game screen
-            //GlobalVar obtains the instances of each player scores
-            GlobalVar.instance.score1 = _playerScriptRefs[0].Score;
-            GlobalVar.instance.score2 = _playerScriptRefs[1].Score;
-            GlobalVar.instance.score3 = _playerScriptRefs[2].Score;
-            GlobalVar.instance.score4 = _playerScriptRefs[3].Score;
+            PlayerPrefs.SetInt("Player1Score", _playerScriptRefs[0].Score);
+            PlayerPrefs.SetInt("Player2Score", _playerScriptRefs[1].Score);
+            PlayerPrefs.SetInt("Player3Score", _playerScriptRefs[2].Score);
+            PlayerPrefs.SetInt("Player4Score", _playerScriptRefs[3].Score);
 
             SceneManager.LoadScene("EndGame");  //using for testing
 
@@ -268,10 +266,10 @@ public class BoardManager : MonoBehaviour
                         cardB = c;
                     }
                     else if (c.IsSelected())
-                        {
-                            //This is the card in the players hand
-                            cardA = c;
-                        }
+                    {
+                        //This is the card in the players hand
+                        cardA = c;
+                    }
                 }
             }
 
@@ -308,15 +306,15 @@ public class BoardManager : MonoBehaviour
                                 AIThinkingDone = true;
                             }
                             else if (AIThinkingDone == true)
-                            {  
+                            {
                                 Debug.Log("Doing nothing"); //leave in here do not delete!! It's needed
-                            }  
+                            }
                         }
                         else
-                            {
-                                _playerScriptRefs[_playerNumber].VetExpansion(); //individual player screens 
-                                StartCoroutine("VetDecisionTimer", _playerScriptRefs[_playerNumber]);
-                            }
+                        {
+                            _playerScriptRefs[_playerNumber].VetExpansion(); //individual player screens 
+                            StartCoroutine("VetDecisionTimer", _playerScriptRefs[_playerNumber]);
+                        }
                     }
 
                     if (_playerScriptRefs[3].playerVetted == true)
@@ -374,31 +372,31 @@ public class BoardManager : MonoBehaviour
                     _playerScriptRefs[CurrentPlayer].connectionKeyword = "Vetted Against";
                     _currentKeyword = "";
                     cardA.gameObject.GetComponent<Renderer>().enabled = false;
-                    cardA.SetIsOnBoard(false);  
+                    cardA.SetIsOnBoard(false);
                     cardA.SetIsSelected(false);
-                    
+
                     cardA.gameObject.layer = 2; //"destroyed"
-                 
+
                     //Destroy(cardA.gameObject);
 
                     _isTurnOver = true;
                     _hitVetBtn = false; //reset btn
                     _afterVet = false;
                     VetStartBool = false;
-                }               
+                }
             }
             _ts.InvokeRepeating("decreaseTime", 1, 1);
         }
         else //if VoteStartBool == true --> in voting
         {
             //RUN VOTING
-           if (_playerScriptRefs[_playerNumber].playerVoted == true) //if player voted
+            if (_playerScriptRefs[_playerNumber].playerVoted == true) //if player voted
             {
                 _ts.CancelInvoke();
                 _playerScriptRefs[_playerNumber].PlayerVoteShrink();
                 _playerNumber++;
 
-                if (_playerNumber < 4) 
+                if (_playerNumber < 4)
                 {
                     if (_playerScriptRefs[_playerNumber].isAiControlled == true) //if AI controlled 
                     {
@@ -413,7 +411,7 @@ public class BoardManager : MonoBehaviour
                         StartCoroutine("VoteDecisionTimer", _playerScriptRefs[_playerNumber]);
                     }
                 }
-                   
+
                 if (_playerScriptRefs[3].playerVoted == true) //last player to vote
                 {
                     _playerScriptRefs[3].PlayerVoteShrink();
@@ -426,7 +424,7 @@ public class BoardManager : MonoBehaviour
 
                     foreach (Player p in _playerScriptRefs)  //destroy main player cards
                     {
-                        if (p.CopyCardLeft != null )
+                        if (p.CopyCardLeft != null)
                         {
                             Destroy(p.CopyCardLeft.gameObject);
                         }
@@ -745,11 +743,11 @@ public class BoardManager : MonoBehaviour
             }
             rd.Close();
             rd = null;
-            
+
         }
-        
+
     }
-    
+
 
     private void PlaySelect()
     {
@@ -845,7 +843,7 @@ public class BoardManager : MonoBehaviour
         // Couldn't find the keyword in an existing node. Add it and connect both cards to it.
         GameObject newKeyNode = Instantiate(NodeOne); // Copy the template keyword node.
         newKeyNode.transform.FindChild("Text").gameObject.GetComponent<Text>().text = keyword;
-            // Set the text of the new keyword node.
+        // Set the text of the new keyword node.
         newKeyNode.name = keyword;
         _keywordNodes.Add(newKeyNode); // Add the keyword to the list of keyword nodes.
         // Connect both cards to the new keyword node.
@@ -854,7 +852,7 @@ public class BoardManager : MonoBehaviour
         ConnectionManager.CreateConnection(cardA.gameObject.GetComponent<RectTransform>(),
             newKeyNode.GetComponent<RectTransform>());
         newKeyNode.transform.position = (cardA.gameObject.transform.position +
-                                         boardCard.gameObject.transform.position)/2;
+                                         boardCard.gameObject.transform.position) / 2;
         //newKeyNode.AddComponent<NodeMovement>();
         foreach (
             Connection connection in
@@ -928,7 +926,7 @@ public class BoardManager : MonoBehaviour
             }
             numConnections++;
         }
-        return location/numConnections;
+        return location / numConnections;
     }
 
     public void SelectCardInHand(Card card)
@@ -945,36 +943,36 @@ public class BoardManager : MonoBehaviour
         }
 
         foreach (Card c in _playerScriptRefs[CurrentPlayer].GetHand())
+        {
+            if (!c.IsSelected() || c.IsOnBoard()) // Skip cards that aren't selected or are on the board.
             {
-                if (!c.IsSelected() || c.IsOnBoard()) // Skip cards that aren't selected or are on the board.
-                {
-                    continue;
-                }
-                
-                if (c.name == card.name) // Is the card already selected?
-                {
-                    card.SetIsSelected(false); // If so, deselect the card
-                    PlayDeselect();
+                continue;
+            }
 
-                    //turn glow off
-                    InHandGlow.GetComponent<Renderer>().enabled = false;
+            if (c.name == card.name) // Is the card already selected?
+            {
+                card.SetIsSelected(false); // If so, deselect the card
+                PlayDeselect();
 
-                    _isPlayerCardSelected = false;
-                    return;
-                }
-                c.SetIsSelected(false); // Deselect the other card, then select this one.
-                card.SetIsSelected(true);
-                PlaySelect();
+                //turn glow off
+                InHandGlow.GetComponent<Renderer>().enabled = false;
+
+                _isPlayerCardSelected = false;
+                return;
+            }
+            c.SetIsSelected(false); // Deselect the other card, then select this one.
+            card.SetIsSelected(true);
+            PlaySelect();
 
             //glow on
             InHandGlow.GetComponent<Renderer>().enabled = true;
             InHandGlow.transform.position = card.gameObject.transform.position;
 
             return;
-            }
-            card.SetIsSelected(true);
-            PlaySelect();
-       
+        }
+        card.SetIsSelected(true);
+        PlaySelect();
+
         _isPlayerCardSelected = true;
 
         //glow on
@@ -1051,11 +1049,10 @@ public class BoardManager : MonoBehaviour
         _isGameStarted = false;
         // TODO Go to end game screen here.
         //collect player scores for end game screen
-        //GlobalVar obtains the instances of each player scores
-        GlobalVar.instance.score1 = _playerScriptRefs[0].Score;
-        GlobalVar.instance.score2 = _playerScriptRefs[1].Score;
-        GlobalVar.instance.score3 = _playerScriptRefs[2].Score;
-        GlobalVar.instance.score4 = _playerScriptRefs[3].Score;
+        PlayerPrefs.SetInt("Player1Score", _playerScriptRefs[0].Score);
+        PlayerPrefs.SetInt("Player2Score", _playerScriptRefs[1].Score);
+        PlayerPrefs.SetInt("Player3Score", _playerScriptRefs[2].Score);
+        PlayerPrefs.SetInt("Player4Score", _playerScriptRefs[3].Score);
         SceneManager.LoadScene("EndGame");  //using for testing
 
     }
@@ -1069,9 +1066,9 @@ public class BoardManager : MonoBehaviour
     {
         CardCollection coll = new CardCollection("Board Cards");
         foreach (Card c in _playerScriptRefs.SelectMany(p => (from Card c in p.GetHand() where c.IsOnBoard() select c)))
-        { 
-            if(c.gameObject.layer == 0)
-            coll.AddCards(c); // Add all cards that are on the board to the collection.
+        {
+            if (c.gameObject.layer == 0)
+                coll.AddCards(c); // Add all cards that are on the board to the collection.
         }
         return coll;
     }
@@ -1184,16 +1181,16 @@ public class BoardManager : MonoBehaviour
         Debug.Log("Vet button selected.");
         VetBtnRight.gameObject.SetActive(false);    //disable vet btns
         VetBtnLeft.gameObject.SetActive(false);
-       
+
         _playerNumber = 0;
         _hitVetBtn = true;
-         
+
         VetResultList[0] = CheckConnection();
         Debug.Log("AI vetted " + VetResultList[0]);
         _playerScriptRefs[_playerNumber].playerVetted = true; //first AI done 
         _playerScriptRefs[_playerNumber].YesNoBtnHit = true;
         _playerScriptRefs[_playerNumber].VetResult = VetResultList[0];
-        
+
     }
 
     private IEnumerator VetDecisionTimer(Player p)
@@ -1213,7 +1210,7 @@ public class BoardManager : MonoBehaviour
     private IEnumerator VetAIDecision() //timer for AI to "think"
     {
         yield return new WaitForSeconds(4.0f);
-       
+
         int rindex = Random.Range(0, 101);
         bool AIVet = rindex > 50;
         VetResultList[_playerNumber] = AIVet;
@@ -1239,7 +1236,7 @@ public class BoardManager : MonoBehaviour
         return yesCount >= noCount;
     }
 
-   private void ToggleCardsOff()
+    private void ToggleCardsOff()
     {
         CardCollection playedCards = GetPlayedCards();
         foreach (Player p in _playerScriptRefs)
@@ -1334,7 +1331,7 @@ public class BoardManager : MonoBehaviour
             else
             {
                 //disable voting buttons for those players
-                cantVotePlayerList[_playerNumber] = true;  
+                cantVotePlayerList[_playerNumber] = true;
                 _playerNumber++;
 
                 //don't display card holders
@@ -1456,43 +1453,43 @@ public class BoardManager : MonoBehaviour
         foreach (KeywordFreq freq in scoring)
         {
             //if (!freq.IsProcessed)
-           // {
-                foreach (Player p in _playerScriptRefs)
+            // {
+            foreach (Player p in _playerScriptRefs)
+            {
+                //check if card is in player hand not just in deck
+                foreach (Card c in p._playerHand)
                 {
-                    //check if card is in player hand not just in deck
-                    foreach (Card c in p._playerHand)
+                    // foreach (Card.CardProperty prop in c.PropertyList.Where(prop => prop.PropertyValue == freq.KeywordName))
+                    //  {
+                    for (int i = 0; i < c.PropertyList.Count; i++)
                     {
-                       // foreach (Card.CardProperty prop in c.PropertyList.Where(prop => prop.PropertyValue == freq.KeywordName))
-                      //  {
-                        for (int i = 0; i < c.PropertyList.Count; i++)
+                        if (c.PropertyList[i].PropertyValue == freq.KeywordName)
                         {
-                            if (c.PropertyList[i].PropertyValue == freq.KeywordName)
-                            {
-                                Card.CardProperty temp = c.PropertyList[i];
+                            Card.CardProperty temp = c.PropertyList[i];
 
-                                Debug.Log("Checking " + freq.KeywordName);
-                                //set cards pt values based on occurance
-                                if (freq.KeywordFreqs >= 10)
-                                {
-                                    //prop.SetPointValue(tier1);
-                                    temp._pointValue = tier1;
-                                }
-                                if (freq.KeywordFreqs < 10 && freq.KeywordFreqs > 4)
-                                {
-                                    //prop.SetPointValue(tier2);
-                                    temp._pointValue = tier2;
-                                }
-                                if (freq.KeywordFreqs >= 0 && freq.KeywordFreqs <= 4)
-                                {
-                                    //prop.SetPointValue(tier3);
-                                    temp._pointValue = tier3;
-                                }
-                                c.PropertyList[i] = temp;
+                            Debug.Log("Checking " + freq.KeywordName);
+                            //set cards pt values based on occurance
+                            if (freq.KeywordFreqs >= 10)
+                            {
+                                //prop.SetPointValue(tier1);
+                                temp._pointValue = tier1;
                             }
-                            //freq.SetIsProcessed(true);
+                            if (freq.KeywordFreqs < 10 && freq.KeywordFreqs > 4)
+                            {
+                                //prop.SetPointValue(tier2);
+                                temp._pointValue = tier2;
+                            }
+                            if (freq.KeywordFreqs >= 0 && freq.KeywordFreqs <= 4)
+                            {
+                                //prop.SetPointValue(tier3);
+                                temp._pointValue = tier3;
+                            }
+                            c.PropertyList[i] = temp;
                         }
+                        //freq.SetIsProcessed(true);
                     }
-                } 
+                }
+            }
             //}
             Debug.Log(freq.KeywordName + " " + freq.KeywordFreqs + " is processed!");
         }
