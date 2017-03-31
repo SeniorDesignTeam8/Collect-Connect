@@ -292,12 +292,13 @@ public class BoardManager : MonoBehaviour
                 if (_playerScriptRefs[_playerNumber].playerVetted == true) //individual buttons (yes/no)
                 {
                     _playerScriptRefs[_playerNumber].VetShrink();
+
                     VetResultList[_playerNumber] = _playerScriptRefs[_playerNumber].VetResult; //pull player's result 
                     _playerNumber++;
 
                     if (_playerNumber < 4) //if hit y/n button
                     {
-                        if (_playerScriptRefs[_playerNumber].isAiControlled == true)
+                        if (_playerScriptRefs[_playerNumber].isAiControlled == true)  //AI Controlled 
                         {
                             if (AIThinkingDone == false)
                             {
@@ -313,6 +314,7 @@ public class BoardManager : MonoBehaviour
                         else
                         {
                             _playerScriptRefs[_playerNumber].VetExpansion(); //individual player screens 
+
                             StartCoroutine("VetDecisionTimer", _playerScriptRefs[_playerNumber]);
                         }
                     }
@@ -390,6 +392,7 @@ public class BoardManager : MonoBehaviour
         else //if VoteStartBool == true --> in voting
         {
             //RUN VOTING
+
             if (_playerScriptRefs[_playerNumber].playerVoted == true) //if player voted
             {
                 _ts.CancelInvoke();
@@ -497,6 +500,12 @@ public class BoardManager : MonoBehaviour
                 KeywordContainerP2.gameObject.layer = 2;
                 KeywordContainerP3.gameObject.layer = 2;
                 KeywordContainerP4.gameObject.layer = 2;
+
+                //Turning on/off player blocking
+                _playerScriptRefs[0].BlockOff.gameObject.GetComponent<Renderer>().enabled = false;
+                _playerScriptRefs[1].BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
+                _playerScriptRefs[2].BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
+                _playerScriptRefs[3].BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
             }
             else if (CurrentPlayer == 1)
             {
@@ -513,6 +522,12 @@ public class BoardManager : MonoBehaviour
                 KeywordContainerP2.gameObject.layer = 5;
                 KeywordContainerP3.gameObject.layer = 2;
                 KeywordContainerP4.gameObject.layer = 2;
+                
+                //Turning on/off player blocking
+                _playerScriptRefs[0].BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
+                _playerScriptRefs[1].BlockOff.gameObject.GetComponent<Renderer>().enabled = false;
+                _playerScriptRefs[2].BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
+                _playerScriptRefs[3].BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
             }
             else if (CurrentPlayer == 2)
             {
@@ -523,6 +538,12 @@ public class BoardManager : MonoBehaviour
                 KeywordContainerP2.gameObject.layer = 2;
                 KeywordContainerP3.gameObject.layer = 5;
                 KeywordContainerP4.gameObject.layer = 2;
+
+                //Turning on/off player blocking
+                _playerScriptRefs[0].BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
+                _playerScriptRefs[1].BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
+                _playerScriptRefs[2].BlockOff.gameObject.GetComponent<Renderer>().enabled = false;
+                _playerScriptRefs[3].BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
             }
             else if (CurrentPlayer == 3)
             {
@@ -540,6 +561,12 @@ public class BoardManager : MonoBehaviour
                 KeywordContainerP2.gameObject.layer = 2;
                 KeywordContainerP3.gameObject.layer = 2;
                 KeywordContainerP4.gameObject.layer = 5;
+
+                //Turning on/off player blocking
+                _playerScriptRefs[0].BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
+                _playerScriptRefs[1].BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
+                _playerScriptRefs[2].BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
+                _playerScriptRefs[3].BlockOff.gameObject.GetComponent<Renderer>().enabled = false;
             }
 
             PopulateKeywords();
@@ -1161,7 +1188,6 @@ public class BoardManager : MonoBehaviour
 
     private IEnumerator VetTimer() //timer for players to select vet
     {
-
         yield return new WaitForSeconds(10.0f);
 
         //if vet btn not hit and main vetting not visible 
@@ -1190,7 +1216,6 @@ public class BoardManager : MonoBehaviour
         _playerScriptRefs[_playerNumber].playerVetted = true; //first AI done 
         _playerScriptRefs[_playerNumber].YesNoBtnHit = true;
         _playerScriptRefs[_playerNumber].VetResult = VetResultList[0];
-
     }
 
     private IEnumerator VetDecisionTimer(Player p)

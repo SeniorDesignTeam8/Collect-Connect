@@ -336,6 +336,7 @@ public class Player : MonoBehaviour
     {
         PlayerPopUpEnhance.gameObject.GetComponent<Renderer>().enabled = true;
         PlayerPopUpEnhanceShadow.gameObject.GetComponent<Renderer>().enabled = true;
+        BlockOff.gameObject.GetComponent<Renderer>().enabled = false;
 
         if (isAiControlled != true) //if human is playing
         {
@@ -348,6 +349,9 @@ public class Player : MonoBehaviour
         {
             VetText.gameObject.GetComponent<Text>().text = _AIText;
             VetText.gameObject.GetComponent<Text>().enabled = true;
+
+            //Turn on block off
+            BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
         }
         
         playerVetted = false;
@@ -360,6 +364,7 @@ public class Player : MonoBehaviour
     {
         PlayerPopUpEnhance.gameObject.GetComponent<Renderer>().enabled = false;
         PlayerPopUpEnhanceShadow.gameObject.GetComponent<Renderer>().enabled = false;
+        BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
         VetText.gameObject.GetComponent<Text>().enabled = false;
         VetYesBtn.gameObject.SetActive(false);
         VetNoBtn.gameObject.SetActive(false);
@@ -413,6 +418,7 @@ public class Player : MonoBehaviour
         playerVoted = false; //reset
         PlayerPopUpEnhance.gameObject.GetComponent<Renderer>().enabled = true;
         PlayerPopUpEnhanceShadow.gameObject.GetComponent<Renderer>().enabled = true;
+        BlockOff.gameObject.GetComponent<Renderer>().enabled = false;
 
         if (isAiControlled != true) //if human is playing
         {
@@ -451,6 +457,7 @@ public class Player : MonoBehaviour
         VoteBtnP2.gameObject.SetActive(false);
         VoteBtnP3.gameObject.SetActive(false);
         VoteBtnP4.gameObject.SetActive(false);
+        BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
     }
 
     public void VoteMainExpansion()
@@ -463,6 +470,8 @@ public class Player : MonoBehaviour
 
         JoinGameBtn.gameObject.SetActive(false);    //turn off joining and leaving game
         LeaveGameBtn.gameObject.SetActive(false);
+
+        BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
     }
 
     public void VoteMainShrink()
