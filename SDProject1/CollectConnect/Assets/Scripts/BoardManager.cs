@@ -1544,6 +1544,7 @@ public class BoardManager : MonoBehaviour
 	{
 		_isGameStarted = true;
 		research_Stage = false;
+	    GameObject.Find("Start Box").active = false;
 		_ts.startTimer ();
 	}
 }
