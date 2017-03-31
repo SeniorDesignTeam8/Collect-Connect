@@ -463,7 +463,6 @@ public class BoardManager : MonoBehaviour
         if (!_isGameStarted)
             return;
         TimerScript.Timeleft = 90;
-        _ts.circleSlider.fillAmount = 1f;
 
         if (VoteStartBool == false)
         {
@@ -1064,6 +1063,8 @@ public class BoardManager : MonoBehaviour
         _playerScriptRefs[CurrentPlayer].connectionKeyword = "Passed";
         Player.PassArray[CurrentPlayer] = true;
         _isTurnOver = true;
+
+        _ts.circleSlider.fillAmount = 1f;
 
         foreach (Card c in from p in _playerScriptRefs from Card c in p.GetHand() where c.IsSelected() select c)
         {

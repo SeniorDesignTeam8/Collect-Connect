@@ -124,7 +124,7 @@ public class Player : MonoBehaviour
         JoinGameBtn.gameObject.SetActive(false);
         _AIText = "AI is thinking...";
         _vetHumanText = "Do you agree with this connection?";
-        _voteHumanText = "Which connection was the most outrageous?";
+        _voteHumanText = "Select the most interesting connection:";
         VetPieceShrink();
         
     }

@@ -56,10 +56,7 @@ public class TimerScript : MonoBehaviour
             InvokeRepeating("decreaseTime", 1, 1);
 
         t.text = "" + Timeleft;
-        if (!isPaused)
-        {
-            circleSlider.fillAmount -= (1f/usualTime*Time.deltaTime);
-        }
+        circleSlider.fillAmount -= (1f / usualTime * Time.deltaTime);
     }
 
     void decreaseTime()
