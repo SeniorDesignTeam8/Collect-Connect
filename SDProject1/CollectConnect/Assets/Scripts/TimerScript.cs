@@ -1,12 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
 public class TimerScript : MonoBehaviour
 {
     public static int Timeleft;
+    public Image circleSlider;
+    public Sprite mainSprite;
+    public Sprite otherSprite;
+    private float usualTime = 90f;
     private BoardManager bM;
     private Button rButton;
     private bool isPaused = false;
@@ -23,6 +28,7 @@ public class TimerScript : MonoBehaviour
         bM = FindObjectOfType<BoardManager>();
         InvokeRepeating("decreaseTime", 1, 1);
         rButton.onClick.AddListener(resetTimer);
+        circleSlider.fillAmount = 1f;
     }
 
     // Update is called once per frame
@@ -31,10 +37,12 @@ public class TimerScript : MonoBehaviour
         if (Timeleft < 15)
         {
             t.color = Color.red;
+            circleSlider.sprite = otherSprite;
         }
         else
         {
             t.color = Color.black;
+            circleSlider.sprite = mainSprite;
         }
 
         if (Timeleft < 0)
@@ -42,12 +50,13 @@ public class TimerScript : MonoBehaviour
             bM.PassBtnHit();
         }
 
-        if(Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space))
             CancelInvoke();
         if (Input.GetKeyUp(KeyCode.Space))
             InvokeRepeating("decreaseTime", 1, 1);
 
         t.text = "" + Timeleft;
+        circleSlider.fillAmount -= (1f / usualTime * Time.deltaTime);
     }
 
     void decreaseTime()
@@ -61,6 +70,7 @@ public class TimerScript : MonoBehaviour
         {
             CancelInvoke();
             Timeleft = 90;
+            circleSlider.fillAmount = 1f;
             InvokeRepeating("decreaseTime", 1, 1);
         }
         else if (lastClickTime > Time.time - D_CLICK_DELAY && lastButNum == 1)
