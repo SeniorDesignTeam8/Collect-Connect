@@ -14,7 +14,7 @@ public class TimerScript : MonoBehaviour
     private float usualTime = 90f;
     private BoardManager bM;
     private Button rButton;
-    private bool isPaused = false;
+    private bool isPaused = true;
     int lastButNum = -1;
     float lastClickTime = -99;
     const float D_CLICK_DELAY = 0.25f;
@@ -26,14 +26,16 @@ public class TimerScript : MonoBehaviour
         t = GetComponent<Text>();
         rButton = GetComponent<Button>();
         bM = FindObjectOfType<BoardManager>();
-        InvokeRepeating("decreaseTime", 1, 1);
+        //InvokeRepeating("decreaseTime", 1, 1);
+
         rButton.onClick.AddListener(resetTimer);
         circleSlider.fillAmount = 1f;
     }
 
     // Update is called once per frame
     private void Update()
-    {
+	{
+
         if (Timeleft < 15)
         {
             t.color = Color.red;
@@ -87,4 +89,14 @@ public class TimerScript : MonoBehaviour
             lastButNum = 1;
         }
     }
+
+	public void startTimer()
+	{
+		InvokeRepeating("decreaseTime", 1, 1);
+	}
+
+	public void stopTimer()
+	{
+		CancelInvoke ();
+	}
 }

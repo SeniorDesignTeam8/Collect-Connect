@@ -86,11 +86,11 @@ public class Card : MonoBehaviour
 
             _isExpanded = false;
         }
-        else if (IsOnBoard()) // Is the card on the board? If not, then select from player's hand.
+		else if (IsOnBoard() && BoardManager.Instance.GetIsStarted()) // Is the card on the board? If not, then select from player's hand.
         {
             BoardManager.Instance.SelectCardOnBoard(this);
         }
-        else // It's in a player's hand. If it's the owning player's turn, then select it.
+		else if(BoardManager.Instance.GetIsStarted()) // It's in a player's hand. If it's the owning player's turn, then select it.
         {
             BoardManager.Instance.SelectCardInHand(this);
         }

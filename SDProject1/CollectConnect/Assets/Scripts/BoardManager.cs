@@ -65,6 +65,7 @@ public class BoardManager : MonoBehaviour
     private int _playerNumber;
     private static IDbConnection _dbconn;
     private TimerScript _ts;
+	private bool research_Stage;
 
     public Button PassBtnP1;
     public Button PassBtnP2;
@@ -85,7 +86,8 @@ public class BoardManager : MonoBehaviour
     private PlayerSelection playerSelection;
 
     private void Awake()
-    {
+	{
+		research_Stage = false;
         _isGameStarted = false;
         _isTurnOver = false;
         IsDeckReady = false;
@@ -162,6 +164,7 @@ public class BoardManager : MonoBehaviour
             DisableVote();
 
             _ts = FindObjectOfType<TimerScript>();
+			//_ts.stopTimer();
         }
         else if (Instance != this)
         {
@@ -180,7 +183,7 @@ public class BoardManager : MonoBehaviour
     {
         // First, check if all players have drawn their cards.
         // If so, then populate the players' word banks.
-        if (!_isGameStarted)
+        if (!research_Stage && !_isGameStarted)
         {
             bool allHandsDrawn = _playerScriptRefs.All(p => !p.IsDrawingCards);
 
@@ -203,9 +206,11 @@ public class BoardManager : MonoBehaviour
                     UpdateScoring();
                     isFirstListGen = false;
                 }
-                _isGameStarted = true;
+				research_Stage = true;
+                //_isGameStarted = true;
             }
         }
+			
 
         if (Deck.Size == 0)
             IsDeckReady = false;
@@ -462,6 +467,7 @@ public class BoardManager : MonoBehaviour
             return;
         if (!_isGameStarted)
             return;
+
         TimerScript.Timeleft = 90;
         _ts.circleSlider.fillAmount = 1f;
 
@@ -1533,5 +1539,12 @@ public class BoardManager : MonoBehaviour
         }
         _playerScriptRefs[_playerNumber].playerVoted = true;    //move to next player
     }
+
+	public void endResearchStage()
+	{
+		_isGameStarted = true;
+		research_Stage = false;
+		_ts.startTimer ();
+	}
 }
 
