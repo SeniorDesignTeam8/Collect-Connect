@@ -82,7 +82,6 @@ public class BoardManager : MonoBehaviour
     public GameObject OnBoardGlow;
 
     private bool AIThinkingDone;
-    private PlayerSelection playerSelection;
 
     private void Awake()
     {
