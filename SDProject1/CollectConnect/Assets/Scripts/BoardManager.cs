@@ -1064,6 +1064,8 @@ public class BoardManager : MonoBehaviour
         Player.PassArray[CurrentPlayer] = true;
         _isTurnOver = true;
 
+        _ts.circleSlider.fillAmount = 1f;
+
         foreach (Card c in from p in _playerScriptRefs from Card c in p.GetHand() where c.IsSelected() select c)
         {
             c.SetIsSelected(false); // Deselect any selected cards.
