@@ -397,7 +397,6 @@ public class BoardManager : MonoBehaviour
         else //if VoteStartBool == true --> in voting
         {
             //RUN VOTING
-
             if (_playerScriptRefs[_playerNumber].playerVoted == true) //if player voted
             {
                 _ts.CancelInvoke();
@@ -416,7 +415,6 @@ public class BoardManager : MonoBehaviour
                     {
                         //expand next player's voting
                         _playerScriptRefs[_playerNumber].PlayerVoteExpansion();
-                        StartCoroutine("VoteDecisionTimer", _playerScriptRefs[_playerNumber]);
                     }
                 }
 
@@ -486,7 +484,7 @@ public class BoardManager : MonoBehaviour
             {
                 //Run voting
                 VoteStartBool = true;
-                StartCoroutine("VoteSetUp");
+                VoteSetUp();
                 CurrentPlayer--;
             }
             else
@@ -709,7 +707,6 @@ public class BoardManager : MonoBehaviour
 
     }
 
-
     private static void BuildDeck()
     {
 
@@ -781,7 +778,6 @@ public class BoardManager : MonoBehaviour
         }
 
     }
-
 
     private void PlaySelect()
     {
@@ -1323,9 +1319,8 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    private IEnumerator VoteSetUp()  //vote screen pops up
+    private void VoteSetUp()  //vote screen pops up
     {
-        yield return new WaitForSeconds(1.0f);
         Debug.Log("Enabling voting.");
 
         EnableVote();
@@ -1372,25 +1367,11 @@ public class BoardManager : MonoBehaviour
             }
         }
         _playerNumber = 0; //reset
-
-        StartCoroutine("VoteDecisionTimer", _playerScriptRefs[_playerNumber]); //start for AI
+        
+        //AI Voting
         _playerScriptRefs[_playerNumber].PlayerVoteExpansion();
-        VoteResultsList[0] = 1; //preset for AI TODO have AI pick randomly 
+        VoteResultsList[0] = 1; //preset for AI 
         _playerScriptRefs[_playerNumber].playerVoted = true;
-    }
-
-    private IEnumerator VoteDecisionTimer(Player p)
-    {
-        yield return new WaitForSeconds(7.0f);
-
-        if (p.playerVoted == false)  //if player didn't vote
-        {
-            Debug.Log(p.name + " did not vote.");
-            p.PlayerVoteShrink();
-            p.playerVoted = true;
-            VoteResultsList[_playerNumber] = 1; //auto set to agree with AI
-        }
-
     }
 
     private void GetVoteResult()
