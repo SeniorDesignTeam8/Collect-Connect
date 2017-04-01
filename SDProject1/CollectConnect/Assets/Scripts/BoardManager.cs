@@ -65,7 +65,7 @@ public class BoardManager : MonoBehaviour
     private int _playerNumber;
     private static IDbConnection _dbconn;
     private TimerScript _ts;
-	private bool research_Stage;
+    private bool research_Stage;
 
     public Button PassBtnP1;
     public Button PassBtnP2;
@@ -86,8 +86,8 @@ public class BoardManager : MonoBehaviour
     private PlayerSelection playerSelection;
 
     private void Awake()
-	{
-		research_Stage = false;
+    {
+        research_Stage = false;
         _isGameStarted = false;
         _isTurnOver = false;
         IsDeckReady = false;
@@ -164,7 +164,7 @@ public class BoardManager : MonoBehaviour
             DisableVote();
 
             _ts = FindObjectOfType<TimerScript>();
-			//_ts.stopTimer();
+            //_ts.stopTimer();
         }
         else if (Instance != this)
         {
@@ -206,11 +206,11 @@ public class BoardManager : MonoBehaviour
                     UpdateScoring();
                     isFirstListGen = false;
                 }
-				research_Stage = true;
+                research_Stage = true;
                 //_isGameStarted = true;
             }
         }
-			
+
 
         if (Deck.Size == 0)
             IsDeckReady = false;
@@ -527,7 +527,7 @@ public class BoardManager : MonoBehaviour
                 KeywordContainerP2.gameObject.layer = 5;
                 KeywordContainerP3.gameObject.layer = 2;
                 KeywordContainerP4.gameObject.layer = 2;
-                
+
                 //Turning on/off player blocking
                 _playerScriptRefs[0].BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
                 _playerScriptRefs[1].BlockOff.gameObject.GetComponent<Renderer>().enabled = false;
@@ -1367,7 +1367,7 @@ public class BoardManager : MonoBehaviour
             }
         }
         _playerNumber = 0; //reset
-        
+
         //AI Voting
         _playerScriptRefs[_playerNumber].PlayerVoteExpansion();
         VoteResultsList[0] = 1; //preset for AI 
@@ -1521,12 +1521,11 @@ public class BoardManager : MonoBehaviour
         _playerScriptRefs[_playerNumber].playerVoted = true;    //move to next player
     }
 
-	public void endResearchStage()
-	{
-		_isGameStarted = true;
-		research_Stage = false;
-	    GameObject.Find("Start Box").active = false;
-		_ts.startTimer ();
-	}
+    public void endResearchStage()
+    {
+        _isGameStarted = true;
+        research_Stage = false;
+        GameObject.Find("Start Box").active = false;
+        _ts.startTimer();
+    }
 }
-

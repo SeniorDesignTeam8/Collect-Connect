@@ -57,6 +57,8 @@ public class Player : MonoBehaviour
     public GameObject VoteCardRight;
     public GameObject VoteKeywordTxt;
     public GameObject VoteConnection;
+    public Button VotePassBtn;
+
     public int VotedForWho;
     public Card CopyCardLeft;
     public Card CopyCardRight;
@@ -83,7 +85,7 @@ public class Player : MonoBehaviour
     {
         IsDrawingCards = true;
         _playerName = gameObject.name.Replace(" ", "").ToLower();
-            // Remove spaces and change to all lowercase to standardize.
+        // Remove spaces and change to all lowercase to standardize.
         _playerHand = new CardCollection(gameObject.name + "'s Hand");
         PlayerScore.GetComponent<Text>();
         ExpCardBackground.gameObject.GetComponent<Renderer>().enabled = false; //make card expansion invisible to user
@@ -117,6 +119,8 @@ public class Player : MonoBehaviour
         VoteBtnP2.GetComponent<Button>().onClick.AddListener(VotePlayer2);
         VoteBtnP3.GetComponent<Button>().onClick.AddListener(VotePlayer3);
         VoteBtnP4.GetComponent<Button>().onClick.AddListener(VotePlayer4);
+        VotePassBtn.GetComponent<Button>().onClick.AddListener(VotePlayer1);    //auto vote for player 1
+        VotePassBtn.gameObject.SetActive(false);
         VotedForWho = 0;
         VotePlayerPiece.gameObject.GetComponent<Renderer>().enabled = false;
         PlayerPiece.gameObject.GetComponent<Renderer>().enabled = false;
@@ -126,7 +130,6 @@ public class Player : MonoBehaviour
         _vetHumanText = "Do you agree with this connection?";
         _voteHumanText = "Which connection was the most outrageous?";
         VetPieceShrink();
-        
     }
 
     private void Update()
@@ -148,19 +151,19 @@ public class Player : MonoBehaviour
         }
         else
             IsDrawingCards = false;
-       
-      if (isAiControlled && BoardManager.Instance.GetCurrentPlayer() == this &&
-            !BoardManager.Instance.GetIsTurnOver() && BoardManager.Instance.GetIsStarted()
-            && BoardManager.Instance.VoteStartBool == false 
-            && BoardManager.Instance.VetStartBool == false)
-      {
-          
+
+        if (isAiControlled && BoardManager.Instance.GetCurrentPlayer() == this &&
+              !BoardManager.Instance.GetIsTurnOver() && BoardManager.Instance.GetIsStarted()
+              && BoardManager.Instance.VoteStartBool == false
+              && BoardManager.Instance.VetStartBool == false)
+        {
+
             //Debug.Log("AI Control: " + name);
-          bool alreadyPlayed = false;
+            bool alreadyPlayed = false;
             List<int> unplayedCardIndices = new List<int>();
             foreach (Card c in BoardManager.Instance.GetPlayersUnplayedCards())
             {
-				if (!c.IsOnBoard() && _playerHand.IndexOf(c) != -1 && c.GetComponent<Renderer>().enabled)
+                if (!c.IsOnBoard() && _playerHand.IndexOf(c) != -1 && c.GetComponent<Renderer>().enabled)
                 {
                     unplayedCardIndices.Add(_playerHand.IndexOf(c));
                 }
@@ -174,7 +177,7 @@ public class Player : MonoBehaviour
             Card pickedCard = _playerHand.At(unplayedCardIndices[randomIndex]);
             BoardManager.Instance.SelectCardInHand(pickedCard);
             CardCollection playedCards = BoardManager.Instance.GetPlayedCards();
-           
+
             //for (int i = 0; i < playedCards.Size; i++)
             //{
             //    Debug.Log("Testing layer of card: " + playedCards.At(i).name + " Layer = " + playedCards.At(i).gameObject.layer);
@@ -192,61 +195,61 @@ public class Player : MonoBehaviour
             //    //No played cards, so must be first played card.
             //}
             //else//{
-            
-                
-                float passChance = Random.Range(0.0f, 1.0f);
-                if (passChance <= AiPassThresholds[BoardManager.Instance.CurrentPlayer])
+
+
+            float passChance = Random.Range(0.0f, 1.0f);
+            if (passChance <= AiPassThresholds[BoardManager.Instance.CurrentPlayer])
+            {
+                Debug.Log("AI Passed.");
+                BoardManager.Instance.PassBtnHit();
+            }
+            else
+            {
+                playedCards.Shuffle();
+                // More organized way of choosing a random card than just picking a random index.
+                float aiValidPlayChance = Random.Range(0.0f, 1.0f);
+                foreach (Card c in playedCards)
                 {
-                    Debug.Log("AI Passed.");
-                    BoardManager.Instance.PassBtnHit();
-                }
-                else
-                {
-                    playedCards.Shuffle();
-                        // More organized way of choosing a random card than just picking a random index.
-                    float aiValidPlayChance = Random.Range(0.0f, 1.0f);
-                    foreach (Card c in playedCards)
+                    // Card c = playedCards.At(0);
+                    Debug.Log("trying a card in hand...");
+                    List<Card.CardProperty> commonProps = c.FindCommonProperties(pickedCard);
+                    //random index to determine if valid play should happen 80% of the time...
+                    if (aiValidPlayChance < 0.8)
                     {
-                       // Card c = playedCards.At(0);
-                       Debug.Log("trying a card in hand...");
-                        List<Card.CardProperty> commonProps = c.FindCommonProperties(pickedCard);
-                        //random index to determine if valid play should happen 80% of the time...
-                        if (aiValidPlayChance < 0.8)
+                        if (commonProps.Count <= 0)
                         {
-                            if (commonProps.Count <= 0)
-                            {
-                                Debug.Log("no common props");
-                                //c = playedCards.At(2);
-                                continue;
-                            }
-                            BoardManager.Instance.SelectCardOnBoard(c);
-                            ShufflePropertyList(ref commonProps);
-                            BoardManager.Instance.SelectKeyword(commonProps[0]);
-                            alreadyPlayed = true;
-                            Debug.Log("AI play valid");
-                            break;
+                            Debug.Log("no common props");
+                            //c = playedCards.At(2);
+                            continue;
                         }
-                        else
-                        {
-                            //...otherwise this invalid play should happen
-                            BoardManager.Instance.SelectCardOnBoard(c);
-                            BoardManager.Instance.SelectKeyword(c.PropertyList.First());
+                        BoardManager.Instance.SelectCardOnBoard(c);
+                        ShufflePropertyList(ref commonProps);
+                        BoardManager.Instance.SelectKeyword(commonProps[0]);
                         alreadyPlayed = true;
-                        Debug.Log("AI play invalid");
-                            break;
-                        }
-                }
-                    if (!alreadyPlayed)
+                        Debug.Log("AI play valid");
+                        break;
+                    }
+                    else
                     {
                         //...otherwise this invalid play should happen
-                        int Randomindex = Random.Range(0, playedCards.Size);
-                        BoardManager.Instance.SelectCardOnBoard(playedCards.At(Randomindex));
-                        BoardManager.Instance.SelectKeyword(playedCards.At(Randomindex).PropertyList.First());
-                        Debug.Log("AI play invalid after");
-                        //break;
+                        BoardManager.Instance.SelectCardOnBoard(c);
+                        BoardManager.Instance.SelectKeyword(c.PropertyList.First());
+                        alreadyPlayed = true;
+                        Debug.Log("AI play invalid");
+                        break;
                     }
-
                 }
+                if (!alreadyPlayed)
+                {
+                    //...otherwise this invalid play should happen
+                    int Randomindex = Random.Range(0, playedCards.Size);
+                    BoardManager.Instance.SelectCardOnBoard(playedCards.At(Randomindex));
+                    BoardManager.Instance.SelectKeyword(playedCards.At(Randomindex).PropertyList.First());
+                    Debug.Log("AI play invalid after");
+                    //break;
+                }
+
+            }
         }
     }
 
@@ -353,7 +356,7 @@ public class Player : MonoBehaviour
             //Turn on block off
             BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
         }
-        
+
         playerVetted = false;
         YesNoBtnHit = false;
         JoinGameBtn.gameObject.SetActive(false);    //turn off joining and leaving game
@@ -428,6 +431,12 @@ public class Player : MonoBehaviour
             VoteBtnP2.gameObject.SetActive(true);
             VoteBtnP3.gameObject.SetActive(true);
             VoteBtnP4.gameObject.SetActive(true);
+
+            //if there is no one to vote for
+            if (BoardManager.Instance.cantVotePlayerList.All(b => b == true))
+            {
+                VotePassBtn.gameObject.SetActive(true);
+            }
         }
         else //if AI is playing
         {
@@ -498,6 +507,7 @@ public class Player : MonoBehaviour
     {
         playerVoted = true;
         VotedForWho = 1;
+        VotePassBtn.gameObject.SetActive(false); //if used, make disappear
     }
 
     private void VotePlayer2()
@@ -537,6 +547,4 @@ public class Player : MonoBehaviour
     {
         PlayerPiece.gameObject.GetComponent<Renderer>().enabled = false;
     }
-
-
 }
