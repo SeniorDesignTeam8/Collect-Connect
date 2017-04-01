@@ -1,8 +1,6 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine.Networking.NetworkSystem;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
@@ -20,10 +18,10 @@ public class Player : MonoBehaviour
     public const int HandSize = 5;
     private bool[] _slotStatus = new bool[HandSize]; // True if taken, false if available.
     private string _playerName; // The player's name (internally).
-    public CardCollection _playerHand; // Represents the player's cards.
+    public CardCollection PlayerHand; // Represents the player's cards.
     private Vector3 _expCardPosition;
     private Vector3 _expCardScale;
-    public bool isAiControlled = false; // TODO Find a way to programatically change this.
+    public bool IsAiControlled;
     public GameObject PlayerPopUpEnhance;
     public GameObject PlayerPopUpEnhanceShadow;
     public GameObject VetText;
@@ -31,27 +29,27 @@ public class Player : MonoBehaviour
     public Button VetNoBtn;
     public Button LeaveGameBtn;
     public Button JoinGameBtn;
-    public bool playerVetted;
+    public bool PlayerVetted;
     public bool YesNoBtnHit;
     public bool VetResult;
-    public Card card1;
-    public Card card2;
-    public String connectionKeyword;
+    public Card Card1;
+    public Card Card2;
+    public string ConnectionKeyword;
 
     public GameObject PlayerPiece;
 
-    public GameObject locationOnBoard1;
-    public GameObject locationOnBoard2;
-    public GameObject locationOnBoard3;
-    public GameObject locationOnBoard4;
-    public GameObject locationOnBoard5;
+    public GameObject LocationOnBoard1;
+    public GameObject LocationOnBoard2;
+    public GameObject LocationOnBoard3;
+    public GameObject LocationOnBoard4;
+    public GameObject LocationOnBoard5;
 
     public GameObject VoteText;
     public Button VoteBtnP1;
     public Button VoteBtnP2;
     public Button VoteBtnP3;
     public Button VoteBtnP4;
-    public bool playerVoted;
+    public bool PlayerVoted;
 
     public GameObject VoteCardLeft;
     public GameObject VoteCardRight;
@@ -67,9 +65,9 @@ public class Player : MonoBehaviour
     public GameObject VotePlayerPiece;
     public GameObject VetPlayerPiece;
 
-    private String _vetHumanText;
-    private String _AIText;
-    private String _voteHumanText;
+    private string _vetHumanText;
+    private string _aiText;
+    private string _voteHumanText;
 
     public static bool[] PassArray =
     {
@@ -86,7 +84,7 @@ public class Player : MonoBehaviour
         IsDrawingCards = true;
         _playerName = gameObject.name.Replace(" ", "").ToLower();
         // Remove spaces and change to all lowercase to standardize.
-        _playerHand = new CardCollection(gameObject.name + "'s Hand");
+        PlayerHand = new CardCollection(gameObject.name + "'s Hand");
         PlayerScore.GetComponent<Text>();
         ExpCardBackground.gameObject.GetComponent<Renderer>().enabled = false; //make card expansion invisible to user
         ExpCardImage.gameObject.GetComponent<Renderer>().enabled = false;
@@ -101,15 +99,15 @@ public class Player : MonoBehaviour
         VetNoBtn.GetComponent<Button>().onClick.AddListener(OnNoBtnHit);
         LeaveGameBtn.GetComponent<Button>().onClick.AddListener(OnLeaveBtnHit);
         JoinGameBtn.GetComponent<Button>().onClick.AddListener(OnJoinBtnHit);
-        playerVetted = false;
+        PlayerVetted = false;
         YesNoBtnHit = false;
         VetResult = true;
-        playerVoted = false;
-        locationOnBoard1.gameObject.GetComponent<Renderer>().enabled = false;
-        locationOnBoard2.gameObject.GetComponent<Renderer>().enabled = false;
-        locationOnBoard3.gameObject.GetComponent<Renderer>().enabled = false;
-        locationOnBoard4.gameObject.GetComponent<Renderer>().enabled = false;
-        locationOnBoard5.gameObject.GetComponent<Renderer>().enabled = false;
+        PlayerVoted = false;
+        LocationOnBoard1.gameObject.GetComponent<Renderer>().enabled = false;
+        LocationOnBoard2.gameObject.GetComponent<Renderer>().enabled = false;
+        LocationOnBoard3.gameObject.GetComponent<Renderer>().enabled = false;
+        LocationOnBoard4.gameObject.GetComponent<Renderer>().enabled = false;
+        LocationOnBoard5.gameObject.GetComponent<Renderer>().enabled = false;
         VoteText.gameObject.GetComponent<Text>().enabled = false;
         VoteBtnP1.gameObject.SetActive(false);
         VoteBtnP2.gameObject.SetActive(false);
@@ -126,7 +124,7 @@ public class Player : MonoBehaviour
         PlayerPiece.gameObject.GetComponent<Renderer>().enabled = false;
         BlockOff.gameObject.GetComponent<Renderer>().enabled = false;
         JoinGameBtn.gameObject.SetActive(false);
-        _AIText = "AI is thinking...";
+        _aiText = "AI is thinking...";
         _vetHumanText = "Do you agree with this connection?";
         _voteHumanText = "Which connection was the most outrageous?";
         VetPieceShrink();
@@ -136,12 +134,12 @@ public class Player : MonoBehaviour
     {
         if (!BoardManager.Instance.GetIsStarted() && !IsDrawingCards)
             return;
-        if (_playerHand.Size < HandSize)
+        if (PlayerHand.Size < HandSize)
         {
             if (BoardManager.IsDeckReady)
             {
                 Card c = BoardManager.Deck.Draw();
-                _playerHand.AddCards(c);
+                PlayerHand.AddCards(c);
                 c.MoveToBoard();
             }
             else
@@ -152,10 +150,10 @@ public class Player : MonoBehaviour
         else
             IsDrawingCards = false;
 
-        if (isAiControlled && BoardManager.Instance.GetCurrentPlayer() == this &&
-              !BoardManager.Instance.GetIsTurnOver() && BoardManager.Instance.GetIsStarted()
-              && BoardManager.Instance.VoteStartBool == false
-              && BoardManager.Instance.VetStartBool == false)
+        if (IsAiControlled && BoardManager.Instance.GetCurrentPlayer() == this &&
+              !BoardManager.Instance.IsTurnOver && BoardManager.Instance.GetIsStarted()
+              && BoardManager.CurrentPhase != GamePhase.Voting
+              && BoardManager.CurrentPhase != GamePhase.Vetting)
         {
 
             //Debug.Log("AI Control: " + name);
@@ -163,9 +161,9 @@ public class Player : MonoBehaviour
             List<int> unplayedCardIndices = new List<int>();
             foreach (Card c in BoardManager.Instance.GetPlayersUnplayedCards())
             {
-                if (!c.IsOnBoard() && _playerHand.IndexOf(c) != -1 && c.GetComponent<Renderer>().enabled)
+                if (!c.IsOnBoard() && PlayerHand.IndexOf(c) != -1 && c.GetComponent<Renderer>().enabled)
                 {
-                    unplayedCardIndices.Add(_playerHand.IndexOf(c));
+                    unplayedCardIndices.Add(PlayerHand.IndexOf(c));
                 }
             }
             if (unplayedCardIndices.Count == 0)
@@ -174,7 +172,7 @@ public class Player : MonoBehaviour
                 return;
             }
             int randomIndex = Random.Range(0, unplayedCardIndices.Count);
-            Card pickedCard = _playerHand.At(unplayedCardIndices[randomIndex]);
+            Card pickedCard = PlayerHand.At(unplayedCardIndices[randomIndex]);
             BoardManager.Instance.SelectCardInHand(pickedCard);
             CardCollection playedCards = BoardManager.Instance.GetPlayedCards();
 
@@ -186,7 +184,7 @@ public class Player : MonoBehaviour
 
             //        Debug.Log("Removed card: " + playedCards.At(i).name);
             //        playedCards.RemoveAt(i);     
-            //    }    
+            //    }
             //}
             Debug.Log("AI trying to play...  ");
             //if (playedCards.Size == 0)
@@ -229,22 +227,19 @@ public class Player : MonoBehaviour
                         Debug.Log("AI play valid");
                         break;
                     }
-                    else
-                    {
-                        //...otherwise this invalid play should happen
-                        BoardManager.Instance.SelectCardOnBoard(c);
-                        BoardManager.Instance.SelectKeyword(c.PropertyList.First());
-                        alreadyPlayed = true;
-                        Debug.Log("AI play invalid");
-                        break;
-                    }
+                    //...otherwise this invalid play should happen
+                    BoardManager.Instance.SelectCardOnBoard(c);
+                    BoardManager.Instance.SelectKeyword(c.PropertyList.First());
+                    alreadyPlayed = true;
+                    Debug.Log("AI play invalid");
+                    break;
                 }
                 if (!alreadyPlayed)
                 {
                     //...otherwise this invalid play should happen
-                    int Randomindex = Random.Range(0, playedCards.Size);
-                    BoardManager.Instance.SelectCardOnBoard(playedCards.At(Randomindex));
-                    BoardManager.Instance.SelectKeyword(playedCards.At(Randomindex).PropertyList.First());
+                    int randomindex = Random.Range(0, playedCards.Size);
+                    BoardManager.Instance.SelectCardOnBoard(playedCards.At(randomindex));
+                    BoardManager.Instance.SelectKeyword(playedCards.At(randomindex).PropertyList.First());
                     Debug.Log("AI play invalid after");
                     //break;
                 }
@@ -261,10 +256,10 @@ public class Player : MonoBehaviour
         PlayerScore.gameObject.GetComponent<Text>().text = Score.ToString(); //display score
     }
 
-    public void ReduceScore(int penalty)
-    {
-        Score -= penalty;
-    }
+    //public void ReduceScore(int penalty)
+    //{
+    //    Score -= penalty;
+    //}
 
     public void PlaceCard(Card c, Vector3 rotation)
     {
@@ -283,14 +278,14 @@ public class Player : MonoBehaviour
     {
         // Get the property value string from the property list in each card.
         List<string> keywords =
-            (from Card c in _playerHand from prop in c.PropertyList select prop.PropertyValue).ToList();
+            (from Card c in PlayerHand from prop in c.PropertyList select prop.PropertyValue).ToList();
         // Remove any duplicates and return.
         return keywords.Distinct().ToList();
     }
 
     public CardCollection GetHand()
     {
-        return _playerHand;
+        return PlayerHand;
     }
 
     public void CardExpansion(Card card) //Expand card
@@ -321,7 +316,7 @@ public class Player : MonoBehaviour
 
     public void SetAiControl(bool aiControlled)
     {
-        isAiControlled = aiControlled;
+        IsAiControlled = aiControlled;
     }
 
     private static void ShufflePropertyList(ref List<Card.CardProperty> propList)
@@ -341,7 +336,7 @@ public class Player : MonoBehaviour
         PlayerPopUpEnhanceShadow.gameObject.GetComponent<Renderer>().enabled = true;
         BlockOff.gameObject.GetComponent<Renderer>().enabled = false;
 
-        if (isAiControlled != true) //if human is playing
+        if (!IsAiControlled) //if human is playing
         {
             VetText.gameObject.GetComponent<Text>().text = _vetHumanText;
             VetText.gameObject.GetComponent<Text>().enabled = true;
@@ -350,14 +345,14 @@ public class Player : MonoBehaviour
         }
         else //if AI is playing
         {
-            VetText.gameObject.GetComponent<Text>().text = _AIText;
+            VetText.gameObject.GetComponent<Text>().text = _aiText;
             VetText.gameObject.GetComponent<Text>().enabled = true;
 
             //Turn on block off
             BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
         }
 
-        playerVetted = false;
+        PlayerVetted = false;
         YesNoBtnHit = false;
         JoinGameBtn.gameObject.SetActive(false);    //turn off joining and leaving game
         LeaveGameBtn.gameObject.SetActive(false);
@@ -374,7 +369,7 @@ public class Player : MonoBehaviour
         //playerVetted = false;
         //YesNoBtnHit = false;
 
-        if (isAiControlled == true) //after vet over display leave or join buttons
+        if (IsAiControlled) //after vet over display leave or join buttons
         {
             JoinGameBtn.gameObject.SetActive(true);
         }
@@ -386,21 +381,24 @@ public class Player : MonoBehaviour
 
     private void OnYesBtnHit()
     {
+        BoardManager.Instance.PlaySelect();
         VetResult = true;
-        playerVetted = true;
+        PlayerVetted = true;
         YesNoBtnHit = true;
     }
 
     private void OnNoBtnHit()
     {
+        BoardManager.Instance.PlaySelect();
         VetResult = false;
-        playerVetted = true;
+        PlayerVetted = true;
         YesNoBtnHit = true;
     }
 
     public void OnLeaveBtnHit()
     {
-        Debug.Log("leave btn hit");
+        BoardManager.Instance.PlaySelect();
+        //Debug.Log("leave btn hit");
         BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
         JoinGameBtn.gameObject.SetActive(true);
         LeaveGameBtn.gameObject.SetActive(false);
@@ -409,7 +407,8 @@ public class Player : MonoBehaviour
 
     private void OnJoinBtnHit()
     {
-        Debug.Log("Join btn hit");
+        BoardManager.Instance.PlaySelect();
+        //Debug.Log("Join btn hit");
         BlockOff.gameObject.GetComponent<Renderer>().enabled = false;
         JoinGameBtn.gameObject.SetActive(false);
         LeaveGameBtn.gameObject.SetActive(true);
@@ -418,12 +417,12 @@ public class Player : MonoBehaviour
 
     public void PlayerVoteExpansion()
     {
-        playerVoted = false; //reset
+        PlayerVoted = false; //reset
         PlayerPopUpEnhance.gameObject.GetComponent<Renderer>().enabled = true;
         PlayerPopUpEnhanceShadow.gameObject.GetComponent<Renderer>().enabled = true;
         BlockOff.gameObject.GetComponent<Renderer>().enabled = false;
 
-        if (isAiControlled != true) //if human is playing
+        if (!IsAiControlled) //if human is playing
         {
             VoteText.gameObject.GetComponent<Text>().text = _voteHumanText;
             VoteText.gameObject.GetComponent<Text>().enabled = true;
@@ -433,27 +432,27 @@ public class Player : MonoBehaviour
             VoteBtnP4.gameObject.SetActive(true);
 
             //if there is no one to vote for
-            if (BoardManager.Instance.cantVotePlayerList.All(b => b == true))
+            if (BoardManager.Instance.CantVotePlayerList.All(b => b))
             {
                 VotePassBtn.gameObject.SetActive(true);
             }
         }
         else //if AI is playing
         {
-            VoteText.gameObject.GetComponent<Text>().text = _AIText;
+            VoteText.gameObject.GetComponent<Text>().text = _aiText;
             VoteText.gameObject.GetComponent<Text>().enabled = true;
         }
 
-        if (BoardManager.Instance.cantVotePlayerList[0] == true)  //cant vote on "invalid" moves
+        if (BoardManager.Instance.CantVotePlayerList[0])  //cant vote on "invalid" moves
             VoteBtnP1.gameObject.SetActive(false);
 
-        if (BoardManager.Instance.cantVotePlayerList[1] == true)
+        if (BoardManager.Instance.CantVotePlayerList[1])
             VoteBtnP2.gameObject.SetActive(false);
 
-        if (BoardManager.Instance.cantVotePlayerList[2] == true)
+        if (BoardManager.Instance.CantVotePlayerList[2])
             VoteBtnP3.gameObject.SetActive(false);
 
-        if (BoardManager.Instance.cantVotePlayerList[3] == true)
+        if (BoardManager.Instance.CantVotePlayerList[3])
             VoteBtnP4.gameObject.SetActive(false);
     }
 
@@ -490,9 +489,9 @@ public class Player : MonoBehaviour
         VoteKeywordTxt.gameObject.GetComponent<Text>().enabled = false;
         VoteConnection.gameObject.GetComponent<Renderer>().enabled = false;
         VotePlayerPiece.gameObject.GetComponent<Renderer>().enabled = false;
-        playerVoted = false; //reset
+        PlayerVoted = false; //reset
 
-        if (isAiControlled == true) //after vet over display leave or join buttons
+        if (IsAiControlled) //after vet over display leave or join buttons
         {
             JoinGameBtn.gameObject.SetActive(true);
         }
@@ -505,26 +504,26 @@ public class Player : MonoBehaviour
 
     private void VotePlayer1()
     {
-        playerVoted = true;
+        PlayerVoted = true;
         VotedForWho = 1;
         VotePassBtn.gameObject.SetActive(false); //if used, make disappear
     }
 
     private void VotePlayer2()
     {
-        playerVoted = true;
+        PlayerVoted = true;
         VotedForWho = 2;
     }
 
     private void VotePlayer3()
     {
-        playerVoted = true;
+        PlayerVoted = true;
         VotedForWho = 3;
     }
 
     private void VotePlayer4()
     {
-        playerVoted = true;
+        PlayerVoted = true;
         VotedForWho = 4;
     }
 

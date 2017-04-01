@@ -1,11 +1,6 @@
-﻿using System;
-using UnityEngine;
-using System.Collections.Generic;
-using System.Linq;
-using UnityEngine.Networking.NetworkSystem;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using Random = UnityEngine.Random;
 
 public class mainMenu : MonoBehaviour
 {
@@ -20,12 +15,12 @@ public class mainMenu : MonoBehaviour
         AboutBtn.gameObject.SetActive(true);
     }
 
-    private void PlayGameTransition()
+    private static void PlayGameTransition()
     {
         SceneManager.LoadScene("PlayerSelection");
     }
 
-    private void AboutGameTransition()
+    private static void AboutGameTransition()
     {
         SceneManager.LoadScene("About");
     }

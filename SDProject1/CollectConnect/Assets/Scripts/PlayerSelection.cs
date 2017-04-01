@@ -1,11 +1,6 @@
-﻿using System;
-using UnityEngine;
-using System.Collections.Generic;
-using System.Linq;
-using UnityEngine.Networking.NetworkSystem;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using Random = UnityEngine.Random;
 
 public class PlayerSelection : MonoBehaviour
 {
@@ -34,24 +29,24 @@ public class PlayerSelection : MonoBehaviour
         ThreePlayersBtn.gameObject.SetActive(true);
     }
 
-    private void BackBtnTransition()
+    private static void BackBtnTransition()
     {
         SceneManager.LoadScene("About");
     }
 
-    private void OnePlayerFunction()
+    private static void OnePlayerFunction()
     {
         PlayerPrefs.SetInt("PlayerNumber", 1);
         SceneManager.LoadScene("MainScene");
     }
 
-    private void TwoPlayersFunction()
+    private static void TwoPlayersFunction()
     {
         PlayerPrefs.SetInt("PlayerNumber", 2);
         SceneManager.LoadScene("MainScene");
     }
 
-    private void ThreePlayersFunction()
+    private static void ThreePlayersFunction()
     {
         PlayerPrefs.SetInt("PlayerNumber", 3);
         SceneManager.LoadScene("MainScene");

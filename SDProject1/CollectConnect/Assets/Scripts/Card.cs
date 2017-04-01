@@ -13,25 +13,25 @@ public class Card : MonoBehaviour
 
         public readonly string PropertyName;
         public readonly string PropertyValue;
-        public int _pointValue;
+        public int PointValue;
 
         public CardProperty(string name, string value, string pointString = "0")
         {
             PropertyName = name;
             PropertyValue = value;
-            if (!int.TryParse(pointString, out _pointValue))
-                _pointValue = 0;
+            if (!int.TryParse(pointString, out PointValue))
+                PointValue = 0;
         }
 
         public bool Equals(CardProperty other)
         {
-            return string.Equals(PropertyName, other.PropertyName) && string.Equals(PropertyValue, other.PropertyValue) && _pointValue == other._pointValue;
+            return string.Equals(PropertyName, other.PropertyName) && string.Equals(PropertyValue, other.PropertyValue) && PointValue == other.PointValue;
         }
 
         public void SetPointValue(int newValue)
         {
             Debug.Log("Setting point value to " + newValue);
-            _pointValue = newValue;
+            PointValue = newValue;
         }
     }
 
@@ -51,7 +51,7 @@ public class Card : MonoBehaviour
     private bool _isTimerRunning; // If true, mouse is currently held down on card.
     private string _expandedInfo; // Information to display in expanded view.
     public List<CardProperty> PropertyList = new List<CardProperty>();
-    private string _imageLocation = null;
+    private string _imageLocation;
 
     // Use this for initialization
     private void Start()
@@ -113,7 +113,7 @@ public class Card : MonoBehaviour
         _isExpanded = true;
     }
 
-    
+
     private void OnMouseDrag()
     {
         if (_isOnBoard && Vector3.Distance(_pointerDownPosition, Input.mousePosition) >
@@ -146,15 +146,7 @@ public class Card : MonoBehaviour
 
     public string GetPropertyValue(string searchName)
     {
-        foreach (CardProperty prop in PropertyList)
-        {
-            if (prop.PropertyName == searchName)
-            {
-                string s = prop.PropertyValue;
-                return s;
-            }
-        }
-        return null;
+        return (from prop in PropertyList where prop.PropertyName == searchName select prop.PropertyValue).FirstOrDefault();
     }
 
     public int GetPts(CardProperty searchProperty)
@@ -165,7 +157,7 @@ public class Card : MonoBehaviour
         {
             //Debug.Log(property.PropertyName);
             if (property.PropertyValue == searchProperty.PropertyValue)
-                return property._pointValue;
+                return property.PointValue;
         }
         return 1;
     }
@@ -216,7 +208,7 @@ public class Card : MonoBehaviour
         }
     }
 
-    public void setImageLocation(string loc)
+    public void SetImageLocation(string loc)
     {
         _imageLocation = loc;
     }
@@ -279,25 +271,25 @@ public class Card : MonoBehaviour
             Card c = this;
             _originalPosition = transform.position;
 
-            if (c == p._playerHand.At(0))   //move cards to designated location on board
+            if (c == p.PlayerHand.At(0))   //move cards to designated location on board
             {
-                c.gameObject.transform.position = p.locationOnBoard1.transform.position;
+                c.gameObject.transform.position = p.LocationOnBoard1.transform.position;
             }
-            else if (c == p._playerHand.At(1))
+            else if (c == p.PlayerHand.At(1))
             {
-                c.gameObject.transform.position = p.locationOnBoard2.transform.position;
+                c.gameObject.transform.position = p.LocationOnBoard2.transform.position;
             }
-            else if (c == p._playerHand.At(2))
+            else if (c == p.PlayerHand.At(2))
             {
-                c.gameObject.transform.position = p.locationOnBoard3.transform.position;
+                c.gameObject.transform.position = p.LocationOnBoard3.transform.position;
             }
-            else if (c == p._playerHand.At(3))
+            else if (c == p.PlayerHand.At(3))
             {
-                c.gameObject.transform.position = p.locationOnBoard4.transform.position;
+                c.gameObject.transform.position = p.LocationOnBoard4.transform.position;
             }
-            else if (c == p._playerHand.At(4))
+            else if (c == p.PlayerHand.At(4))
             {
-                c.gameObject.transform.position = p.locationOnBoard5.transform.position;
+                c.gameObject.transform.position = p.LocationOnBoard5.transform.position;
             }
         }
         else

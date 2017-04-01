@@ -44,17 +44,13 @@ public class EndGame2 : MonoBehaviour
         Scoring();  //calculate scoring
     }
 
-    private void MainMenuTransition()    //go back to main menu
+    private static void MainMenuTransition()    //go back to main menu
     {
         SceneManager.LoadScene("mainMenu");
     }
 
     private void Scoring()
     {
-        int score1 = 0;
-        int score2 = 0;
-        string tempName = "";
-
         //get players and scores
         PlayerScores[0, 0] = "PLAYER1";
         PlayerScores[1, 0] = "PLAYER2";
@@ -79,8 +75,10 @@ public class EndGame2 : MonoBehaviour
             {
                 if (j < 3)  //not end of list
                 {
-                    Int32.TryParse(PlayerScores[j, 1], out score1); //convert string to int
-                    Int32.TryParse(PlayerScores[j + 1, 1], out score2);
+                    int score1;
+                    int.TryParse(PlayerScores[j, 1], out score1); //convert string to int
+                    int score2;
+                    int.TryParse(PlayerScores[j + 1, 1], out score2);
 
                     Debug.Log("Score 1: " + score1);
                     Debug.Log("Score2: " + score2);
@@ -91,7 +89,7 @@ public class EndGame2 : MonoBehaviour
                         PlayerScores[j, 1] = score2.ToString(); //flip scores
                         PlayerScores[j + 1, 1] = score1.ToString();
 
-                        tempName = PlayerScores[j, 0]; //flip player names
+                        string tempName = PlayerScores[j, 0];
                         PlayerScores[j, 0] = PlayerScores[j + 1, 0];
                         PlayerScores[j + 1, 0] = tempName;
                     }
@@ -101,21 +99,20 @@ public class EndGame2 : MonoBehaviour
 
         for (int k = 0; k < 4; k++)    //making a list of player pieces to align with scores
         {
-            if (PlayerScores[k, 0] == "PLAYER1")
+            switch (PlayerScores[k, 0])
             {
-                PlayerPieces[k] = P1Piece;
-            }
-            else if (PlayerScores[k, 0] == "PLAYER2")
-            {
-                PlayerPieces[k] = P2Piece;
-            }
-            else if (PlayerScores[k, 0] == "PLAYER3")
-            {
-                PlayerPieces[k] = P3Piece;
-            }
-            else if (PlayerScores[k, 0] == "PLAYER4")
-            {
-                PlayerPieces[k] = P4Piece;
+                case "PLAYER1":
+                    PlayerPieces[k] = P1Piece;
+                    break;
+                case "PLAYER2":
+                    PlayerPieces[k] = P2Piece;
+                    break;
+                case "PLAYER3":
+                    PlayerPieces[k] = P3Piece;
+                    break;
+                case "PLAYER4":
+                    PlayerPieces[k] = P4Piece;
+                    break;
             }
         }
 

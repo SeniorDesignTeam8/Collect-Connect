@@ -1,15 +1,11 @@
 ﻿using System;
 using UnityEngine;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using UnityEngine.UI;
-using System.Xml;
 using System.Collections;
 using Mono.Data.Sqlite;
 using System.Data;
-using System.Runtime.InteropServices;
-using System.Security.Cryptography;
 using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
@@ -42,7 +38,7 @@ public class BoardManager : MonoBehaviour
     private bool _isBoardCardSelected;
     private bool _isKeywordSelected;
     public int CurrentPlayer;
-    public bool _isTurnOver;
+    public bool IsTurnOver { get; private set; }
     private bool _playedTurn;
     public GameObject VetEnhance;
     public GameObject VetEnhanceShadow;
@@ -55,16 +51,14 @@ public class BoardManager : MonoBehaviour
     private Card _copyCardRight;
     public List<bool> VetResultList;
     private bool _afterVet;
-    private bool isFirstListGen = true;
-    public bool VetStartBool;
+    private bool _isFirstListGen = true;
+    //public bool VetStartBool;
     private bool _hitVetBtn;
     private readonly List<Vector3> _gridPositions = new List<Vector3>();
     private int[] _scoreboard;
     private int _playerNumber;
     private static IDbConnection _dbconn;
     private TimerScript _ts;
-    private bool research_Stage;
-
     public Button PassBtnP1;
     public Button PassBtnP2;
     public Button PassBtnP3;
@@ -73,39 +67,39 @@ public class BoardManager : MonoBehaviour
     public GameObject VoteEnhance;
     public GameObject VoteEnhanceShadow;
     public List<int> VoteResultsList;
-    public bool VoteStartBool;
-    public List<bool> cantVotePlayerList;
-    public List<int> legalVotePlayerList;
+    //public bool VoteStartBool;
+    public List<bool> CantVotePlayerList;
+    public List<int> LegalVotePlayerList;
 
     public GameObject InHandGlow;
     public GameObject OnBoardGlow;
 
-    private bool AIThinkingDone;
-    private PlayerSelection playerSelection;
+    public static GamePhase CurrentPhase = GamePhase.PreGame;
+
+    private bool _aiThinkingDone;
+    private PlayerSelection _playerSelection;
 
     private void Awake()
     {
-        research_Stage = false;
         _isGameStarted = false;
-        _isTurnOver = false;
         IsDeckReady = false;
         _playedTurn = false;
         VetResultList = new List<bool>();
         VoteResultsList = new List<int>();
-        cantVotePlayerList = new List<bool>();
-        legalVotePlayerList = new List<int>();
+        CantVotePlayerList = new List<bool>();
+        LegalVotePlayerList = new List<int>();
         _afterVet = false;
-        VetStartBool = false;
+        //VetStartBool = false;
         _hitVetBtn = false;
         _playerNumber = 0;
-        VoteStartBool = false;
-        AIThinkingDone = false;
+        //VoteStartBool = false;
+        _aiThinkingDone = false;
 
         for (int i = 0; i < 4; i++) //prefill lists
         {
             VetResultList.Add(true);
             VoteResultsList.Add(1);
-            cantVotePlayerList.Add(false);
+            CantVotePlayerList.Add(false);
         }
     }
 
@@ -131,14 +125,15 @@ public class BoardManager : MonoBehaviour
                 _playerScriptRefs.Add(player.GetComponent<Player>());
             _playerScriptRefs[0].SetAiControl(true);    //set first player to be AI controlled
 
-            if (PlayerPrefs.GetInt("PlayerNumber") == 1)
+            switch (PlayerPrefs.GetInt("PlayerNumber"))
             {
-                _playerScriptRefs[1].OnLeaveBtnHit();
-                _playerScriptRefs[3].OnLeaveBtnHit();
-            }
-            else if (PlayerPrefs.GetInt("PlayerNumber") == 2)
-            {
-                _playerScriptRefs[3].OnLeaveBtnHit();
+                case 1:
+                    _playerScriptRefs[1].OnLeaveBtnHit();
+                    _playerScriptRefs[3].OnLeaveBtnHit();
+                    break;
+                case 2:
+                    _playerScriptRefs[3].OnLeaveBtnHit();
+                    break;
             }
 
             _keywordList = new List<string>();
@@ -166,7 +161,7 @@ public class BoardManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        DontDestroyOnLoad(gameObject);
+        //DontDestroyOnLoad(gameObject);
     }
 
     internal Player GetCurrentPlayer()
@@ -179,7 +174,7 @@ public class BoardManager : MonoBehaviour
     {
         // First, check if all players have drawn their cards.
         // If so, then populate the players' word banks.
-        if (!research_Stage && !_isGameStarted)
+        if (CurrentPhase != GamePhase.Research && !_isGameStarted)
         {
             bool allHandsDrawn = _playerScriptRefs.All(p => !p.IsDrawingCards);
 
@@ -197,12 +192,12 @@ public class BoardManager : MonoBehaviour
                 PopulateKeywords();
 
 
-                if (isFirstListGen)
+                if (_isFirstListGen)
                 {
                     UpdateScoring();
-                    isFirstListGen = false;
+                    _isFirstListGen = false;
                 }
-                research_Stage = true;
+                CurrentPhase = GamePhase.Research;
                 //_isGameStarted = true;
             }
         }
@@ -229,18 +224,19 @@ public class BoardManager : MonoBehaviour
                     PlayPlace();
 
                     //first card played by AI
-                    _playerScriptRefs[CurrentPlayer].connectionKeyword = "First Card Played";
+                    _playerScriptRefs[CurrentPlayer].ConnectionKeyword = "First Card Played";
 
                     //c.gameObject.AddComponent<NodeMovement>();
                     _isPlayerCardSelected = false;
                     _isFirstCardPlay = false;
-                    _isTurnOver = true;
+                    IsTurnOver = true;
                 }
             }
         }
         else if (AllCardsPlayed())
         {
             _isGameStarted = false;
+            CurrentPhase = GamePhase.PostGame;
             // TODO Go to end game screen here.
             //collect player scores for end game screen
             PlayerPrefs.SetInt("Player1Score", _playerScriptRefs[0].Score);
@@ -251,7 +247,7 @@ public class BoardManager : MonoBehaviour
             SceneManager.LoadScene("EndGame");  //using for testing
 
         }
-        else if (VoteStartBool == false)
+        else if (CurrentPhase != GamePhase.Voting)
         {
             //tri select check
             Card cardA = null, cardB = null;
@@ -268,7 +264,7 @@ public class BoardManager : MonoBehaviour
                     }
                     else if (c.IsSelected())
                     {
-                        //This is the card in the players hand
+                        //This is the card in the player's hand
                         cardA = c;
                     }
                 }
@@ -276,60 +272,59 @@ public class BoardManager : MonoBehaviour
 
             //after tri-select, add cards to list for vetting (currentPlayer, card1, card2, keyword)
             //store connection in player
-            _playerScriptRefs[CurrentPlayer].card1 = cardA;
-            _playerScriptRefs[CurrentPlayer].card2 = cardB;
-            _playerScriptRefs[CurrentPlayer].connectionKeyword = _currentKeyword;
+            _playerScriptRefs[CurrentPlayer].Card1 = cardA;
+            _playerScriptRefs[CurrentPlayer].Card2 = cardB;
+            _playerScriptRefs[CurrentPlayer].ConnectionKeyword = _currentKeyword;
 
-            if (!VetStartBool)  //if vetting hasn't started
+            if (CurrentPhase != GamePhase.Vetting)  //if vetting hasn't started
             {
                 Debug.Log("Starting vet setup.");
-                VetStartBool = true;
                 VetSetUp();
                 _ts.CancelInvoke();
             }
-            else if(_playerScriptRefs[_playerNumber].playerVetted == true) //if vetting has started and player hit yes/no btn
+            else if (_playerScriptRefs[_playerNumber].PlayerVetted) //if vetting has started and player hit yes/no btn
+            {
+                _playerScriptRefs[_playerNumber].VetShrink();
+
+                VetResultList[_playerNumber] = _playerScriptRefs[_playerNumber].VetResult; //pull player's result 
+                _playerNumber++;
+
+                if (_playerNumber < 4)
                 {
-                    _playerScriptRefs[_playerNumber].VetShrink();
-
-                    VetResultList[_playerNumber] = _playerScriptRefs[_playerNumber].VetResult; //pull player's result 
-                    _playerNumber++;
-
-                    if (_playerNumber < 4)
+                    if (_playerScriptRefs[_playerNumber].IsAiControlled)  //AI Controlled
                     {
-                        if (_playerScriptRefs[_playerNumber].isAiControlled == true)  //AI Controlled 
+                        if (!_aiThinkingDone)
                         {
-                            if (AIThinkingDone == false)
-                            {
-                                _playerScriptRefs[_playerNumber].VetExpansion(); //individual player screens
-                                StartCoroutine("VetAIDecision"); //start AI decision timer
-                                AIThinkingDone = true;
-                            }
-                            else if (AIThinkingDone == true)
-                            {
-                                Debug.Log("Doing nothing"); //leave in here do not delete!! It's needed
-                            }
+                            _playerScriptRefs[_playerNumber].VetExpansion(); //individual player screens
+                            StartCoroutine("VetAiDecision"); //start AI decision timer
+                            _aiThinkingDone = true;
                         }
-                        else
+                        else if (_aiThinkingDone)
                         {
-                            _playerScriptRefs[_playerNumber].VetExpansion(); //individual player screens 
+                            Debug.Log("Doing nothing"); //leave in here do not delete!! It's needed
                         }
                     }
-
-                    if (_playerScriptRefs[3].playerVetted == true)
+                    else
                     {
-                        _hitVetBtn = false;
-                        _playerScriptRefs[3].VetShrink();
-                        Destroy(_copyCardLeft.gameObject); //delete clones
-                        Destroy(_copyCardRight.gameObject);
-                        DisableVet(); //shrink vet visuals
-                        ToggleCardsOn();
-                        _afterVet = true; //all done vetting
-                        _playerNumber = 0;
-                        AIThinkingDone = false; //reset
+                        _playerScriptRefs[_playerNumber].VetExpansion(); //individual player screens 
                     }
                 }
 
-            if (_afterVet == true) //get the vet result, true for yes/valid, false for no/invalid
+                if (_playerScriptRefs[3].PlayerVetted)
+                {
+                    _hitVetBtn = false;
+                    _playerScriptRefs[3].VetShrink();
+                    Destroy(_copyCardLeft.gameObject); //delete clones
+                    Destroy(_copyCardRight.gameObject);
+                    DisableVet(); //shrink vet visuals
+                    ToggleCardsOn();
+                    _afterVet = true; //all done vetting
+                    _playerNumber = 0;
+                    _aiThinkingDone = false; //reset
+                }
+            }
+
+            if (_afterVet) //get the vet result, true for yes/valid, false for no/invalid
             {
                 if (GetVetResult())
                 {
@@ -344,10 +339,10 @@ public class BoardManager : MonoBehaviour
                             Debug.Log("Prop's value: " + prop.PropertyValue);
                             GetCurrentPlayer().IncreaseScore(cardA.GetPts(prop));
                             GetCurrentPlayer().PlayerScore.GetComponent<Text>().text = "" + GetCurrentPlayer().Score;
-                            _isTurnOver = true;
+                            IsTurnOver = true;
                             _hitVetBtn = false; //reset btn
                             _afterVet = false;
-                            VetStartBool = false;
+                            CurrentPhase = GamePhase.Playing;
                         }
                         else
                         {
@@ -364,22 +359,25 @@ public class BoardManager : MonoBehaviour
                 {
                     //the players vetted against the connection. Reset the cards and pass.
                     ResetPassArray();
-                    _playerScriptRefs[CurrentPlayer].card1 = null;
-                    _playerScriptRefs[CurrentPlayer].card2 = null;
-                    _playerScriptRefs[CurrentPlayer].connectionKeyword = "Vetted Against";
+                    _playerScriptRefs[CurrentPlayer].Card1 = null;
+                    _playerScriptRefs[CurrentPlayer].Card2 = null;
+                    _playerScriptRefs[CurrentPlayer].ConnectionKeyword = "Vetted Against";
                     _currentKeyword = "";
-                    cardA.gameObject.GetComponent<Renderer>().enabled = false;
-                    cardA.SetIsOnBoard(false);
-                    cardA.SetIsSelected(false);
+                    if (cardA != null)
+                    {
+                        cardA.gameObject.GetComponent<Renderer>().enabled = false;
+                        cardA.SetIsOnBoard(false);
+                        cardA.SetIsSelected(false);
 
-                    cardA.gameObject.layer = 2; //"destroyed"
+                        cardA.gameObject.layer = 2; //"destroyed"
+                    }
 
                     //Destroy(cardA.gameObject);
-
-                    _isTurnOver = true;
+                    CurrentPhase = GamePhase.Playing;
+                    IsTurnOver = true;
                     _hitVetBtn = false; //reset btn
                     _afterVet = false;
-                    VetStartBool = false;
+                    //VetStartBool = false;
                 }
             }
         }
@@ -387,18 +385,18 @@ public class BoardManager : MonoBehaviour
         {
             //RUN VOTING
             _ts.CancelInvoke();
-            if (_playerScriptRefs[_playerNumber].playerVoted == true) //if player voted
+            if (_playerScriptRefs[_playerNumber].PlayerVoted) //if player voted
             {
                 _playerScriptRefs[_playerNumber].PlayerVoteShrink();
                 _playerNumber++;
 
                 if (_playerNumber < 4)
                 {
-                    if (_playerScriptRefs[_playerNumber].isAiControlled == true) //if AI controlled 
+                    if (_playerScriptRefs[_playerNumber].IsAiControlled) //if AI controlled
                     {
                         _playerScriptRefs[_playerNumber].PlayerVoteExpansion();
-                        StartCoroutine("VoteAIDecision"); //start AI decision timer
-                        AIThinkingDone = true;
+                        StartCoroutine("VoteAiDecision"); //start AI decision timer
+                        _aiThinkingDone = true;
                     }
                     else
                     {
@@ -407,14 +405,14 @@ public class BoardManager : MonoBehaviour
                     }
                 }
 
-                if (_playerScriptRefs[3].playerVoted == true) //last player to vote
+                if (_playerScriptRefs[3].PlayerVoted) //last player to vote
                 {
                     _playerScriptRefs[3].PlayerVoteShrink();
                     GetVoteResult();    //distribute points
                     ToggleCardsOn();    //enable card movement
                     DisableVote();      //shrink voting screen
                     _playerNumber = 0;
-                    AIThinkingDone = false; //reset
+                    _aiThinkingDone = false; //reset
                     //VoteStartBool = false;
 
                     foreach (Player p in _playerScriptRefs)  //destroy main player cards
@@ -432,11 +430,11 @@ public class BoardManager : MonoBehaviour
 
                     for (int i = 0; i < 4; i++) //rest listing
                     {
-                        cantVotePlayerList[i] = false;
+                        CantVotePlayerList[i] = false;
                     }
 
                     CurrentPlayer = 0;    //start round after voting (for late update)
-                    VoteStartBool = false;
+                    CurrentPhase = GamePhase.Playing;
                     _ts.InvokeRepeating("decreaseTime", 1, 1);
                 }
             }
@@ -450,16 +448,16 @@ public class BoardManager : MonoBehaviour
 
     private void LateUpdate()
     {
-        if (!_isTurnOver)
+        if (!IsTurnOver)
             return;
         if (!_isGameStarted)
             return;
 
         TimerScript.Timeleft = 90;
-        _ts.circleSlider.fillAmount = 1f;
+        _ts.circleSlider.fillAmount = 1.0f;
         _ts.InvokeRepeating("decreaseTime", 1, 1);
 
-        if (VoteStartBool == false)
+        if (CurrentPhase != GamePhase.Voting)
         {
             //shrink player piece
             _playerScriptRefs[CurrentPlayer].PlayerPieceShrink();
@@ -473,7 +471,6 @@ public class BoardManager : MonoBehaviour
             if (CurrentPlayer == 4) //all players have played in round 
             {
                 //Run voting
-                VoteStartBool = true;
                 VoteSetUp();
                 CurrentPlayer--;
             }
@@ -486,86 +483,86 @@ public class BoardManager : MonoBehaviour
             Debug.Log("player's turn: " + CurrentPlayer);
             CurrentPlayer %= Players.Length;
 
-            if (CurrentPlayer == 0)
+            switch (CurrentPlayer)
             {
-                PassBtnP1.gameObject.SetActive(true);
-                PassBtnP2.gameObject.SetActive(false);
-                PassBtnP3.gameObject.SetActive(false);
-                PassBtnP4.gameObject.SetActive(false);
-                KeywordContainerP2.gameObject.layer = 2;
-                KeywordContainerP3.gameObject.layer = 2;
-                KeywordContainerP4.gameObject.layer = 2;
-
-                //Turning on/off player blocking
-                _playerScriptRefs[0].BlockOff.gameObject.GetComponent<Renderer>().enabled = false;
-                _playerScriptRefs[1].BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
-                _playerScriptRefs[2].BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
-                _playerScriptRefs[3].BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
-            }
-            else if (CurrentPlayer == 1)
-            {
-                PassBtnP1.gameObject.SetActive(false);
-                PassBtnP2.gameObject.SetActive(true);
-                PassBtnP3.gameObject.SetActive(false);
-                PassBtnP4.gameObject.SetActive(false);
-
-                if (_playerScriptRefs[CurrentPlayer].isAiControlled == true)
-                {
+                case 0:
+                    PassBtnP1.gameObject.SetActive(true);
                     PassBtnP2.gameObject.SetActive(false);
-                }
-
-                KeywordContainerP2.gameObject.layer = 5;
-                KeywordContainerP3.gameObject.layer = 2;
-                KeywordContainerP4.gameObject.layer = 2;
-
-                //Turning on/off player blocking
-                _playerScriptRefs[0].BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
-                _playerScriptRefs[1].BlockOff.gameObject.GetComponent<Renderer>().enabled = false;
-                _playerScriptRefs[2].BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
-                _playerScriptRefs[3].BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
-            }
-            else if (CurrentPlayer == 2)
-            {
-                PassBtnP1.gameObject.SetActive(false);
-                PassBtnP2.gameObject.SetActive(false);
-                PassBtnP3.gameObject.SetActive(true);
-                PassBtnP4.gameObject.SetActive(false);
-                KeywordContainerP2.gameObject.layer = 2;
-                KeywordContainerP3.gameObject.layer = 5;
-                KeywordContainerP4.gameObject.layer = 2;
-
-                //Turning on/off player blocking
-                _playerScriptRefs[0].BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
-                _playerScriptRefs[1].BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
-                _playerScriptRefs[2].BlockOff.gameObject.GetComponent<Renderer>().enabled = false;
-                _playerScriptRefs[3].BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
-            }
-            else if (CurrentPlayer == 3)
-            {
-                PassBtnP1.gameObject.SetActive(false);
-                PassBtnP2.gameObject.SetActive(false);
-                PassBtnP3.gameObject.SetActive(false);
-                PassBtnP4.gameObject.SetActive(true);
-
-                if (_playerScriptRefs[CurrentPlayer].isAiControlled == true ||
-                        VoteStartBool == true)
-                {
+                    PassBtnP3.gameObject.SetActive(false);
                     PassBtnP4.gameObject.SetActive(false);
-                }
+                    KeywordContainerP2.gameObject.layer = 2;
+                    KeywordContainerP3.gameObject.layer = 2;
+                    KeywordContainerP4.gameObject.layer = 2;
 
-                KeywordContainerP2.gameObject.layer = 2;
-                KeywordContainerP3.gameObject.layer = 2;
-                KeywordContainerP4.gameObject.layer = 5;
+                    //Turning on/off player blocking
+                    _playerScriptRefs[0].BlockOff.gameObject.GetComponent<Renderer>().enabled = false;
+                    _playerScriptRefs[1].BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
+                    _playerScriptRefs[2].BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
+                    _playerScriptRefs[3].BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
+                    break;
+                case 1:
+                    PassBtnP1.gameObject.SetActive(false);
+                    PassBtnP2.gameObject.SetActive(true);
+                    PassBtnP3.gameObject.SetActive(false);
+                    PassBtnP4.gameObject.SetActive(false);
 
-                //Turning on/off player blocking
-                _playerScriptRefs[0].BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
-                _playerScriptRefs[1].BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
-                _playerScriptRefs[2].BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
-                _playerScriptRefs[3].BlockOff.gameObject.GetComponent<Renderer>().enabled = false;
+                    if (_playerScriptRefs[CurrentPlayer].IsAiControlled)
+                    {
+                        PassBtnP2.gameObject.SetActive(false);
+                    }
+
+                    KeywordContainerP2.gameObject.layer = 5;
+                    KeywordContainerP3.gameObject.layer = 2;
+                    KeywordContainerP4.gameObject.layer = 2;
+
+                    //Turning on/off player blocking
+                    _playerScriptRefs[0].BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
+                    _playerScriptRefs[1].BlockOff.gameObject.GetComponent<Renderer>().enabled = false;
+                    _playerScriptRefs[2].BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
+                    _playerScriptRefs[3].BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
+                    break;
+                case 2:
+                    PassBtnP1.gameObject.SetActive(false);
+                    PassBtnP2.gameObject.SetActive(false);
+                    PassBtnP3.gameObject.SetActive(true);
+                    PassBtnP4.gameObject.SetActive(false);
+                    KeywordContainerP2.gameObject.layer = 2;
+                    KeywordContainerP3.gameObject.layer = 5;
+                    KeywordContainerP4.gameObject.layer = 2;
+
+                    //Turning on/off player blocking
+                    _playerScriptRefs[0].BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
+                    _playerScriptRefs[1].BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
+                    _playerScriptRefs[2].BlockOff.gameObject.GetComponent<Renderer>().enabled = false;
+                    _playerScriptRefs[3].BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
+                    break;
+                case 3:
+                    PassBtnP1.gameObject.SetActive(false);
+                    PassBtnP2.gameObject.SetActive(false);
+                    PassBtnP3.gameObject.SetActive(false);
+                    PassBtnP4.gameObject.SetActive(true);
+
+                    if (_playerScriptRefs[CurrentPlayer].IsAiControlled ||
+                        CurrentPhase == GamePhase.Voting)
+                    {
+                        PassBtnP4.gameObject.SetActive(false);
+                    }
+
+                    KeywordContainerP2.gameObject.layer = 2;
+                    KeywordContainerP3.gameObject.layer = 2;
+                    KeywordContainerP4.gameObject.layer = 5;
+
+                    //Turning on/off player blocking
+                    _playerScriptRefs[0].BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
+                    _playerScriptRefs[1].BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
+                    _playerScriptRefs[2].BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
+                    _playerScriptRefs[3].BlockOff.gameObject.GetComponent<Renderer>().enabled = false;
+                    break;
             }
 
             PopulateKeywords();
-            _isTurnOver = false;
+            CurrentPhase = GamePhase.Playing;
+            IsTurnOver = false;
             _isPlayerCardSelected = false;
             _isBoardCardSelected = false;
             _playedTurn = false;
@@ -616,7 +613,11 @@ public class BoardManager : MonoBehaviour
             btn.onClick.AddListener(() =>
             {
                 Debug.Log(go.GetComponentInChildren<Text>().text + " Clicked!");
-                _currentKeyword = go.GetComponentInChildren<Text>().text;
+                if (CurrentPlayer == 0)
+                {
+                    PlaySelect();
+                    _currentKeyword = go.GetComponentInChildren<Text>().text;
+                }
             });
             Vector3 scale = transform.localScale;
             scale.x = 1.0f;
@@ -639,7 +640,11 @@ public class BoardManager : MonoBehaviour
             btn.onClick.AddListener(() =>
             {
                 Debug.Log(go.GetComponentInChildren<Text>().text + " Clicked!");
-                _currentKeyword = go.GetComponentInChildren<Text>().text;
+                if (CurrentPlayer == 1)
+                {
+                    PlaySelect();
+                    _currentKeyword = go.GetComponentInChildren<Text>().text;
+                }
             });
             Vector3 scale = transform.localScale;
             scale.x = 1.0f;
@@ -661,7 +666,11 @@ public class BoardManager : MonoBehaviour
             btn.onClick.AddListener(() =>
             {
                 Debug.Log(go.GetComponentInChildren<Text>().text + " Clicked!");
-                _currentKeyword = go.GetComponentInChildren<Text>().text;
+                if (CurrentPlayer == 2)
+                {
+                    PlaySelect();
+                    _currentKeyword = go.GetComponentInChildren<Text>().text;
+                }
             });
             Vector3 scale = transform.localScale;
             scale.x = 1.0f;
@@ -682,7 +691,11 @@ public class BoardManager : MonoBehaviour
             btn.onClick.AddListener(() =>
             {
                 Debug.Log(go.GetComponentInChildren<Text>().text + " Clicked!");
-                _currentKeyword = go.GetComponentInChildren<Text>().text;
+                if (CurrentPlayer == 3)
+                {
+                    PlaySelect();
+                    _currentKeyword = go.GetComponentInChildren<Text>().text;
+                }
             });
             Vector3 scale = transform.localScale;
             scale.x = 1.0f;
@@ -748,7 +761,7 @@ public class BoardManager : MonoBehaviour
                 cardComponent.SetExpInfo(s);
                 int cardId = (int)(long)rd["cardID"];
                 s = (string)rd["imageLocation"];
-                cardComponent.setImageLocation(s);
+                cardComponent.SetImageLocation(s);
 
                 string keywordQuery = "SELECT * FROM attributes NATURAL JOIN parameters NATURAL JOIN cards NATURAL JOIN parameters_attributes WHERE cardID = " + cardId;
                 IDbCommand kwCmd = _dbconn.CreateCommand();
@@ -769,7 +782,7 @@ public class BoardManager : MonoBehaviour
 
     }
 
-    private void PlaySelect()
+    public void PlaySelect()
     {
         if (SoundEffectSource.isPlaying)
             SoundEffectSource.Stop();
@@ -804,10 +817,8 @@ public class BoardManager : MonoBehaviour
     public void CardExpand(Card card) //find card and player to expand
     {
         Player p = FindOwningPlayer(card);
-        foreach (Card c in p.GetHand())
+        foreach (Card c in from Card c in p.GetHand() where c.name == card.name select c)
         {
-            if (c.name != card.name)
-                continue;
             p.CardExpansion(c);
             PlayExpand();
             return;
@@ -817,10 +828,8 @@ public class BoardManager : MonoBehaviour
     public void CardUnexpand(Card card) //find card and player to unexpand
     {
         Player p = FindOwningPlayer(card);
-        foreach (Card c in p.GetHand())
+        foreach (Card c in from Card c in p.GetHand() where c.name == card.name select c)
         {
-            if (c.name != card.name)
-                continue;
             p.CardShrink(c);
             PlayDeselect();
             return;
@@ -1051,22 +1060,22 @@ public class BoardManager : MonoBehaviour
 
     public void PassBtnHit() //player hit pass button
     {
-        _playerScriptRefs[CurrentPlayer].card1 = null;
-        _playerScriptRefs[CurrentPlayer].card2 = null;
-        _playerScriptRefs[CurrentPlayer].connectionKeyword = "Passed";
+        _playerScriptRefs[CurrentPlayer].Card1 = null;
+        _playerScriptRefs[CurrentPlayer].Card2 = null;
+        _playerScriptRefs[CurrentPlayer].ConnectionKeyword = "Passed";
         Player.PassArray[CurrentPlayer] = true;
-        _isTurnOver = true;
-
+        IsTurnOver = true;
+        PlaySelect();
         foreach (Card c in from p in _playerScriptRefs from Card c in p.GetHand() where c.IsSelected() select c)
         {
             c.SetIsSelected(false); // Deselect any selected cards.
         }
-        foreach (bool b in Player.PassArray)
+        if (Player.PassArray.Any(b => !b))
         {
-            if (!b)
-                return;
+            return;
         }
         _isGameStarted = false;
+        CurrentPhase = GamePhase.PostGame;
         // TODO Go to end game screen here.
         //collect player scores for end game screen
         PlayerPrefs.SetInt("Player1Score", _playerScriptRefs[0].Score);
@@ -1096,10 +1105,9 @@ public class BoardManager : MonoBehaviour
     public CardCollection GetPlayersUnplayedCards()
     {
         CardCollection coll = new CardCollection("Unplayed Cards");
-        foreach (Card c in _playerScriptRefs[CurrentPlayer].GetHand())
+        foreach (Card c in from Card c in _playerScriptRefs[CurrentPlayer].GetHand() where !c.IsOnBoard() select c)
         {
-            if (!c.IsOnBoard())
-                coll.AddCards(c);
+            coll.AddCards(c);
         }
         return coll;
     }
@@ -1108,11 +1116,6 @@ public class BoardManager : MonoBehaviour
     {
         if (_keywordList.Contains(prop.PropertyValue))
             _currentKeyword = prop.PropertyValue;
-    }
-
-    public bool GetIsTurnOver()
-    {
-        return _isTurnOver;
     }
 
     public bool GetIsStarted()
@@ -1150,23 +1153,23 @@ public class BoardManager : MonoBehaviour
     private void VetSetUp()  //timer before vet screen pops up
     {
         Debug.Log("Enabling vet.");
-
+        CurrentPhase = GamePhase.Vetting;
         for (int i = 0; i < 4; i++)
         {
             VetResultList[i] = true;    //reset result list
-            _playerScriptRefs[i].playerVetted = false; //reset all player vetted
+            _playerScriptRefs[i].PlayerVetted = false; //reset all player vetted
         }
 
         EnableVet();
         ToggleCardsOff();
 
-        VetConnectionWordTxt.gameObject.GetComponent<Text>().text = _playerScriptRefs[CurrentPlayer].connectionKeyword; //store card connection for vet and vote 
+        VetConnectionWordTxt.gameObject.GetComponent<Text>().text = _playerScriptRefs[CurrentPlayer].ConnectionKeyword; //store card connection for vet and vote 
 
-        _copyCardLeft = Instantiate(_playerScriptRefs[CurrentPlayer].card1, new Vector3(0f, 0f, 0f), Quaternion.identity);
+        _copyCardLeft = Instantiate(_playerScriptRefs[CurrentPlayer].Card1, new Vector3(0f, 0f, 0f), Quaternion.identity);
         _copyCardLeft.transform.position = VetCard1.gameObject.transform.position;
         _copyCardLeft.transform.localScale = VetCard1.gameObject.GetComponent<Renderer>().bounds.extents;
 
-        _copyCardRight = Instantiate(_playerScriptRefs[CurrentPlayer].card2, new Vector3(0f, 0f, 0f), Quaternion.identity);
+        _copyCardRight = Instantiate(_playerScriptRefs[CurrentPlayer].Card2, new Vector3(0f, 0f, 0f), Quaternion.identity);
         _copyCardRight.transform.position = VetCard2.gameObject.transform.position;
         _copyCardRight.transform.localScale = VetCard2.gameObject.GetComponent<Renderer>().bounds.extents;
 
@@ -1175,21 +1178,21 @@ public class BoardManager : MonoBehaviour
 
         VetResultList[0] = CheckConnection();
         Debug.Log("AI vetted " + VetResultList[0]);
-        _playerScriptRefs[_playerNumber].playerVetted = true; //first AI done 
+        _playerScriptRefs[_playerNumber].PlayerVetted = true; //first AI done 
         _playerScriptRefs[_playerNumber].YesNoBtnHit = true;
         _playerScriptRefs[_playerNumber].VetResult = VetResultList[0];
 
     }
 
-    private IEnumerator VetAIDecision() //timer for AI to "think"
+    private IEnumerator VetAiDecision() //timer for AI to "think"
     {
         yield return new WaitForSeconds(4.0f);
 
         int rindex = Random.Range(0, 101);
-        bool AIVet = rindex > 50;
-        VetResultList[_playerNumber] = AIVet;
-        _playerScriptRefs[_playerNumber].playerVetted = true;
-        AIThinkingDone = false; //reset
+        bool aiVet = rindex > 50;
+        VetResultList[_playerNumber] = aiVet;
+        _playerScriptRefs[_playerNumber].PlayerVetted = true;
+        _aiThinkingDone = false; //reset
     }
 
     private bool GetVetResult()
@@ -1246,7 +1249,7 @@ public class BoardManager : MonoBehaviour
     {
         VoteEnhance.gameObject.GetComponent<Renderer>().enabled = false;
         VoteEnhanceShadow.gameObject.GetComponent<Renderer>().enabled = false;
-        legalVotePlayerList.Clear();    //clear player voting list for AI voting
+        LegalVotePlayerList.Clear();    //clear player voting list for AI voting
 
         foreach (Player p in _playerScriptRefs) //shrink main voting pieces 
         {
@@ -1258,7 +1261,7 @@ public class BoardManager : MonoBehaviour
     {
         VoteEnhance.gameObject.GetComponent<Renderer>().enabled = true;
         VoteEnhanceShadow.gameObject.GetComponent<Renderer>().enabled = true;
-
+        //Debug.Log("Hi, Mom!");
         foreach (Player p in _playerScriptRefs) //expand main voting pieces 
         {
             p.VoteMainExpansion();
@@ -1268,7 +1271,7 @@ public class BoardManager : MonoBehaviour
     private void VoteSetUp()  //vote screen pops up
     {
         Debug.Log("Enabling voting.");
-
+        CurrentPhase = GamePhase.Voting;
         EnableVote();
         ToggleCardsOff();
 
@@ -1280,31 +1283,31 @@ public class BoardManager : MonoBehaviour
         _playerNumber = 0; //reset for voting below
         foreach (Player p in _playerScriptRefs)
         {
-            p.VoteKeywordTxt.gameObject.GetComponent<Text>().text = p.connectionKeyword;
+            p.VoteKeywordTxt.gameObject.GetComponent<Text>().text = p.ConnectionKeyword;
 
-            if (p.connectionKeyword != "Passed" && p.connectionKeyword != "Vetted Against" && p.connectionKeyword != "First Card Played")
+            if (p.ConnectionKeyword != "Passed" && p.ConnectionKeyword != "Vetted Against" && p.ConnectionKeyword != "First Card Played")
             {
                 //don't display cards if player passed or vetted against or if first card
                 //don't allow players to vote for this play
-                p.VoteKeywordTxt.gameObject.GetComponent<Text>().text = p.connectionKeyword;
+                p.VoteKeywordTxt.gameObject.GetComponent<Text>().text = p.ConnectionKeyword;
 
-                p.CopyCardLeft = Instantiate(p.card1, new Vector3(0f, 0f, 0f), Quaternion.identity);
+                p.CopyCardLeft = Instantiate(p.Card1, new Vector3(0f, 0f, 0f), Quaternion.identity);
                 p.CopyCardLeft.transform.position = p.VoteCardLeft.gameObject.transform.position;
                 p.CopyCardLeft.transform.localScale = Vector3.one;
                 p.VoteCardLeft.gameObject.GetComponent<Renderer>().enabled = false;
 
-                p.CopyCardRight = Instantiate(p.card2, new Vector3(0f, 0f, 0f), Quaternion.identity);
+                p.CopyCardRight = Instantiate(p.Card2, new Vector3(0f, 0f, 0f), Quaternion.identity);
                 p.CopyCardRight.transform.position = p.VoteCardRight.gameObject.transform.position;
                 p.CopyCardRight.transform.localScale = Vector3.one;
                 p.VoteCardRight.gameObject.GetComponent<Renderer>().enabled = false;
                 _playerNumber++;
-                legalVotePlayerList.Add(_playerNumber++); //add valid players to list for AI voting
+                LegalVotePlayerList.Add(_playerNumber++); //add valid players to list for AI voting
                 _playerNumber--;
             }
             else
             {
                 //disable voting buttons for those players
-                cantVotePlayerList[_playerNumber] = true;
+                CantVotePlayerList[_playerNumber] = true;
                 _playerNumber++;
 
                 //don't display card holders
@@ -1316,8 +1319,8 @@ public class BoardManager : MonoBehaviour
 
         //AI Voting
         _playerScriptRefs[_playerNumber].PlayerVoteExpansion();
-        VoteResultsList[0] = 1; //preset for AI 
-        _playerScriptRefs[_playerNumber].playerVoted = true;
+        VoteResultsList[0] = 1; //preset for AI
+        _playerScriptRefs[_playerNumber].PlayerVoted = true;
     }
 
     private void GetVoteResult()
@@ -1348,17 +1351,12 @@ public class BoardManager : MonoBehaviour
     private bool CheckConnection()
     {
         List<Card.CardProperty> commonProps = _copyCardRight.FindCommonProperties(_copyCardLeft);
-        foreach (Card.CardProperty key in commonProps)
-        {
-            if (key.PropertyValue == _currentKeyword)
-                return true;
-        }
-        return false;
+        return commonProps.Any(key => key.PropertyValue == _currentKeyword);
     }
 
     private struct KeywordFreq
     {
-        public string KeywordName;
+        public readonly string KeywordName;
         public int KeywordFreqs;
         public bool IsProcessed;
 
@@ -1382,7 +1380,7 @@ public class BoardManager : MonoBehaviour
 
     private void UpdateScoring()
     {
-        Debug.Log("Blah");
+        //Debug.Log("Blah");
         int tier1 = 2;
         int tier2 = 4;
         int tier3 = 6;
@@ -1394,7 +1392,7 @@ public class BoardManager : MonoBehaviour
 
             foreach (Player p in _playerScriptRefs)
             {
-                foreach (Card c in p._playerHand)
+                foreach (Card c in p.PlayerHand)
                 {
                     foreach (Card.CardProperty prop in c.PropertyList)
                     {
@@ -1416,7 +1414,7 @@ public class BoardManager : MonoBehaviour
             foreach (Player p in _playerScriptRefs)
             {
                 //check if card is in player hand not just in deck
-                foreach (Card c in p._playerHand)
+                foreach (Card c in p.PlayerHand)
                 {
                     // foreach (Card.CardProperty prop in c.PropertyList.Where(prop => prop.PropertyValue == freq.KeywordName))
                     //  {
@@ -1431,17 +1429,17 @@ public class BoardManager : MonoBehaviour
                             if (freq.KeywordFreqs >= 10)
                             {
                                 //prop.SetPointValue(tier1);
-                                temp._pointValue = tier1;
+                                temp.PointValue = tier1;
                             }
                             if (freq.KeywordFreqs < 10 && freq.KeywordFreqs > 4)
                             {
                                 //prop.SetPointValue(tier2);
-                                temp._pointValue = tier2;
+                                temp.PointValue = tier2;
                             }
                             if (freq.KeywordFreqs >= 0 && freq.KeywordFreqs <= 4)
                             {
                                 //prop.SetPointValue(tier3);
-                                temp._pointValue = tier3;
+                                temp.PointValue = tier3;
                             }
                             c.PropertyList[i] = temp;
                         }
@@ -1454,24 +1452,24 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    private IEnumerator VoteAIDecision() //timer for AI to "think"
+    private IEnumerator VoteAiDecision() //timer for AI to "think"
     {
         yield return new WaitForSeconds(4.0f);
 
-        if (legalVotePlayerList.Count != 0) //something to vote on 
+        if (LegalVotePlayerList.Count != 0) //something to vote on 
         {
             var random = new System.Random();
-            int playerSelection = random.Next(legalVotePlayerList.Count);
+            int playerSelection = random.Next(LegalVotePlayerList.Count);
             _playerScriptRefs[_playerNumber].VotedForWho = playerSelection;
         }
-        _playerScriptRefs[_playerNumber].playerVoted = true;    //move to next player
+        _playerScriptRefs[_playerNumber].PlayerVoted = true;    //move to next player
     }
 
-    public void endResearchStage()
+    public void EndResearchStage()
     {
+        CurrentPhase = GamePhase.Playing;
         _isGameStarted = true;
-        research_Stage = false;
-        GameObject.Find("Start Box").active = false;
+        GameObject.Find("Start Box").SetActive(false);
         _ts.startTimer();
     }
 }
