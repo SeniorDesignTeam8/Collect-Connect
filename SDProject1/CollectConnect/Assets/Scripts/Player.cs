@@ -57,6 +57,8 @@ public class Player : MonoBehaviour
     public GameObject VoteCardRight;
     public GameObject VoteKeywordTxt;
     public GameObject VoteConnection;
+    public Button VotePassBtn;
+
     public int VotedForWho;
     public Card CopyCardLeft;
     public Card CopyCardRight;
@@ -117,6 +119,7 @@ public class Player : MonoBehaviour
         VoteBtnP2.GetComponent<Button>().onClick.AddListener(VotePlayer2);
         VoteBtnP3.GetComponent<Button>().onClick.AddListener(VotePlayer3);
         VoteBtnP4.GetComponent<Button>().onClick.AddListener(VotePlayer4);
+        VotePassBtn.GetComponent<Button>().onClick.AddListener(VotePlayer1);    //auto vote for player 1
         VotedForWho = 0;
         VotePlayerPiece.gameObject.GetComponent<Renderer>().enabled = false;
         PlayerPiece.gameObject.GetComponent<Renderer>().enabled = false;
@@ -126,7 +129,6 @@ public class Player : MonoBehaviour
         _vetHumanText = "Do you agree with this connection?";
         _voteHumanText = "Which connection was the most outrageous?";
         VetPieceShrink();
-        
     }
 
     private void Update()
@@ -428,6 +430,12 @@ public class Player : MonoBehaviour
             VoteBtnP2.gameObject.SetActive(true);
             VoteBtnP3.gameObject.SetActive(true);
             VoteBtnP4.gameObject.SetActive(true);
+
+            //if there is no one to vote for
+            if (BoardManager.Instance.cantVotePlayerList.All(b => b == true))
+            {
+                VotePassBtn.gameObject.SetActive(true);
+            }
         }
         else //if AI is playing
         {
@@ -537,6 +545,4 @@ public class Player : MonoBehaviour
     {
         PlayerPiece.gameObject.GetComponent<Renderer>().enabled = false;
     }
-
-
 }
