@@ -211,6 +211,24 @@ public class BoardManager : MonoBehaviour
         }
         else if (CurrentPhase == GamePhase.Research)
         {
+            if (_playerScriptRefs[CurrentPlayer].IsAiControlled)
+            {
+                List<String> keywordsSelected = new List<String>();
+                CardCollection unplayedCards = GetPlayersUnplayedCards();  
+                for (int i = 0; i < 5; i++)
+                {
+                    String theKeyword = unplayedCards.At(i).PropertyList.First().ToString();
+                    Debug.Log("In for loop " + i);
+                    if (!keywordsSelected.Contains(theKeyword))
+                    {
+                        Debug.Log("In if statement " + i);
+                        keywordsSelected.Add(theKeyword);
+                        SelectKeyword(unplayedCards.At(i).PropertyList.First());
+                    }
+                }
+                Debug.Log("AI done picking...");
+                EndKeywordPick();
+            }
             if (_previousKeyword != _currentKeyword && !_currentKeywordList.Contains(_currentKeyword))
             {
                 _previousKeyword = _currentKeyword;
