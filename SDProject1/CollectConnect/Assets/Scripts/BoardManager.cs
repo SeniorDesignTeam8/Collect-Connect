@@ -213,16 +213,16 @@ public class BoardManager : MonoBehaviour
         {
             if (_playerScriptRefs[CurrentPlayer].IsAiControlled)
             {
-                int RandIndex = Random.Range(0, 5);
-                List<String> keywordsSelected = new List<String>();
+                int randIndex = Random.Range(0, 5);
+                List<string> keywordsSelected = new List<string>();
                 CardCollection unplayedCards = GetPlayersUnplayedCards();
-                String theKeyword = unplayedCards.At(RandIndex).PropertyList.First().PropertyValue;
+                string theKeyword = unplayedCards.At(randIndex).PropertyList.First().PropertyValue;
                 
                 if (!_currentKeywordList.Contains(theKeyword))
                   { 
                     _currentKeywordList.Add(theKeyword);
                     Debug.Log("AI picked " + theKeyword);
-                    SelectKeyword(unplayedCards.At(RandIndex).PropertyList.First());
+                    SelectKeyword(unplayedCards.At(randIndex).PropertyList.First());
                      _numSelections++;
                   }
                   
