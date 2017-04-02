@@ -216,17 +216,19 @@ public class BoardManager : MonoBehaviour
                 int RandIndex = Random.Range(0, 5);
                 List<String> keywordsSelected = new List<String>();
                 CardCollection unplayedCards = GetPlayersUnplayedCards();
-                String theKeyword = unplayedCards.At(RandIndex).PropertyList.First().ToString();
+                String theKeyword = unplayedCards.At(RandIndex).PropertyList.First().PropertyValue;
                 
-               // if (!keywordsSelected.Contains(theKeyword))
-                  {
-                      
-                    keywordsSelected.Add(theKeyword);
+                if (!_currentKeywordList.Contains(theKeyword))
+                  { 
+                    _currentKeywordList.Add(theKeyword);
+                    Debug.Log("AI picked " + theKeyword);
                     SelectKeyword(unplayedCards.At(RandIndex).PropertyList.First());
-                 }
+                     _numSelections++;
+                  }
                   
                 
                 Debug.Log("AI done picking...");
+                
                 EndKeywordPick();
             }
             if (_previousKeyword != _currentKeyword && !_currentKeywordList.Contains(_currentKeyword))
