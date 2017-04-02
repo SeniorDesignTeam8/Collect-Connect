@@ -234,7 +234,7 @@ public class Player : MonoBehaviour
                     Debug.Log("AI play invalid");
                     break;
                 }
-                if (!alreadyPlayed)
+                if (!alreadyPlayed && playedCards.Size > 0)
                 {
                     //...otherwise this invalid play should happen
                     int randomindex = Random.Range(0, playedCards.Size);

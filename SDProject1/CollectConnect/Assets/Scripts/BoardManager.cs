@@ -11,6 +11,7 @@ using Random = UnityEngine.Random;
 
 public class BoardManager : MonoBehaviour
 {
+    private const int MaxNumKeywordPicks = 5;
     public static bool IsDeckReady { get; private set; }
     public static BoardManager Instance;
     public GameObject[] Players;
@@ -21,6 +22,7 @@ public class BoardManager : MonoBehaviour
     public GameObject KeywordPrefab;
     public GameObject NodeOne;
     public int Columns = 8, Rows = 8;
+    public GameObject MasterKeywordList; // Includes the GridLayoutGroup and label.
     public static CardCollection Deck;
     public static bool IsCardExpanded;
     public AudioSource SoundEffectSource;
@@ -28,8 +30,8 @@ public class BoardManager : MonoBehaviour
     public AudioClip DeselectSound;
     public AudioClip ExpandSound;
     public AudioClip PlaceSound;
-    private List<string> _keywordList;
-    private string _currentKeyword;
+    private List<string> _keywordList, _copyList; // _copyList contains ALL the keywords. _keywordList just contains the 20 for the game.
+    private string _currentKeyword, _previousKeyword;
     private List<GameObject> _keywordNodes;
     public List<Player> _playerScriptRefs { get; private set; }
     private bool _isGameStarted;
@@ -50,11 +52,11 @@ public class BoardManager : MonoBehaviour
     private Card _copyCardLeft;
     private Card _copyCardRight;
     public List<bool> VetResultList;
+    private List<string> _currentKeywordList = new List<string>(); // Contains the currently selected keywords. Don't load them into the _keywordList until we're ready to start the game.
     private bool _afterVet;
     private bool _isFirstListGen = true;
     //public bool VetStartBool;
     private bool _hitVetBtn;
-    private readonly List<Vector3> _gridPositions = new List<Vector3>();
     private int[] _scoreboard;
     private int _playerNumber;
     private static IDbConnection _dbconn;
@@ -76,8 +78,11 @@ public class BoardManager : MonoBehaviour
 
     public static GamePhase CurrentPhase = GamePhase.PreGame;
 
+    private int _numSelections; // The number of keywords the current player has picked during Research.
     private bool _aiThinkingDone;
     private PlayerSelection _playerSelection;
+    private GridLayoutGroup _keywordGrid; // Contains the 20 keyword button GameObjects in the word bank.
+    private List<Text> _graphicalKeyList = new List<Text>(); // Contains the list of Text components in the word bank buttons.
 
     private void Awake()
     {
@@ -114,7 +119,6 @@ public class BoardManager : MonoBehaviour
 
             Deck = new CardCollection("Deck");
             BuildDeck();
-
             if (Deck == null)
                 Deck = new CardCollection("Deck");
             Deck.Shuffle();
@@ -135,9 +139,12 @@ public class BoardManager : MonoBehaviour
                     _playerScriptRefs[3].OnLeaveBtnHit();
                     break;
             }
-
+            _keywordGrid = MasterKeywordList.GetComponentInChildren<GridLayoutGroup>();
             _keywordList = new List<string>();
+            _copyList = new List<string>();
             _scoreboard = new int[Players.Length];
+            _keywordGrid.GetComponentsInChildren(_graphicalKeyList);
+            Debug.Log("Size of graphical key list: " + _graphicalKeyList.Count);
             _keywordNodes = new List<GameObject>();
             _isFirstCardPlay = true;
             PassBtnP1.GetComponent<Button>().onClick.AddListener(PassBtnHit);
@@ -187,8 +194,8 @@ public class BoardManager : MonoBehaviour
                     _keywordList.AddRange(t.GetComponent<Player>().GetKeywords());
                 }
                 // Remove any duplicates, then we're ready to start.
-
-                _keywordList = _keywordList.Distinct().ToList();
+                _copyList = _keywordList; // TODO Make sure this doesn't alias.
+                _keywordList = PickSubset(_keywordList.Distinct().ToList());
                 PopulateKeywords();
 
 
@@ -198,10 +205,42 @@ public class BoardManager : MonoBehaviour
                     _isFirstListGen = false;
                 }
                 CurrentPhase = GamePhase.Research;
+                MasterKeywordList.SetActive(true);
                 //_isGameStarted = true;
             }
         }
+        else if (CurrentPhase == GamePhase.Research)
+        {
+            if (_previousKeyword != _currentKeyword && !_currentKeywordList.Contains(_currentKeyword))
+            {
+                _previousKeyword = _currentKeyword;
+                _currentKeywordList.Add(_currentKeyword);
+                foreach (Text t in _graphicalKeyList)
+                {
+                    if (string.IsNullOrEmpty(t.text))
+                    {
+                        t.text = _currentKeyword;
+                        Debug.Log("Now displaying " + _currentKeyword);
+                        t.gameObject.GetComponent<Image>().enabled = true;
+                        t.gameObject.GetComponent<Button>().interactable = true;
+                        Text t1 = t; // Prevent varied behavior (caused by different compiler versions)
+                        t.gameObject.GetComponent<Button>().onClick.AddListener(() =>
+                        {
+                            if (_graphicalKeyList.IndexOf(t1) / MaxNumKeywordPicks == CurrentPlayer) // was this a keyword picked by the current player?
+                            {
+                                _currentKeywordList.Remove(t1.text);
+                                t1.text = "";
+                                t1.gameObject.GetComponent<Image>().enabled = false;
+                                t1.gameObject.GetComponent<Button>().interactable = false;
+                                _numSelections--;
+                            }
+                        });
+                        break;
+                    }
+                }
 
+            }
+        }
 
         if (Deck.Size == 0)
             IsDeckReady = false;
@@ -435,10 +474,30 @@ public class BoardManager : MonoBehaviour
 
                     CurrentPlayer = 0;    //start round after voting (for late update)
                     CurrentPhase = GamePhase.Playing;
-                    _ts.InvokeRepeating("decreaseTime", 1, 1);
+                    _ts.InvokeRepeating("DecreaseTime", 1, 1);
                 }
             }
         }
+    }
+
+    private static List<string> PickSubset(IList<string> wordList)
+    {
+        for (int i = 0; i < wordList.Count; i++)
+        {
+            int index = Random.Range(0, wordList.Count);
+            string temp = wordList[index];
+            wordList[index] = wordList[i];
+            wordList[i] = temp;
+        }
+        List<string> subList = new List<string>();
+        for (int i = 0; i < 20; i++)
+        {
+            int index = Random.Range(0, wordList.Count);
+            subList.Add(wordList[index]);
+            wordList.RemoveAt(index);
+        }
+        subList.Sort();
+        return subList;
     }
 
     private bool AllCardsPlayed()
@@ -454,8 +513,8 @@ public class BoardManager : MonoBehaviour
             return;
 
         TimerScript.Timeleft = 90;
-        _ts.circleSlider.fillAmount = 1.0f;
-        _ts.InvokeRepeating("decreaseTime", 1, 1);
+        _ts.CircleSlider.fillAmount = 1.0f;
+        _ts.InvokeRepeating("DecreaseTime", 1, 1);
 
         if (CurrentPhase != GamePhase.Voting)
         {
@@ -579,7 +638,8 @@ public class BoardManager : MonoBehaviour
             _keywordList.AddRange(p.GetKeywords());
         }
         _keywordList = _keywordList.Distinct().ToList();
-        _keywordList.Sort();
+        _copyList = _keywordList; // TODO Make sure this doesn't alias.
+        _keywordList = PickSubset(_keywordList);
 
         // clear the list
         // TODO Possibly combine KeywordContainers into an array?
@@ -615,8 +675,20 @@ public class BoardManager : MonoBehaviour
                 Debug.Log(go.GetComponentInChildren<Text>().text + " Clicked!");
                 if (CurrentPlayer == 0)
                 {
-                    PlaySelect();
-                    _currentKeyword = go.GetComponentInChildren<Text>().text;
+                    if (CurrentPhase == GamePhase.Research)
+                    {
+                        if (_numSelections < 5 && _currentKeyword != go.GetComponentInChildren<Text>().text)
+                        {
+                            PlaySelect();
+                            _currentKeyword = go.GetComponentInChildren<Text>().text;
+                            _numSelections++;
+                        }
+                    }
+                    else
+                    {
+                        PlaySelect();
+                        _currentKeyword = go.GetComponentInChildren<Text>().text;
+                    }
                 }
             });
             Vector3 scale = transform.localScale;
@@ -640,10 +712,22 @@ public class BoardManager : MonoBehaviour
             btn.onClick.AddListener(() =>
             {
                 Debug.Log(go.GetComponentInChildren<Text>().text + " Clicked!");
-                if (CurrentPlayer == 1)
+                if (CurrentPlayer == 1) // TODO Change to 0 to test functionality until AI can pick 5 keywords.
                 {
-                    PlaySelect();
-                    _currentKeyword = go.GetComponentInChildren<Text>().text;
+                    if (CurrentPhase == GamePhase.Research)
+                    {
+                        if (_numSelections < 5 && _currentKeyword != go.GetComponentInChildren<Text>().text)
+                        {
+                            PlaySelect();
+                            _currentKeyword = go.GetComponentInChildren<Text>().text;
+                            _numSelections++;
+                        }
+                    }
+                    else
+                    {
+                        PlaySelect();
+                        _currentKeyword = go.GetComponentInChildren<Text>().text;
+                    }
                 }
             });
             Vector3 scale = transform.localScale;
@@ -666,10 +750,22 @@ public class BoardManager : MonoBehaviour
             btn.onClick.AddListener(() =>
             {
                 Debug.Log(go.GetComponentInChildren<Text>().text + " Clicked!");
-                if (CurrentPlayer == 2)
+                if (CurrentPlayer == 2) // TODO Change to 0 to test functionality until AI can pick 5 keywords.
                 {
-                    PlaySelect();
-                    _currentKeyword = go.GetComponentInChildren<Text>().text;
+                    if (CurrentPhase == GamePhase.Research)
+                    {
+                        if (_numSelections < 5 && _currentKeyword != go.GetComponentInChildren<Text>().text)
+                        {
+                            PlaySelect();
+                            _currentKeyword = go.GetComponentInChildren<Text>().text;
+                            _numSelections++;
+                        }
+                    }
+                    else
+                    {
+                        PlaySelect();
+                        _currentKeyword = go.GetComponentInChildren<Text>().text;
+                    }
                 }
             });
             Vector3 scale = transform.localScale;
@@ -691,10 +787,23 @@ public class BoardManager : MonoBehaviour
             btn.onClick.AddListener(() =>
             {
                 Debug.Log(go.GetComponentInChildren<Text>().text + " Clicked!");
-                if (CurrentPlayer == 3)
+                if (CurrentPlayer == 3) // TODO Change to 0 to test functionality until AI can pick 5 keywords.
                 {
-                    PlaySelect();
-                    _currentKeyword = go.GetComponentInChildren<Text>().text;
+                    if (CurrentPhase == GamePhase.Research)
+                    {
+                        if (_numSelections < 5 && _currentKeyword != go.GetComponentInChildren<Text>().text)
+                        {
+                            PlaySelect();
+                            _currentKeyword = go.GetComponentInChildren<Text>().text;
+                            
+                            _numSelections++;
+                        }
+                    }
+                    else
+                    {
+                        PlaySelect();
+                        _currentKeyword = go.GetComponentInChildren<Text>().text;
+                    }
                 }
             });
             Vector3 scale = transform.localScale;
@@ -1465,11 +1574,25 @@ public class BoardManager : MonoBehaviour
         _playerScriptRefs[_playerNumber].PlayerVoted = true;    //move to next player
     }
 
-    public void EndResearchStage()
+    public void EndKeywordPick() // TODO This was originally the EndResearchPhase method. AI should be able to call this after it picks its keywords.
     {
-        CurrentPhase = GamePhase.Playing;
-        _isGameStarted = true;
-        GameObject.Find("Start Box").SetActive(false);
-        _ts.startTimer();
+        if (CurrentPlayer == Players.Length - 1 && _numSelections == MaxNumKeywordPicks) // If it's the last player's turn to pick & they chose 5 keywords...
+        {
+            PlaySelect();
+            CurrentPhase = GamePhase.Playing; // Then let's start the game!
+            _isGameStarted = true;
+            MasterKeywordList.SetActive(false);
+            _keywordList = _currentKeywordList;
+            _numSelections = 0;
+            GameObject.Find("Start Box").SetActive(false);
+            _ts.StartTimer(); // TODO add timer to Research stage.
+        }
+        else if (_numSelections == MaxNumKeywordPicks) // TODO AI will have to increment _numSelections for this to trigger.
+            // It's not the last player's turn, so let's check if they have 5 keywords.
+        {
+            PlaySelect();
+            CurrentPlayer++; // Next player's turn to pick keywords.
+            _numSelections = 0;
+        }
     }
 }

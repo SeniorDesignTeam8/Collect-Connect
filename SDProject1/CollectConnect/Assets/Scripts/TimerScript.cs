@@ -1,35 +1,31 @@
 ﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
 using UnityEngine.UI;
-using UnityEngine.EventSystems;
 
 public class TimerScript : MonoBehaviour
 {
     public static int Timeleft;
-    public Image circleSlider;
-    public Sprite mainSprite;
-    public Sprite otherSprite;
-    private float usualTime = 90f;
-    private BoardManager bM;
-    private Button rButton;
-    private bool isPaused = true;
-    int lastButNum = -1;
-    float lastClickTime = -99;
-    const float D_CLICK_DELAY = 0.25f;
-    Text t;
+    public Image CircleSlider;
+    public Sprite MainSprite;
+    public Sprite OtherSprite;
+    private float _usualTime = 90.0f;
+    private BoardManager _bM;
+    private Button _rButton;
+    private bool _isPaused = true;
+    private int _lastButNum = -1;
+    private float _lastClickTime = -99.0f;
+    private const float DClickDelay = 0.25f;
+    private Text _t;
 
     // Use this for initialization
     private void Start()
     {
-        t = GetComponent<Text>();
-        rButton = GetComponent<Button>();
-        bM = FindObjectOfType<BoardManager>();
+        _t = GetComponent<Text>();
+        _rButton = GetComponent<Button>();
+        _bM = FindObjectOfType<BoardManager>();
         //InvokeRepeating("decreaseTime", 1, 1);
 
-        rButton.onClick.AddListener(resetTimer);
-        circleSlider.fillAmount = 1f;
+        _rButton.onClick.AddListener(ResetTimer);
+        CircleSlider.fillAmount = 1.0f;
     }
 
     // Update is called once per frame
@@ -38,62 +34,62 @@ public class TimerScript : MonoBehaviour
 
         if (Timeleft < 15)
         {
-            t.color = Color.red;
-            circleSlider.sprite = otherSprite;
+            _t.color = Color.red;
+            CircleSlider.sprite = OtherSprite;
         }
         else
         {
-            t.color = Color.black;
-            circleSlider.sprite = mainSprite;
+            _t.color = Color.black;
+            CircleSlider.sprite = MainSprite;
         }
 
         if (Timeleft < 0)
         {
-            bM.PassBtnHit();
+            _bM.PassBtnHit();
         }
 
         if (Input.GetKeyDown(KeyCode.Space))
             CancelInvoke();
         if (Input.GetKeyUp(KeyCode.Space))
-            InvokeRepeating("decreaseTime", 1, 1);
+            InvokeRepeating("DecreaseTime", 1, 1);
 
-        t.text = "" + Timeleft;
-        circleSlider.fillAmount -= (1f/usualTime*Time.deltaTime);
+        _t.text = "" + Timeleft;
+        CircleSlider.fillAmount -= (1.0f / _usualTime * Time.deltaTime);
     }
 
-    void decreaseTime()
+    private void DecreaseTime()
     {
         Timeleft--;
     }
 
-    void resetTimer()
+    private void ResetTimer()
     {
-        if (lastClickTime > Time.time - D_CLICK_DELAY && lastButNum == 2)
+        if (_lastClickTime > Time.time - DClickDelay && _lastButNum == 2)
         {
             CancelInvoke();
             Timeleft = 90;
-            circleSlider.fillAmount = 1f;
-            InvokeRepeating("decreaseTime", 1, 1);
+            CircleSlider.fillAmount = 1.0f;
+            InvokeRepeating("DecreaseTime", 1, 1);
         }
-        else if (lastClickTime > Time.time - D_CLICK_DELAY && lastButNum == 1)
+        else if (_lastClickTime > Time.time - DClickDelay && _lastButNum == 1)
         {
-            lastClickTime = Time.time;
-            lastButNum = 2;
+            _lastClickTime = Time.time;
+            _lastButNum = 2;
         }
         else
         {
-            lastClickTime = Time.time;
-            lastButNum = 1;
+            _lastClickTime = Time.time;
+            _lastButNum = 1;
         }
     }
 
-	public void startTimer()
+	public void StartTimer()
 	{
-		InvokeRepeating("decreaseTime", 1, 1);
+		InvokeRepeating("DecreaseTime", 1, 1);
 	}
 
-	public void stopTimer()
+	public void StopTimer()
 	{
-		CancelInvoke ();
+		CancelInvoke();
 	}
 }
