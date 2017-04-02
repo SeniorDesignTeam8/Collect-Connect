@@ -214,10 +214,10 @@ public class BoardManager : MonoBehaviour
             if (_playerScriptRefs[CurrentPlayer].IsAiControlled)
             {
 
-                int RandIndex = Random.Range(0, 5);
-                String theKeyword = "";
+                int randIndex = Random.Range(0, 5);
+                string theKeyword = "";
                 int j = 0;
-                List<String> keywordsSelected = new List<String>();
+                List<string> keywordsSelected = new List<string>();
                 CardCollection unplayedCards = GetPlayersUnplayedCards();
                 unplayedCards.Shuffle();
                 //for (int i = 0; i < unplayedCards.At(0).PropertyList.Count; i++)
