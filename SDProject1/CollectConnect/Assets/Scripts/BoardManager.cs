@@ -246,6 +246,7 @@ public class BoardManager : MonoBehaviour
                         t.GetComponentInParent<Image>().enabled = true;
                         t.GetComponentInParent<Button>().interactable = true;
                         Text t1 = t; // Prevent varied behavior (caused by different compiler versions)
+                        t.GetComponentInParent<Button>().onClick.RemoveAllListeners();
                         t.GetComponentInParent<Button>().onClick.AddListener(() =>
                         {
                             if (_graphicalKeyList.IndexOf(t1) / MaxNumKeywordPicks == CurrentPlayer) // was this a keyword picked by the current player?
@@ -1626,6 +1627,7 @@ public class BoardManager : MonoBehaviour
             _currentKeyword = "";
             _previousKeyword = "";
             GameObject.Find("Start Box").SetActive(false);
+            CurrentPlayer = 0;
             _ts.StartTimer(); // TODO add timer to Research stage.
         }
         else if (_numSelections == MaxNumKeywordPicks) // TODO AI will have to increment _numSelections for this to trigger.
@@ -1637,6 +1639,7 @@ public class BoardManager : MonoBehaviour
             _currentKeyword = "";
             _previousKeyword = "";
             _keywordList = PickSubset(_copyList);
+            PopulateKeywords();
             CurrentPlayer++; // Next player's turn to pick keywords.
             _numSelections = 0;
         }
