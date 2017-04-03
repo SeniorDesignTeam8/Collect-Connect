@@ -94,10 +94,8 @@ public class BoardManager : MonoBehaviour
         CantVotePlayerList = new List<bool>();
         LegalVotePlayerList = new List<int>();
         _afterVet = false;
-        //VetStartBool = false;
         _hitVetBtn = false;
         _playerNumber = 0;
-        //VoteStartBool = false;
         _aiThinkingDone = false;
 
         for (int i = 0; i < 4; i++) //prefill lists
@@ -129,7 +127,7 @@ public class BoardManager : MonoBehaviour
                 _playerScriptRefs.Add(player.GetComponent<Player>());
             _playerScriptRefs[0].SetAiControl(true);    //set first player to be AI controlled
 
-            switch (PlayerPrefs.GetInt("PlayerNumber"))
+            switch (PlayerPrefs.GetInt("PlayerNumber")) //set other players to AI from player selection screen
             {
                 case 1:
                     _playerScriptRefs[1].OnLeaveBtnHit();
@@ -163,6 +161,7 @@ public class BoardManager : MonoBehaviour
 
             _ts = FindObjectOfType<TimerScript>();
             //_ts.stopTimer();
+
         }
         else if (Instance != this)
         {
@@ -204,6 +203,13 @@ public class BoardManager : MonoBehaviour
                     UpdateScoring();
                     _isFirstListGen = false;
                 }
+
+                //turn on all player block offs
+                foreach (Player p in _playerScriptRefs)
+                {
+                    p.BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
+                }
+
                 CurrentPhase = GamePhase.Research;
                 MasterKeywordList.SetActive(true);
                 //_isGameStarted = true;
@@ -211,6 +217,9 @@ public class BoardManager : MonoBehaviour
         }
         else if (CurrentPhase == GamePhase.Research)
         {
+            //turn off player's block off 
+            _playerScriptRefs[CurrentPlayer].BlockOff.gameObject.GetComponent<Renderer>().enabled = false;
+
             if (_playerScriptRefs[CurrentPlayer].IsAiControlled)
             {
                 if (_numSelections < 5)
@@ -1623,6 +1632,9 @@ public class BoardManager : MonoBehaviour
 
     public void EndKeywordPick() // TODO This was originally the EndResearchPhase method. AI should be able to call this after it picks its keywords.
     {
+        //turn on player's block off 
+        _playerScriptRefs[CurrentPlayer].BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
+
         if (CurrentPlayer == Players.Length - 1 && _numSelections == MaxNumKeywordPicks) // If it's the last player's turn to pick & they chose 5 keywords...
         {
             PlaySelect();
