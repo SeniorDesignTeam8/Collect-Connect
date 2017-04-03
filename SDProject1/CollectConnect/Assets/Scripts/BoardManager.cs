@@ -671,12 +671,18 @@ public class BoardManager : MonoBehaviour
         Debug.Log("Populating keywords");
 
         //Clear and (re?)populate the word banks.
-        foreach (Player p in _playerScriptRefs)
+        if (CurrentPhase == GamePhase.Research || CurrentPhase == GamePhase.PreGame)
         {
-            _keywordList.AddRange(p.GetKeywords());
+            foreach (Player p in _playerScriptRefs)
+            {
+                _keywordList.AddRange(p.GetKeywords());
+            }
+        }
+        else
+        {
+            _keywordList = _currentKeywordList;
         }
         _keywordList = _keywordList.Distinct().ToList();
-        _copyList = _keywordList; // TODO Make sure this doesn't alias.
         _keywordList = PickSubset(_keywordList);
 
         // clear the list
@@ -1627,6 +1633,7 @@ public class BoardManager : MonoBehaviour
             _currentKeyword = "";
             _previousKeyword = "";
             GameObject.Find("Start Box").SetActive(false);
+            PopulateKeywords();
             CurrentPlayer = 0;
             _ts.StartTimer(); // TODO add timer to Research stage.
         }
