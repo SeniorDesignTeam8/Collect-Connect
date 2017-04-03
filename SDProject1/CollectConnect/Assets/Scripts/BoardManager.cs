@@ -31,7 +31,7 @@ public class BoardManager : MonoBehaviour
     public AudioClip ExpandSound;
     public AudioClip PlaceSound;
     private List<string> _keywordList, _copyList; // _copyList contains ALL the keywords. _keywordList just contains the 20 for the game.
-    private string _currentKeyword, _previousKeyword;
+    private string _currentKeyword, _previousKeyword, _removedKeyword;
     private List<GameObject> _keywordNodes;
     public List<Player> _playerScriptRefs { get; private set; }
     private bool _isGameStarted;
@@ -213,35 +213,25 @@ public class BoardManager : MonoBehaviour
         {
             if (_playerScriptRefs[CurrentPlayer].IsAiControlled)
             {
-
-                int randIndex = Random.Range(0, 5);
-                string theKeyword = "";
-                int j = 0;
-                List<string> keywordsSelected = new List<string>();
-                CardCollection unplayedCards = GetPlayersUnplayedCards();
-                unplayedCards.Shuffle();
-                //for (int i = 0; i < unplayedCards.At(0).PropertyList.Count; i++)
-                //{
-                //    theKeyword = unplayedCards.At(0).PropertyList[i].PropertyValue;
-                //    if(!_currentKeywordList.Contains(theKeyword))
-                //    {
-                //        break;
-                //    }
-                //    j++;
-                //}
-                theKeyword = unplayedCards.At(0).PropertyList.First().PropertyValue;
-                if (!_currentKeywordList.Contains(theKeyword))
-                  { 
-                   // _currentKeywordList.Add(theKeyword);
-                    Debug.Log("AI picked " + theKeyword);
-                    SelectKeyword(unplayedCards.At(0).PropertyList.First());
-                     _numSelections++;
-                  }
-                  
-                
+                if (_numSelections < 5)
+                {
+                    int[] indices = Enumerable.Range(0, _keywordList.Count + 1).ToArray();
+                    Shuffle(ref indices);
+                    foreach (int index in indices)
+                    {
+                        if (!_currentKeywordList.Contains(_keywordList[index])) // TODO I have seen this line throw an ArguementOutOfRangeException.
+                        {
+                            _currentKeyword = _keywordList[index];
+                            _numSelections++;
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    EndKeywordPick();
+                }
                 Debug.Log("AI done picking...");
-                
-                EndKeywordPick();
             }
             if (_previousKeyword != _currentKeyword && !_currentKeywordList.Contains(_currentKeyword))
             {
@@ -253,17 +243,21 @@ public class BoardManager : MonoBehaviour
                     {
                         t.text = _currentKeyword;
                         Debug.Log("Now displaying " + _currentKeyword);
-                        t.gameObject.GetComponent<Image>().enabled = true;
-                        t.gameObject.GetComponent<Button>().interactable = true;
+                        t.GetComponentInParent<Image>().enabled = true;
+                        t.GetComponentInParent<Button>().interactable = true;
                         Text t1 = t; // Prevent varied behavior (caused by different compiler versions)
-                        t.gameObject.GetComponent<Button>().onClick.AddListener(() =>
+                        t.GetComponentInParent<Button>().onClick.AddListener(() =>
                         {
                             if (_graphicalKeyList.IndexOf(t1) / MaxNumKeywordPicks == CurrentPlayer) // was this a keyword picked by the current player?
                             {
+                                PlaySelect();
+                                _removedKeyword = t1.text;
                                 _currentKeywordList.Remove(t1.text);
                                 t1.text = "";
-                                t1.gameObject.GetComponent<Image>().enabled = false;
-                                t1.gameObject.GetComponent<Button>().interactable = false;
+                                _currentKeyword = "";
+                                _previousKeyword = "";
+                                t1.GetComponentInParent<Image>().enabled = false;
+                                t1.GetComponentInParent<Button>().interactable = false;
                                 _numSelections--;
                             }
                         });
@@ -512,6 +506,17 @@ public class BoardManager : MonoBehaviour
         }
     }
 
+    private static void Shuffle(ref int[] arr)
+    {
+        for (int i = 0; i < arr.Length; i++)
+        {
+            int temp = arr[i];
+            int newIndex = Random.Range(0, arr.Length);
+            arr[i] = arr[newIndex];
+            arr[newIndex] = temp;
+        }
+    }
+
     private static List<string> PickSubset(IList<string> wordList)
     {
         for (int i = 0; i < wordList.Count; i++)
@@ -709,7 +714,7 @@ public class BoardManager : MonoBehaviour
                 {
                     if (CurrentPhase == GamePhase.Research)
                     {
-                        if (_numSelections < 5 && _currentKeyword != go.GetComponentInChildren<Text>().text)
+                        if (_numSelections < 5 && _currentKeyword != go.GetComponentInChildren<Text>().text && !_currentKeywordList.Contains(go.GetComponentInChildren<Text>().text))
                         {
                             PlaySelect();
                             _currentKeyword = go.GetComponentInChildren<Text>().text;
@@ -748,9 +753,10 @@ public class BoardManager : MonoBehaviour
                 {
                     if (CurrentPhase == GamePhase.Research)
                     {
-                        if (_numSelections < 5 && _currentKeyword != go.GetComponentInChildren<Text>().text)
+                        if (_numSelections < 5 && _currentKeyword != go.GetComponentInChildren<Text>().text && !_currentKeywordList.Contains(go.GetComponentInChildren<Text>().text))
                         {
                             PlaySelect();
+                            Debug.Log("Setting current keyword to: " + go.GetComponentInChildren<Text>().text);
                             _currentKeyword = go.GetComponentInChildren<Text>().text;
                             _numSelections++;
                         }
@@ -786,7 +792,7 @@ public class BoardManager : MonoBehaviour
                 {
                     if (CurrentPhase == GamePhase.Research)
                     {
-                        if (_numSelections < 5 && _currentKeyword != go.GetComponentInChildren<Text>().text)
+                        if (_numSelections < 5 && _currentKeyword != go.GetComponentInChildren<Text>().text && !_currentKeywordList.Contains(go.GetComponentInChildren<Text>().text))
                         {
                             PlaySelect();
                             _currentKeyword = go.GetComponentInChildren<Text>().text;
@@ -823,7 +829,7 @@ public class BoardManager : MonoBehaviour
                 {
                     if (CurrentPhase == GamePhase.Research)
                     {
-                        if (_numSelections < 5 && _currentKeyword != go.GetComponentInChildren<Text>().text)
+                        if (_numSelections < 5 && _currentKeyword != go.GetComponentInChildren<Text>().text && !_currentKeywordList.Contains(go.GetComponentInChildren<Text>().text))
                         {
                             PlaySelect();
                             _currentKeyword = go.GetComponentInChildren<Text>().text;
@@ -1616,6 +1622,9 @@ public class BoardManager : MonoBehaviour
             MasterKeywordList.SetActive(false);
             _keywordList = _currentKeywordList;
             _numSelections = 0;
+            _removedKeyword = "";
+            _currentKeyword = "";
+            _previousKeyword = "";
             GameObject.Find("Start Box").SetActive(false);
             _ts.StartTimer(); // TODO add timer to Research stage.
         }
@@ -1623,6 +1632,11 @@ public class BoardManager : MonoBehaviour
             // It's not the last player's turn, so let's check if they have 5 keywords.
         {
             PlaySelect();
+            Debug.Log("Ding!");
+            _removedKeyword = "";
+            _currentKeyword = "";
+            _previousKeyword = "";
+            _keywordList = PickSubset(_copyList);
             CurrentPlayer++; // Next player's turn to pick keywords.
             _numSelections = 0;
         }
