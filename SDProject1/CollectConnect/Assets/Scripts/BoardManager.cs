@@ -516,9 +516,9 @@ public class BoardManager : MonoBehaviour
 
                     CurrentPlayer = 0;    //start round after voting (for late update)
                     CurrentPhase = GamePhase.Playing;
-                    _ts.InvokeRepeating("DecreaseTime", 1, 1);
                 }
             }
+            _ts.InvokeRepeating("DecreaseTime", 1, 1);
         }
     }
 
@@ -567,7 +567,6 @@ public class BoardManager : MonoBehaviour
 
         TimerScript.Timeleft = 90;
         _ts.CircleSlider.fillAmount = 1.0f;
-        _ts.InvokeRepeating("DecreaseTime", 1, 1);
 
         if (CurrentPhase != GamePhase.Voting)
         {
