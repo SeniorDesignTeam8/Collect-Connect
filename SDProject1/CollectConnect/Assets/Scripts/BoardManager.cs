@@ -83,6 +83,7 @@ public class BoardManager : MonoBehaviour
     private PlayerSelection _playerSelection;
     private GridLayoutGroup _keywordGrid; // Contains the 20 keyword button GameObjects in the word bank.
     private List<Text> _graphicalKeyList = new List<Text>(); // Contains the list of Text components in the word bank buttons.
+    public Button WordBankBtn;
 
     private void Awake()
     {
@@ -155,6 +156,9 @@ public class BoardManager : MonoBehaviour
             PassBtnP4.gameObject.SetActive(true);
             InHandGlow.GetComponent<Renderer>().enabled = false;
             OnBoardGlow.GetComponent<Renderer>().enabled = false;
+
+            WordBankBtn.gameObject.SetActive(true);
+            WordBankBtn.GetComponent<Button>().onClick.AddListener(EndKeywordPick);
 
             DisableVet();
             DisableVote();
@@ -1646,7 +1650,7 @@ public class BoardManager : MonoBehaviour
             _removedKeyword = "";
             _currentKeyword = "";
             _previousKeyword = "";
-            GameObject.Find("Start Box").SetActive(false);
+            WordBankBtn.gameObject.SetActive(false);
             PopulateKeywords();
             CurrentPlayer = 0;
             _ts.StartTimer(); // TODO add timer to Research stage.
