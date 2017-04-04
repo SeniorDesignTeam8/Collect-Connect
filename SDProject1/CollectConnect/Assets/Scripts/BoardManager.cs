@@ -55,7 +55,6 @@ public class BoardManager : MonoBehaviour
     private List<string> _currentKeywordList = new List<string>(); // Contains the currently selected keywords. Don't load them into the _keywordList until we're ready to start the game.
     private bool _afterVet;
     private bool _isFirstListGen = true;
-    //public bool VetStartBool;
     private bool _hitVetBtn;
     private int[] _scoreboard;
     private int _playerNumber;
@@ -69,7 +68,6 @@ public class BoardManager : MonoBehaviour
     public GameObject VoteEnhance;
     public GameObject VoteEnhanceShadow;
     public List<int> VoteResultsList;
-    //public bool VoteStartBool;
     public List<bool> CantVotePlayerList;
     public List<int> LegalVotePlayerList;
 
@@ -458,11 +456,10 @@ public class BoardManager : MonoBehaviour
                     IsTurnOver = true;
                     _hitVetBtn = false; //reset btn
                     _afterVet = false;
-                    //VetStartBool = false;
                 }
             }
         }
-        else //if VoteStartBool == true --> in voting
+        else
         {
             //RUN VOTING
             _ts.CancelInvoke();
@@ -494,7 +491,6 @@ public class BoardManager : MonoBehaviour
                     DisableVote();      //shrink voting screen
                     _playerNumber = 0;
                     _aiThinkingDone = false; //reset
-                    //VoteStartBool = false;
 
                     foreach (Player p in _playerScriptRefs)  //destroy main player cards
                     {
