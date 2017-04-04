@@ -611,6 +611,7 @@ public class BoardManager : MonoBehaviour
                     _playerScriptRefs[2].BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
                     _playerScriptRefs[3].BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
                     break;
+
                 case 1:
                     PassBtnP1.gameObject.SetActive(false);
                     PassBtnP2.gameObject.SetActive(true);
@@ -632,6 +633,7 @@ public class BoardManager : MonoBehaviour
                     _playerScriptRefs[2].BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
                     _playerScriptRefs[3].BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
                     break;
+
                 case 2:
                     PassBtnP1.gameObject.SetActive(false);
                     PassBtnP2.gameObject.SetActive(false);
@@ -647,6 +649,7 @@ public class BoardManager : MonoBehaviour
                     _playerScriptRefs[2].BlockOff.gameObject.GetComponent<Renderer>().enabled = false;
                     _playerScriptRefs[3].BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
                     break;
+
                 case 3:
                     PassBtnP1.gameObject.SetActive(false);
                     PassBtnP2.gameObject.SetActive(false);
@@ -671,12 +674,16 @@ public class BoardManager : MonoBehaviour
                     break;
             }
 
-            //PopulateKeywords();
-            CurrentPhase = GamePhase.Playing;
-            IsTurnOver = false;
-            _isPlayerCardSelected = false;
-            _isBoardCardSelected = false;
-            _playedTurn = false;
+            if (CurrentPhase != GamePhase.Voting)
+            {
+                //PopulateKeywords();
+                CurrentPhase = GamePhase.Playing;
+                IsTurnOver = false;
+                _isPlayerCardSelected = false;
+                _isBoardCardSelected = false;
+                _playedTurn = false;
+            }
+            
         }
     }
 
