@@ -561,7 +561,7 @@ public class BoardManager : MonoBehaviour
         if (!_isGameStarted)
             return;
 
-        TimerScript.Timeleft = 90;
+        TimerScript.Timeleft = 120;
         _ts.CircleSlider.fillAmount = 1.0f;
 
         if (CurrentPhase != GamePhase.Voting)
@@ -679,7 +679,7 @@ public class BoardManager : MonoBehaviour
                 _isBoardCardSelected = false;
                 _playedTurn = false;
             }
-            
+
         }
     }
 
@@ -857,7 +857,7 @@ public class BoardManager : MonoBehaviour
                         {
                             PlaySelect();
                             _currentKeyword = go.GetComponentInChildren<Text>().text;
-                            
+
                             _numSelections++;
                         }
                     }
@@ -1155,7 +1155,7 @@ public class BoardManager : MonoBehaviour
                 PlayDeselect();
 
                 //turn glow off
-                InHandGlow.GetComponent<Renderer>().enabled = false;
+                InHandGlowOff(card);
 
                 _isPlayerCardSelected = false;
                 return;
@@ -1165,8 +1165,7 @@ public class BoardManager : MonoBehaviour
             PlaySelect();
 
             //glow on
-            InHandGlow.GetComponent<Renderer>().enabled = true;
-            InHandGlow.transform.position = card.gameObject.transform.position;
+            InHandGlowOn(card);
 
             return;
         }
@@ -1176,8 +1175,8 @@ public class BoardManager : MonoBehaviour
         _isPlayerCardSelected = true;
 
         //glow on
-        InHandGlow.GetComponent<Renderer>().enabled = true;
-        InHandGlow.transform.position = card.gameObject.transform.position;
+        InHandGlowOn(card);
+
     }
 
     public void SelectCardOnBoard(Card card)
@@ -1205,7 +1204,7 @@ public class BoardManager : MonoBehaviour
                     _isBoardCardSelected = false;
 
                     //turn glow off
-                    OnBoardGlow.GetComponent<Renderer>().enabled = false;
+                    OnBoardGlowOff(card);
 
                     return;
                 }
@@ -1214,8 +1213,7 @@ public class BoardManager : MonoBehaviour
                 PlaySelect();
 
                 //glow on
-                OnBoardGlow.GetComponent<Renderer>().enabled = true;
-                OnBoardGlow.transform.position = card.gameObject.transform.position;
+                OnBoardGlowOn(card);
 
                 return;
             }
@@ -1225,8 +1223,7 @@ public class BoardManager : MonoBehaviour
         _isBoardCardSelected = true;
 
         //glow on
-        OnBoardGlow.GetComponent<Renderer>().enabled = true;
-        OnBoardGlow.transform.position = card.gameObject.transform.position;
+        OnBoardGlowOn(card);
     }
 
     public void PassBtnHit() //player hit pass button
@@ -1658,7 +1655,7 @@ public class BoardManager : MonoBehaviour
             _ts.StartTimer(); // TODO add timer to Research stage.
         }
         else if (_numSelections == MaxNumKeywordPicks) // TODO AI will have to increment _numSelections for this to trigger.
-            // It's not the last player's turn, so let's check if they have 5 keywords.
+                                                       // It's not the last player's turn, so let's check if they have 5 keywords.
         {
             PlaySelect();
             Debug.Log("Ding!");
@@ -1670,5 +1667,55 @@ public class BoardManager : MonoBehaviour
             CurrentPlayer++; // Next player's turn to pick keywords.
             _numSelections = 0;
         }
+    }
+
+    private void InHandGlowOn(Card card)
+    {
+        RectTransform rt = (RectTransform)card.transform;
+
+        if (rt.rect.width > rt.rect.height) //card is horizontal
+        {
+            transform.Rotate(90, 0, 0);
+        }
+
+        InHandGlow.GetComponent<Renderer>().enabled = true;
+        InHandGlow.transform.position = card.gameObject.transform.position;
+    }
+
+    private void OnBoardGlowOn(Card card)
+    {
+        RectTransform rt = (RectTransform)card.transform;
+
+        if (rt.rect.width > rt.rect.height) //card is horizontal
+        {
+            transform.Rotate(0, 0, 90);
+        }
+
+        OnBoardGlow.GetComponent<Renderer>().enabled = true;
+        OnBoardGlow.transform.position = card.gameObject.transform.position;
+    }
+
+    private void InHandGlowOff(Card card)
+    {
+        RectTransform rt = (RectTransform)card.transform;
+
+        if (rt.rect.width > rt.rect.height) //card was rotated, rotate back 
+        {
+            transform.Rotate(0, 0, -90);
+        }
+
+        InHandGlow.GetComponent<Renderer>().enabled = false;
+    }
+
+    private void OnBoardGlowOff(Card card)
+    {
+        RectTransform rt = (RectTransform)card.transform;
+
+        if (rt.rect.width > rt.rect.height) //card was rotated, rotate back 
+        {
+            transform.Rotate(-90, 0, 0);
+        }
+
+        OnBoardGlow.GetComponent<Renderer>().enabled = false;
     }
 }
