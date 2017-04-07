@@ -561,8 +561,10 @@ public class BoardManager : MonoBehaviour
         if (!_isGameStarted)
             return;
 
+        _ts.CancelInvoke();
         TimerScript.Timeleft = 120;
         _ts.CircleSlider.fillAmount = 1.0f;
+        _ts.InvokeRepeating("DecreaseTime", 1, 1);
 
         if (CurrentPhase != GamePhase.Voting)
         {
