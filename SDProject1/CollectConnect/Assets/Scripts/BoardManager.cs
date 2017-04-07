@@ -70,6 +70,7 @@ public class BoardManager : MonoBehaviour
     public List<int> VoteResultsList;
     public List<bool> CantVotePlayerList;
     public List<int> LegalVotePlayerList;
+    private bool _afterVote;
 
     public GameObject InHandGlow;
     public GameObject OnBoardGlow;
@@ -160,6 +161,8 @@ public class BoardManager : MonoBehaviour
 
             DisableVet();
             DisableVote();
+
+            _afterVote = false;
 
             _ts = FindObjectOfType<TimerScript>();
             //_ts.stopTimer();
@@ -510,7 +513,8 @@ public class BoardManager : MonoBehaviour
                         CantVotePlayerList[i] = false;
                     }
 
-                    CurrentPlayer = 0;    //start round after voting (for late update)
+                    _afterVote = true;
+                    //CurrentPlayer = 0;    //start round after voting (for late update)
                     CurrentPhase = GamePhase.Playing;
                 }
             }
@@ -577,6 +581,12 @@ public class BoardManager : MonoBehaviour
 
             CurrentPlayer++;
 
+            if (_afterVote == true)
+            {
+                CurrentPlayer = 0;
+                _afterVote = false;
+            }
+            
             if (CurrentPlayer == 4) //all players have played in round 
             {
                 //Run voting
@@ -587,10 +597,11 @@ public class BoardManager : MonoBehaviour
             {
                 //shrink player piece
                 _playerScriptRefs[CurrentPlayer].PlayerPieceExpansion();
-            }
 
-            Debug.Log("player's turn: " + CurrentPlayer);
-            CurrentPlayer %= Players.Length;
+                Debug.Log("player's turn before: " + CurrentPlayer);
+                CurrentPlayer %= Players.Length;
+                Debug.Log("player's turn after: " + CurrentPlayer);
+            }
 
             switch (CurrentPlayer)
             {
