@@ -430,34 +430,41 @@ public class Player : MonoBehaviour
         {
             VoteText.gameObject.GetComponent<Text>().text = _voteHumanText;
             VoteText.gameObject.GetComponent<Text>().enabled = true;
-            VoteBtnP1.gameObject.SetActive(true);
-            VoteBtnP2.gameObject.SetActive(true);
-            VoteBtnP3.gameObject.SetActive(true);
-            VoteBtnP4.gameObject.SetActive(true);
 
             //if there is no one to vote for
-            if (BoardManager.Instance.CantVotePlayerList.All(b => b))
+
+
+
+
+            if (BoardManager.Instance.CantVotePlayerList.TrueForAll(b => b == true))
             {
                 VotePassBtn.gameObject.SetActive(true);
+                Debug.Log("Running this one");
             }
+            else if (BoardManager.Instance.CantVotePlayerList[BoardManager.Instance.CurrentPlayer] == false &&
+                     BoardManager.Instance.CantVotePlayerList.FindAll(b => b == false).Count == 1)
+            {
+                VotePassBtn.gameObject.SetActive(true);
+                Debug.Log("Running THAT one");
+            }
+
+            if (!BoardManager.Instance.CantVotePlayerList[0]) //turn on voting buttons
+                VoteBtnP1.gameObject.SetActive(true);
+
+            if (!BoardManager.Instance.CantVotePlayerList[1])
+                VoteBtnP2.gameObject.SetActive(true);
+
+            if (!BoardManager.Instance.CantVotePlayerList[2])
+                VoteBtnP3.gameObject.SetActive(true);
+
+            if (!BoardManager.Instance.CantVotePlayerList[3])
+                VoteBtnP4.gameObject.SetActive(true);
         }
         else //if AI is playing
         {
             VoteText.gameObject.GetComponent<Text>().text = _aiText;
             VoteText.gameObject.GetComponent<Text>().enabled = true;
         }
-
-        if (BoardManager.Instance.CantVotePlayerList[0])  //cant vote on "invalid" moves
-            VoteBtnP1.gameObject.SetActive(false);
-
-        if (BoardManager.Instance.CantVotePlayerList[1])
-            VoteBtnP2.gameObject.SetActive(false);
-
-        if (BoardManager.Instance.CantVotePlayerList[2])
-            VoteBtnP3.gameObject.SetActive(false);
-
-        if (BoardManager.Instance.CantVotePlayerList[3])
-            VoteBtnP4.gameObject.SetActive(false);
     }
 
     public void PlayerVoteShrink()
@@ -469,6 +476,7 @@ public class Player : MonoBehaviour
         VoteBtnP2.gameObject.SetActive(false);
         VoteBtnP3.gameObject.SetActive(false);
         VoteBtnP4.gameObject.SetActive(false);
+        VotePassBtn.gameObject.SetActive(false);
         BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
     }
 
