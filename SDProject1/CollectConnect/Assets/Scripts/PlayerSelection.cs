@@ -31,7 +31,7 @@ public class PlayerSelection : MonoBehaviour
 
     private static void BackBtnTransition()
     {
-        SceneManager.LoadScene("About");
+        SceneManager.LoadScene("mainMenu");
     }
 
     private static void OnePlayerFunction()
