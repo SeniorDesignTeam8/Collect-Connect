@@ -7,7 +7,7 @@ public class TimerScript : MonoBehaviour
     public Image CircleSlider;
     public Sprite MainSprite;
     public Sprite OtherSprite;
-    private float _usualTime = 90.0f;
+    private float _usualTime = 120.0f;
     private BoardManager _bM;
     private Button _rButton;
     private bool _isPaused = true;
@@ -32,7 +32,7 @@ public class TimerScript : MonoBehaviour
     private void Update()
 	{
 
-        if (Timeleft < 15)
+        if (Timeleft < 31)
         {
             _t.color = Color.red;
             CircleSlider.sprite = OtherSprite;
@@ -67,7 +67,7 @@ public class TimerScript : MonoBehaviour
         if (_lastClickTime > Time.time - DClickDelay && _lastButNum == 2)
         {
             CancelInvoke();
-            Timeleft = 90;
+            Timeleft = 120;
             CircleSlider.fillAmount = 1.0f;
             InvokeRepeating("DecreaseTime", 1, 1);
         }

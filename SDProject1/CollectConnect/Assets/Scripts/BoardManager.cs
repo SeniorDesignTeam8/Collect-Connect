@@ -561,7 +561,7 @@ public class BoardManager : MonoBehaviour
         if (!_isGameStarted)
             return;
 
-        TimerScript.Timeleft = 90;
+        TimerScript.Timeleft = 120;
         _ts.CircleSlider.fillAmount = 1.0f;
 
         if (CurrentPhase != GamePhase.Voting)
