@@ -409,10 +409,14 @@ public class Player : MonoBehaviour
     {
         BoardManager.Instance.PlaySelect();
         //Debug.Log("Join btn hit");
-        BlockOff.gameObject.GetComponent<Renderer>().enabled = false;
         JoinGameBtn.gameObject.SetActive(false);
         LeaveGameBtn.gameObject.SetActive(true);
         SetAiControl(false);
+
+        if (BoardManager.Instance.GetCurrentPlayer() == this)
+        {
+            BlockOff.gameObject.GetComponent<Renderer>().enabled = false;
+        }
     }
 
     public void PlayerVoteExpansion()
