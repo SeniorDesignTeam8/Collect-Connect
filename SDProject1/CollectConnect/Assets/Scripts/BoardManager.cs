@@ -39,6 +39,7 @@ public class BoardManager : MonoBehaviour
     private bool _isPlayerCardSelected;
     private bool _isBoardCardSelected;
     private bool _isKeywordSelected;
+    private bool _isGameListGenerated;
     public int CurrentPlayer;
     public bool IsTurnOver { get; private set; }
     private bool _playedTurn;
@@ -122,6 +123,7 @@ public class BoardManager : MonoBehaviour
             Deck.Shuffle();
             IsDeckReady = true;
             Instance = this;
+            _isGameListGenerated = false;
             _playerScriptRefs = new List<Player>();
             foreach (GameObject player in Players)
                 _playerScriptRefs.Add(player.GetComponent<Player>());
@@ -706,14 +708,18 @@ public class BoardManager : MonoBehaviour
             {
                 _keywordList.AddRange(p.GetKeywords());
             }
+            _keywordList = _keywordList.Distinct().ToList();
+            _keywordList = PickSubset(_keywordList);
+        }
+        else if (!_isGameListGenerated && CurrentPhase == GamePhase.Playing)
+        {
+            _keywordList = _currentKeywordList;
+            _isGameListGenerated = true;
         }
         else
         {
-            _keywordList = _currentKeywordList;
+            _keywordList = _keywordList.Distinct().ToList();
         }
-        _keywordList = _keywordList.Distinct().ToList();
-        _keywordList = PickSubset(_keywordList);
-
         // clear the list
         // TODO Possibly combine KeywordContainers into an array?
         foreach (Transform child in KeywordContainerP1.transform)
@@ -1636,7 +1642,7 @@ public class BoardManager : MonoBehaviour
     {
         yield return new WaitForSeconds(4.0f);
 
-        if (LegalVotePlayerList.Count != 0) //something to vote on 
+        if (LegalVotePlayerList.Count != 0) //something to vote on
         {
             var random = new System.Random();
             int playerSelection = random.Next(LegalVotePlayerList.Count);
@@ -1647,7 +1653,7 @@ public class BoardManager : MonoBehaviour
 
     public void EndKeywordPick() // TODO This was originally the EndResearchPhase method. AI should be able to call this after it picks its keywords.
     {
-        //turn on player's block off 
+        //turn on player's block off
         _playerScriptRefs[CurrentPlayer].BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
 
         if (CurrentPlayer == Players.Length - 1 && _numSelections == MaxNumKeywordPicks) // If it's the last player's turn to pick & they chose 5 keywords...
