@@ -714,6 +714,7 @@ public class BoardManager : MonoBehaviour
         else if (!_isGameListGenerated && CurrentPhase == GamePhase.Playing)
         {
             _keywordList = _currentKeywordList;
+            _keywordList.Sort();
             _isGameListGenerated = true;
         }
         else
