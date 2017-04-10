@@ -57,7 +57,7 @@ public class BoardManager : MonoBehaviour
     private bool _isFirstListGen = true;
     private bool _hitVetBtn;
     private int[] _scoreboard;
-    private int _playerNumber;
+    public int PlayerNumber;
     private static IDbConnection _dbconn;
     private TimerScript _ts;
     public Button PassBtnP1;
@@ -95,7 +95,7 @@ public class BoardManager : MonoBehaviour
         LegalVotePlayerList = new List<int>();
         _afterVet = false;
         _hitVetBtn = false;
-        _playerNumber = 0;
+        PlayerNumber = 0;
         _aiThinkingDone = false;
 
         for (int i = 0; i < 4; i++) //prefill lists
@@ -362,20 +362,20 @@ public class BoardManager : MonoBehaviour
                 VetSetUp();
                 _ts.CancelInvoke();
             }
-            else if (_playerScriptRefs[_playerNumber].PlayerVetted) //if vetting has started and player hit yes/no btn
+            else if (_playerScriptRefs[PlayerNumber].PlayerVetted) //if vetting has started and player hit yes/no btn
             {
-                _playerScriptRefs[_playerNumber].VetShrink();
+                _playerScriptRefs[PlayerNumber].VetShrink();
 
-                VetResultList[_playerNumber] = _playerScriptRefs[_playerNumber].VetResult; //pull player's result 
-                _playerNumber++;
+                VetResultList[PlayerNumber] = _playerScriptRefs[PlayerNumber].VetResult; //pull player's result 
+                PlayerNumber++;
 
-                if (_playerNumber < 4)
+                if (PlayerNumber < 4)
                 {
-                    if (_playerScriptRefs[_playerNumber].IsAiControlled)  //AI Controlled
+                    if (_playerScriptRefs[PlayerNumber].IsAiControlled)  //AI Controlled
                     {
                         if (!_aiThinkingDone)
                         {
-                            _playerScriptRefs[_playerNumber].VetExpansion(); //individual player screens
+                            _playerScriptRefs[PlayerNumber].VetExpansion(); //individual player screens
                             StartCoroutine("VetAiDecision"); //start AI decision timer
                             _aiThinkingDone = true;
                         }
@@ -386,7 +386,7 @@ public class BoardManager : MonoBehaviour
                     }
                     else
                     {
-                        _playerScriptRefs[_playerNumber].VetExpansion(); //individual player screens 
+                        _playerScriptRefs[PlayerNumber].VetExpansion(); //individual player screens 
                     }
                 }
 
@@ -399,7 +399,7 @@ public class BoardManager : MonoBehaviour
                     DisableVet(); //shrink vet visuals
                     ToggleCardsOn();
                     _afterVet = true; //all done vetting
-                    _playerNumber = 0;
+                    PlayerNumber = 0;
                     _aiThinkingDone = false; //reset
                 }
             }
@@ -466,23 +466,23 @@ public class BoardManager : MonoBehaviour
         {
             //RUN VOTING
             _ts.CancelInvoke();
-            if (_playerScriptRefs[_playerNumber].PlayerVoted) //if player voted
+            if (_playerScriptRefs[PlayerNumber].PlayerVoted) //if player voted
             {
-                _playerScriptRefs[_playerNumber].PlayerVoteShrink();
-                _playerNumber++;
+                _playerScriptRefs[PlayerNumber].PlayerVoteShrink();
+                PlayerNumber++;
 
-                if (_playerNumber < 4)
+                if (PlayerNumber < 4)
                 {
-                    if (_playerScriptRefs[_playerNumber].IsAiControlled) //if AI controlled
+                    if (_playerScriptRefs[PlayerNumber].IsAiControlled) //if AI controlled
                     {
-                        _playerScriptRefs[_playerNumber].PlayerVoteExpansion();
+                        _playerScriptRefs[PlayerNumber].PlayerVoteExpansion();
                         StartCoroutine("VoteAiDecision"); //start AI decision timer
                         _aiThinkingDone = true;
                     }
                     else
                     {
                         //expand next player's voting
-                        _playerScriptRefs[_playerNumber].PlayerVoteExpansion();
+                        _playerScriptRefs[PlayerNumber].PlayerVoteExpansion();
                     }
                 }
 
@@ -492,7 +492,7 @@ public class BoardManager : MonoBehaviour
                     GetVoteResult();    //distribute points
                     ToggleCardsOn();    //enable card movement
                     DisableVote();      //shrink voting screen
-                    _playerNumber = 0;
+                    PlayerNumber = 0;
                     _aiThinkingDone = false; //reset
 
                     foreach (Player p in _playerScriptRefs)  //destroy main player cards
@@ -598,9 +598,7 @@ public class BoardManager : MonoBehaviour
                 //shrink player piece
                 _playerScriptRefs[CurrentPlayer].PlayerPieceExpansion();
 
-                Debug.Log("player's turn before: " + CurrentPlayer);
                 CurrentPlayer %= Players.Length;
-                Debug.Log("player's turn after: " + CurrentPlayer);
             }
 
             switch (CurrentPlayer)
@@ -1354,14 +1352,14 @@ public class BoardManager : MonoBehaviour
         _copyCardRight.transform.position = VetCard2.gameObject.transform.position;
         _copyCardRight.transform.localScale = VetCard2.gameObject.GetComponent<Renderer>().bounds.extents;
 
-        _playerNumber = 0;
+        PlayerNumber = 0;
         _hitVetBtn = true;
 
         VetResultList[0] = CheckConnection();
         Debug.Log("AI vetted " + VetResultList[0]);
-        _playerScriptRefs[_playerNumber].PlayerVetted = true; //first AI done 
-        _playerScriptRefs[_playerNumber].YesNoBtnHit = true;
-        _playerScriptRefs[_playerNumber].VetResult = VetResultList[0];
+        _playerScriptRefs[PlayerNumber].PlayerVetted = true; //first AI done 
+        _playerScriptRefs[PlayerNumber].YesNoBtnHit = true;
+        _playerScriptRefs[PlayerNumber].VetResult = VetResultList[0];
 
     }
 
@@ -1371,8 +1369,8 @@ public class BoardManager : MonoBehaviour
 
         int rindex = Random.Range(0, 101);
         bool aiVet = rindex > 50;
-        VetResultList[_playerNumber] = aiVet;
-        _playerScriptRefs[_playerNumber].PlayerVetted = true;
+        VetResultList[PlayerNumber] = aiVet;
+        _playerScriptRefs[PlayerNumber].PlayerVetted = true;
         _aiThinkingDone = false; //reset
     }
 
@@ -1461,7 +1459,7 @@ public class BoardManager : MonoBehaviour
             VoteResultsList[i] = 1; //reset result list
         }
 
-        _playerNumber = 0; //reset for voting below
+        PlayerNumber = 0; //reset for voting below
         foreach (Player p in _playerScriptRefs)
         {
             p.VoteKeywordTxt.gameObject.GetComponent<Text>().text = p.ConnectionKeyword;
@@ -1481,27 +1479,27 @@ public class BoardManager : MonoBehaviour
                 p.CopyCardRight.transform.position = p.VoteCardRight.gameObject.transform.position;
                 p.CopyCardRight.transform.localScale = Vector3.one;
                 p.VoteCardRight.gameObject.GetComponent<Renderer>().enabled = false;
-                _playerNumber++;
-                LegalVotePlayerList.Add(_playerNumber++); //add valid players to list for AI voting
-                _playerNumber--;
+                PlayerNumber++;
+                LegalVotePlayerList.Add(PlayerNumber++); //add valid players to list for AI voting
+                PlayerNumber--;
             }
             else
             {
                 //disable voting buttons for those players
-                CantVotePlayerList[_playerNumber] = true;
-                _playerNumber++;
+                CantVotePlayerList[PlayerNumber] = true;
+                PlayerNumber++;
 
                 //don't display card holders
                 p.VoteCardLeft.gameObject.GetComponent<Renderer>().enabled = false;
                 p.VoteCardRight.gameObject.GetComponent<Renderer>().enabled = false;
             }
         }
-        _playerNumber = 0; //reset
+        PlayerNumber = 0; //reset
 
         //AI Voting
-        _playerScriptRefs[_playerNumber].PlayerVoteExpansion();
+        _playerScriptRefs[PlayerNumber].PlayerVoteExpansion();
         VoteResultsList[0] = 1; //preset for AI
-        _playerScriptRefs[_playerNumber].PlayerVoted = true;
+        _playerScriptRefs[PlayerNumber].PlayerVoted = true;
     }
 
     private void GetVoteResult()
@@ -1641,9 +1639,9 @@ public class BoardManager : MonoBehaviour
         {
             var random = new System.Random();
             int playerSelection = random.Next(LegalVotePlayerList.Count);
-            _playerScriptRefs[_playerNumber].VotedForWho = playerSelection;
+            _playerScriptRefs[PlayerNumber].VotedForWho = playerSelection;
         }
-        _playerScriptRefs[_playerNumber].PlayerVoted = true;    //move to next player
+        _playerScriptRefs[PlayerNumber].PlayerVoted = true;    //move to next player
     }
 
     public void EndKeywordPick() // TODO This was originally the EndResearchPhase method. AI should be able to call this after it picks its keywords.

@@ -431,21 +431,16 @@ public class Player : MonoBehaviour
             VoteText.gameObject.GetComponent<Text>().text = _voteHumanText;
             VoteText.gameObject.GetComponent<Text>().enabled = true;
 
-            //if there is no one to vote for
-
-
-
-
-            if (BoardManager.Instance.CantVotePlayerList.TrueForAll(b => b == true))
+            //if there are no players you can vote for
+            if (BoardManager.Instance.CantVotePlayerList.All(b => b == true))
             {
                 VotePassBtn.gameObject.SetActive(true);
-                Debug.Log("Running this one");
-            }
-            else if (BoardManager.Instance.CantVotePlayerList[BoardManager.Instance.CurrentPlayer] == false &&
-                     BoardManager.Instance.CantVotePlayerList.FindAll(b => b == false).Count == 1)
+
+            }   //if current player is has play, but rest can't vote for 
+            else if (BoardManager.Instance.CantVotePlayerList[BoardManager.Instance.PlayerNumber] == false &&
+                        BoardManager.Instance.CantVotePlayerList.FindAll(c => c == false).Count == 1)
             {
                 VotePassBtn.gameObject.SetActive(true);
-                Debug.Log("Running THAT one");
             }
 
             if (!BoardManager.Instance.CantVotePlayerList[0]) //turn on voting buttons
