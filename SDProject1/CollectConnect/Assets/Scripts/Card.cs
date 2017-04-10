@@ -46,6 +46,8 @@ public class Card : MonoBehaviour
     private bool _isDragging;
     private Vector3 _originalPosition;
     private Vector3 _pointerDownPosition;
+    private Vector3 _offset;
+    private Vector3 _screenPoint;
     private bool _isSpriteLoaded;
     private bool _isSelected; // Specifies if this card is selected.
     private bool _isTimerRunning; // If true, mouse is currently held down on card.
@@ -67,6 +69,9 @@ public class Card : MonoBehaviour
         Debug.Log("Mouse Down.");
         _mouseDownTime = Time.time; // Mark the current time as 0. After 2 seconds, expand card.
         _pointerDownPosition = Input.mousePosition;
+        _screenPoint = Camera.main.WorldToScreenPoint(gameObject.transform.position);
+        _offset = gameObject.transform.position - Camera.main.ScreenToWorldPoint(new Vector3(_pointerDownPosition.x, _pointerDownPosition.y, _screenPoint.z));
+        
         _isTimerRunning = true;
     }
 
@@ -111,28 +116,33 @@ public class Card : MonoBehaviour
         // TODO: Expand Card.
         BoardManager.Instance.CardExpand(this);
         _isExpanded = true;
+
     }
 
 
     private void OnMouseDrag()
     {
         if (_isOnBoard && Vector3.Distance(_pointerDownPosition, Input.mousePosition) >
-            gameObject.GetComponent<RectTransform>().rect.width / 2 && !_isExpanded)
+            gameObject.GetComponent<RectTransform>().rect.width && !_isExpanded)
         {
             _isDragging = true;
             _isTimerRunning = false;
         }
+        if (_isDragging)
+        {
+            Vector3 cursorPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, _screenPoint.z);
+            Vector3 cursorPosition = Camera.main.ScreenToWorldPoint(cursorPoint) + _offset;
+            transform.position = cursorPosition;
+            //Vector3 actualMouseLocation = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            //gameObject.transform.localPosition = new Vector3(actualMouseLocation.x, actualMouseLocation.y, gameObject.transform.localPosition.z);
+        }
     }
 
     // Update is called once per frame
-    private void LateUpdate()
-    {
-        if (_isDragging)
-        {
-            Vector3 actualMouseLocation = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            transform.position = new Vector3(actualMouseLocation.x, actualMouseLocation.y, transform.position.z);
-        }
-    }
+    //private void LateUpdate()
+    //{
+
+    //}
 
     public void AddProperty(string propName, string propVal, string pointVal = "0")
     {

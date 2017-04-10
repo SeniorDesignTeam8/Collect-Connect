@@ -229,7 +229,8 @@ public class BoardManager : MonoBehaviour
             {
                 if (_numSelections < 5)
                 {
-                    int[] indices = Enumerable.Range(0, _keywordList.Count + 1).ToArray();
+                    int[] indices = Enumerable.Range(0, _keywordList.Count).ToArray();
+                    Debug.Log("Last value: " + indices[indices.Length - 1]);
                     Shuffle(ref indices);
                     foreach (int index in indices)
                     {
