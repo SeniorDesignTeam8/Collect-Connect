@@ -130,9 +130,12 @@ public class Card : MonoBehaviour
         }
         if (_isDragging)
         {
+            if (BoardManager.Instance.OnBoardGlow.GetComponent<Renderer>().enabled)
+                BoardManager.Instance.OnBoardGlow.transform.position = gameObject.transform.position;
             Vector3 cursorPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, _screenPoint.z);
             Vector3 cursorPosition = Camera.main.ScreenToWorldPoint(cursorPoint) + _offset;
             transform.position = cursorPosition;
+
             //Vector3 actualMouseLocation = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             //gameObject.transform.localPosition = new Vector3(actualMouseLocation.x, actualMouseLocation.y, gameObject.transform.localPosition.z);
         }
