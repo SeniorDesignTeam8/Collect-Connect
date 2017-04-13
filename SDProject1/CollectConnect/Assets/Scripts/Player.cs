@@ -44,26 +44,25 @@ public class Player : MonoBehaviour
     public GameObject LocationOnBoard4;
     public GameObject LocationOnBoard5;
 
+    public GameObject VetPlayerPiece;
+
     public GameObject VoteText;
     public Button VoteBtnP1;
     public Button VoteBtnP2;
     public Button VoteBtnP3;
     public Button VoteBtnP4;
     public bool PlayerVoted;
-
     public GameObject VoteCardLeft;
     public GameObject VoteCardRight;
     public GameObject VoteKeywordTxt;
     public GameObject VoteConnection;
     public Button VotePassBtn;
-
     public int VotedForWho;
     public Card CopyCardLeft;
     public Card CopyCardRight;
-    private bool _postVote;
+   public GameObject VotePlayerPiece;
+
     public GameObject BlockOff;
-    public GameObject VotePlayerPiece;
-    public GameObject VetPlayerPiece;
 
     private string _vetHumanText;
     private string _aiText;

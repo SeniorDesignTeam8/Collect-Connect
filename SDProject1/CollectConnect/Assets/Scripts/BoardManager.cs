@@ -389,7 +389,17 @@ public class BoardManager : MonoBehaviour
                     }
                     else
                     {
-                        _playerScriptRefs[PlayerNumber].VetExpansion(); //individual player screens 
+                        if (PlayerNumber == CurrentPlayer) //if player who played connection is "Vetting"
+                        {
+                            //skip over them and vote yes
+                            _playerScriptRefs[PlayerNumber].YesNoBtnHit = true;
+                            _playerScriptRefs[PlayerNumber].VetResult = true;
+                            _playerScriptRefs[PlayerNumber].PlayerVetted = true;
+                        }
+                        else
+                        {
+                            _playerScriptRefs[PlayerNumber].VetExpansion(); //individual player screens 
+                        }
                     }
                 }
 
