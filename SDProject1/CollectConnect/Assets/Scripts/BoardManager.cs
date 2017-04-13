@@ -85,6 +85,8 @@ public class BoardManager : MonoBehaviour
     private List<Text> _graphicalKeyList = new List<Text>(); // Contains the list of Text components in the word bank buttons.
     public Button WordBankBtn;
 
+    public GameObject test;
+
     private void Awake()
     {
         _isGameStarted = false;
@@ -1019,6 +1021,11 @@ public class BoardManager : MonoBehaviour
         Player p = FindOwningPlayer(card);
         foreach (Card c in from Card c in p.GetHand() where c.name == card.name select c)
         {
+            if (card.IsOnBoard())
+            {
+                p = _playerScriptRefs[0];
+            }
+
             p.CardExpansion(c);
             PlayExpand();
             return;
@@ -1030,6 +1037,11 @@ public class BoardManager : MonoBehaviour
         Player p = FindOwningPlayer(card);
         foreach (Card c in from Card c in p.GetHand() where c.name == card.name select c)
         {
+            if (card.IsOnBoard())
+            {
+                p = _playerScriptRefs[0];
+            }
+
             p.CardShrink(c);
             PlayDeselect();
             return;

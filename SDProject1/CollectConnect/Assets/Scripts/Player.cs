@@ -289,17 +289,17 @@ public class Player : MonoBehaviour
 
     public void CardExpansion(Card card) //Expand card
     {
-        ExpCardBackground.gameObject.GetComponent<Renderer>().enabled = true;
-        ExpCardImage.gameObject.GetComponent<Renderer>().enabled = true;
-        ExpCardTitle.gameObject.GetComponent<Text>().text = card.name;
-        ExpCardInfo.gameObject.GetComponent<Text>().text = card.GetExpInfo();
-        ExpCardTitle.gameObject.GetComponent<Text>().enabled = true;
-        ExpCardInfo.gameObject.GetComponent<Text>().enabled = true;
-        _expCardPosition = card.gameObject.transform.position;
-        _expCardScale = card.gameObject.transform.localScale;
-        card.gameObject.transform.position = ExpCardImage.transform.position;
-        card.gameObject.transform.localScale = ExpCardImage.gameObject.GetComponent<Renderer>().bounds.extents;
-        //Make card appear in expand
+            ExpCardBackground.gameObject.GetComponent<Renderer>().enabled = true;
+            ExpCardImage.gameObject.GetComponent<Renderer>().enabled = true;
+            ExpCardTitle.gameObject.GetComponent<Text>().text = card.name;
+            ExpCardInfo.gameObject.GetComponent<Text>().text = card.GetExpInfo();
+            ExpCardTitle.gameObject.GetComponent<Text>().enabled = true;
+            ExpCardInfo.gameObject.GetComponent<Text>().enabled = true;
+            _expCardPosition = card.gameObject.transform.position;
+            _expCardScale = card.gameObject.transform.localScale;
+            card.gameObject.transform.position = ExpCardImage.transform.position;
+            card.gameObject.transform.localScale = ExpCardImage.gameObject.GetComponent<Renderer>().bounds.extents;
+            //Make card appear in expand
     }
 
     public void CardShrink(Card card) //Shrink card

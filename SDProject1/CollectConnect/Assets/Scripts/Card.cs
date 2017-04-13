@@ -113,7 +113,7 @@ public class Card : MonoBehaviour
             return;
         _isTimerRunning = false;
         Debug.Log("Expanding " + name);
-        // TODO: Expand Card.
+
         BoardManager.Instance.CardExpand(this);
         _isExpanded = true;
 
