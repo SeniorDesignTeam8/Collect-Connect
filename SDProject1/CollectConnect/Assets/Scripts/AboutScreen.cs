@@ -21,5 +21,14 @@ public class AboutScreen : MonoBehaviour
     {
         SceneManager.LoadScene("MainMenu");
     }
+
+    public void Update()
+    {
+        //quit application 
+        if (Input.GetKeyDown((KeyCode.Escape)))
+        {
+            Application.Quit();
+        }
+    }
 }
 

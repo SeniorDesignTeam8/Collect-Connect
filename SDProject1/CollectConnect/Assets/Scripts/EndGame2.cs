@@ -136,5 +136,14 @@ public class EndGame2 : MonoBehaviour
         FourthPlaceScoreTxt.gameObject.GetComponent<Text>().text = PlayerScores[3, 1];
         FourthPlaceHolder.gameObject.GetComponent<Renderer>().enabled = false;
     }
+
+    public void Update()
+    {
+        //quit application 
+        if (Input.GetKeyDown((KeyCode.Escape)))
+        {
+            Application.Quit();
+        }
+    }
 }
  

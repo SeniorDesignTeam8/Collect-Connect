@@ -187,6 +187,12 @@ public class BoardManager : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
+        //quit application 
+        if (Input.GetKeyDown((KeyCode.Escape)))
+        {
+            Application.Quit();
+        }
+        
         // First, check if all players have drawn their cards.
         // If so, then populate the players' word banks.
         if (CurrentPhase != GamePhase.Research && !_isGameStarted)
