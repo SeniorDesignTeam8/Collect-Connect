@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Random = UnityEngine.Random;
@@ -64,5 +63,10 @@ public class CardCollection : IEnumerable
     public Card At(int index)
     {
         return _cardList[index];
+    }
+
+    public static void SetSeed(int seed)
+    {
+        Random.InitState(seed);
     }
 }

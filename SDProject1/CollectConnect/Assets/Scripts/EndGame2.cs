@@ -1,11 +1,7 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections.Generic;
-using System.Linq;
-using UnityEngine.Networking.NetworkSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using Random = UnityEngine.Random;
 
 public class EndGame2 : MonoBehaviour
 {
@@ -62,11 +58,11 @@ public class EndGame2 : MonoBehaviour
         PlayerScores[3, 1] = PlayerPrefs.GetInt("Player4Score").ToString();
 
 
-        for (int b = 0; b < 4; b++)
-        {
-            Debug.Log(PlayerScores[b, 0]);
-            Debug.Log(PlayerScores[b, 1]);
-        }
+        //for (int b = 0; b < 4; b++)
+        //{
+        //    Debug.Log(PlayerScores[b, 0]);
+        //    Debug.Log(PlayerScores[b, 1]);
+        //}
 
 
         for (int i = 0; i < 4; i++) //find top score
@@ -80,8 +76,8 @@ public class EndGame2 : MonoBehaviour
                     int score2;
                     int.TryParse(PlayerScores[j + 1, 1], out score2);
 
-                    Debug.Log("Score 1: " + score1);
-                    Debug.Log("Score2: " + score2);
+                    //Debug.Log("Score 1: " + score1);
+                    //Debug.Log("Score2: " + score2);
 
 
                     if (score1 < score2) //if the second score is larger than the first
@@ -139,8 +135,8 @@ public class EndGame2 : MonoBehaviour
 
     public void Update()
     {
-        //quit application 
-        if (Input.GetKeyDown((KeyCode.Escape)))
+        //quit application
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
             Application.Quit();
         }

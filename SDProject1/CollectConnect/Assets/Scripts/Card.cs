@@ -1,9 +1,7 @@
-﻿ using System;
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
-using System.Text;
 
 
 public class Card : MonoBehaviour
@@ -30,7 +28,7 @@ public class Card : MonoBehaviour
 
         public void SetPointValue(int newValue)
         {
-            Debug.Log("Setting point value to " + newValue);
+            //Debug.Log("Setting point value to " + newValue);
             PointValue = newValue;
         }
     }
@@ -66,7 +64,7 @@ public class Card : MonoBehaviour
 
     private void OnMouseDown()
     {
-        Debug.Log("Mouse Down.");
+        //Debug.Log("Mouse Down.");
         _mouseDownTime = Time.time; // Mark the current time as 0. After 2 seconds, expand card.
         _pointerDownPosition = Input.mousePosition;
         _screenPoint = Camera.main.WorldToScreenPoint(gameObject.transform.position);
@@ -77,7 +75,7 @@ public class Card : MonoBehaviour
 
     private void OnMouseUp()
     {
-        Debug.Log("Mouse Up.");
+        //Debug.Log("Mouse Up.");
         _isTimerRunning = false;
         if (_isDragging)
         {
@@ -86,7 +84,7 @@ public class Card : MonoBehaviour
         }
         if (_isExpanded) // Is the card expanded?
         {
-            Debug.Log("Shrinking " + name);
+            //Debug.Log("Shrinking " + name);
             BoardManager.Instance.CardUnexpand(this);
 
             _isExpanded = false;
@@ -112,7 +110,7 @@ public class Card : MonoBehaviour
         if (!_isTimerRunning || !(Time.time - _mouseDownTime >= ExpandedInfoDelay))
             return;
         _isTimerRunning = false;
-        Debug.Log("Expanding " + name);
+        //Debug.Log("Expanding " + name);
 
         BoardManager.Instance.CardExpand(this);
         _isExpanded = true;
@@ -164,7 +162,7 @@ public class Card : MonoBehaviour
 
     public int GetPts(CardProperty searchProperty)
     {
-        Debug.Log("Getting points for " + searchProperty.PropertyValue);
+        //Debug.Log("Getting points for " + searchProperty.PropertyValue);
         //Debug.Log(searchProperty.PropertyName);
         foreach (CardProperty property in PropertyList)
         {
@@ -177,7 +175,7 @@ public class Card : MonoBehaviour
 
     public CardProperty GetPropertyFromKeyword(string keyword)
     {
-        Debug.Log("Getting property for " + keyword);
+        //Debug.Log("Getting property for " + keyword);
         foreach (CardProperty prop in PropertyList)
         {
             if (prop.PropertyValue.Equals(keyword))

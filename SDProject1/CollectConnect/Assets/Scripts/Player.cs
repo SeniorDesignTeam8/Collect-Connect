@@ -78,8 +78,19 @@ public class Player : MonoBehaviour
         0.05f, 0.05f, 0.05f, 0.05f
     };
 
+#if !UNITY_EDITOR
+    private void Awake()
+    {
+        if (Debug.isDebugBuild)
+        {
+            Random.InitState(42);
+        }
+    }
+#endif
+
     private void Start()
     {
+
         IsDrawingCards = true;
         _playerName = gameObject.name.Replace(" ", "").ToLower();
         // Remove spaces and change to all lowercase to standardize.
@@ -185,7 +196,7 @@ public class Player : MonoBehaviour
             //        playedCards.RemoveAt(i);     
             //    }
             //}
-            Debug.Log("AI trying to play...  ");
+            //Debug.Log("AI trying to play...  ");
             //if (playedCards.Size == 0)
             //{
             //    //Debug.Log("First played card.");
@@ -197,7 +208,7 @@ public class Player : MonoBehaviour
             float passChance = Random.Range(0.0f, 1.0f);
             if (passChance <= AiPassThresholds[BoardManager.Instance.CurrentPlayer])
             {
-                Debug.Log("AI Passed.");
+                //Debug.Log("AI Passed.");
                 BoardManager.Instance.PassBtnHit();
             }
             else
@@ -207,15 +218,15 @@ public class Player : MonoBehaviour
                 float aiValidPlayChance = Random.Range(0.0f, 1.0f);
                 foreach (Card c in playedCards)
                 {
-                    // Card c = playedCards.At(0);
-                    Debug.Log("trying a card in hand...");
+                    //Card c = playedCards.At(0);
+                    //Debug.Log("trying a card in hand...");
                     List<Card.CardProperty> commonProps = c.FindCommonProperties(pickedCard);
                     //random index to determine if valid play should happen 80% of the time...
                     if (aiValidPlayChance < 0.8)
                     {
                         if (commonProps.Count <= 0)
                         {
-                            Debug.Log("no common props");
+                            //Debug.Log("no common props");
                             //c = playedCards.At(2);
                             continue;
                         }
@@ -223,14 +234,14 @@ public class Player : MonoBehaviour
                         ShufflePropertyList(ref commonProps);
                         BoardManager.Instance.SelectKeyword(commonProps[0]);
                         alreadyPlayed = true;
-                        Debug.Log("AI play valid");
+                        //Debug.Log("AI play valid");
                         break;
                     }
                     //...otherwise this invalid play should happen
                     BoardManager.Instance.SelectCardOnBoard(c);
                     BoardManager.Instance.SelectKeyword(c.PropertyList.First());
                     alreadyPlayed = true;
-                    Debug.Log("AI play invalid");
+                    //Debug.Log("AI play invalid");
                     break;
                 }
                 if (!alreadyPlayed && playedCards.Size > 0)
@@ -239,7 +250,7 @@ public class Player : MonoBehaviour
                     int randomindex = Random.Range(0, playedCards.Size);
                     BoardManager.Instance.SelectCardOnBoard(playedCards.At(randomindex));
                     BoardManager.Instance.SelectKeyword(playedCards.At(randomindex).PropertyList.First());
-                    Debug.Log("AI play invalid after");
+                    //Debug.Log("AI play invalid after");
                     //break;
                 }
 
@@ -251,7 +262,7 @@ public class Player : MonoBehaviour
     public void IncreaseScore(int reward)
     {
         Score += reward;
-        Debug.Log("Score: " + reward);
+        //Debug.Log("Score: " + reward);
         PlayerScore.gameObject.GetComponent<Text>().text = Score.ToString(); //display score
     }
 
@@ -431,7 +442,7 @@ public class Player : MonoBehaviour
             VoteText.gameObject.GetComponent<Text>().enabled = true;
 
             //if there are no players you can vote for
-            if (BoardManager.Instance.CantVotePlayerList.All(b => b == true))
+            if (BoardManager.Instance.CantVotePlayerList.All(b => b))
             {
                 VotePassBtn.gameObject.SetActive(true);
 
