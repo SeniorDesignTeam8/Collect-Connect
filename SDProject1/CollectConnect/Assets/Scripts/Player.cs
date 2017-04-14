@@ -512,6 +512,7 @@ public class Player : MonoBehaviour
     {
         PlayerVoted = true;
         VotedForWho = 1;
+        BoardManager.Instance.PlaySelect();
         VotePassBtn.gameObject.SetActive(false); //if used, make disappear
     }
 
@@ -519,18 +520,22 @@ public class Player : MonoBehaviour
     {
         PlayerVoted = true;
         VotedForWho = 2;
+        BoardManager.Instance.PlaySelect();
+
     }
 
     private void VotePlayer3()
     {
         PlayerVoted = true;
         VotedForWho = 3;
+        BoardManager.Instance.PlaySelect();
     }
 
     private void VotePlayer4()
     {
         PlayerVoted = true;
         VotedForWho = 4;
+        BoardManager.Instance.PlaySelect();
     }
 
     public void VetPieceExpansion()  //display turn player piece
