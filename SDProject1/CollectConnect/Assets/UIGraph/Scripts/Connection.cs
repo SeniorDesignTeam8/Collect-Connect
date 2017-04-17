@@ -123,7 +123,7 @@ public class Connection : MonoBehaviour {
 
 		points[0].CalculateVectors(target[0]);
 		points[1].CalculateVectors(target[1]);
-	    line.positionCount = resolution;
+	    line.numPositions = resolution;
 		for (int i = 0; i < resolution; i++) {
 			line.SetPosition(i, GetBezierPoint((float)i/(float)(resolution-1)));
 		}
