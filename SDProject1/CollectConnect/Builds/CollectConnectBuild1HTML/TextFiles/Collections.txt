@@ -1,4 +1,0 @@
-Clubs
-Diamonds
-Hearts
-Spades

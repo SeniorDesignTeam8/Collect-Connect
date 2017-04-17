@@ -44,26 +44,25 @@ public class Player : MonoBehaviour
     public GameObject LocationOnBoard4;
     public GameObject LocationOnBoard5;
 
+    public GameObject VetPlayerPiece;
+
     public GameObject VoteText;
     public Button VoteBtnP1;
     public Button VoteBtnP2;
     public Button VoteBtnP3;
     public Button VoteBtnP4;
     public bool PlayerVoted;
-
     public GameObject VoteCardLeft;
     public GameObject VoteCardRight;
     public GameObject VoteKeywordTxt;
     public GameObject VoteConnection;
     public Button VotePassBtn;
-
     public int VotedForWho;
     public Card CopyCardLeft;
     public Card CopyCardRight;
-    private bool _postVote;
+   public GameObject VotePlayerPiece;
+
     public GameObject BlockOff;
-    public GameObject VotePlayerPiece;
-    public GameObject VetPlayerPiece;
 
     private string _vetHumanText;
     private string _aiText;
@@ -79,8 +78,19 @@ public class Player : MonoBehaviour
         0.05f, 0.05f, 0.05f, 0.05f
     };
 
+#if !UNITY_EDITOR
+    private void Awake()
+    {
+        if (Debug.isDebugBuild)
+        {
+            Random.InitState(42);
+        }
+    }
+#endif
+
     private void Start()
     {
+
         IsDrawingCards = true;
         _playerName = gameObject.name.Replace(" ", "").ToLower();
         // Remove spaces and change to all lowercase to standardize.
@@ -186,7 +196,7 @@ public class Player : MonoBehaviour
             //        playedCards.RemoveAt(i);     
             //    }
             //}
-            Debug.Log("AI trying to play...  ");
+            //Debug.Log("AI trying to play...  ");
             //if (playedCards.Size == 0)
             //{
             //    //Debug.Log("First played card.");
@@ -198,7 +208,7 @@ public class Player : MonoBehaviour
             float passChance = Random.Range(0.0f, 1.0f);
             if (passChance <= AiPassThresholds[BoardManager.Instance.CurrentPlayer])
             {
-                Debug.Log("AI Passed.");
+                //Debug.Log("AI Passed.");
                 BoardManager.Instance.PassBtnHit();
             }
             else
@@ -208,15 +218,15 @@ public class Player : MonoBehaviour
                 float aiValidPlayChance = Random.Range(0.0f, 1.0f);
                 foreach (Card c in playedCards)
                 {
-                    // Card c = playedCards.At(0);
-                    Debug.Log("trying a card in hand...");
+                    //Card c = playedCards.At(0);
+                    //Debug.Log("trying a card in hand...");
                     List<Card.CardProperty> commonProps = c.FindCommonProperties(pickedCard);
                     //random index to determine if valid play should happen 80% of the time...
                     if (aiValidPlayChance < 0.8)
                     {
                         if (commonProps.Count <= 0)
                         {
-                            Debug.Log("no common props");
+                            //Debug.Log("no common props");
                             //c = playedCards.At(2);
                             continue;
                         }
@@ -224,14 +234,14 @@ public class Player : MonoBehaviour
                         ShufflePropertyList(ref commonProps);
                         BoardManager.Instance.SelectKeyword(commonProps[0]);
                         alreadyPlayed = true;
-                        Debug.Log("AI play valid");
+                        //Debug.Log("AI play valid");
                         break;
                     }
                     //...otherwise this invalid play should happen
                     BoardManager.Instance.SelectCardOnBoard(c);
                     BoardManager.Instance.SelectKeyword(c.PropertyList.First());
                     alreadyPlayed = true;
-                    Debug.Log("AI play invalid");
+                    //Debug.Log("AI play invalid");
                     break;
                 }
                 if (!alreadyPlayed && playedCards.Size > 0)
@@ -240,7 +250,7 @@ public class Player : MonoBehaviour
                     int randomindex = Random.Range(0, playedCards.Size);
                     BoardManager.Instance.SelectCardOnBoard(playedCards.At(randomindex));
                     BoardManager.Instance.SelectKeyword(playedCards.At(randomindex).PropertyList.First());
-                    Debug.Log("AI play invalid after");
+                    //Debug.Log("AI play invalid after");
                     //break;
                 }
 
@@ -252,7 +262,7 @@ public class Player : MonoBehaviour
     public void IncreaseScore(int reward)
     {
         Score += reward;
-        Debug.Log("Score: " + reward);
+        //Debug.Log("Score: " + reward);
         PlayerScore.gameObject.GetComponent<Text>().text = Score.ToString(); //display score
     }
 
@@ -290,17 +300,17 @@ public class Player : MonoBehaviour
 
     public void CardExpansion(Card card) //Expand card
     {
-        ExpCardBackground.gameObject.GetComponent<Renderer>().enabled = true;
-        ExpCardImage.gameObject.GetComponent<Renderer>().enabled = true;
-        ExpCardTitle.gameObject.GetComponent<Text>().text = card.name;
-        ExpCardInfo.gameObject.GetComponent<Text>().text = card.GetExpInfo();
-        ExpCardTitle.gameObject.GetComponent<Text>().enabled = true;
-        ExpCardInfo.gameObject.GetComponent<Text>().enabled = true;
-        _expCardPosition = card.gameObject.transform.position;
-        _expCardScale = card.gameObject.transform.localScale;
-        card.gameObject.transform.position = ExpCardImage.transform.position;
-        card.gameObject.transform.localScale = ExpCardImage.gameObject.GetComponent<Renderer>().bounds.extents;
-        //Make card appear in expand
+            ExpCardBackground.gameObject.GetComponent<Renderer>().enabled = true;
+            ExpCardImage.gameObject.GetComponent<Renderer>().enabled = true;
+            ExpCardTitle.gameObject.GetComponent<Text>().text = card.name;
+            ExpCardInfo.gameObject.GetComponent<Text>().text = card.GetExpInfo();
+            ExpCardTitle.gameObject.GetComponent<Text>().enabled = true;
+            ExpCardInfo.gameObject.GetComponent<Text>().enabled = true;
+            _expCardPosition = card.gameObject.transform.position;
+            _expCardScale = card.gameObject.transform.localScale;
+            card.gameObject.transform.position = ExpCardImage.transform.position;
+            card.gameObject.transform.localScale = ExpCardImage.gameObject.GetComponent<Renderer>().bounds.extents;
+            //Make card appear in expand
     }
 
     public void CardShrink(Card card) //Shrink card
@@ -430,34 +440,36 @@ public class Player : MonoBehaviour
         {
             VoteText.gameObject.GetComponent<Text>().text = _voteHumanText;
             VoteText.gameObject.GetComponent<Text>().enabled = true;
-            VoteBtnP1.gameObject.SetActive(true);
-            VoteBtnP2.gameObject.SetActive(true);
-            VoteBtnP3.gameObject.SetActive(true);
-            VoteBtnP4.gameObject.SetActive(true);
 
-            //if there is no one to vote for
+            //if there are no players you can vote for
             if (BoardManager.Instance.CantVotePlayerList.All(b => b))
             {
                 VotePassBtn.gameObject.SetActive(true);
+
+            }   //if current player is has play, but rest can't vote for 
+            else if (BoardManager.Instance.CantVotePlayerList[BoardManager.Instance.PlayerNumber] == false &&
+                        BoardManager.Instance.CantVotePlayerList.FindAll(c => c == false).Count == 1)
+            {
+                VotePassBtn.gameObject.SetActive(true);
             }
+
+            if (!BoardManager.Instance.CantVotePlayerList[0]) //turn on voting buttons
+                VoteBtnP1.gameObject.SetActive(true);
+
+            if (!BoardManager.Instance.CantVotePlayerList[1])
+                VoteBtnP2.gameObject.SetActive(true);
+
+            if (!BoardManager.Instance.CantVotePlayerList[2])
+                VoteBtnP3.gameObject.SetActive(true);
+
+            if (!BoardManager.Instance.CantVotePlayerList[3])
+                VoteBtnP4.gameObject.SetActive(true);
         }
         else //if AI is playing
         {
             VoteText.gameObject.GetComponent<Text>().text = _aiText;
             VoteText.gameObject.GetComponent<Text>().enabled = true;
         }
-
-        if (BoardManager.Instance.CantVotePlayerList[0])  //cant vote on "invalid" moves
-            VoteBtnP1.gameObject.SetActive(false);
-
-        if (BoardManager.Instance.CantVotePlayerList[1])
-            VoteBtnP2.gameObject.SetActive(false);
-
-        if (BoardManager.Instance.CantVotePlayerList[2])
-            VoteBtnP3.gameObject.SetActive(false);
-
-        if (BoardManager.Instance.CantVotePlayerList[3])
-            VoteBtnP4.gameObject.SetActive(false);
     }
 
     public void PlayerVoteShrink()
@@ -469,6 +481,7 @@ public class Player : MonoBehaviour
         VoteBtnP2.gameObject.SetActive(false);
         VoteBtnP3.gameObject.SetActive(false);
         VoteBtnP4.gameObject.SetActive(false);
+        VotePassBtn.gameObject.SetActive(false);
         BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
     }
 
@@ -510,6 +523,7 @@ public class Player : MonoBehaviour
     {
         PlayerVoted = true;
         VotedForWho = 1;
+        BoardManager.Instance.PlaySelect();
         VotePassBtn.gameObject.SetActive(false); //if used, make disappear
     }
 
@@ -517,18 +531,22 @@ public class Player : MonoBehaviour
     {
         PlayerVoted = true;
         VotedForWho = 2;
+        BoardManager.Instance.PlaySelect();
+
     }
 
     private void VotePlayer3()
     {
         PlayerVoted = true;
         VotedForWho = 3;
+        BoardManager.Instance.PlaySelect();
     }
 
     private void VotePlayer4()
     {
         PlayerVoted = true;
         VotedForWho = 4;
+        BoardManager.Instance.PlaySelect();
     }
 
     public void VetPieceExpansion()  //display turn player piece

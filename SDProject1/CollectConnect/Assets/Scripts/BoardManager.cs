@@ -39,6 +39,7 @@ public class BoardManager : MonoBehaviour
     private bool _isPlayerCardSelected;
     private bool _isBoardCardSelected;
     private bool _isKeywordSelected;
+    private bool _isGameListGenerated;
     public int CurrentPlayer;
     public bool IsTurnOver { get; private set; }
     private bool _playedTurn;
@@ -57,7 +58,7 @@ public class BoardManager : MonoBehaviour
     private bool _isFirstListGen = true;
     private bool _hitVetBtn;
     private int[] _scoreboard;
-    private int _playerNumber;
+    public int PlayerNumber;
     private static IDbConnection _dbconn;
     private TimerScript _ts;
     public Button PassBtnP1;
@@ -84,6 +85,8 @@ public class BoardManager : MonoBehaviour
     private List<Text> _graphicalKeyList = new List<Text>(); // Contains the list of Text components in the word bank buttons.
     public Button WordBankBtn;
 
+    public GameObject test;
+
     private void Awake()
     {
         _isGameStarted = false;
@@ -95,9 +98,15 @@ public class BoardManager : MonoBehaviour
         LegalVotePlayerList = new List<int>();
         _afterVet = false;
         _hitVetBtn = false;
-        _playerNumber = 0;
+        PlayerNumber = 0;
         _aiThinkingDone = false;
-
+#if !UNITY_EDITOR
+        if (Debug.isDebugBuild)
+        {
+            Random.InitState(42);
+            CardCollection.SetSeed(42);
+        }
+#endif
         for (int i = 0; i < 4; i++) //prefill lists
         {
             VetResultList.Add(true);
@@ -110,7 +119,7 @@ public class BoardManager : MonoBehaviour
     {
         if (Instance == null)
         {
-            Debug.Log(Application.dataPath);
+            //Debug.Log(Application.dataPath);
             string conn = "URI=file:" + Application.dataPath + "/CollectConnectDB.db"; //Path to database.
             _dbconn = (IDbConnection)new SqliteConnection(conn);
             _dbconn.Open(); //Open connection to the database.
@@ -122,6 +131,7 @@ public class BoardManager : MonoBehaviour
             Deck.Shuffle();
             IsDeckReady = true;
             Instance = this;
+            _isGameListGenerated = false;
             _playerScriptRefs = new List<Player>();
             foreach (GameObject player in Players)
                 _playerScriptRefs.Add(player.GetComponent<Player>());
@@ -142,7 +152,7 @@ public class BoardManager : MonoBehaviour
             _copyList = new List<string>();
             _scoreboard = new int[Players.Length];
             _keywordGrid.GetComponentsInChildren(_graphicalKeyList);
-            Debug.Log("Size of graphical key list: " + _graphicalKeyList.Count);
+            //Debug.Log("Size of graphical key list: " + _graphicalKeyList.Count);
             _keywordNodes = new List<GameObject>();
             _isFirstCardPlay = true;
             PassBtnP1.GetComponent<Button>().onClick.AddListener(PassBtnHit);
@@ -183,6 +193,12 @@ public class BoardManager : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
+        //quit application 
+        if (Input.GetKeyDown((KeyCode.Escape)))
+        {
+            Application.Quit();
+        }
+        
         // First, check if all players have drawn their cards.
         // If so, then populate the players' word banks.
         if (CurrentPhase != GamePhase.Research && !_isGameStarted)
@@ -229,7 +245,8 @@ public class BoardManager : MonoBehaviour
             {
                 if (_numSelections < 5)
                 {
-                    int[] indices = Enumerable.Range(0, _keywordList.Count + 1).ToArray();
+                    int[] indices = Enumerable.Range(0, _keywordList.Count).ToArray();
+                    //Debug.Log("Last value: " + indices[indices.Length - 1]);
                     Shuffle(ref indices);
                     foreach (int index in indices)
                     {
@@ -245,7 +262,7 @@ public class BoardManager : MonoBehaviour
                 {
                     EndKeywordPick();
                 }
-                Debug.Log("AI done picking...");
+                //Debug.Log("AI done picking...");
             }
             if (_previousKeyword != _currentKeyword && !_currentKeywordList.Contains(_currentKeyword))
             {
@@ -256,7 +273,7 @@ public class BoardManager : MonoBehaviour
                     if (string.IsNullOrEmpty(t.text))
                     {
                         t.text = _currentKeyword;
-                        Debug.Log("Now displaying " + _currentKeyword);
+                        //Debug.Log("Now displaying " + _currentKeyword);
                         t.GetComponentInParent<Image>().enabled = true;
                         t.GetComponentInParent<Button>().interactable = true;
                         Text t1 = t; // Prevent varied behavior (caused by different compiler versions)
@@ -358,35 +375,45 @@ public class BoardManager : MonoBehaviour
 
             if (CurrentPhase != GamePhase.Vetting)  //if vetting hasn't started
             {
-                Debug.Log("Starting vet setup.");
+                //Debug.Log("Starting vet setup.");
                 VetSetUp();
                 _ts.CancelInvoke();
             }
-            else if (_playerScriptRefs[_playerNumber].PlayerVetted) //if vetting has started and player hit yes/no btn
+            else if (_playerScriptRefs[PlayerNumber].PlayerVetted) //if vetting has started and player hit yes/no btn
             {
-                _playerScriptRefs[_playerNumber].VetShrink();
+                _playerScriptRefs[PlayerNumber].VetShrink();
 
-                VetResultList[_playerNumber] = _playerScriptRefs[_playerNumber].VetResult; //pull player's result 
-                _playerNumber++;
+                VetResultList[PlayerNumber] = _playerScriptRefs[PlayerNumber].VetResult; //pull player's result 
+                PlayerNumber++;
 
-                if (_playerNumber < 4)
+                if (PlayerNumber < 4)
                 {
-                    if (_playerScriptRefs[_playerNumber].IsAiControlled)  //AI Controlled
+                    if (_playerScriptRefs[PlayerNumber].IsAiControlled)  //AI Controlled
                     {
                         if (!_aiThinkingDone)
                         {
-                            _playerScriptRefs[_playerNumber].VetExpansion(); //individual player screens
+                            _playerScriptRefs[PlayerNumber].VetExpansion(); //individual player screens
                             StartCoroutine("VetAiDecision"); //start AI decision timer
                             _aiThinkingDone = true;
                         }
                         else if (_aiThinkingDone)
                         {
-                            Debug.Log("Doing nothing"); //leave in here do not delete!! It's needed
+                            //Debug.Log("Doing nothing"); //leave in here do not delete!! It's needed
                         }
                     }
                     else
                     {
-                        _playerScriptRefs[_playerNumber].VetExpansion(); //individual player screens 
+                        if (PlayerNumber == CurrentPlayer) //if player who played connection is "Vetting"
+                        {
+                            //skip over them and vote yes
+                            _playerScriptRefs[PlayerNumber].YesNoBtnHit = true;
+                            _playerScriptRefs[PlayerNumber].VetResult = true;
+                            _playerScriptRefs[PlayerNumber].PlayerVetted = true;
+                        }
+                        else
+                        {
+                            _playerScriptRefs[PlayerNumber].VetExpansion(); //individual player screens 
+                        }
                     }
                 }
 
@@ -399,7 +426,7 @@ public class BoardManager : MonoBehaviour
                     DisableVet(); //shrink vet visuals
                     ToggleCardsOn();
                     _afterVet = true; //all done vetting
-                    _playerNumber = 0;
+                    PlayerNumber = 0;
                     _aiThinkingDone = false; //reset
                 }
             }
@@ -414,9 +441,9 @@ public class BoardManager : MonoBehaviour
                         ResetPassArray();
                         if (cardA != null)
                         {
-                            Debug.Log(cardA);
+                            //Debug.Log(cardA);
                             Card.CardProperty prop = cardA.GetPropertyFromKeyword(_currentKeyword);
-                            Debug.Log("Prop's value: " + prop.PropertyValue);
+                            //Debug.Log("Prop's value: " + prop.PropertyValue);
                             GetCurrentPlayer().IncreaseScore(cardA.GetPts(prop));
                             GetCurrentPlayer().PlayerScore.GetComponent<Text>().text = "" + GetCurrentPlayer().Score;
                             _keywordList.Remove(_currentKeyword);
@@ -426,10 +453,10 @@ public class BoardManager : MonoBehaviour
                             _afterVet = false;
                             CurrentPhase = GamePhase.Playing;
                         }
-                        else
-                        {
-                            Debug.Log("CardA is null. Null Pointer Exception.");
-                        }
+                        //else
+                        //{
+                        //    Debug.Log("CardA is null. Null Pointer Exception.");
+                        //}
                         _currentKeyword = "";
                     }
                     else
@@ -466,23 +493,23 @@ public class BoardManager : MonoBehaviour
         {
             //RUN VOTING
             _ts.CancelInvoke();
-            if (_playerScriptRefs[_playerNumber].PlayerVoted) //if player voted
+            if (_playerScriptRefs[PlayerNumber].PlayerVoted) //if player voted
             {
-                _playerScriptRefs[_playerNumber].PlayerVoteShrink();
-                _playerNumber++;
+                _playerScriptRefs[PlayerNumber].PlayerVoteShrink();
+                PlayerNumber++;
 
-                if (_playerNumber < 4)
+                if (PlayerNumber < 4)
                 {
-                    if (_playerScriptRefs[_playerNumber].IsAiControlled) //if AI controlled
+                    if (_playerScriptRefs[PlayerNumber].IsAiControlled) //if AI controlled
                     {
-                        _playerScriptRefs[_playerNumber].PlayerVoteExpansion();
+                        _playerScriptRefs[PlayerNumber].PlayerVoteExpansion();
                         StartCoroutine("VoteAiDecision"); //start AI decision timer
                         _aiThinkingDone = true;
                     }
                     else
                     {
                         //expand next player's voting
-                        _playerScriptRefs[_playerNumber].PlayerVoteExpansion();
+                        _playerScriptRefs[PlayerNumber].PlayerVoteExpansion();
                     }
                 }
 
@@ -492,7 +519,7 @@ public class BoardManager : MonoBehaviour
                     GetVoteResult();    //distribute points
                     ToggleCardsOn();    //enable card movement
                     DisableVote();      //shrink voting screen
-                    _playerNumber = 0;
+                    PlayerNumber = 0;
                     _aiThinkingDone = false; //reset
 
                     foreach (Player p in _playerScriptRefs)  //destroy main player cards
@@ -581,7 +608,7 @@ public class BoardManager : MonoBehaviour
 
             CurrentPlayer++;
 
-            if (_afterVote == true)
+            if (_afterVote)
             {
                 CurrentPlayer = 0;
                 _afterVote = false;
@@ -598,9 +625,7 @@ public class BoardManager : MonoBehaviour
                 //shrink player piece
                 _playerScriptRefs[CurrentPlayer].PlayerPieceExpansion();
 
-                Debug.Log("player's turn before: " + CurrentPlayer);
                 CurrentPlayer %= Players.Length;
-                Debug.Log("player's turn after: " + CurrentPlayer);
             }
 
             switch (CurrentPlayer)
@@ -698,7 +723,7 @@ public class BoardManager : MonoBehaviour
 
     private void PopulateKeywords()
     {
-        Debug.Log("Populating keywords");
+        //Debug.Log("Populating keywords");
 
         //Clear and (re?)populate the word banks.
         if (CurrentPhase == GamePhase.Research || CurrentPhase == GamePhase.PreGame)
@@ -707,14 +732,19 @@ public class BoardManager : MonoBehaviour
             {
                 _keywordList.AddRange(p.GetKeywords());
             }
+            _keywordList = _keywordList.Distinct().ToList();
+            _keywordList = PickSubset(_keywordList);
+        }
+        else if (!_isGameListGenerated && CurrentPhase == GamePhase.Playing)
+        {
+            _keywordList = _currentKeywordList;
+            _keywordList.Sort();
+            _isGameListGenerated = true;
         }
         else
         {
-            _keywordList = _currentKeywordList;
+            _keywordList = _keywordList.Distinct().ToList();
         }
-        _keywordList = _keywordList.Distinct().ToList();
-        _keywordList = PickSubset(_keywordList);
-
         // clear the list
         // TODO Possibly combine KeywordContainers into an array?
         foreach (Transform child in KeywordContainerP1.transform)
@@ -746,7 +776,7 @@ public class BoardManager : MonoBehaviour
             Button btn = go.GetComponent<Button>();
             btn.onClick.AddListener(() =>
             {
-                Debug.Log(go.GetComponentInChildren<Text>().text + " Clicked!");
+                //Debug.Log(go.GetComponentInChildren<Text>().text + " Clicked!");
                 if (CurrentPlayer == 0)
                 {
                     if (CurrentPhase == GamePhase.Research)
@@ -785,7 +815,7 @@ public class BoardManager : MonoBehaviour
             Button btn = go.GetComponent<Button>();
             btn.onClick.AddListener(() =>
             {
-                Debug.Log(go.GetComponentInChildren<Text>().text + " Clicked!");
+                //Debug.Log(go.GetComponentInChildren<Text>().text + " Clicked!");
                 if (CurrentPlayer == 1) // TODO Change to 0 to test functionality until AI can pick 5 keywords.
                 {
                     if (CurrentPhase == GamePhase.Research)
@@ -793,7 +823,7 @@ public class BoardManager : MonoBehaviour
                         if (_numSelections < 5 && _currentKeyword != go.GetComponentInChildren<Text>().text && !_currentKeywordList.Contains(go.GetComponentInChildren<Text>().text))
                         {
                             PlaySelect();
-                            Debug.Log("Setting current keyword to: " + go.GetComponentInChildren<Text>().text);
+                            //Debug.Log("Setting current keyword to: " + go.GetComponentInChildren<Text>().text);
                             _currentKeyword = go.GetComponentInChildren<Text>().text;
                             _numSelections++;
                         }
@@ -824,7 +854,7 @@ public class BoardManager : MonoBehaviour
             Button btn = go.GetComponent<Button>();
             btn.onClick.AddListener(() =>
             {
-                Debug.Log(go.GetComponentInChildren<Text>().text + " Clicked!");
+                //Debug.Log(go.GetComponentInChildren<Text>().text + " Clicked!");
                 if (CurrentPlayer == 2) // TODO Change to 0 to test functionality until AI can pick 5 keywords.
                 {
                     if (CurrentPhase == GamePhase.Research)
@@ -861,7 +891,7 @@ public class BoardManager : MonoBehaviour
             Button btn = go.GetComponent<Button>();
             btn.onClick.AddListener(() =>
             {
-                Debug.Log(go.GetComponentInChildren<Text>().text + " Clicked!");
+                //Debug.Log(go.GetComponentInChildren<Text>().text + " Clicked!");
                 if (CurrentPlayer == 3) // TODO Change to 0 to test functionality until AI can pick 5 keywords.
                 {
                     if (CurrentPhase == GamePhase.Research)
@@ -1003,6 +1033,11 @@ public class BoardManager : MonoBehaviour
         Player p = FindOwningPlayer(card);
         foreach (Card c in from Card c in p.GetHand() where c.name == card.name select c)
         {
+            if (card.IsOnBoard())
+            {
+                p = _playerScriptRefs[0];
+            }
+
             p.CardExpansion(c);
             PlayExpand();
             return;
@@ -1014,6 +1049,11 @@ public class BoardManager : MonoBehaviour
         Player p = FindOwningPlayer(card);
         foreach (Card c in from Card c in p.GetHand() where c.name == card.name select c)
         {
+            if (card.IsOnBoard())
+            {
+                p = _playerScriptRefs[0];
+            }
+
             p.CardShrink(c);
             PlayDeselect();
             return;
@@ -1144,14 +1184,14 @@ public class BoardManager : MonoBehaviour
 
     public void SelectCardInHand(Card card)
     {
-        Debug.Log("Attempting to select hand card: " + card.name);
+        //Debug.Log("Attempting to select hand card: " + card.name);
         bool cardFound =
             _playerScriptRefs[CurrentPlayer].GetHand().Cast<Card>().Any(c => c.name == card.name && !c.IsOnBoard());
 
         // First, check if the card is in the current player's hand.
         if (!cardFound)
         {
-            Debug.Log("Card not found");
+            //Debug.Log("Card not found");
             return;
         }
 
@@ -1194,7 +1234,7 @@ public class BoardManager : MonoBehaviour
 
     public void SelectCardOnBoard(Card card)
     {
-        Debug.Log("Attempting to select board card: " + card.name);
+        //Debug.Log("Attempting to select board card: " + card.name);
         Player p = FindOwningPlayer(card);
         bool cardFound =
             p.GetHand().Cast<Card>().Any(c => c.IsOnBoard() && c.name == card.name);
@@ -1333,7 +1373,7 @@ public class BoardManager : MonoBehaviour
 
     private void VetSetUp()  //timer before vet screen pops up
     {
-        Debug.Log("Enabling vet.");
+        //Debug.Log("Enabling vet.");
         CurrentPhase = GamePhase.Vetting;
         for (int i = 0; i < 4; i++)
         {
@@ -1354,14 +1394,14 @@ public class BoardManager : MonoBehaviour
         _copyCardRight.transform.position = VetCard2.gameObject.transform.position;
         _copyCardRight.transform.localScale = VetCard2.gameObject.GetComponent<Renderer>().bounds.extents;
 
-        _playerNumber = 0;
+        PlayerNumber = 0;
         _hitVetBtn = true;
 
         VetResultList[0] = CheckConnection();
-        Debug.Log("AI vetted " + VetResultList[0]);
-        _playerScriptRefs[_playerNumber].PlayerVetted = true; //first AI done 
-        _playerScriptRefs[_playerNumber].YesNoBtnHit = true;
-        _playerScriptRefs[_playerNumber].VetResult = VetResultList[0];
+        //Debug.Log("AI vetted " + VetResultList[0]);
+        _playerScriptRefs[PlayerNumber].PlayerVetted = true; //first AI done 
+        _playerScriptRefs[PlayerNumber].YesNoBtnHit = true;
+        _playerScriptRefs[PlayerNumber].VetResult = VetResultList[0];
 
     }
 
@@ -1371,14 +1411,14 @@ public class BoardManager : MonoBehaviour
 
         int rindex = Random.Range(0, 101);
         bool aiVet = rindex > 50;
-        VetResultList[_playerNumber] = aiVet;
-        _playerScriptRefs[_playerNumber].PlayerVetted = true;
+        VetResultList[PlayerNumber] = aiVet;
+        _playerScriptRefs[PlayerNumber].PlayerVetted = true;
         _aiThinkingDone = false; //reset
     }
 
     private bool GetVetResult()
     {
-        Debug.Log("Getting vet results.");
+        //Debug.Log("Getting vet results.");
         int yesCount = 0, noCount = 0;
         foreach (bool vet in VetResultList)
         {
@@ -1451,7 +1491,7 @@ public class BoardManager : MonoBehaviour
 
     private void VoteSetUp()  //vote screen pops up
     {
-        Debug.Log("Enabling voting.");
+        //Debug.Log("Enabling voting.");
         CurrentPhase = GamePhase.Voting;
         EnableVote();
         ToggleCardsOff();
@@ -1461,7 +1501,7 @@ public class BoardManager : MonoBehaviour
             VoteResultsList[i] = 1; //reset result list
         }
 
-        _playerNumber = 0; //reset for voting below
+        PlayerNumber = 0; //reset for voting below
         foreach (Player p in _playerScriptRefs)
         {
             p.VoteKeywordTxt.gameObject.GetComponent<Text>().text = p.ConnectionKeyword;
@@ -1481,32 +1521,32 @@ public class BoardManager : MonoBehaviour
                 p.CopyCardRight.transform.position = p.VoteCardRight.gameObject.transform.position;
                 p.CopyCardRight.transform.localScale = Vector3.one;
                 p.VoteCardRight.gameObject.GetComponent<Renderer>().enabled = false;
-                _playerNumber++;
-                LegalVotePlayerList.Add(_playerNumber++); //add valid players to list for AI voting
-                _playerNumber--;
+                PlayerNumber++;
+                LegalVotePlayerList.Add(PlayerNumber++); //add valid players to list for AI voting
+                PlayerNumber--;
             }
             else
             {
                 //disable voting buttons for those players
-                CantVotePlayerList[_playerNumber] = true;
-                _playerNumber++;
+                CantVotePlayerList[PlayerNumber] = true;
+                PlayerNumber++;
 
                 //don't display card holders
                 p.VoteCardLeft.gameObject.GetComponent<Renderer>().enabled = false;
                 p.VoteCardRight.gameObject.GetComponent<Renderer>().enabled = false;
             }
         }
-        _playerNumber = 0; //reset
+        PlayerNumber = 0; //reset
 
         //AI Voting
-        _playerScriptRefs[_playerNumber].PlayerVoteExpansion();
+        _playerScriptRefs[PlayerNumber].PlayerVoteExpansion();
         VoteResultsList[0] = 1; //preset for AI
-        _playerScriptRefs[_playerNumber].PlayerVoted = true;
+        _playerScriptRefs[PlayerNumber].PlayerVoted = true;
     }
 
     private void GetVoteResult()
     {
-        Debug.Log("Getting vote results.");
+        //Debug.Log("Getting vote results.");
         //VoteResultsList.Clear();
         foreach (Player p in _playerScriptRefs)
         {
@@ -1587,7 +1627,7 @@ public class BoardManager : MonoBehaviour
             scoring.Add(freq);
         }
         //check if card is in player hand not just in deck
-        Debug.Log(scoring.Count);
+        //Debug.Log(scoring.Count);
         foreach (KeywordFreq freq in scoring)
         {
             //if (!freq.IsProcessed)
@@ -1605,7 +1645,7 @@ public class BoardManager : MonoBehaviour
                         {
                             Card.CardProperty temp = c.PropertyList[i];
 
-                            Debug.Log("Checking " + freq.KeywordName);
+                            //Debug.Log("Checking " + freq.KeywordName);
                             //set cards pt values based on occurance
                             if (freq.KeywordFreqs >= 10)
                             {
@@ -1629,7 +1669,7 @@ public class BoardManager : MonoBehaviour
                 }
             }
             //}
-            Debug.Log(freq.KeywordName + " " + freq.KeywordFreqs + " is processed!");
+            //Debug.Log(freq.KeywordName + " " + freq.KeywordFreqs + " is processed!");
         }
     }
 
@@ -1637,18 +1677,18 @@ public class BoardManager : MonoBehaviour
     {
         yield return new WaitForSeconds(4.0f);
 
-        if (LegalVotePlayerList.Count != 0) //something to vote on 
+        if (LegalVotePlayerList.Count != 0) //something to vote on
         {
             var random = new System.Random();
             int playerSelection = random.Next(LegalVotePlayerList.Count);
-            _playerScriptRefs[_playerNumber].VotedForWho = playerSelection;
+            _playerScriptRefs[PlayerNumber].VotedForWho = playerSelection;
         }
-        _playerScriptRefs[_playerNumber].PlayerVoted = true;    //move to next player
+        _playerScriptRefs[PlayerNumber].PlayerVoted = true;    //move to next player
     }
 
     public void EndKeywordPick() // TODO This was originally the EndResearchPhase method. AI should be able to call this after it picks its keywords.
     {
-        //turn on player's block off 
+        //turn on player's block off
         _playerScriptRefs[CurrentPlayer].BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
 
         if (CurrentPlayer == Players.Length - 1 && _numSelections == MaxNumKeywordPicks) // If it's the last player's turn to pick & they chose 5 keywords...
@@ -1671,7 +1711,6 @@ public class BoardManager : MonoBehaviour
                                                        // It's not the last player's turn, so let's check if they have 5 keywords.
         {
             PlaySelect();
-            Debug.Log("Ding!");
             _removedKeyword = "";
             _currentKeyword = "";
             _previousKeyword = "";
@@ -1688,7 +1727,7 @@ public class BoardManager : MonoBehaviour
 
         if (rt.rect.width > rt.rect.height) //card is horizontal
         {
-            transform.Rotate(90, 0, 0);
+            transform.Rotate(90.0f, 0.0f, 0.0f);
         }
 
         InHandGlow.GetComponent<Renderer>().enabled = true;
@@ -1701,7 +1740,7 @@ public class BoardManager : MonoBehaviour
 
         if (rt.rect.width > rt.rect.height) //card is horizontal
         {
-            transform.Rotate(0, 0, 90);
+            transform.Rotate(0.0f, 0.0f, 90.0f);
         }
 
         OnBoardGlow.GetComponent<Renderer>().enabled = true;
@@ -1714,7 +1753,7 @@ public class BoardManager : MonoBehaviour
 
         if (rt.rect.width > rt.rect.height) //card was rotated, rotate back 
         {
-            transform.Rotate(0, 0, -90);
+            transform.Rotate(0.0f, 0.0f, -90.0f);
         }
 
         InHandGlow.GetComponent<Renderer>().enabled = false;
@@ -1726,7 +1765,7 @@ public class BoardManager : MonoBehaviour
 
         if (rt.rect.width > rt.rect.height) //card was rotated, rotate back 
         {
-            transform.Rotate(-90, 0, 0);
+            transform.Rotate(-90.0f, 0.0f, 0.0f);
         }
 
         OnBoardGlow.GetComponent<Renderer>().enabled = false;

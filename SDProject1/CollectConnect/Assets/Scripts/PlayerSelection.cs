@@ -51,6 +51,15 @@ public class PlayerSelection : MonoBehaviour
         PlayerPrefs.SetInt("PlayerNumber", 3);
         SceneManager.LoadScene("MainScene");
     }
+
+    public void Update()
+    {
+        //quit application 
+        if (Input.GetKeyDown((KeyCode.Escape)))
+        {
+            Application.Quit();
+        }
+    }
 }
 
 

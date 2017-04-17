@@ -24,4 +24,13 @@ public class mainMenu : MonoBehaviour
     {
         SceneManager.LoadScene("About");
     }
+
+    public void Update()
+    {
+        //quit application
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
+    }
 }

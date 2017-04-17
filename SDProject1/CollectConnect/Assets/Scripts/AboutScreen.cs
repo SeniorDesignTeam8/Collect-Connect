@@ -1,11 +1,6 @@
-﻿using System;
-using UnityEngine;
-using System.Collections.Generic;
-using System.Linq;
-using UnityEngine.Networking.NetworkSystem;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using Random = UnityEngine.Random;
 
 public class AboutScreen : MonoBehaviour
 {
@@ -20,6 +15,15 @@ public class AboutScreen : MonoBehaviour
     private void BackBtnTransition()
     {
         SceneManager.LoadScene("MainMenu");
+    }
+
+    public void Update()
+    {
+        //quit application
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
     }
 }
 
