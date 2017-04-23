@@ -378,6 +378,7 @@ public class BoardManager : MonoBehaviour
                 //Debug.Log("Starting vet setup.");
                 VetSetUp();
                 _ts.CancelInvoke();
+                _ts._isPaused = true;
             }
             else if (_playerScriptRefs[PlayerNumber].PlayerVetted) //if vetting has started and player hit yes/no btn
             {
@@ -493,6 +494,7 @@ public class BoardManager : MonoBehaviour
         {
             //RUN VOTING
             _ts.CancelInvoke();
+            _ts._isPaused = true;
             if (_playerScriptRefs[PlayerNumber].PlayerVoted) //if player voted
             {
                 _playerScriptRefs[PlayerNumber].PlayerVoteShrink();
@@ -546,6 +548,7 @@ public class BoardManager : MonoBehaviour
                 }
             }
             _ts.InvokeRepeating("DecreaseTime", 1, 1);
+            _ts._isPaused = false;
         }
     }
 
@@ -593,9 +596,11 @@ public class BoardManager : MonoBehaviour
             return;
 
         _ts.CancelInvoke();
+        _ts._isPaused = true;
         TimerScript.Timeleft = 120;
         _ts.CircleSlider.fillAmount = 1.0f;
         _ts.InvokeRepeating("DecreaseTime", 1, 1);
+        _ts._isPaused = false;
 
         if (CurrentPhase != GamePhase.Voting)
         {

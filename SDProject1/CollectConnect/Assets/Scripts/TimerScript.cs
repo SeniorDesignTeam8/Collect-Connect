@@ -10,7 +10,7 @@ public class TimerScript : MonoBehaviour
     private float _usualTime = 120.0f;
     private BoardManager _bM;
     private Button _rButton;
-    private bool _isPaused = true;
+    public bool _isPaused = true;
     private int _lastButNum = -1;
     private float _lastClickTime = -99.0f;
     private const float DClickDelay = 0.25f;
@@ -49,12 +49,19 @@ public class TimerScript : MonoBehaviour
         }
 
         if (Input.GetKeyDown(KeyCode.Space))
+        {
+            _isPaused = true;
             CancelInvoke();
+        }
         if (Input.GetKeyUp(KeyCode.Space))
+        {
+            _isPaused = false;
             InvokeRepeating("DecreaseTime", 1, 1);
+        }
 
         _t.text = "" + Timeleft;
-        CircleSlider.fillAmount -= (1.0f / _usualTime * Time.deltaTime);
+        if(!_isPaused)
+            CircleSlider.fillAmount -= (1.0f / _usualTime * Time.deltaTime);
     }
 
     private void DecreaseTime()
