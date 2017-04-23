@@ -135,6 +135,7 @@ public class BoardManager : MonoBehaviour
             _playerScriptRefs = new List<Player>();
             foreach (GameObject player in Players)
                 _playerScriptRefs.Add(player.GetComponent<Player>());
+
             _playerScriptRefs[0].SetAiControl(true);    //set first player to be AI controlled
 
             switch (PlayerPrefs.GetInt("PlayerNumber")) //set other players to AI from player selection screen
