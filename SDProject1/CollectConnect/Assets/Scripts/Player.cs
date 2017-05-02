@@ -408,11 +408,16 @@ public class Player : MonoBehaviour
     public void OnLeaveBtnHit()
     {
         BoardManager.Instance.PlaySelect();
-        //Debug.Log("leave btn hit");
-        BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
-        JoinGameBtn.gameObject.SetActive(true);
-        LeaveGameBtn.gameObject.SetActive(false);
-        SetAiControl(true);
+       // Debug.Log("leave btn hit");
+
+		//if the player can leave
+		if (CanLeave () == true) 
+		{
+			BlockOff.gameObject.GetComponent<Renderer> ().enabled = true;
+			JoinGameBtn.gameObject.SetActive (true);
+			LeaveGameBtn.gameObject.SetActive (false);
+			SetAiControl (true);
+		}
     }
 
     private void OnJoinBtnHit()
@@ -568,4 +573,24 @@ public class Player : MonoBehaviour
     {
         PlayerPiece.gameObject.GetComponent<Renderer>().enabled = false;
     }
+
+
+	//checks to see if the player can leave
+	private bool CanLeave()
+	{
+		int count = 0;
+
+		for(int i = 0; i < BoardManager.Instance.Players.Length; i++)
+		{
+			if (BoardManager.Instance._playerScriptRefs [i].IsAiControlled == false) 
+			{
+				count++;
+			}
+		}
+
+		if (count > 1)
+			return true;
+		else
+			return false;
+	}
 }

@@ -133,6 +133,7 @@ public class BoardManager : MonoBehaviour
             Instance = this;
             _isGameListGenerated = false;
             _playerScriptRefs = new List<Player>();
+
             foreach (GameObject player in Players)
                 _playerScriptRefs.Add(player.GetComponent<Player>());
 
@@ -141,13 +142,15 @@ public class BoardManager : MonoBehaviour
             switch (PlayerPrefs.GetInt("PlayerNumber")) //set other players to AI from player selection screen
             {
                 case 1:
-                    _playerScriptRefs[1].OnLeaveBtnHit();
-                    _playerScriptRefs[3].OnLeaveBtnHit();
+				_playerScriptRefs[1].OnLeaveBtnHit();
+				_playerScriptRefs [2].LeaveGameBtn.gameObject.SetActive (false);
+                _playerScriptRefs[3].OnLeaveBtnHit();
                     break;
                 case 2:
                     _playerScriptRefs[3].OnLeaveBtnHit();
                     break;
             }
+
             _keywordGrid = MasterKeywordList.GetComponentInChildren<GridLayoutGroup>();
             _keywordList = new List<string>();
             _copyList = new List<string>();
@@ -199,6 +202,10 @@ public class BoardManager : MonoBehaviour
         {
             Application.Quit();
         }
+
+		//Checks to see if Default Player can leave the game
+		CanDefaultPlayerLeave();
+
         
         // First, check if all players have drawn their cards.
         // If so, then populate the players' word banks.
@@ -1776,4 +1783,25 @@ public class BoardManager : MonoBehaviour
 
         OnBoardGlow.GetComponent<Renderer>().enabled = false;
     }
+
+	private void CanDefaultPlayerLeave()
+	{
+		int count = 0;
+
+		for(int i = 0; i < Players.Length; i++)
+		{
+			if (_playerScriptRefs [i].IsAiControlled == false) 
+			{
+				count++;
+			}
+		}
+
+		if (count >= 2 && _playerScriptRefs [2].IsAiControlled == false) 
+		{
+			_playerScriptRefs [2].LeaveGameBtn.gameObject.SetActive (true);
+		} else
+		{
+			_playerScriptRefs [2].LeaveGameBtn.gameObject.SetActive (false);
+		}
+	}
 }
