@@ -42,7 +42,7 @@ public class EndGame2 : MonoBehaviour
 
     private static void MainMenuTransition()    //go back to main menu
     {
-        SceneManager.LoadScene("mainMenu");
+		SceneManager.LoadScene ("mainMenu");
     }
 
     private void Scoring()
