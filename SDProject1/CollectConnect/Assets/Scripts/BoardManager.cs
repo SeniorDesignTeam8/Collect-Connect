@@ -1277,7 +1277,7 @@ public class BoardManager : MonoBehaviour
                 c.SetIsSelected(false);
                 card.SetIsSelected(true);
                 PlaySelect();
-
+				Debug.Log (card.ToString ());
                 //glow on
                 OnBoardGlowOn(card);
 
@@ -1736,51 +1736,31 @@ public class BoardManager : MonoBehaviour
 
     private void InHandGlowOn(Card card)
     {
-        RectTransform rt = (RectTransform)card.transform;
+		InHandGlow.GetComponent<Renderer>().enabled = true;
+		InHandGlow.transform.position = card.gameObject.transform.position;
 
-        if (rt.rect.width > rt.rect.height) //card is horizontal
-        {
-            transform.Rotate(90.0f, 0.0f, 0.0f);
-        }
-
-        InHandGlow.GetComponent<Renderer>().enabled = true;
-        InHandGlow.transform.position = card.gameObject.transform.position;
+		RotateGlow (card, InHandGlow);      
     }
 
-    private void OnBoardGlowOn(Card card)
-    {
-        RectTransform rt = (RectTransform)card.transform;
+    public void OnBoardGlowOn(Card card)
+    {  
 
-        if (rt.rect.width > rt.rect.height) //card is horizontal
-        {
-            transform.Rotate(0.0f, 0.0f, 90.0f);
-        }
+		RotateGlow (card, OnBoardGlow);
+		OnBoardGlow.GetComponent<Renderer>().enabled = true;
+		OnBoardGlow.transform.position = card.gameObject.transform.position;
 
-        OnBoardGlow.GetComponent<Renderer>().enabled = true;
-        OnBoardGlow.transform.position = card.gameObject.transform.position;
+
     }
 
     private void InHandGlowOff(Card card)
     {
-        RectTransform rt = (RectTransform)card.transform;
-
-        if (rt.rect.width > rt.rect.height) //card was rotated, rotate back 
-        {
-            transform.Rotate(0.0f, 0.0f, -90.0f);
-        }
-
+		UnrotateGlow (card, InHandGlow);
         InHandGlow.GetComponent<Renderer>().enabled = false;
     }
 
     private void OnBoardGlowOff(Card card)
     {
-        RectTransform rt = (RectTransform)card.transform;
-
-        if (rt.rect.width > rt.rect.height) //card was rotated, rotate back 
-        {
-            transform.Rotate(-90.0f, 0.0f, 0.0f);
-        }
-
+		UnrotateGlow (card, OnBoardGlow);
         OnBoardGlow.GetComponent<Renderer>().enabled = false;
     }
 
@@ -1788,7 +1768,7 @@ public class BoardManager : MonoBehaviour
 	{
 		int count = 0;
 
-		for(int i = 0; i < Players.Length; i++)
+		for(int i = 0; i < Players.Length; i++) //Count how many Human Players there are
 		{
 			if (_playerScriptRefs [i].IsAiControlled == false) 
 			{
@@ -1796,12 +1776,40 @@ public class BoardManager : MonoBehaviour
 			}
 		}
 
-		if (count >= 2 && _playerScriptRefs [2].IsAiControlled == false) 
+		if (count >= 2 && _playerScriptRefs [2].IsAiControlled == false)  //if there is more than 2 and one of them is the default player
 		{
-			_playerScriptRefs [2].LeaveGameBtn.gameObject.SetActive (true);
+			_playerScriptRefs [2].LeaveGameBtn.gameObject.SetActive (true); //give them the option to leave
 		} else
 		{
-			_playerScriptRefs [2].LeaveGameBtn.gameObject.SetActive (false);
+			_playerScriptRefs [2].LeaveGameBtn.gameObject.SetActive (false); //else the default player must stay in
 		}
+	}
+
+	//Rotate the glow if the card is horizontal
+	private void RotateGlow(Card card, GameObject Glow)
+	{
+		if (card.isHorizontal == true)
+		{ //card is horizontal
+			//transform.Rotate(0.0f, 0.0f, 90.0f); 		 <---- this made the Canvas itself rotate
+			Glow.gameObject.transform.eulerAngles = new Vector3 (0, 0, 90);
+		} else
+		{
+			Glow.gameObject.transform.eulerAngles = new Vector3 (0, 0, 0);
+		}
+
+	}
+
+	//unrotate the glow if the glow was rotated
+	private void UnrotateGlow(Card card, GameObject Glow)
+	{
+		if (card.isHorizontal == true) 
+		{ //card is horizontal
+			//transform.Rotate(0.0f, 0.0f, 90.0f); 		 <---- this made the Canvas itself rotate
+			Glow.gameObject.transform.eulerAngles = new Vector3 (0, 0, 0);
+		} else
+		{
+			Glow.gameObject.transform.eulerAngles = new Vector3 (0, 0, 90);
+		}
+
 	}
 }

@@ -52,13 +52,14 @@ public class Card : MonoBehaviour
     private string _expandedInfo; // Information to display in expanded view.
     public List<CardProperty> PropertyList = new List<CardProperty>();
     private string _imageLocation;
-
+	public bool isHorizontal;
     // Use this for initialization
     private void Start()
     {
         _collider = GetComponent<BoxCollider2D>();
         _renderer = GetComponent<SpriteRenderer>();
         LineList = new List<LineRenderer>();
+		isHorizontal = false;
         //CardGlow.GetComponent<Renderer>().enabled = false;
     }
 
@@ -128,8 +129,11 @@ public class Card : MonoBehaviour
         }
         if (_isDragging)
         {
-            if (BoardManager.Instance.OnBoardGlow.GetComponent<Renderer>().enabled)
-                BoardManager.Instance.OnBoardGlow.transform.position = gameObject.transform.position;
+			if (BoardManager.Instance.OnBoardGlow.GetComponent<Renderer> ().enabled) 
+			{
+				BoardManager.Instance.OnBoardGlowOn (this); //Makes the Glow the correct rotation on drag
+				BoardManager.Instance.OnBoardGlow.transform.position = gameObject.transform.position;
+			}
             Vector3 cursorPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, _screenPoint.z);
             Vector3 cursorPosition = Camera.main.ScreenToWorldPoint(cursorPoint) + _offset;
             transform.position = cursorPosition;
@@ -209,6 +213,10 @@ public class Card : MonoBehaviour
             Texture2D tex = new Texture2D(2, 2);
             tex.LoadImage(fileData);
             Sprite mySprite = Sprite.Create(tex, new Rect(0.0f, 0.0f, tex.width, tex.height), new Vector2(0.5f, 0.5f), 75.0f);
+			if(tex.width > tex.height)
+			{
+				isHorizontal = true;
+			}
             _renderer.sprite = mySprite;
             return true;
         }
