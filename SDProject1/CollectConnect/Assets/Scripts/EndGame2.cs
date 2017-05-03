@@ -42,6 +42,8 @@ public class EndGame2 : MonoBehaviour
 
     private static void MainMenuTransition()    //go back to main menu
     {
+		BoardManager.CurrentPhase = GamePhase.PreGame;
+		BoardManager.ResetPassArray ();
 		SceneManager.LoadScene ("mainMenu");
     }
 

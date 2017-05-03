@@ -30,7 +30,7 @@ public class BoardManager : MonoBehaviour
     public AudioClip DeselectSound;
     public AudioClip ExpandSound;
     public AudioClip PlaceSound;
-    private List<string> _keywordList, _copyList; // _copyList contains ALL the keywords. _keywordList just contains the 20 for the game.
+    public List<string> _keywordList, _copyList; // _copyList contains ALL the keywords. _keywordList just contains the 20 for the game.
     private string _currentKeyword, _previousKeyword, _removedKeyword;
     private List<GameObject> _keywordNodes;
     public List<Player> _playerScriptRefs { get; private set; }
@@ -113,6 +113,7 @@ public class BoardManager : MonoBehaviour
             VoteResultsList.Add(1);
             CantVotePlayerList.Add(false);
         }
+
     }
 
     private void Start()
@@ -163,10 +164,10 @@ public class BoardManager : MonoBehaviour
             PassBtnP2.GetComponent<Button>().onClick.AddListener(PassBtnHit);
             PassBtnP3.GetComponent<Button>().onClick.AddListener(PassBtnHit);
             PassBtnP4.GetComponent<Button>().onClick.AddListener(PassBtnHit);
-            PassBtnP1.gameObject.SetActive(true);
-            PassBtnP2.gameObject.SetActive(true);
-            PassBtnP3.gameObject.SetActive(true);
-            PassBtnP4.gameObject.SetActive(true);
+            PassBtnP1.gameObject.SetActive(true);//tHESE NEED TO BE MOVED
+            PassBtnP2.gameObject.SetActive(true);//
+            PassBtnP3.gameObject.SetActive(true);//
+            PassBtnP4.gameObject.SetActive(true);//
             InHandGlow.GetComponent<Renderer>().enabled = false;
             OnBoardGlow.GetComponent<Renderer>().enabled = false;
 
@@ -215,7 +216,7 @@ public class BoardManager : MonoBehaviour
 
             if (allHandsDrawn)
             {
-                _keywordList.Clear();
+                _keywordList.Clear(); //MIGHT NEED TO ACTUALLY REPOPULATE 
                 //Clear and (re?)populate the word banks.
                 foreach (GameObject t in Players)
                 {
@@ -1137,7 +1138,7 @@ public class BoardManager : MonoBehaviour
         return true;
     }
 
-    private static void ResetPassArray()
+    public static void ResetPassArray()
     {
         for (int i = 0; i < Player.PassArray.Length; i++)
         {
