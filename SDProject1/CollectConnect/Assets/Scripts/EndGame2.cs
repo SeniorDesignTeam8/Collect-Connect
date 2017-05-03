@@ -40,7 +40,7 @@ public class EndGame2 : MonoBehaviour
         Scoring();  //calculate scoring
     }
 
-    private static void MainMenuTransition()    //go back to main menu
+    public static void MainMenuTransition()    //go back to main menu
     {
 		BoardManager.CurrentPhase = GamePhase.PreGame;
 		BoardManager.ResetPassArray ();

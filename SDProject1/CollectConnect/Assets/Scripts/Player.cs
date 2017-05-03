@@ -87,7 +87,10 @@ public class Player : MonoBehaviour
         }
     }
 #endif
-
+	private void Awake()
+	{
+		JoinGameBtn.gameObject.SetActive(false);// Race condition forced me to put this here
+	}
     private void Start()
     {
 		Debug.Log ("Player " + PlayerPiece.ToString () + "   " + PassArray [0] + PassArray [1] + PassArray [2] + PassArray [3]);
@@ -133,7 +136,7 @@ public class Player : MonoBehaviour
         VotePlayerPiece.gameObject.GetComponent<Renderer>().enabled = false;
         PlayerPiece.gameObject.GetComponent<Renderer>().enabled = false;
         BlockOff.gameObject.GetComponent<Renderer>().enabled = false;
-        JoinGameBtn.gameObject.SetActive(false);
+        
         _aiText = "AI is thinking...";
         _vetHumanText = "Do you agree with this connection?";
         _voteHumanText = "Which connection was the most outrageous?";
@@ -256,6 +259,7 @@ public class Player : MonoBehaviour
 
             }
         }
+
     }
 
 

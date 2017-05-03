@@ -87,6 +87,11 @@ public class BoardManager : MonoBehaviour
 
     public GameObject test;
 
+	public const float timeOut = 300.0f; //5 minutes
+	public float countdown;
+	public bool countOver;
+	public GameObject resetBoard;
+
     private void Awake()
     {
         _isGameStarted = false;
@@ -100,6 +105,9 @@ public class BoardManager : MonoBehaviour
         _hitVetBtn = false;
         PlayerNumber = 0;
         _aiThinkingDone = false;
+		countdown = timeOut;
+		countOver = false;
+
 #if !UNITY_EDITOR
         if (Debug.isDebugBuild)
         {
@@ -164,10 +172,7 @@ public class BoardManager : MonoBehaviour
             PassBtnP2.GetComponent<Button>().onClick.AddListener(PassBtnHit);
             PassBtnP3.GetComponent<Button>().onClick.AddListener(PassBtnHit);
             PassBtnP4.GetComponent<Button>().onClick.AddListener(PassBtnHit);
-            PassBtnP1.gameObject.SetActive(true);//tHESE NEED TO BE MOVED
-            PassBtnP2.gameObject.SetActive(true);//
-            PassBtnP3.gameObject.SetActive(true);//
-            PassBtnP4.gameObject.SetActive(true);//
+           
             InHandGlow.GetComponent<Renderer>().enabled = false;
             OnBoardGlow.GetComponent<Renderer>().enabled = false;
 
@@ -198,6 +203,21 @@ public class BoardManager : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
+		if (Input.anyKeyDown) 
+		{
+			countdown = timeOut;
+		}
+		else if (countOver == false)
+		{
+			countdown -= Time.deltaTime;
+			Debug.Log ("Countdown: " + countdown.ToString ());
+			if (countdown <= 0.0f)
+			{
+				countOver = true;
+				resetBoard.gameObject.transform.position = new Vector3 (0,0,0);
+			}
+		}
+
         //quit application 
         if (Input.GetKeyDown((KeyCode.Escape)))
         {
@@ -559,6 +579,7 @@ public class BoardManager : MonoBehaviour
             _ts.InvokeRepeating("DecreaseTime", 1, 1);
             _ts._isPaused = false;
         }
+			
     }
 
     private static void Shuffle(ref int[] arr)
@@ -1748,6 +1769,10 @@ public class BoardManager : MonoBehaviour
             PopulateKeywords();
             CurrentPlayer = 0;
             _ts.StartTimer(); // TODO add timer to Research stage.
+			PassBtnP1.gameObject.SetActive(true);
+			PassBtnP2.gameObject.SetActive(true);
+			PassBtnP3.gameObject.SetActive(true);
+			PassBtnP4.gameObject.SetActive(true);
         }
         else if (_numSelections == MaxNumKeywordPicks) // TODO AI will have to increment _numSelections for this to trigger.
                                                        // It's not the last player's turn, so let's check if they have 5 keywords.
