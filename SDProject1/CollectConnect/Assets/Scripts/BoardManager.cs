@@ -788,6 +788,13 @@ public class BoardManager : MonoBehaviour
             go.GetComponentInChildren<Text>().text = str;
             go.transform.SetParent(KeywordContainerP1.transform);
             Button btn = go.GetComponent<Button>();
+			ColorBlock btnColors = go.GetComponent<Button>().colors;
+			btnColors.normalColor = Color.white;
+			btnColors.highlightedColor = Color.yellow;
+			btnColors.pressedColor = Color.grey;
+
+			btn.colors = btnColors;
+
             btn.onClick.AddListener(() =>
             {
                 //Debug.Log(go.GetComponentInChildren<Text>().text + " Clicked!");
@@ -827,6 +834,13 @@ public class BoardManager : MonoBehaviour
             go.GetComponentInChildren<Text>().text = str;
             go.transform.SetParent(KeywordContainerP2.transform);
             Button btn = go.GetComponent<Button>();
+			ColorBlock btnColors = go.GetComponent<Button>().colors;
+			btnColors.normalColor = Color.white;
+			btnColors.highlightedColor = Color.yellow;
+			btnColors.pressedColor = Color.grey;
+
+			btn.colors = btnColors;
+
             btn.onClick.AddListener(() =>
             {
                 //Debug.Log(go.GetComponentInChildren<Text>().text + " Clicked!");
@@ -866,6 +880,13 @@ public class BoardManager : MonoBehaviour
             go.GetComponentInChildren<Text>().text = str;
             go.transform.SetParent(KeywordContainerP3.transform);
             Button btn = go.GetComponent<Button>();
+			ColorBlock btnColors = go.GetComponent<Button>().colors;
+			btnColors.normalColor = Color.white;
+			btnColors.highlightedColor = Color.yellow;
+			btnColors.pressedColor = Color.grey;
+
+			btn.colors = btnColors;
+
             btn.onClick.AddListener(() =>
             {
                 //Debug.Log(go.GetComponentInChildren<Text>().text + " Clicked!");
@@ -903,6 +924,13 @@ public class BoardManager : MonoBehaviour
             go.GetComponentInChildren<Text>().text = str;
             go.transform.SetParent(KeywordContainerP4.transform);
             Button btn = go.GetComponent<Button>();
+			ColorBlock btnColors = go.GetComponent<Button>().colors;
+			btnColors.normalColor = Color.white;
+			btnColors.highlightedColor = Color.yellow;
+			btnColors.pressedColor = Color.grey;
+
+			btn.colors = btnColors;
+
             btn.onClick.AddListener(() =>
             {
                 //Debug.Log(go.GetComponentInChildren<Text>().text + " Clicked!");
