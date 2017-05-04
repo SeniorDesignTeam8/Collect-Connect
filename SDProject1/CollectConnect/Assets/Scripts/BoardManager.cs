@@ -87,11 +87,12 @@ public class BoardManager : MonoBehaviour
 
     public GameObject test;
 
-	public const float timeOut = 10.0f; //5 minutes
+	public const float timeOut = 300.0f; //5 minutes
 	public float countdown;
 	public bool countOver;
 	public GameObject resetBoard;
 	public bool canCheckPlayers;
+	public Font newFont;
 
     private void Awake()
     {
@@ -758,7 +759,6 @@ public class BoardManager : MonoBehaviour
                 _isBoardCardSelected = false;
                 _playedTurn = false;
             }
-
         }
     }
 
@@ -787,7 +787,7 @@ public class BoardManager : MonoBehaviour
             _keywordList = _keywordList.Distinct().ToList();
         }
         // clear the list
-        // TODO Possibly combine KeywordContainers into an array?
+
         foreach (Transform child in KeywordContainerP1.transform)
         {
             Destroy(child.gameObject);
@@ -807,190 +807,27 @@ public class BoardManager : MonoBehaviour
         {
             Destroy(child.gameObject);
         }
-
-        // TODO: Possibly combine these into one block? A lot of repetition.
+			
         foreach (string str in _keywordList)
         {
-            GameObject go = Instantiate(KeywordPrefab);
-            go.GetComponentInChildren<Text>().text = str;
-            go.transform.SetParent(KeywordContainerP1.transform);
-            Button btn = go.GetComponent<Button>();
-			ColorBlock btnColors = go.GetComponent<Button>().colors;
-			btnColors.normalColor = Color.white;
-			btnColors.highlightedColor = Color.yellow;
-			btnColors.pressedColor = Color.grey;
+			SetupKeywordList (KeywordContainerP1, str);
+        }
 
-			btn.colors = btnColors;
-
-            btn.onClick.AddListener(() =>
-            {
-                //Debug.Log(go.GetComponentInChildren<Text>().text + " Clicked!");
-                if (CurrentPlayer == 0)
-                {
-                    if (CurrentPhase == GamePhase.Research)
-                    {
-                        if (_numSelections < 5 && _currentKeyword != go.GetComponentInChildren<Text>().text && !_currentKeywordList.Contains(go.GetComponentInChildren<Text>().text))
-                        {
-                            PlaySelect();
-                            _currentKeyword = go.GetComponentInChildren<Text>().text;
-                            _numSelections++;
-                        }
-                    }
-                    else
-                    {
-                        PlaySelect();
-                        _currentKeyword = go.GetComponentInChildren<Text>().text;
-                    }
-                }
-            });
-            Vector3 scale = transform.localScale;
-            scale.x = 1.0f;
-            scale.y = 1.0f;
-            scale.z = 1.0f;
-
-            go.transform.Rotate(0.0f, 0.0f, 180.0f);
-            go.transform.localScale = scale;
-            go.SetActive(true);
-
+        foreach (string str in _keywordList)
+        {
+			SetupKeywordList (KeywordContainerP2, str);
             //Debug.Log(str);
         }
 
         foreach (string str in _keywordList)
         {
-            GameObject go = Instantiate(KeywordPrefab);
-            go.GetComponentInChildren<Text>().text = str;
-            go.transform.SetParent(KeywordContainerP2.transform);
-            Button btn = go.GetComponent<Button>();
-			ColorBlock btnColors = go.GetComponent<Button>().colors;
-			btnColors.normalColor = Color.white;
-			btnColors.highlightedColor = Color.yellow;
-			btnColors.pressedColor = Color.grey;
-
-			btn.colors = btnColors;
-
-            btn.onClick.AddListener(() =>
-            {
-                //Debug.Log(go.GetComponentInChildren<Text>().text + " Clicked!");
-                if (CurrentPlayer == 1) // TODO Change to 0 to test functionality until AI can pick 5 keywords.
-                {
-                    if (CurrentPhase == GamePhase.Research)
-                    {
-                        if (_numSelections < 5 && _currentKeyword != go.GetComponentInChildren<Text>().text && !_currentKeywordList.Contains(go.GetComponentInChildren<Text>().text))
-                        {
-                            PlaySelect();
-                            //Debug.Log("Setting current keyword to: " + go.GetComponentInChildren<Text>().text);
-                            _currentKeyword = go.GetComponentInChildren<Text>().text;
-                            _numSelections++;
-                        }
-                    }
-                    else
-                    {
-                        PlaySelect();
-                        _currentKeyword = go.GetComponentInChildren<Text>().text;
-                    }
-                }
-            });
-            Vector3 scale = transform.localScale;
-            scale.x = 1.0f;
-            scale.y = 1.0f;
-            scale.z = 1.0f;
-            //go.transform.Rotate(0.0f, 0.0f, -90.0f);
-            go.transform.localScale = scale;
-            go.SetActive(true);
-
-            //Debug.Log(str);
+			SetupKeywordList (KeywordContainerP3, str);
         }
 
         foreach (string str in _keywordList)
         {
-            GameObject go = Instantiate(KeywordPrefab);
-            go.GetComponentInChildren<Text>().text = str;
-            go.transform.SetParent(KeywordContainerP3.transform);
-            Button btn = go.GetComponent<Button>();
-			ColorBlock btnColors = go.GetComponent<Button>().colors;
-			btnColors.normalColor = Color.white;
-			btnColors.highlightedColor = Color.yellow;
-			btnColors.pressedColor = Color.grey;
-
-			btn.colors = btnColors;
-
-            btn.onClick.AddListener(() =>
-            {
-                //Debug.Log(go.GetComponentInChildren<Text>().text + " Clicked!");
-                if (CurrentPlayer == 2) // TODO Change to 0 to test functionality until AI can pick 5 keywords.
-                {
-                    if (CurrentPhase == GamePhase.Research)
-                    {
-                        if (_numSelections < 5 && _currentKeyword != go.GetComponentInChildren<Text>().text && !_currentKeywordList.Contains(go.GetComponentInChildren<Text>().text))
-                        {
-                            PlaySelect();
-                            _currentKeyword = go.GetComponentInChildren<Text>().text;
-                            _numSelections++;
-                        }
-                    }
-                    else
-                    {
-                        PlaySelect();
-                        _currentKeyword = go.GetComponentInChildren<Text>().text;
-                    }
-                }
-            });
-            Vector3 scale = transform.localScale;
-            scale.x = 1.0f;
-            scale.y = 1.0f;
-            scale.z = 1.0f;
-            go.transform.localScale = scale;
-            go.SetActive(true);
-
-            //Debug.Log(str);
+			SetupKeywordList (KeywordContainerP4, str);
         }
-
-        foreach (string str in _keywordList)
-        {
-            GameObject go = Instantiate(KeywordPrefab);
-            go.GetComponentInChildren<Text>().text = str;
-            go.transform.SetParent(KeywordContainerP4.transform);
-            Button btn = go.GetComponent<Button>();
-			ColorBlock btnColors = go.GetComponent<Button>().colors;
-			btnColors.normalColor = Color.white;
-			btnColors.highlightedColor = Color.yellow;
-			btnColors.pressedColor = Color.grey;
-
-			btn.colors = btnColors;
-
-            btn.onClick.AddListener(() =>
-            {
-                //Debug.Log(go.GetComponentInChildren<Text>().text + " Clicked!");
-                if (CurrentPlayer == 3) // TODO Change to 0 to test functionality until AI can pick 5 keywords.
-                {
-                    if (CurrentPhase == GamePhase.Research)
-                    {
-                        if (_numSelections < 5 && _currentKeyword != go.GetComponentInChildren<Text>().text && !_currentKeywordList.Contains(go.GetComponentInChildren<Text>().text))
-                        {
-                            PlaySelect();
-                            _currentKeyword = go.GetComponentInChildren<Text>().text;
-
-                            _numSelections++;
-                        }
-                    }
-                    else
-                    {
-                        PlaySelect();
-                        _currentKeyword = go.GetComponentInChildren<Text>().text;
-                    }
-                }
-            });
-            Vector3 scale = transform.localScale;
-            scale.x = 1.0f;
-            scale.y = 1.0f;
-            scale.z = 1.0f;
-            //go.transform.Rotate(0.0f, 0.0f, 90.0f);
-            go.transform.localScale = scale;
-            go.SetActive(true);
-
-            //Debug.Log(str);
-        }
-
     }
 
     private static void BuildDeck()
@@ -1788,9 +1625,8 @@ public class BoardManager : MonoBehaviour
 			PassBtnP4.gameObject.SetActive(true);
         }
         else if (_numSelections == MaxNumKeywordPicks) // TODO AI will have to increment _numSelections for this to trigger.
-                                                       // It's not the last player's turn, so let's check if they have 5 keywords.
-        {
-            PlaySelect();
+		{												// It's not the last player's turn, so let's check if they have 5 keywords
+			PlaySelect();                                                       
             _removedKeyword = "";
             _currentKeyword = "";
             _previousKeyword = "";
@@ -1811,12 +1647,9 @@ public class BoardManager : MonoBehaviour
 
     public void OnBoardGlowOn(Card card)
     {  
-
 		RotateGlow (card, OnBoardGlow);
 		OnBoardGlow.GetComponent<Renderer>().enabled = true;
 		OnBoardGlow.transform.position = card.gameObject.transform.position;
-
-
     }
 
     private void InHandGlowOff(Card card)
@@ -1859,11 +1692,11 @@ public class BoardManager : MonoBehaviour
 		{ //card is horizontal
 			//transform.Rotate(0.0f, 0.0f, 90.0f); 		 <---- this made the Canvas itself rotate
 			Glow.gameObject.transform.eulerAngles = new Vector3 (0, 0, 90);
-		} else
+		}
+		else
 		{
 			Glow.gameObject.transform.eulerAngles = new Vector3 (0, 0, 0);
 		}
-
 	}
 
 	//unrotate the glow if the glow was rotated
@@ -1873,10 +1706,71 @@ public class BoardManager : MonoBehaviour
 		{ //card is horizontal
 			//transform.Rotate(0.0f, 0.0f, 90.0f); 		 <---- this made the Canvas itself rotate
 			Glow.gameObject.transform.eulerAngles = new Vector3 (0, 0, 0);
-		} else
+		} 
+		else
 		{
 			Glow.gameObject.transform.eulerAngles = new Vector3 (0, 0, 90);
 		}
 
+	}
+
+	//Container is the Container which is passed in
+	private void SetupKeywordList(GameObject Container, string str)
+	{
+		GameObject go = Instantiate(KeywordPrefab);
+
+		go.GetComponentInChildren<Text> ().text = str;
+		go.GetComponentInChildren<Text> ().resizeTextForBestFit = true;
+		go.GetComponentInChildren<Text> ().resizeTextMaxSize = 10;
+		go.GetComponentInChildren<Text> ().resizeTextMinSize = 1;
+		go.GetComponentInChildren<Text> ().fontStyle = FontStyle.Bold;
+		go.GetComponentInChildren<Text> ().alignByGeometry = true;
+		go.GetComponentInChildren<Text> ().font = newFont;
+
+		go.transform.SetParent (Container.transform);
+
+		Button btn = go.GetComponent<Button> ();
+
+		ColorBlock btnColors = go.GetComponent<Button> ().colors;
+		btnColors.normalColor = Color.white;
+		btnColors.highlightedColor = Color.yellow;
+		btnColors.pressedColor = Color.grey;
+
+		btn.colors = btnColors;
+
+		btn.onClick.AddListener (() => 
+		{
+			//Debug.Log(go.GetComponentInChildren<Text>().text + " Clicked!");
+
+			switch (CurrentPlayer)
+			{
+				case 0:
+					go.transform.Rotate (0.0f, 0.0f, 180.0f);
+					break;
+				default:
+					break;
+			}
+
+			if (CurrentPhase == GamePhase.Research)
+			{
+				if (_numSelections < 5 && _currentKeyword != go.GetComponentInChildren<Text> ().text && !_currentKeywordList.Contains (go.GetComponentInChildren<Text> ().text)) {
+					PlaySelect ();
+					//Debug.Log("Setting current keyword to: " + go.GetComponentInChildren<Text>().text);
+					_currentKeyword = go.GetComponentInChildren<Text> ().text;
+					_numSelections++;
+				}
+			} else {
+				PlaySelect ();
+				_currentKeyword = go.GetComponentInChildren<Text> ().text;
+			}
+		});
+		
+		Vector3 scale = transform.localScale;
+		scale.x = 1.0f;
+		scale.y = 1.0f;
+		scale.z = 1.0f;
+		//go.transform.Rotate(0.0f, 0.0f, -90.0f);
+		go.transform.localScale = scale;
+		go.SetActive (true);
 	}
 }
