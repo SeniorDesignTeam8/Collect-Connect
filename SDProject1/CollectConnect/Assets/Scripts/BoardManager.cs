@@ -91,6 +91,7 @@ public class BoardManager : MonoBehaviour
 	public float countdown;
 	public bool countOver;
 	public GameObject resetBoard;
+	public bool canCheckPlayers;
 
     private void Awake()
     {
@@ -107,6 +108,7 @@ public class BoardManager : MonoBehaviour
         _aiThinkingDone = false;
 		countdown = timeOut;
 		countOver = false;
+		canCheckPlayers = false;
 
 #if !UNITY_EDITOR
         if (Debug.isDebugBuild)
@@ -160,6 +162,7 @@ public class BoardManager : MonoBehaviour
                     break;
             }
 
+			canCheckPlayers = true;
             _keywordGrid = MasterKeywordList.GetComponentInChildren<GridLayoutGroup>();
             _keywordList = new List<string>();
             _copyList = new List<string>();
@@ -210,7 +213,7 @@ public class BoardManager : MonoBehaviour
 		else if (countOver == false)
 		{
 			countdown -= Time.deltaTime;
-			Debug.Log ("Countdown: " + countdown.ToString ());
+			//Debug.Log ("Countdown: " + countdown.ToString ());
 			if (countdown <= 0.0f)
 			{
 				countOver = true;
@@ -226,8 +229,10 @@ public class BoardManager : MonoBehaviour
         }
 
 		//Checks to see if Default Player can leave the game
-		CanDefaultPlayerLeave();
-
+		if (canCheckPlayers)
+		{
+			CanDefaultPlayerLeave ();
+		}
         
         // First, check if all players have drawn their cards.
         // If so, then populate the players' word banks.

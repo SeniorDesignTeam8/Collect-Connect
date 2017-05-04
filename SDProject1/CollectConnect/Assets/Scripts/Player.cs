@@ -78,22 +78,23 @@ public class Player : MonoBehaviour
         0.05f, 0.05f, 0.05f, 0.05f
     };
 
-#if !UNITY_EDITOR
-    private void Awake()
-    {
-        if (Debug.isDebugBuild)
-        {
-            Random.InitState(42);
-        }
-    }
-#endif
 	private void Awake()
 	{
+		#if !UNITY_EDITOR
+		  
+		        if (Debug.isDebugBuild)
+		        {
+		            Random.InitState(42);
+		        }
+		    
+		#endif
+
 		JoinGameBtn.gameObject.SetActive(false);// Race condition forced me to put this here
 	}
+
     private void Start()
     {
-		Debug.Log ("Player " + PlayerPiece.ToString () + "   " + PassArray [0] + PassArray [1] + PassArray [2] + PassArray [3]);
+		//Debug.Log ("Player " + PlayerPiece.ToString () + "   " + PassArray [0] + PassArray [1] + PassArray [2] + PassArray [3]);
         IsDrawingCards = true;
         _playerName = gameObject.name.Replace(" ", "").ToLower();
         // Remove spaces and change to all lowercase to standardize.
