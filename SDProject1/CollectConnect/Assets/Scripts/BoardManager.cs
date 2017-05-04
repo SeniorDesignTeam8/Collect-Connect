@@ -87,7 +87,7 @@ public class BoardManager : MonoBehaviour
 
     public GameObject test;
 
-	public const float timeOut = 300.0f; //5 minutes
+	public const float timeOut = 10.0f; //5 minutes
 	public float countdown;
 	public bool countOver;
 	public GameObject resetBoard;
@@ -214,7 +214,8 @@ public class BoardManager : MonoBehaviour
 			if (countdown <= 0.0f)
 			{
 				countOver = true;
-				resetBoard.gameObject.transform.position = new Vector3 (0,0,0);
+				resetBoard.gameObject.transform.position = new Vector3 (0,1,-10);
+				StartCoroutine (RestartingGame ());
 			}
 		}
 
@@ -1478,6 +1479,13 @@ public class BoardManager : MonoBehaviour
         _playerScriptRefs[PlayerNumber].PlayerVetted = true;
         _aiThinkingDone = false; //reset
     }
+
+	private IEnumerator RestartingGame() //timer for AI to "think"
+	{
+		yield return new WaitForSeconds(3.0f);
+
+		EndGame2.MainMenuTransition ();
+	}
 
     private bool GetVetResult()
     {
