@@ -1753,6 +1753,7 @@ public class BoardManager : MonoBehaviour
 
 			if (CurrentPhase == GamePhase.Research)
 			{
+					//this is where players pick their keywords
 				if (_numSelections < 5 && _currentKeyword != go.GetComponentInChildren<Text> ().text && !_currentKeywordList.Contains (go.GetComponentInChildren<Text> ().text)) {
 					PlaySelect ();
 					//Debug.Log("Setting current keyword to: " + go.GetComponentInChildren<Text>().text);
