@@ -602,13 +602,13 @@ public class BoardManager : MonoBehaviour
 
     private static List<string> PickSubset(IList<string> wordList)
     {
-        for (int i = 0; i < wordList.Count; i++)
-        {
-            int index = Random.Range(0, wordList.Count);
-            string temp = wordList[index];
-            wordList[index] = wordList[i];
-            wordList[i] = temp;
-        }
+//        for (int i = 0; i < wordList.Count; i++)
+//        {
+//            int index = Random.Range(0, wordList.Count);
+//            string temp = wordList[index];
+//            wordList[index] = wordList[i];
+//            wordList[i] = temp;
+//        }
         List<string> subList = new List<string>();
         for (int i = 0; i < 20; i++)
         {
