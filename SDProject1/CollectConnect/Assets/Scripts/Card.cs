@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
@@ -209,15 +210,16 @@ public class Card : MonoBehaviour
     {
         try
         {
-            byte[] fileData = File.ReadAllBytes(Application.dataPath + "/pics/" + _imageLocation);
-            Texture2D tex = new Texture2D(2, 2);
-            tex.LoadImage(fileData);
-            Sprite mySprite = Sprite.Create(tex, new Rect(0.0f, 0.0f, tex.width, tex.height), new Vector2(0.5f, 0.5f), 75.0f);
-			if(tex.width > tex.height)
-			{
-				isHorizontal = true;
-			}
-            _renderer.sprite = mySprite;
+			StartCoroutine(ApplySprite());
+//            byte[] fileData = File.ReadAllBytes(Application.dataPath + "/pics/" + _imageLocation);
+//            Texture2D tex = new Texture2D(2, 2);
+//            tex.LoadImage(fileData);
+//            Sprite mySprite = Sprite.Create(tex, new Rect(0.0f, 0.0f, tex.width, tex.height), new Vector2(0.5f, 0.5f), 75.0f);
+//			if(tex.width > tex.height)
+//			{
+//				isHorizontal = true;
+//			}
+//            _renderer.sprite = mySprite;
             return true;
         }
         catch (DirectoryNotFoundException e)
@@ -333,4 +335,19 @@ public class Card : MonoBehaviour
     {
         return other.PropertyList.Where(prop => DoesPropertyExist(prop.PropertyValue, prop.PropertyName)).Distinct().ToList();
     }
+
+	private IEnumerator ApplySprite()
+	{
+		string url = _imageLocation;
+		Texture2D tex = new Texture2D(2, 2);
+		WWW webImage = new WWW (url);
+		yield return webImage;
+		webImage.LoadImageIntoTexture(tex);
+		Sprite mySprite = Sprite.Create(tex, new Rect(0.0f, 0.0f, tex.width, tex.height), new Vector2(0.5f, 0.5f), 75.0f);
+		if(tex.width > tex.height || tex.width == tex.height)
+		{
+			isHorizontal = true;
+		}
+		_renderer.sprite = mySprite;
+	}
 }
