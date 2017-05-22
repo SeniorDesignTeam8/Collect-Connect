@@ -19,6 +19,7 @@ public class MobileNode : MonoBehaviour
         _pointerDownPosition = transform.position;
         _screenPoint = Camera.main.WorldToScreenPoint(gameObject.transform.position);
         _offset = gameObject.transform.position - Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, _screenPoint.z));
+		_isDragging = true;
     }
 
     private void OnMouseUp()
