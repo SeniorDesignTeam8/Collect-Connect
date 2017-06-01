@@ -94,6 +94,8 @@ public class BoardManager : MonoBehaviour
 	public bool canCheckPlayers;
 	public Font newFont;
 
+	public List<Text> KeywordList;
+
     private void Awake()
     {
         _isGameStarted = false;
@@ -773,8 +775,16 @@ public class BoardManager : MonoBehaviour
             {
                 _keywordList.AddRange(p.GetKeywords());
             }
+
             _keywordList = _keywordList.Distinct().ToList();
             _keywordList = PickSubset(_keywordList);
+
+//			int i = 0;
+//			foreach (string t in _keywordList) //putting the keywords into the wordbank list
+//			{
+//				_graphicalKeyList [i].text = t.ToString();
+//				i++;
+//			}
         }
         else if (!_isGameListGenerated && CurrentPhase == GamePhase.Playing)
         {

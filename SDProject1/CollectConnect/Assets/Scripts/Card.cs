@@ -210,16 +210,16 @@ public class Card : MonoBehaviour
     {
         try
         {
-			StartCoroutine(ApplySprite());
-//            byte[] fileData = File.ReadAllBytes(Application.dataPath + "/pics/" + _imageLocation);
-//            Texture2D tex = new Texture2D(2, 2);
-//            tex.LoadImage(fileData);
-//            Sprite mySprite = Sprite.Create(tex, new Rect(0.0f, 0.0f, tex.width, tex.height), new Vector2(0.5f, 0.5f), 75.0f);
-//			if(tex.width > tex.height)
-//			{
-//				isHorizontal = true;
-//			}
-//            _renderer.sprite = mySprite;
+			//StartCoroutine(ApplySprite());
+            byte[] fileData = File.ReadAllBytes(Application.dataPath + "/pics/" + _imageLocation);
+            Texture2D tex = new Texture2D(2, 2);
+            tex.LoadImage(fileData);
+            Sprite mySprite = Sprite.Create(tex, new Rect(0.0f, 0.0f, tex.width, tex.height), new Vector2(0.5f, 0.5f), 75.0f);
+			if(tex.width > tex.height)
+			{
+				isHorizontal = true;
+			}
+            _renderer.sprite = mySprite;
             return true;
         }
         catch (DirectoryNotFoundException e)
