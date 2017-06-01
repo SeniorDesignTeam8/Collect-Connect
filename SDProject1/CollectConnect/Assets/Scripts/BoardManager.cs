@@ -77,7 +77,7 @@ public class BoardManager : MonoBehaviour
     public GameObject OnBoardGlow;
 
     public static GamePhase CurrentPhase = GamePhase.PreGame;
-
+	public static PlayerTurnPhase CurrPlayer = PlayerTurnPhase.Player1;
     private int _numSelections; // The number of keywords the current player has picked during Research.
     private bool _aiThinkingDone;
     private PlayerSelection _playerSelection;
@@ -820,23 +820,23 @@ public class BoardManager : MonoBehaviour
 			
         foreach (string str in _keywordList)
         {
-			SetupKeywordList (KeywordContainerP1, str);
+			SetupKeywordList (KeywordContainerP1, str, 0);
         }
 
         foreach (string str in _keywordList)
         {
-			SetupKeywordList (KeywordContainerP2, str);
+			SetupKeywordList (KeywordContainerP2, str, 1);
             //Debug.Log(str);
         }
 
         foreach (string str in _keywordList)
         {
-			SetupKeywordList (KeywordContainerP3, str);
+			SetupKeywordList (KeywordContainerP3, str, 2);
         }
 
         foreach (string str in _keywordList)
         {
-			SetupKeywordList (KeywordContainerP4, str);
+			SetupKeywordList (KeywordContainerP4, str, 3);
         }
     }
 
@@ -1633,6 +1633,10 @@ public class BoardManager : MonoBehaviour
 			PassBtnP2.gameObject.SetActive(true);
 			PassBtnP3.gameObject.SetActive(true);
 			PassBtnP4.gameObject.SetActive(true);
+			ResetKeywordColor (KeywordContainerP2);
+			ResetKeywordColor (KeywordContainerP3);
+			ResetKeywordColor (KeywordContainerP4);
+
         }
         else if (_numSelections == MaxNumKeywordPicks) // TODO AI will have to increment _numSelections for this to trigger.
 		{												// It's not the last player's turn, so let's check if they have 5 keywords
@@ -1644,6 +1648,7 @@ public class BoardManager : MonoBehaviour
             PopulateKeywords();
             CurrentPlayer++; // Next player's turn to pick keywords.
             _numSelections = 0;
+
         }
     }
 
@@ -1725,7 +1730,7 @@ public class BoardManager : MonoBehaviour
 	}
 
 	//Container is the Container which is passed in
-	private void SetupKeywordList(GameObject Container, string str)
+	private void SetupKeywordList(GameObject Container, string str, int playerTurn)
 	{
 		GameObject go = Instantiate(KeywordPrefab);
 
@@ -1746,6 +1751,11 @@ public class BoardManager : MonoBehaviour
 		btnColors.highlightedColor = Color.yellow;
 		btnColors.pressedColor = Color.grey;
 
+		if (CurrentPhase == GamePhase.Research && _currentKeywordList.Contains (str))
+		{
+			btnColors.normalColor = Color.grey;
+		}
+
 		btn.colors = btnColors;
 
 		btn.onClick.AddListener (() => 
@@ -1761,18 +1771,27 @@ public class BoardManager : MonoBehaviour
 					break;
 			}
 
-			if (CurrentPhase == GamePhase.Research)
-			{
-				if (_numSelections < 5 && _currentKeyword != go.GetComponentInChildren<Text> ().text && !_currentKeywordList.Contains (go.GetComponentInChildren<Text> ().text)) {
-					PlaySelect ();
-					//Debug.Log("Setting current keyword to: " + go.GetComponentInChildren<Text>().text);
-					_currentKeyword = go.GetComponentInChildren<Text> ().text;
-					_numSelections++;
+				if (CurrentPhase == GamePhase.Research && CurrentPlayer == playerTurn)
+				{
+					if (_numSelections < 5 && _currentKeyword != go.GetComponentInChildren<Text> ().text && !_currentKeywordList.Contains (go.GetComponentInChildren<Text> ().text)) 
+					{
+						PlaySelect ();
+						//Debug.Log("Setting current keyword to: " + go.GetComponentInChildren<Text>().text);
+						_currentKeyword = go.GetComponentInChildren<Text> ().text;
+						_numSelections++;
+					}
+				
+//					else 
+//					{
+//						PlaySelect ();
+//						_currentKeyword = go.GetComponentInChildren<Text> ().text;
+//					}			
 				}
-			} else {
-				PlaySelect ();
-				_currentKeyword = go.GetComponentInChildren<Text> ().text;
-			}
+				else if (CurrentPhase == GamePhase.Playing && CurrentPlayer == playerTurn)
+				{
+					PlaySelect ();
+					_currentKeyword = go.GetComponentInChildren<Text> ().text;
+				}
 		});
 		
 		Vector3 scale = transform.localScale;
@@ -1782,5 +1801,26 @@ public class BoardManager : MonoBehaviour
 		//go.transform.Rotate(0.0f, 0.0f, -90.0f);
 		go.transform.localScale = scale;
 		go.SetActive (true);
+	}
+
+	public void ResetKeywordColor(GameObject Container)
+	{
+
+		Component[] buttonList;
+
+		buttonList = Container.GetComponentsInChildren<Button> ();
+
+		foreach (Button button in buttonList) 
+		{
+			Button btn = button.GetComponent<Button> ();
+
+			ColorBlock btnColors = button.GetComponent<Button> ().colors;
+			btnColors.normalColor = Color.white;
+			btnColors.highlightedColor = Color.yellow;
+			btnColors.pressedColor = Color.grey;
+
+			btn.colors = btnColors;
+		}
+
 	}
 }
