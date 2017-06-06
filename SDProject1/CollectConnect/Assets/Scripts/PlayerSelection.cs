@@ -37,19 +37,19 @@ public class PlayerSelection : MonoBehaviour
     private static void OnePlayerFunction()
     {
         PlayerPrefs.SetInt("PlayerNumber", 1);
-        SceneManager.LoadScene("MainScene");
+        SceneManager.LoadScene("CharacterSelection");
     }
 
     private static void TwoPlayersFunction()
     {
         PlayerPrefs.SetInt("PlayerNumber", 2);
-        SceneManager.LoadScene("MainScene");
+        SceneManager.LoadScene("CharacterSelection");
     }
 
     private static void ThreePlayersFunction()
     {
         PlayerPrefs.SetInt("PlayerNumber", 3);
-        SceneManager.LoadScene("MainScene");
+		SceneManager.LoadScene("CharacterSelection");
     }
 
     public void Update()
