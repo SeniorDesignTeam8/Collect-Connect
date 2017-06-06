@@ -77,6 +77,7 @@ public class BoardManager : MonoBehaviour
     public GameObject OnBoardGlow;
 
     public static GamePhase CurrentPhase = GamePhase.PreGame;
+	public static PlayerTurnPhase CurrPlayer = PlayerTurnPhase.Player1;
     private int _numSelections; // The number of keywords the current player has picked during Research.
     private bool _aiThinkingDone;
     private PlayerSelection _playerSelection;
