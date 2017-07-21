@@ -15,7 +15,7 @@ public class Player : MonoBehaviour
     public GameObject ExpCardImage; // Expand card Image
     public GameObject ExpCardTitle; // Title of expanded card.
     public GameObject ExpCardInfo; // Extended info of expanded card.
-    public const int HandSize = 5;
+    public const int HandSize = 4;
     private bool[] _slotStatus = new bool[HandSize]; // True if taken, false if available.
     private string _playerName; // The player's name (internally).
     public CardCollection PlayerHand; // Represents the player's cards.
