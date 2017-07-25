@@ -152,6 +152,7 @@ public class BoardManager : MonoBehaviour
                 _playerScriptRefs.Add(player.GetComponent<Player>());
 
             _playerScriptRefs[0].SetAiControl(true);    //set first player to be AI controlled
+		
 
             switch (PlayerPrefs.GetInt("PlayerNumber")) //set other players to AI from player selection screen
             {
@@ -270,7 +271,7 @@ public class BoardManager : MonoBehaviour
                 }
 
                 CurrentPhase = GamePhase.Research;
-                MasterKeywordList.SetActive(true);
+                MasterKeywordList.SetActive(true); //Set to true if we want keyword phase back
                 //_isGameStarted = true;
             }
         }

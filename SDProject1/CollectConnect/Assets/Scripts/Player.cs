@@ -113,10 +113,10 @@ public class Player : MonoBehaviour
         VetNoBtn.GetComponent<Button>().onClick.AddListener(OnNoBtnHit);
         LeaveGameBtn.GetComponent<Button>().onClick.AddListener(OnLeaveBtnHit);
         JoinGameBtn.GetComponent<Button>().onClick.AddListener(OnJoinBtnHit);
-        PlayerVetted = false;
+        PlayerVetted = true;
         YesNoBtnHit = false;
         VetResult = true;
-        PlayerVoted = false;
+        PlayerVoted = true;
         LocationOnBoard1.gameObject.GetComponent<Renderer>().enabled = false;
         LocationOnBoard2.gameObject.GetComponent<Renderer>().enabled = false;
         LocationOnBoard3.gameObject.GetComponent<Renderer>().enabled = false;
@@ -367,7 +367,7 @@ public class Player : MonoBehaviour
             BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
         }
 
-        PlayerVetted = false;
+        PlayerVetted = true;
         YesNoBtnHit = false;
         JoinGameBtn.gameObject.SetActive(false);    //turn off joining and leaving game
         LeaveGameBtn.gameObject.SetActive(false);
@@ -441,7 +441,7 @@ public class Player : MonoBehaviour
 
     public void PlayerVoteExpansion()
     {
-        PlayerVoted = false; //reset
+        PlayerVoted = true; //reset
         PlayerPopUpEnhance.gameObject.GetComponent<Renderer>().enabled = true;
         PlayerPopUpEnhanceShadow.gameObject.GetComponent<Renderer>().enabled = true;
         BlockOff.gameObject.GetComponent<Renderer>().enabled = false;
@@ -516,7 +516,7 @@ public class Player : MonoBehaviour
         VoteKeywordTxt.gameObject.GetComponent<Text>().enabled = false;
         VoteConnection.gameObject.GetComponent<Renderer>().enabled = false;
         VotePlayerPiece.gameObject.GetComponent<Renderer>().enabled = false;
-        PlayerVoted = false; //reset
+        PlayerVoted = true; //reset
 
         if (IsAiControlled) //after vet over display leave or join buttons
         {
