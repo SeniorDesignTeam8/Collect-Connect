@@ -1130,6 +1130,7 @@ public class BoardManager : MonoBehaviour
                 _isPlayerCardSelected = false;
                 return;
             }
+
             c.SetIsSelected(false); // Deselect the other card, then select this one.
             card.SetIsSelected(true);
             PlaySelect();
@@ -1142,6 +1143,7 @@ public class BoardManager : MonoBehaviour
         card.SetIsSelected(true);
         PlaySelect();
 
+			
         _isPlayerCardSelected = true;
 
         //glow on
@@ -1324,7 +1326,7 @@ public class BoardManager : MonoBehaviour
 
     private IEnumerator VetAiDecision() //timer for AI to "think"
     {
-        yield return new WaitForSeconds(4.0f);
+        yield return new WaitForSeconds(0.5f);
 
         int rindex = Random.Range(0, 101);
         bool aiVet = rindex > 50;
@@ -1599,7 +1601,7 @@ public class BoardManager : MonoBehaviour
 
     private IEnumerator VoteAiDecision() //timer for AI to "think"
     {
-        yield return new WaitForSeconds(4.0f);
+        yield return new WaitForSeconds(0.5f);
 
         if (LegalVotePlayerList.Count != 0) //something to vote on
         {
