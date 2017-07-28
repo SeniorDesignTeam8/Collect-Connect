@@ -73,9 +73,10 @@ public class Player : MonoBehaviour
         false, false, false, false
     };
 
-    private static readonly float[] AiPassThresholds = {
-        0.5f, 0.5f, 0.5f, 0.5f
-	};
+    private static readonly float[] AiPassThresholds =
+    {
+        0.05f, 0.05f, 0.05f, 0.05f
+    };
 
 	private void Awake()
 	{
@@ -138,8 +139,8 @@ public class Player : MonoBehaviour
         BlockOff.gameObject.GetComponent<Renderer>().enabled = false;
         
         _aiText = "AI is thinking...";
-        //_vetHumanText = "Do you agree with this connection?";
-        //_voteHumanText = "Which connection was the most outrageous?";
+        _vetHumanText = "Do you agree with this connection?";
+        _voteHumanText = "Which connection was the most outrageous?";
         VetPieceShrink();
     }
 

@@ -31,8 +31,7 @@ public class BoardManager : MonoBehaviour
     public AudioClip ExpandSound;
     public AudioClip PlaceSound;
     public List<string> _keywordList, _copyList; // _copyList contains ALL the keywords. _keywordList just contains the 20 for the game.
-    private string  _previousKeyword, _removedKeyword;
-	public string _currentKeyword;
+    private string _currentKeyword, _previousKeyword, _removedKeyword;
     private List<GameObject> _keywordNodes;
     public List<Player> _playerScriptRefs { get; private set; }
     private bool _isGameStarted;
@@ -706,10 +705,6 @@ public class BoardManager : MonoBehaviour
                     KeywordContainerP2.gameObject.layer = 5;
                     KeywordContainerP3.gameObject.layer = 2;
                     KeywordContainerP4.gameObject.layer = 2;
-					KeywordContainerP3.gameObject.SetActive(true);
-					KeywordContainerP3.gameObject.SetActive(false);
-					KeywordContainerP4.gameObject.SetActive(false);
-
 
                     //Turning on/off player blocking
                     _playerScriptRefs[0].BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
@@ -726,9 +721,6 @@ public class BoardManager : MonoBehaviour
                     KeywordContainerP2.gameObject.layer = 2;
                     KeywordContainerP3.gameObject.layer = 5;
                     KeywordContainerP4.gameObject.layer = 2;
-					KeywordContainerP3.gameObject.SetActive(false);
-					KeywordContainerP3.gameObject.SetActive(true);
-					KeywordContainerP4.gameObject.SetActive(false);
 
                     //Turning on/off player blocking
                     _playerScriptRefs[0].BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
@@ -1020,7 +1012,6 @@ public class BoardManager : MonoBehaviour
         }
         // Couldn't find the keyword in an existing node. Add it and connect both cards to it.
         GameObject newKeyNode = Instantiate(NodeOne); // Copy the template keyword node.
-		newKeyNode.GetComponent<onBoardKeyword>().onBoardKey(newKeyNode);
         newKeyNode.transform.FindChild("Text").gameObject.GetComponent<Text>().text = keyword;
         // Set the text of the new keyword node.
         newKeyNode.name = keyword;
@@ -1797,7 +1788,7 @@ public class BoardManager : MonoBehaviour
 //						_currentKeyword = go.GetComponentInChildren<Text> ().text;
 //					}			
 				}
-				else if (CurrentPhase == GamePhase.Playing )//&& CurrentPlayer == playerTurn
+				else if (CurrentPhase == GamePhase.Playing && CurrentPlayer == playerTurn)
 				{
 					PlaySelect ();
 					_currentKeyword = go.GetComponentInChildren<Text> ().text;
