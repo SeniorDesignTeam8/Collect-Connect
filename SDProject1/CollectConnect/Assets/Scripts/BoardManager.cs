@@ -31,7 +31,7 @@ public class BoardManager : MonoBehaviour
     public AudioClip ExpandSound;
     public AudioClip PlaceSound;
     public List<string> _keywordList, _copyList; // _copyList contains ALL the keywords. _keywordList just contains the 20 for the game.
-    private string _currentKeyword, _previousKeyword, _removedKeyword;
+    public string _currentKeyword, _previousKeyword, _removedKeyword;
     private List<GameObject> _keywordNodes;
     public List<Player> _playerScriptRefs { get; private set; }
     private bool _isGameStarted;
