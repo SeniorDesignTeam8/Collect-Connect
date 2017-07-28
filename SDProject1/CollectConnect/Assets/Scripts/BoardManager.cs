@@ -1788,7 +1788,7 @@ public class BoardManager : MonoBehaviour
 //						_currentKeyword = go.GetComponentInChildren<Text> ().text;
 //					}			
 				}
-				else if (CurrentPhase == GamePhase.Playing && CurrentPlayer == playerTurn)
+				else if (CurrentPhase == GamePhase.Playing )//&& CurrentPlayer == playerTurn
 				{
 					PlaySelect ();
 					_currentKeyword = go.GetComponentInChildren<Text> ().text;
