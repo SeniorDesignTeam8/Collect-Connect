@@ -15,8 +15,8 @@ public class Player : MonoBehaviour
     public GameObject ExpCardImage; // Expand card Image
     public GameObject ExpCardTitle; // Title of expanded card.
     public GameObject ExpCardInfo; // Extended info of expanded card.
-    public const int HandSize = 4;
-    private bool[] _slotStatus = new bool[HandSize]; // True if taken, false if available.
+    public int HandSize = 4;
+    private bool[] _slotStatus; // True if taken, false if available.
     private string _playerName; // The player's name (internally).
     public CardCollection PlayerHand; // Represents the player's cards.
     private Vector3 _expCardPosition;
@@ -90,6 +90,7 @@ public class Player : MonoBehaviour
 		#endif
 
 		JoinGameBtn.gameObject.SetActive(false);// Race condition forced me to put this here
+		_slotStatus = new bool[HandSize];
 	}
 
     private void Start()
@@ -148,10 +149,14 @@ public class Player : MonoBehaviour
     {
         if (!BoardManager.Instance.GetIsStarted() && !IsDrawingCards)
             return;
+		
         if (PlayerHand.Size < HandSize)
         {
+			//Debug.Log ("PlayerHand.Size = " + PlayerHand.Size + " Player = " + this.ToString () + " GamePhase = " + BoardManager.CurrentPhase.ToString ());
+
             if (BoardManager.IsDeckReady)
             {
+				//Debug.Log ("PlayerHand.Size = " + PlayerHand.Size + " Player = " + this.ToString () + " GamePhase = " + BoardManager.CurrentPhase.ToString ());
                 Card c = BoardManager.Deck.Draw();
                 PlayerHand.AddCards(c);
                 c.MoveToBoard();
@@ -597,5 +602,27 @@ public class Player : MonoBehaviour
 			return true;
 		else
 			return false;
+	}
+
+	public void RedealCards()
+	{
+		Debug.Log ("PlayerHand.Size = " + PlayerHand.Size + " Player = " + this.ToString () + " GamePhase = " + BoardManager.CurrentPhase.ToString ());
+
+		if (PlayerHand.Size < HandSize)
+		{
+			IsDrawingCards = true;
+			if (BoardManager.IsDeckReady)
+			{
+				//Debug.Log ("PlayerHand.Size = " + PlayerHand.Size + " Player = " + this.ToString () + " GamePhase = " + BoardManager.CurrentPhase.ToString ());
+				Card c = BoardManager.Deck.Draw();
+				PlayerHand.AddCards(c);
+				c.MoveToBoard();
+			}
+			else
+			{
+				IsDrawingCards = false;
+			}
+		}
+
 	}
 }

@@ -271,8 +271,8 @@ public class BoardManager : MonoBehaviour
                 }
 
                 CurrentPhase = GamePhase.Research;
-                MasterKeywordList.SetActive(true); //Set to true if we want keyword phase back
-                //_isGameStarted = true;
+                MasterKeywordList.SetActive(false); //Set to true if we want keyword phase back
+                _isGameStarted = true;
             }
         }
         else if (CurrentPhase == GamePhase.Research)
@@ -289,11 +289,11 @@ public class BoardManager : MonoBehaviour
                     Shuffle(ref indices);
                     foreach (int index in indices)
                     {
-                        if (!_currentKeywordList.Contains(_keywordList[index])) // TODO I have seen this line throw an ArguementOutOfRangeException.
+                       // if (!_currentKeywordList.Contains(_keywordList[index])) // TODO I have seen this line throw an ArguementOutOfRangeException.
                         {
-                            _currentKeyword = _keywordList[index];
-                            _numSelections++;
-                            break;
+                         //   _currentKeyword = _keywordList[index];
+                         //   _numSelections++;
+                         //   break;
                         }
                     }
                 }
@@ -498,6 +498,8 @@ public class BoardManager : MonoBehaviour
                         //    Debug.Log("CardA is null. Null Pointer Exception.");
                         //}
                         _currentKeyword = "";
+						GetCurrentPlayer ().HandSize++; //Enables it so the cards can be redealt
+						GetCurrentPlayer ().RedealCards ();
                     }
                     else
                     {
@@ -1183,7 +1185,7 @@ public class BoardManager : MonoBehaviour
                 c.SetIsSelected(false);
                 card.SetIsSelected(true);
                 PlaySelect();
-				Debug.Log (card.ToString ());
+				//Debug.Log (card.ToString ());
                 //glow on
                 OnBoardGlowOn(card);
 
