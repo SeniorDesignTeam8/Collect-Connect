@@ -16,7 +16,7 @@ public class Player : MonoBehaviour
     public GameObject ExpCardTitle; // Title of expanded card.
     public GameObject ExpCardInfo; // Extended info of expanded card.
     public int HandSize = 4;
-    private bool[] _slotStatus; // True if taken, false if available.
+    public bool[] _slotStatus; // True if taken, false if available.
     private string _playerName; // The player's name (internally).
     public CardCollection PlayerHand; // Represents the player's cards.
     private Vector3 _expCardPosition;
@@ -606,16 +606,16 @@ public class Player : MonoBehaviour
 
 	public void RedealCards()
 	{
-		Debug.Log ("PlayerHand.Size = " + PlayerHand.Size + " Player = " + this.ToString () + " GamePhase = " + BoardManager.CurrentPhase.ToString ());
+		//Debug.Log ("PlayerHand.Size = " + PlayerHand.Size + " Player = " + this.ToString () + " GamePhase = " + BoardManager.CurrentPhase.ToString ());
 
 		if (PlayerHand.Size < HandSize)
 		{
 			IsDrawingCards = true;
-			if (BoardManager.IsDeckReady)
+			if (BoardManager.IsDeckReady || BoardManager.CurrentPhase == GamePhase.Playing)
 			{
 				//Debug.Log ("PlayerHand.Size = " + PlayerHand.Size + " Player = " + this.ToString () + " GamePhase = " + BoardManager.CurrentPhase.ToString ());
 				Card c = BoardManager.Deck.Draw();
-				PlayerHand.AddCards(c);
+				PlayerHand.AddSingleCard(c);
 				c.MoveToBoard();
 			}
 			else

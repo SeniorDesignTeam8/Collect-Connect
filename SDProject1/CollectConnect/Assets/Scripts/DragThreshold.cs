@@ -12,7 +12,7 @@ public class DragThreshold : MonoBehaviour {
 				defaultValue , 
 				(int) (defaultValue * Screen.dpi / 160f));
 
-		Debug.Log (EventSystem.current.pixelDragThreshold);
+		//Debug.Log (EventSystem.current.pixelDragThreshold);
 	}
 	
 

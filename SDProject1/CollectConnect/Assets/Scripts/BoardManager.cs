@@ -22,6 +22,7 @@ public class BoardManager : MonoBehaviour
     public GameObject KeywordPrefab;
     public GameObject NodeOne;
     public int Columns = 8, Rows = 8;
+	public int cardIndex;
     public GameObject MasterKeywordList; // Includes the GridLayoutGroup and label.
     public static CardCollection Deck;
     public static bool IsCardExpanded;
@@ -492,14 +493,16 @@ public class BoardManager : MonoBehaviour
                             _hitVetBtn = false; //reset btn
                             _afterVet = false;
                             CurrentPhase = GamePhase.Playing;
+
+							ColorKeywordButton ();
                         }
                         //else
                         //{
                         //    Debug.Log("CardA is null. Null Pointer Exception.");
                         //}
                         _currentKeyword = "";
-						GetCurrentPlayer ().HandSize++; //Enables it so the cards can be redealt
-						GetCurrentPlayer ().RedealCards ();
+						//GetCurrentPlayer ().HandSize--; //Enables it so the cards can be redealt
+						//GetCurrentPlayer ().RedealCards ();
                     }
                     else
                     {
@@ -1008,6 +1011,10 @@ public class BoardManager : MonoBehaviour
             PlayPlace();
             cardA.SetIsSelected(false);
             boardCard.SetIsSelected(false);
+
+			cardIndex = GetCurrentPlayer ().GetHand ().IndexOf (cardA); //Find the index of the current card played
+			NewCard (cardIndex); //Prepare the hand for a new card
+
             //cardA.gameObject.AddComponent<MobileNode>();
             ResetPassArray();
             return true;
@@ -1039,6 +1046,9 @@ public class BoardManager : MonoBehaviour
         cardA.SetIsSelected(false);
         boardCard.SetIsSelected(false);
         //cardA.gameObject.AddComponent<MobileNode>();
+
+		cardIndex = GetCurrentPlayer ().GetHand ().IndexOf (cardA); //Find the index of the current card played
+		NewCard (cardIndex); //Prepare the hand for a new card
 
         return true;
     }
@@ -1826,6 +1836,31 @@ public class BoardManager : MonoBehaviour
 
 			btn.colors = btnColors;
 		}
+	}
+
+	//adds a new card to the players hand
+	public void NewCard(int cIndex)
+	{
+		GetCurrentPlayer ().HandSize++; //makes a spot in the players hand
+		//GetCurrentPlayer ().GetHand ().RemoveAt (cIndex);
+		GetCurrentPlayer ().GetComponent<Player> ()._slotStatus [cIndex] = false; //registers an open spot in the hand
+		GetCurrentPlayer ().RedealCards (); //adds the new card
+		SetUpIndex (cIndex); //swaps the cards so the slot match up
+	}
+
+	//swaps old card with new card
+	public void SetUpIndex(int cIndex)
+	{
+		Card temp = new Card();
+		temp = GetCurrentPlayer ().GetHand ()._cardList [cIndex]; //Temp equals the card played
+		GetCurrentPlayer ().GetHand ()._cardList [cIndex] = GetCurrentPlayer ().GetHand ()._cardList [GetCurrentPlayer ().GetHand ()._cardList.Count - 1]; //replace the played card with the drawn card
+		GetCurrentPlayer ().GetHand ()._cardList [GetCurrentPlayer ().GetHand ()._cardList.Count - 1] = temp; //the last card in the deck is the played card
+	}
+
+	public void ColorKeywordButton ()
+	{
+
 
 	}
+
 }

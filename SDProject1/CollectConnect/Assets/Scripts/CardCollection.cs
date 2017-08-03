@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Random = UnityEngine.Random;
@@ -6,7 +7,7 @@ using Random = UnityEngine.Random;
 public class CardCollection : IEnumerable
 {
     private string _name;
-    private List<Card> _cardList;
+    public List<Card> _cardList;
 
     public int Size
     {
@@ -28,7 +29,13 @@ public class CardCollection : IEnumerable
     {
         _cardList.AddRange(cards);
         _cardList = _cardList.Distinct().ToList();
+		//Debug.Log(_cardList.Count.ToString ());
     }
+
+	public void AddSingleCard(Card card)
+	{
+		_cardList.Add (card);
+	}
 
     public void Shuffle()
     {
