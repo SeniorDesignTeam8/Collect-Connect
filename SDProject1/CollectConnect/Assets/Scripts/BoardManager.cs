@@ -33,6 +33,7 @@ public class BoardManager : MonoBehaviour
     public AudioClip PlaceSound;
     public List<string> _keywordList, _copyList; // _copyList contains ALL the keywords. _keywordList just contains the 20 for the game.
     public string _currentKeyword, _previousKeyword, _removedKeyword;
+	public GameObject _currentKeywordButton;
     private List<GameObject> _keywordNodes;
     public List<Player> _playerScriptRefs { get; private set; }
     private bool _isGameStarted;
@@ -494,7 +495,8 @@ public class BoardManager : MonoBehaviour
                             _afterVet = false;
                             CurrentPhase = GamePhase.Playing;
 
-							ColorKeywordButton ();
+							//ColorKeywordButton ();
+
                         }
                         //else
                         //{
@@ -1793,6 +1795,7 @@ public class BoardManager : MonoBehaviour
 						PlaySelect ();
 						//Debug.Log("Setting current keyword to: " + go.GetComponentInChildren<Text>().text);
 						_currentKeyword = go.GetComponentInChildren<Text> ().text;
+						_currentKeywordButton = go;
 						_numSelections++;
 					}
 				
@@ -1806,6 +1809,7 @@ public class BoardManager : MonoBehaviour
 				{
 					PlaySelect ();
 					_currentKeyword = go.GetComponentInChildren<Text> ().text;
+					_currentKeywordButton = go;
 				}
 		});
 		
@@ -1857,9 +1861,19 @@ public class BoardManager : MonoBehaviour
 		GetCurrentPlayer ().GetHand ()._cardList [GetCurrentPlayer ().GetHand ()._cardList.Count - 1] = temp; //the last card in the deck is the played card
 	}
 
+
+	//uncomment line 498 to reactivate
 	public void ColorKeywordButton ()
 	{
+		Debug.Log (_currentKeywordButton.ToString ());
+		Button btn = _currentKeywordButton.GetComponent<Button> ();
 
+		ColorBlock btnColors = btn.GetComponent<Button> ().colors;
+		btnColors.normalColor = new Color (0, 0, 0);
+
+		btn.colors = btnColors;
+
+		_currentKeywordButton.GetComponent<Button> ().colors = btnColors;
 
 	}
 
