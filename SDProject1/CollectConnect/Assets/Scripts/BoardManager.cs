@@ -486,7 +486,7 @@ public class BoardManager : MonoBehaviour
                             //Debug.Log("Prop's value: " + prop.PropertyValue);
                             GetCurrentPlayer().IncreaseScore(cardA.GetPts(prop));
                             GetCurrentPlayer().PlayerScore.GetComponent<Text>().text = "" + GetCurrentPlayer().Score;
-                            _keywordList.Remove(_currentKeyword);
+                            //_keywordList.Remove(_currentKeyword);
                             PopulateKeywords();
                             IsTurnOver = true;
                             _hitVetBtn = false; //reset btn
