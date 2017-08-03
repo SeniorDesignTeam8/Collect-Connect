@@ -3,7 +3,7 @@ This file is to show you how to pull the info for the database from the Translat
 Things needed:
 collectConnectDB.db
 combined.py
-tn.sql (The translation network Dump)
+tn.sql (The translation network Dump) **not in the repository**
 Python3.6
 
 **make sure these files are in the folder SDProject/CollectConnect/Assets **
