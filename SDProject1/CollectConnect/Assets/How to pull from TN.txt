@@ -1,0 +1,15 @@
+This file is to show you how to pull the info for the database from the Translation Network
+
+Things needed:
+collectConnectDB.db
+combined.py
+tn.sql (The translation network Dump)
+Python3.6
+
+**make sure these files are in the folder SDProject/CollectConnect/Assets **
+
+Then simply run the combined.py script using command prompt
+
+
+
+****DUMP may have a variable named "world\'s fair" if this is the case just find and replace "world\'s" with "worlds"****
