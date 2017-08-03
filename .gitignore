@@ -28,10 +28,10 @@ sysinfo.txt
 *.apk
 *.unitypackage
 /SDProject1/CollectConnect/Library/UnityAssemblies
-/SDProject1/CollectConnect/Library
-/SDProject1/CollectConnect/Assets/pics
+/SDProject1/CollectConnect/Library/
 /SDProject1/CollectConnect/Assets/tn1.sql*
 /SDProject1/CollectConnect/Assets/combined.py*
+/SDProject1/CollectConnect/Assets/pics/*
 
 
 
