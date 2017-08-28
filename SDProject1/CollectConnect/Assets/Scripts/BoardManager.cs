@@ -11,6 +11,9 @@ using Random = UnityEngine.Random;
 
 public class BoardManager : MonoBehaviour
 {
+	public int GridSpacing = 1;
+
+
     private const int MaxNumKeywordPicks = 5;
     public static bool IsDeckReady { get; private set; }
     public static BoardManager Instance;
@@ -35,6 +38,7 @@ public class BoardManager : MonoBehaviour
     public string _currentKeyword, _previousKeyword, _removedKeyword;
 	public GameObject _currentKeywordButton;
     private List<GameObject> _keywordNodes;
+	public Transform BoardGrid;
     public List<Player> _playerScriptRefs { get; private set; }
     private bool _isGameStarted;
     private bool _isFirstCardPlay;
@@ -489,6 +493,7 @@ public class BoardManager : MonoBehaviour
                             GetCurrentPlayer().IncreaseScore(cardA.GetPts(prop));
                             GetCurrentPlayer().PlayerScore.GetComponent<Text>().text = "" + GetCurrentPlayer().Score;
                             //_keywordList.Remove(_currentKeyword);
+
                             PopulateKeywords();
                             IsTurnOver = true;
                             _hitVetBtn = false; //reset btn
@@ -894,11 +899,11 @@ public class BoardManager : MonoBehaviour
                 Card cardComponent = c.GetComponent<Card>();
                 cardComponent.name = (string)rd["cardDisplayTitle"];
                 cardComponent.AddProperty("Collection", col, "1");
-                byte[] raw = (byte[])rd["cardDescription"];
-                string s = System.Text.Encoding.UTF8.GetString(raw);
+				//byte[] raw = (byte[])rd["cardDescription"];
+				string s = rd["cardDescription"].ToString();
                 cardComponent.SetExpInfo(s);
                 int cardId = (int)(long)rd["cardID"];
-                s = (string)rd["imageLocation"];
+				s = rd["imageLocation"].ToString();
                 cardComponent.SetImageLocation(s);
 
                 string keywordQuery = "SELECT * FROM attributes NATURAL JOIN parameters NATURAL JOIN cards NATURAL JOIN parameters_attributes WHERE cardID = " + cardId;
@@ -1051,6 +1056,10 @@ public class BoardManager : MonoBehaviour
 
 		cardIndex = GetCurrentPlayer ().GetHand ().IndexOf (cardA); //Find the index of the current card played
 		NewCard (cardIndex); //Prepare the hand for a new card
+		//newKeyNode.gameObject.transform.SetParent (BoardGrid); 
+
+		//newKeyNode.gameObject.transform.position = SnapToGrid(transform,GridSpacing);
+		this.GetComponent<GridClass>().SnapToGrid(newKeyNode);
 
         return true;
     }
@@ -1876,5 +1885,9 @@ public class BoardManager : MonoBehaviour
 		_currentKeywordButton.GetComponent<Button> ().colors = btnColors;
 
 	}
+
+
+
+
 
 }
