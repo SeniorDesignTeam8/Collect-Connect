@@ -853,77 +853,157 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    private static void BuildDeck()
-    {
 
-        IDbCommand dbcmd = _dbconn.CreateCommand();
+	private static void BuildDeck()
+	{
+
+		IDbCommand dbcmd = _dbconn.CreateCommand();
 
 
-        // Load the collections.
-        List<string> collectionList = new List<string>();
-        List<int> collectionIdList = new List<int>();
-        try
-        {
-            const string sqlQuery = "SELECT * FROM sets"; // get id of last card inserted into cards table
-            dbcmd.CommandText = sqlQuery;
-            IDataReader rd = dbcmd.ExecuteReader();
-            while (rd.Read())
-            {
-                collectionIdList.Add(rd.GetInt32(0));
-                collectionList.Add(rd.GetString(1));
-            }
-            rd.Close();
-            rd = null;
+		// Load the collections.
+		List<string> collectionList = new List<string>();
+		List<int> collectionIdList = new List<int>();
+		try
+		{
+			const string sqlQuery = "SELECT * FROM sets"; // get id of last card inserted into cards table
+			dbcmd.CommandText = sqlQuery;
+			IDataReader rd = dbcmd.ExecuteReader();
+			while (rd.Read())
+			{
+				collectionIdList.Add(rd.GetInt32(0));
+				collectionList.Add(rd.GetString(1));
+			}
+			rd.Close();
+			rd = null;
 
-            collectionList = collectionList.Distinct().ToList(); // Remove any duplicates.
-            collectionIdList = collectionIdList.Distinct().ToList(); // Remove any duplicates.
-        }
-        catch (Exception e)
-        {
-            Debug.LogException(e);
-            throw;
-        }
-        // Load the artifacts from each collection to make cards from them. Then add them to their respective lists.
-        foreach (string col in collectionList)
-        {
-            int index = collectionList.IndexOf(col);
-            int setId = collectionIdList[index];
+			collectionList = collectionList.Distinct().ToList(); // Remove any duplicates.
+			collectionIdList = collectionIdList.Distinct().ToList(); // Remove any duplicates.
+		}
+		catch (Exception e)
+		{
+			Debug.LogException(e);
+			throw;
+		}
+		// Load the artifacts from each collection to make cards from them. Then add them to their respective lists.
+		foreach (string col in collectionList)
+		{
+			int index = collectionList.IndexOf(col);
+			int setId = collectionIdList[index];
 
-            string sqlQuery = "SELECT * FROM cards INNER JOIN sets ON cards.setID = sets.setID WHERE cards.setID = " + setId;// get id of last card inserted into cards table
-            dbcmd.CommandText = sqlQuery;
-            IDataReader rd = dbcmd.ExecuteReader();
-            while (rd.Read())
-            {
-                GameObject c = Instantiate(GameObject.Find("Card"));
-                c.AddComponent<Card>();
-                Card cardComponent = c.GetComponent<Card>();
-                cardComponent.name = (string)rd["cardDisplayTitle"];
-                cardComponent.AddProperty("Collection", col, "1");
-				//byte[] raw = (byte[])rd["cardDescription"];
-				string s = rd["cardDescription"].ToString();
-                cardComponent.SetExpInfo(s);
-                int cardId = (int)(long)rd["cardID"];
-				s = rd["imageLocation"].ToString();
-                cardComponent.SetImageLocation(s);
+			string sqlQuery = "SELECT * FROM cards INNER JOIN sets ON cards.setID = sets.setID WHERE cards.setID = " + setId;// get id of last card inserted into cards table
+			Debug.Log(sqlQuery);
+			dbcmd.CommandText = sqlQuery;
+			IDataReader rd = dbcmd.ExecuteReader();
+			while (rd.Read())
+			{
+				GameObject c = Instantiate(GameObject.Find("Card"));
+				c.AddComponent<Card>();
+				Card cardComponent = c.GetComponent<Card>();
+				cardComponent.name = (string)rd["cardDisplayTitle"];
+				cardComponent.AddProperty("Collection", col, "1");
+				string raw = (string)rd["cardDescription"];
+				string s = raw;
+				cardComponent.SetExpInfo(s);
+				int cardId = (int)(long)rd["cardID"];
+				s = (string)rd["imageFileName"];
+				cardComponent.SetImageLocation(s);
 
-                string keywordQuery = "SELECT * FROM attributes NATURAL JOIN parameters NATURAL JOIN cards NATURAL JOIN parameters_attributes WHERE cardID = " + cardId;
-                IDbCommand kwCmd = _dbconn.CreateCommand();
-                kwCmd.CommandText = keywordQuery;
-                IDataReader kwReader = kwCmd.ExecuteReader();
-                while (kwReader.Read())
-                {
-                    cardComponent.AddProperty((string)kwReader["parameter"], (string)kwReader["attribute"], (int)(long)kwReader["pointValue"] + "");
-                }
-                kwReader.Close();
-                kwReader = null;
-                Deck.AddCards(cardComponent);
-            }
-            rd.Close();
-            rd = null;
+				string keywordQuery = "SELECT c.*, cat.category, param.parameter, attr.attribute FROM cards c NATURAL JOIN categories_parameters_attributes cpa LEFT OUTER JOIN categories cat ON cpa.categoryID = cat.categoryID LEFT OUTER JOIN parameters param ON cpa.parameterID = param.parameterID LEFT OUTER JOIN attributes attr ON cpa.attributeID = attr.attributeID WHERE cardID = " + cardId ;
+				Debug.Log (keywordQuery);
+				IDbCommand kwCmd = _dbconn.CreateCommand();
+				kwCmd.CommandText = keywordQuery;
+				IDataReader kwReader = kwCmd.ExecuteReader();
+				//Debug.Log(kwCmd.ToString() + "    " + kwReader.ToString() + "    " + (int)(long)kwReader["cpa.pointValue"]);
+				while (kwReader.Read())
+				{
+					Debug.Log ("Reading Data from Card: " + cardId);
+					//Debug.Log (kwReader ["parameter"] + "    " + kwReader ["attribute"] );
+					//if((string)kwReader ["parameter"] != "NULL" && (string)kwReader ["attribute"]  != "NULL")
+						cardComponent.AddProperty((string)kwReader["category"],(string)kwReader["parameter"],/*,  (string)kwReader["attribute"], /*(int)(long)kwReader["cpa.pointValue"]+*/  "0");
+				}
+				kwReader.Close();
+				kwReader = null;
+				Deck.AddCards(cardComponent);
+			}
+			rd.Close();
+			rd = null;
 
-        }
+		}
 
-    }
+		//1145;
+	}
+
+//    private static void BuildDeck()
+//    {
+//
+//        IDbCommand dbcmd = _dbconn.CreateCommand();
+//
+//
+//        // Load the collections.
+//        List<string> collectionList = new List<string>();
+//        List<int> collectionIdList = new List<int>();
+//        try
+//        {
+//            const string sqlQuery = "SELECT * FROM sets"; // get id of last card inserted into cards table
+//            dbcmd.CommandText = sqlQuery;
+//            IDataReader rd = dbcmd.ExecuteReader();
+//            while (rd.Read())
+//            {
+//                collectionIdList.Add(rd.GetInt32(0));
+//                collectionList.Add(rd.GetString(1));
+//            }
+//            rd.Close();
+//            rd = null;
+//
+//            collectionList = collectionList.Distinct().ToList(); // Remove any duplicates.
+//            collectionIdList = collectionIdList.Distinct().ToList(); // Remove any duplicates.
+//        }
+//        catch (Exception e)
+//        {
+//            Debug.LogException(e);
+//            throw;
+//        }
+//        // Load the artifacts from each collection to make cards from them. Then add them to their respective lists.
+//        foreach (string col in collectionList)
+//        {
+//            int index = collectionList.IndexOf(col);
+//            int setId = collectionIdList[index];
+//
+//            string sqlQuery = "SELECT * FROM cards INNER JOIN sets ON cards.setID = sets.setID WHERE cards.setID = " + setId;// get id of last card inserted into cards table
+//            dbcmd.CommandText = sqlQuery;
+//            IDataReader rd = dbcmd.ExecuteReader();
+//            while (rd.Read())
+//            {
+//                GameObject c = Instantiate(GameObject.Find("Card"));
+//                c.AddComponent<Card>();
+//                Card cardComponent = c.GetComponent<Card>();
+//                cardComponent.name = (string)rd["cardDisplayTitle"];
+//                cardComponent.AddProperty("Collection", col, "1");
+//				//byte[] raw = (byte[])rd["cardDescription"];
+//				string s = rd["cardDescription"].ToString();
+//                cardComponent.SetExpInfo(s);
+//                int cardId = (int)(long)rd["cardID"];
+//				s = rd["imageLocation"].ToString();
+//                cardComponent.SetImageLocation(s);
+//
+//                string keywordQuery = "SELECT * FROM attributes NATURAL JOIN parameters NATURAL JOIN cards NATURAL JOIN parameters_attributes WHERE cardID = " + cardId;
+//                IDbCommand kwCmd = _dbconn.CreateCommand();
+//                kwCmd.CommandText = keywordQuery;
+//                IDataReader kwReader = kwCmd.ExecuteReader();
+//                while (kwReader.Read())
+//                {
+//                    cardComponent.AddProperty((string)kwReader["parameter"], (string)kwReader["attribute"], (int)(long)kwReader["pointValue"] + "");
+//                }
+//                kwReader.Close();
+//                kwReader = null;
+//                Deck.AddCards(cardComponent);
+//            }
+//            rd.Close();
+//            rd = null;
+//
+//        }
+//
+//    }
 
     public void PlaySelect()
     {
@@ -1033,12 +1113,12 @@ public class BoardManager : MonoBehaviour
         newKeyNode.name = keyword;
         _keywordNodes.Add(newKeyNode); // Add the keyword to the list of keyword nodes.
         // Connect both cards to the new keyword node.
-        ConnectionManager.CreateConnection(boardCard.gameObject.GetComponent<RectTransform>(),
+       ConnectionManager.CreateConnection(boardCard.gameObject.GetComponent<RectTransform>(),
+           newKeyNode.GetComponent<RectTransform>());
+       ConnectionManager.CreateConnection(cardA.gameObject.GetComponent<RectTransform>(),
             newKeyNode.GetComponent<RectTransform>());
-        ConnectionManager.CreateConnection(cardA.gameObject.GetComponent<RectTransform>(),
-            newKeyNode.GetComponent<RectTransform>());
-        newKeyNode.transform.position = (cardA.gameObject.transform.position +
-                                         boardCard.gameObject.transform.position) / 2;
+        //newKeyNode.transform.position = (cardA.gameObject.transform.position +
+                                         //boardCard.gameObject.transform.position) / 2;
         //newKeyNode.AddComponent<NodeMovement>();
         foreach (
             Connection connection in

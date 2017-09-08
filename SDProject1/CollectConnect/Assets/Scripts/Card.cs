@@ -120,7 +120,7 @@ public class Card : MonoBehaviour
     }
 
 
-    private void OnMouseDrag()
+    /*private void OnMouseDrag()
     {
         if (_isOnBoard && Vector3.Distance(_pointerDownPosition, Input.mousePosition) >
             gameObject.GetComponent<RectTransform>().rect.width && !_isExpanded)
@@ -142,7 +142,7 @@ public class Card : MonoBehaviour
             //Vector3 actualMouseLocation = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             //gameObject.transform.localPosition = new Vector3(actualMouseLocation.x, actualMouseLocation.y, gameObject.transform.localPosition.z);
         }
-    }
+    }*/
 
     // Update is called once per frame
     //private void LateUpdate()
@@ -150,7 +150,7 @@ public class Card : MonoBehaviour
 
     //}
 
-    public void AddProperty(string propName, string propVal, string pointVal = "0")
+	public void AddProperty(string propName, string propVal, string pointVal = "0")
     {
         CardProperty newProp = new CardProperty(propName, propVal, pointVal);
         if (PropertyList.Any(prop => prop.Equals(newProp)))

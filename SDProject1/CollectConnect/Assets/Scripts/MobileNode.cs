@@ -30,7 +30,7 @@ public class MobileNode : MonoBehaviour
     private void OnMouseDrag()
     {
         if (Vector3.Distance(_pointerDownPosition, Input.mousePosition) > gameObject.GetComponent<RectTransform>().rect.width)
-            _isDragging = true;
+            //_isDragging = true;
         if (_isDragging)
         {
             Vector3 cursorPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, _screenPoint.z);

@@ -4,10 +4,11 @@ using UnityEngine;
 
 public class GridClass : MonoBehaviour {
 
-	public List<GameObject>[] PlayedKeywords = new List<GameObject>[20];
+	public List<GameObject> PlayedKeywords ;
 	public int columnCount;
 	public int rowCount;
 	public int listCount;
+	public GameObject tile;
 
 	// Use this for initialization
 	void Start () 
@@ -37,11 +38,19 @@ public class GridClass : MonoBehaviour {
 			rowCount++;
 		}
 
+		for(int i = 0;i<4;i++) //columns
+		{
+			for(int j = 0;j<5;j++) //rows
+			{
+				PlayedKeywords.Add(Instantiate(tile,new Vector3(-8+(i*5), 5-j*2, 0),Quaternion.identity));
+			}
+		}
 	}
 
-	public Vector3 SnapToGrid(GameObject Key)
+	public void SnapToGrid(GameObject Key)
 	{
-		PlayedKeywords [listCount] = Key;
+		Key.transform.position = PlayedKeywords [listCount].transform.position;
+		PlayedKeywords [listCount] = Key.gameObject;
 		listCount++;
 	}
 
