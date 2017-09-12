@@ -54,6 +54,7 @@ public class Card : MonoBehaviour
     public List<CardProperty> PropertyList = new List<CardProperty>();
     private string _imageLocation;
 	public bool isHorizontal;
+	public int cardID;
     // Use this for initialization
     private void Start()
     {
@@ -206,7 +207,7 @@ public class Card : MonoBehaviour
     //    }
     //}
 
-    private bool SetSprite()
+    public bool SetSprite()
     {
         try
         {
@@ -214,12 +215,32 @@ public class Card : MonoBehaviour
             byte[] fileData = File.ReadAllBytes(Application.dataPath + "/pics/" + _imageLocation);
             Texture2D tex = new Texture2D(2, 2);
             tex.LoadImage(fileData);
-            Sprite mySprite = Sprite.Create(tex, new Rect(0.0f, 0.0f, tex.width, tex.height), new Vector2(0.5f, 0.5f), 75.0f);
-			if(tex.width > tex.height)
+
+			if(tex.width >130 && tex.height >165)
+			{
+				if(tex.width > tex.height)
+				{
+					isHorizontal = true;
+					tex = ScaleTexture(tex, 128, 90);
+				}
+				else
+				{
+					tex = ScaleTexture(tex, 125, 148);
+				}
+			}
+			else if(tex.width > tex.height)
 			{
 				isHorizontal = true;
 			}
+			//Debug.Log("Exiting ScaleTexture" + tex.width.ToString() + "  " + tex.height.ToString());
+
+			Sprite mySprite = Sprite.Create(tex, new Rect(0.0f, 0.0f, tex.width, tex.height ), new Vector2(0.5f, 0.5f), 75.0f);
+
+			//BoundsSetup(mySprite);
+
+		
             _renderer.sprite = mySprite;
+
             return true;
         }
         catch (DirectoryNotFoundException e)
@@ -228,6 +249,24 @@ public class Card : MonoBehaviour
             return false;
         }
     }
+
+	public Texture2D ScaleTexture(Texture2D source,int targetWidth,int targetHeight)
+	{
+		Texture2D result = new Texture2D(targetWidth,targetHeight,source.format,true);
+		Color[] rpixels = result.GetPixels(0);
+		float incX = ((float)1/source.width)*((float)source.width/targetWidth);
+		float incY = ((float)1/source.height)*((float)source.height/targetHeight);
+
+		for(int px = 0; px < rpixels.Length; px++)
+		{
+			rpixels[px] = source.GetPixelBilinear(incX*((float)px%targetWidth),
+				incY*((float)Mathf.Floor(px/targetWidth)));
+		}
+
+		result.SetPixels(rpixels,0);
+		result.Apply();
+		return result;
+	}
 
     public void SetImageLocation(string loc)
     {
@@ -317,8 +356,6 @@ public class Card : MonoBehaviour
         {
             transform.position = _originalPosition;
         }
-
-
     }
 
     public bool IsOnBoard()
@@ -336,18 +373,32 @@ public class Card : MonoBehaviour
         return other.PropertyList.Where(prop => DoesPropertyExist(prop.PropertyValue, prop.PropertyName)).Distinct().ToList();
     }
 
-	private IEnumerator ApplySprite()
+	//Un-comment and use if loading images from the web
+//	private IEnumerator ApplySprite()
+//	{
+//		string url = _imageLocation;
+//		Texture2D tex = new Texture2D(2, 2);
+//		WWW webImage = new WWW (url);
+//		yield return webImage;
+//		webImage.LoadImageIntoTexture(tex);
+//		Sprite mySprite = Sprite.Create(tex, new Rect(0.0f, 0.0f, tex.width, tex.height), new Vector2(0.5f, 0.5f), 75.0f);
+//
+//	
+//		if(tex.width > tex.height || tex.width == tex.height)
+//		{
+//			isHorizontal = true;
+//		}
+//		_renderer.sprite = mySprite;
+//
+//	}
+
+	public void SetID(int ID)
 	{
-		string url = _imageLocation;
-		Texture2D tex = new Texture2D(2, 2);
-		WWW webImage = new WWW (url);
-		yield return webImage;
-		webImage.LoadImageIntoTexture(tex);
-		Sprite mySprite = Sprite.Create(tex, new Rect(0.0f, 0.0f, tex.width, tex.height), new Vector2(0.5f, 0.5f), 75.0f);
-		if(tex.width > tex.height || tex.width == tex.height)
-		{
-			isHorizontal = true;
-		}
-		_renderer.sprite = mySprite;
+		cardID = ID;
+	}
+
+	public int GetID()
+	{
+		return cardID;
 	}
 }

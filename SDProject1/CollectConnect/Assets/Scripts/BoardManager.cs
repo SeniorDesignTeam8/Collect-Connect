@@ -891,7 +891,7 @@ public class BoardManager : MonoBehaviour
 			int setId = collectionIdList[index];
 
 			string sqlQuery = "SELECT * FROM cards INNER JOIN sets ON cards.setID = sets.setID WHERE cards.setID = " + setId;// get id of last card inserted into cards table
-			Debug.Log(sqlQuery);
+			//Debug.Log(sqlQuery);
 			dbcmd.CommandText = sqlQuery;
 			IDataReader rd = dbcmd.ExecuteReader();
 			while (rd.Read())
@@ -906,17 +906,18 @@ public class BoardManager : MonoBehaviour
 				cardComponent.SetExpInfo(s);
 				int cardId = (int)(long)rd["cardID"];
 				s = (string)rd["imageFileName"];
+				cardComponent.SetID (cardId);
 				cardComponent.SetImageLocation(s);
 
 				string keywordQuery = "SELECT c.*, cat.category, param.parameter, attr.attribute FROM cards c NATURAL JOIN categories_parameters_attributes cpa LEFT OUTER JOIN categories cat ON cpa.categoryID = cat.categoryID LEFT OUTER JOIN parameters param ON cpa.parameterID = param.parameterID LEFT OUTER JOIN attributes attr ON cpa.attributeID = attr.attributeID WHERE cardID = " + cardId ;
-				Debug.Log (keywordQuery);
+				//Debug.Log (keywordQuery);
 				IDbCommand kwCmd = _dbconn.CreateCommand();
 				kwCmd.CommandText = keywordQuery;
 				IDataReader kwReader = kwCmd.ExecuteReader();
 				//Debug.Log(kwCmd.ToString() + "    " + kwReader.ToString() + "    " + (int)(long)kwReader["cpa.pointValue"]);
 				while (kwReader.Read())
 				{
-					Debug.Log ("Reading Data from Card: " + cardId);
+					//Debug.Log ("Reading Data from Card: " + cardId);
 					//Debug.Log (kwReader ["parameter"] + "    " + kwReader ["attribute"] );
 					//if((string)kwReader ["parameter"] != "NULL" && (string)kwReader ["attribute"]  != "NULL")
 						cardComponent.AddProperty((string)kwReader["category"],(string)kwReader["parameter"],/*,  (string)kwReader["attribute"], /*(int)(long)kwReader["cpa.pointValue"]+*/  "0");
@@ -1133,7 +1134,7 @@ public class BoardManager : MonoBehaviour
         cardA.SetIsSelected(false);
         boardCard.SetIsSelected(false);
         //cardA.gameObject.AddComponent<MobileNode>();
-
+		WriteDB.WriteConnection(keyword,cardA.GetID(), boardCard.GetID(),_dbconn);
 		cardIndex = GetCurrentPlayer ().GetHand ().IndexOf (cardA); //Find the index of the current card played
 		NewCard (cardIndex); //Prepare the hand for a new card
 		//newKeyNode.gameObject.transform.SetParent (BoardGrid); 
