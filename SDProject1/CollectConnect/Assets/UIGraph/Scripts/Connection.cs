@@ -18,7 +18,7 @@ public class Connection : MonoBehaviour {
 	[SerializeField] LineRenderer _line;
 	public LineRenderer line {
 		get {
-			if (!_line) _line = GetComponent<LineRenderer>();
+			//if (!_line) _line = GetComponent<LineRenderer>();
 			return _line;
 		}
 	}

@@ -1084,17 +1084,8 @@ public class BoardManager : MonoBehaviour
             if (keyNode.transform.FindChild("Text").gameObject.GetComponent<Text>().text != keyword)
                 continue;
             // The keyword is already a node. Use it.
-            ConnectionManager.CreateConnection(cardA.gameObject.GetComponent<RectTransform>(),
-                keyNode.GetComponent<RectTransform>());
-            keyNode.transform.position = CalculatePosition(keyNode);
-            foreach (
-                Connection connection in
-                ConnectionManager.FindConnections(cardA.gameObject.GetComponent<RectTransform>()))
-            {
-                SetDirectionsAndColor(connection);
-                connection.UpdateName();
-                connection.UpdateCurve();
-            }
+			SnapToKeyword.CornerSnap(cardA, boardCard, keyNode);
+
             cardA.SetIsOnBoard(true);
             PlayPlace();
             cardA.SetIsSelected(false);
@@ -1113,22 +1104,10 @@ public class BoardManager : MonoBehaviour
         // Set the text of the new keyword node.
         newKeyNode.name = keyword;
         _keywordNodes.Add(newKeyNode); // Add the keyword to the list of keyword nodes.
-        // Connect both cards to the new keyword node.
-       ConnectionManager.CreateConnection(boardCard.gameObject.GetComponent<RectTransform>(),
-           newKeyNode.GetComponent<RectTransform>());
-       ConnectionManager.CreateConnection(cardA.gameObject.GetComponent<RectTransform>(),
-            newKeyNode.GetComponent<RectTransform>());
-        //newKeyNode.transform.position = (cardA.gameObject.transform.position +
-                                         //boardCard.gameObject.transform.position) / 2;
-        //newKeyNode.AddComponent<NodeMovement>();
-        foreach (
-            Connection connection in
-            ConnectionManager.FindConnections(newKeyNode.gameObject.GetComponent<RectTransform>()))
-        {
-            SetDirectionsAndColor(connection);
-            connection.UpdateName();
-            connection.UpdateCurve();
-        }
+  
+		this.GetComponent<GridClass>().SnapToGrid(newKeyNode);
+		SnapToKeyword.CornerSnap(cardA, boardCard, newKeyNode);
+
         cardA.SetIsOnBoard(true);
         PlayPlace();
         cardA.SetIsSelected(false);
@@ -1140,7 +1119,7 @@ public class BoardManager : MonoBehaviour
 		//newKeyNode.gameObject.transform.SetParent (BoardGrid); 
 
 		//newKeyNode.gameObject.transform.position = SnapToGrid(transform,GridSpacing);
-		this.GetComponent<GridClass>().SnapToGrid(newKeyNode);
+
 
         return true;
     }

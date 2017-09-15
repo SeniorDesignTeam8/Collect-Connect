@@ -15,11 +15,11 @@ public class MobileNode : MonoBehaviour
 
     private void OnMouseDown()
     {
-        // TODO Check for another dragging node with non-null Vector3?
-        _pointerDownPosition = transform.position;
-        _screenPoint = Camera.main.WorldToScreenPoint(gameObject.transform.position);
-        _offset = gameObject.transform.position - Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, _screenPoint.z));
-		_isDragging = true;
+//        // TODO Check for another dragging node with non-null Vector3?
+//        _pointerDownPosition = transform.position;
+//        _screenPoint = Camera.main.WorldToScreenPoint(gameObject.transform.position);
+//        _offset = gameObject.transform.position - Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, _screenPoint.z));
+//		_isDragging = true;
     }
 
     private void OnMouseUp()
@@ -29,13 +29,13 @@ public class MobileNode : MonoBehaviour
 
     private void OnMouseDrag()
     {
-        if (Vector3.Distance(_pointerDownPosition, Input.mousePosition) > gameObject.GetComponent<RectTransform>().rect.width)
-            //_isDragging = true;
-        if (_isDragging)
-        {
-            Vector3 cursorPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, _screenPoint.z);
-            Vector3 cursorPosition = Camera.main.ScreenToWorldPoint(cursorPoint) + _offset;
-            transform.position = cursorPosition;
-        }
+//        if (Vector3.Distance(_pointerDownPosition, Input.mousePosition) > gameObject.GetComponent<RectTransform>().rect.width)
+//            //_isDragging = true;
+//        if (_isDragging)
+//        {
+//            Vector3 cursorPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, _screenPoint.z);
+//            Vector3 cursorPosition = Camera.main.ScreenToWorldPoint(cursorPoint) + _offset;
+//            transform.position = cursorPosition;
+//        }
     }
 }

@@ -55,6 +55,8 @@ public class Card : MonoBehaviour
     private string _imageLocation;
 	public bool isHorizontal;
 	public int cardID;
+	public bool isSnapped;
+
     // Use this for initialization
     private void Start()
     {
@@ -62,6 +64,7 @@ public class Card : MonoBehaviour
         _renderer = GetComponent<SpriteRenderer>();
         LineList = new List<LineRenderer>();
 		isHorizontal = false;
+		isSnapped = false;
         //CardGlow.GetComponent<Renderer>().enabled = false;
     }
 
@@ -400,5 +403,15 @@ public class Card : MonoBehaviour
 	public int GetID()
 	{
 		return cardID;
+	}
+
+	public void SetSnapped(bool snapped) //set whether the card is already snapped to a keyword
+	{
+		isSnapped = snapped;
+	}
+
+	public bool GetSnapped() //is the card snapped to a keyword
+	{
+		return isSnapped;
 	}
 }
