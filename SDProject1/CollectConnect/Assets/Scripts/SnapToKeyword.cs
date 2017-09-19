@@ -4,16 +4,6 @@ using UnityEngine;
 
 public class SnapToKeyword : BoardManager {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
-
 	public static void CornerSnap(Card cardA, Card boardCard, GameObject keyword)
 	{
 		BoxCollider2D cardARend = cardA.gameObject.GetComponent<BoxCollider2D> ();
@@ -33,7 +23,6 @@ public class SnapToKeyword : BoardManager {
 			{
 				Debug.Log ("Corner " + i.ToString() + " Filled");
 			}
-
 		}
 
 		if (boardCard.isSnapped != true) 
@@ -51,15 +40,12 @@ public class SnapToKeyword : BoardManager {
 				{
 					Debug.Log ("Corner " + i.ToString() + " Filled");
 				}
-
 			}
 		}
-
 	}
 
 	public static Vector3 Coordinates(int i, BoxCollider2D cardRend, KeywordCorners keyCorn)
 	{
-
 		switch (i) 
 		{
 		case 0: //top left
@@ -74,8 +60,5 @@ public class SnapToKeyword : BoardManager {
 			Debug.Log ("Coordinates Broke");
 			return new Vector3 (1, 1, 1);
 		}
-
-
-
 	}
 }

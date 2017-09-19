@@ -1945,9 +1945,4 @@ public class BoardManager : MonoBehaviour
 		_currentKeywordButton.GetComponent<Button> ().colors = btnColors;
 
 	}
-
-
-
-
-
 }

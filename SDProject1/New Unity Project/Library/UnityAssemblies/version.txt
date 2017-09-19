@@ -1,2 +1,0 @@
-5.4.3f1:2.8.0.0
-StandaloneWindows

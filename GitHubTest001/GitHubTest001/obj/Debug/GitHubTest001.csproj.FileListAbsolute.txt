@@ -1,8 +1,0 @@
-C:\Users\mgutt\Source\Repos\Collect-Connect\GitHubTest001\GitHubTest001\bin\Debug\GitHubTest001.exe.config
-C:\Users\Alexandra\Source\Repos\Collect-Connect\GitHubTest001\GitHubTest001\bin\Debug\GitHubTest001.exe.config
-C:\Users\Jake\Source\Repos\Collect-Connect\GitHubTest001\GitHubTest001\bin\Debug\GitHubTest001.exe.config
-C:\Users\Jake\Source\Repos\Collect-Connect\GitHubTest001\GitHubTest001\bin\Debug\GitHubTest001.exe
-C:\Users\Jake\Source\Repos\Collect-Connect\GitHubTest001\GitHubTest001\bin\Debug\GitHubTest001.pdb
-C:\Users\Jake\Source\Repos\Collect-Connect\GitHubTest001\GitHubTest001\obj\Debug\GitHubTest001.csprojResolveAssemblyReference.cache
-C:\Users\Jake\Source\Repos\Collect-Connect\GitHubTest001\GitHubTest001\obj\Debug\GitHubTest001.exe
-C:\Users\Jake\Source\Repos\Collect-Connect\GitHubTest001\GitHubTest001\obj\Debug\GitHubTest001.pdb

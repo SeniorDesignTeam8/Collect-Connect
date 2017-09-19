@@ -38,11 +38,11 @@ public class GridClass : MonoBehaviour {
 			rowCount++;
 		}
 
-		for(int i = 0;i<4;i++) //columns
+		for(int i = 0;i<5;i++) //columns
 		{
-			for(int j = 0;j<5;j++) //rows
+			for(int j = 0;j<3;j++) //rows
 			{
-				PlayedKeywords.Add(Instantiate(tile,new Vector3(-8+(i*5), 5-j*2, 0),Quaternion.identity));
+				PlayedKeywords.Add(Instantiate(tile,new Vector3(-8+(i*5), 5 - (j*2.75f) - j, 0),Quaternion.identity));
 			}
 		}
 	}
