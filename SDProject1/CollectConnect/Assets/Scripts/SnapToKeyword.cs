@@ -17,6 +17,8 @@ public class SnapToKeyword : BoardManager {
 			if (keyword.GetComponent<KeywordCorners>().cornerFilled [i] == false) 
 			{
 				cardA.transform.position = Coordinates (i, cardARend, keyCorn); //Set the new corners to the board locations
+				cardA.SetAttachedKey(keyword.gameObject);
+				cardA.SetOnCorner (i);
 				keyword.GetComponent<KeywordCorners>().cornerFilled [i] = true;
 				break;
 			} else
@@ -25,13 +27,20 @@ public class SnapToKeyword : BoardManager {
 			}
 		}
 
-		if (boardCard.isSnapped != true) 
+//		if (boardCard.isSnapped != true) 
+	if (boardCard.isSnapped == true) 
 		{
+			ClearAttachedCorner (boardCard);
+		}
+
 			for (int i = 0; i < keyword.GetComponent<KeywordCorners>().cornerFilled.Length; i++)
 			{
 				if (keyword.GetComponent<KeywordCorners>().cornerFilled [i] == false) 
 				{
+				
 					boardCard.transform.position = Coordinates (i, boardRend, keyCorn);  //Set the new corners to the board locations
+					boardCard.SetAttachedKey(keyword.gameObject);
+					boardCard.SetOnCorner (i);
 					keyword.GetComponent<KeywordCorners>().cornerFilled [i] = true;
 					boardCard.SetSnapped (true);
 					break;
@@ -41,7 +50,7 @@ public class SnapToKeyword : BoardManager {
 					Debug.Log ("Corner " + i.ToString() + " Filled");
 				}
 			}
-		}
+		//}
 	}
 
 	public static Vector3 Coordinates(int i, BoxCollider2D cardRend, KeywordCorners keyCorn)
@@ -60,5 +69,12 @@ public class SnapToKeyword : BoardManager {
 			Debug.Log ("Coordinates Broke");
 			return new Vector3 (1, 1, 1);
 		}
+	}
+
+	public static void ClearAttachedCorner(Card boardCard)
+	{
+		GameObject keyWord = boardCard.GetAttachedTo ();
+		int cornerNum = boardCard.GetOnCorner ();
+		keyWord.GetComponent<KeywordCorners> ().cornerFilled [cornerNum] = false;
 	}
 }

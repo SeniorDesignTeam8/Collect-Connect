@@ -90,7 +90,7 @@ public class BoardManager : MonoBehaviour
     private GridLayoutGroup _keywordGrid; // Contains the 20 keyword button GameObjects in the word bank.
     private List<Text> _graphicalKeyList = new List<Text>(); // Contains the list of Text components in the word bank buttons.
     public Button WordBankBtn;
-
+	public GameObject prevKeyNode;
     public GameObject test;
 
 	public const float timeOut = 300.0f; //5 minutes
@@ -1072,19 +1072,45 @@ public class BoardManager : MonoBehaviour
 
     private bool AddCardsToBoard(Card cardA, Card boardCard, string keyword)
     {
+//		if (boardCard.isSnapped == true) 
+//		{
+//			boardCard = Instantiate (boardCard);
+//			boardCard.SetSnapped(false);
+//			Debug.Log (boardCard.GetSnapped ().ToString ());
+//		}
+//
         bool validPlay = true;
+
         if (cardA.gameObject.GetComponent<GraphNode>() == null)
             cardA.gameObject.AddComponent<GraphNode>();
 
         if (!cardA.DoesPropertyExist(keyword) || !boardCard.DoesPropertyExist(keyword))
             validPlay = false;
 
+	
+
         foreach (GameObject keyNode in _keywordNodes)
         {
             if (keyNode.transform.FindChild("Text").gameObject.GetComponent<Text>().text != keyword)
                 continue;
             // The keyword is already a node. Use it.
+
+
 			SnapToKeyword.CornerSnap(cardA, boardCard, keyNode);
+
+//			for(int i = 0; i < keyNode.GetComponent<KeywordCorners>().cornerFilled.Length; i++)
+//			{
+//				if (keyNode.GetComponent<KeywordCorners> ().cornerFilled [i] == true) 
+//				{
+//					if (i == keyNode.GetComponent<KeywordCorners>().cornerFilled.Length - 1) 
+//					{
+//						Debug.Log ("Removing " + keyNode.GetComponentInChildren<Text>().ToString());
+//
+//					}
+//				}
+//				else
+//					break;
+//			}
 
             cardA.SetIsOnBoard(true);
             PlayPlace();
@@ -1096,8 +1122,10 @@ public class BoardManager : MonoBehaviour
 
             //cardA.gameObject.AddComponent<MobileNode>();
             ResetPassArray();
+			prevKeyNode = keyNode;
             return true;
         }
+
         // Couldn't find the keyword in an existing node. Add it and connect both cards to it.
         GameObject newKeyNode = Instantiate(NodeOne); // Copy the template keyword node.
         newKeyNode.transform.FindChild("Text").gameObject.GetComponent<Text>().text = keyword;
@@ -1119,8 +1147,7 @@ public class BoardManager : MonoBehaviour
 		//newKeyNode.gameObject.transform.SetParent (BoardGrid); 
 
 		//newKeyNode.gameObject.transform.position = SnapToGrid(transform,GridSpacing);
-
-
+		prevKeyNode = newKeyNode;
         return true;
     }
 

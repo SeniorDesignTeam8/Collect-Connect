@@ -56,6 +56,8 @@ public class Card : MonoBehaviour
 	public bool isHorizontal;
 	public int cardID;
 	public bool isSnapped;
+	public GameObject attachedKeyNode;
+	public int atCorner;
 
     // Use this for initialization
     private void Start()
@@ -413,5 +415,28 @@ public class Card : MonoBehaviour
 	public bool GetSnapped() //is the card snapped to a keyword
 	{
 		return isSnapped;
+	}
+
+	public void SetAttachedKey(GameObject keyNode)
+	{
+		//Which Keynode is the card attached too
+		attachedKeyNode = keyNode;
+	}
+
+	public GameObject GetAttachedTo()
+	{
+		//return which keynode the card is attached too
+		return attachedKeyNode;
+	}
+
+	public void SetOnCorner(int cornerNum)
+	{
+		atCorner = cornerNum;
+	}
+
+	public int GetOnCorner()
+	{
+		//which corner is the card attached too
+		return atCorner;
 	}
 }
