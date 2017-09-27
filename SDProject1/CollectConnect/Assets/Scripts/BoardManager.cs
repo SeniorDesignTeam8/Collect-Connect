@@ -1091,7 +1091,7 @@ public class BoardManager : MonoBehaviour
 
         foreach (GameObject keyNode in _keywordNodes)
         {
-            if (keyNode.transform.FindChild("Text").gameObject.GetComponent<Text>().text != keyword)
+            if (keyNode.transform.Find("Text").gameObject.GetComponent<Text>().text != keyword)
                 continue;
             // The keyword is already a node. Use it.
 
@@ -1128,7 +1128,7 @@ public class BoardManager : MonoBehaviour
 
         // Couldn't find the keyword in an existing node. Add it and connect both cards to it.
         GameObject newKeyNode = Instantiate(NodeOne); // Copy the template keyword node.
-        newKeyNode.transform.FindChild("Text").gameObject.GetComponent<Text>().text = keyword;
+        newKeyNode.transform.Find("Text").gameObject.GetComponent<Text>().text = keyword;
         // Set the text of the new keyword node.
         newKeyNode.name = keyword;
         _keywordNodes.Add(newKeyNode); // Add the keyword to the list of keyword nodes.

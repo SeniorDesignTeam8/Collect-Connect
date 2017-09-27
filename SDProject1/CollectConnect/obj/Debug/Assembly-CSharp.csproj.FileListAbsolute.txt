@@ -33,3 +33,5 @@ C:\Users\adpapaio\Desktop\GitHub\Collect-Connect\SDProject1\CollectConnect\Temp\
 C:\Users\adpapaio\Desktop\GitHub\Collect-Connect\SDProject1\CollectConnect\obj\Debug\Assembly-CSharp.csprojResolveAssemblyReference.cache
 C:\Users\adpapaio\Desktop\GitHub\Collect-Connect\SDProject1\CollectConnect\obj\Debug\Assembly-CSharp.dll
 C:\Users\adpapaio\Desktop\GitHub\Collect-Connect\SDProject1\CollectConnect\obj\Debug\Assembly-CSharp.pdb
+C:\Users\ltpachec\Desktop\Collect-Connect\SDProject1\CollectConnect\obj\Debug\Assembly-CSharp.dll
+C:\Users\ltpachec\Desktop\Collect-Connect\SDProject1\CollectConnect\obj\Debug\Assembly-CSharp.pdb
