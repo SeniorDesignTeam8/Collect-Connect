@@ -12,11 +12,11 @@ public class SnapToKeyword : BoardManager {
 
 		keyword.GetComponent<KeywordCorners> ().SetCorners ();  //Set the new corners to the board locations
 
-		//if (boardCard.isSnapped != true) 
-		if (boardCard.isSnapped == true && boardCard.GetAttachedTo() != keyword) 
-		{
-			ClearAttachedCorner (boardCard);
-		}
+//		//if (boardCard.isSnapped != true) 
+//		if (boardCard.isSnapped == true && boardCard.GetAttachedTo() != keyword) 
+//		{
+//			
+//		}
 
 		for (int i = 0; i < keyword.GetComponent<KeywordCorners>().cornerFilled.Length; i++)
 		{
@@ -36,6 +36,7 @@ public class SnapToKeyword : BoardManager {
 //	
 		if(boardCard.GetAttachedTo() != keyword)
 		{
+			ClearAttachedCorner (boardCard);
 			for (int i = 0; i < keyword.GetComponent<KeywordCorners>().cornerFilled.Length; i++)
 			{
 				if (keyword.GetComponent<KeywordCorners>().cornerFilled [i] == false) 
@@ -76,8 +77,11 @@ public class SnapToKeyword : BoardManager {
 
 	public static void ClearAttachedCorner(Card boardCard)
 	{
-		GameObject keyWord = boardCard.GetAttachedTo ();
-		int cornerNum = boardCard.GetOnCorner ();
-		keyWord.GetComponent<KeywordCorners> ().cornerFilled [cornerNum] = false;
+		if (boardCard.GetAttachedTo () != null)
+		{
+			GameObject keyWord = boardCard.GetAttachedTo ();
+			int cornerNum = boardCard.GetOnCorner ();
+			keyWord.GetComponent<KeywordCorners> ().cornerFilled [cornerNum] = false;
+		}
 	}
 }
