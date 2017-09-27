@@ -11,7 +11,7 @@ public class MainMenuButton : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 
-		mainButton.GetComponent.onClick.AddListener (LoadMainMenu);
+		mainButton.GetComponent<Button>().onClick.AddListener (LoadMainMenu);
 	}
 
 	public static void LoadMainMenu()

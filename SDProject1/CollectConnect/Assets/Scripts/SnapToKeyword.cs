@@ -1,11 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SnapToKeyword : BoardManager {
 
 	public static void CornerSnap(Card cardA, Card boardCard, GameObject keyword)
 	{
+		bool shouldDisable = false;
 		BoxCollider2D cardARend = cardA.gameObject.GetComponent<BoxCollider2D> ();
 		BoxCollider2D boardRend = boardCard.gameObject.GetComponent<BoxCollider2D> ();
 		KeywordCorners keyCorn = keyword.gameObject.GetComponent<KeywordCorners> ();
@@ -55,6 +57,15 @@ public class SnapToKeyword : BoardManager {
 				}
 			}
 		}
+
+		//Un comment these lines too remove keyword after 4 cards are attached
+		//shouldDisable = ShouldItDisable (keyword);
+
+		//if (shouldDisable)
+		//{
+			//Need to find a way to turn off the button associated with this keyword
+			//keyword.GetComponentInParent<Button> ().interactable = false;
+		//}
 	}
 
 	public static Vector3 Coordinates(int i, BoxCollider2D cardRend, KeywordCorners keyCorn)
@@ -83,5 +94,18 @@ public class SnapToKeyword : BoardManager {
 			int cornerNum = boardCard.GetOnCorner ();
 			keyWord.GetComponent<KeywordCorners> ().cornerFilled [cornerNum] = false;
 		}
+	}
+
+	public static bool ShouldItDisable(GameObject keyword)
+	{
+		for (int i = 0; i < keyword.GetComponent<KeywordCorners> ().cornerFilled.Length; i++)
+		{
+			if (keyword.GetComponent<KeywordCorners> ().cornerFilled [i] == false) 
+			{
+				return false;
+			}
+		}
+
+		return true;
 	}
 }
