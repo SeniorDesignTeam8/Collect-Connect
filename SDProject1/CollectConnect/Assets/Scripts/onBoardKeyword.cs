@@ -31,7 +31,7 @@ public class onBoardKeyword : MonoBehaviour {
 		btn.onClick.AddListener (() => 
 			{
 				Debug.Log(go.GetComponentInChildren<Text>().text + " Clicked!");
-				BoardManager.Instance.PlaySelect ();
+                BoardManager.Instance.PlaySelect ();
 				BoardManager.Instance._currentKeyword = go.GetComponentInChildren<Text> ().text;
 				//Debug.Log(BoardManager.Instance._currentKeyword);
 			});

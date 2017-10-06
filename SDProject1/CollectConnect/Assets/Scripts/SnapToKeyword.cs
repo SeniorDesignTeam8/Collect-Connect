@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SnapToKeyword : BoardManager {
+public class SnapToKeyword : MonoBehaviour {
 
-	public static void CornerSnap(Card cardA, Card boardCard, GameObject keyword)
+	public static bool CornerSnap(Card cardA, Card boardCard, GameObject keyword)
 	{
 		bool shouldDisable = false;
 		BoxCollider2D cardARend = cardA.gameObject.GetComponent<BoxCollider2D> ();
@@ -13,12 +13,6 @@ public class SnapToKeyword : BoardManager {
 		KeywordCorners keyCorn = keyword.gameObject.GetComponent<KeywordCorners> ();
 
 		keyword.GetComponent<KeywordCorners> ().SetCorners ();  //Set the new corners to the board locations
-
-//		//if (boardCard.isSnapped != true) 
-//		if (boardCard.isSnapped == true && boardCard.GetAttachedTo() != keyword) 
-//		{
-//			
-//		}
 
 		for (int i = 0; i < keyword.GetComponent<KeywordCorners>().cornerFilled.Length; i++)
 		{
@@ -31,7 +25,7 @@ public class SnapToKeyword : BoardManager {
 				break;
 			} else
 			{
-				Debug.Log ("Corner " + i.ToString() + " Filled");
+				//Debug.Log ("Corner " + i.ToString() + " Filled");
 			}
 		}
 
@@ -53,19 +47,21 @@ public class SnapToKeyword : BoardManager {
 				} 
 				else 
 				{
-					Debug.Log ("Corner " + i.ToString() + " Filled");
+					//Debug.Log ("Corner " + i.ToString() + " Filled");
 				}
 			}
 		}
 
-		//Un comment these lines too remove keyword after 4 cards are attached
-		//shouldDisable = ShouldItDisable (keyword);
 
-		//if (shouldDisable)
-		//{
-			//Need to find a way to turn off the button associated with this keyword
-			//keyword.GetComponentInParent<Button> ().interactable = false;
-		//}
+
+		shouldDisable = ShouldItDisable (keyword);
+
+        if (shouldDisable)
+		{
+            return true;
+		}
+
+        return false;
 	}
 
 	public static Vector3 Coordinates(int i, BoxCollider2D cardRend, KeywordCorners keyCorn)

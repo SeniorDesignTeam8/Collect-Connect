@@ -60,7 +60,7 @@ public class BoardManager : MonoBehaviour
     private Card _copyCardRight;
     public List<bool> VetResultList;
     private List<string> _currentKeywordList = new List<string>(); // Contains the currently selected keywords. Don't load them into the _keywordList until we're ready to start the game.
-    private bool _afterVet;
+    private bool AfterVet;
     private bool _isFirstListGen = true;
     private bool _hitVetBtn;
     private int[] _scoreboard;
@@ -111,13 +111,13 @@ public class BoardManager : MonoBehaviour
         VoteResultsList = new List<int>();
         CantVotePlayerList = new List<bool>();
         LegalVotePlayerList = new List<int>();
-        _afterVet = false;
+        AfterVet = false;
         _hitVetBtn = false;
         PlayerNumber = 0;
         _aiThinkingDone = false;
-		countdown = timeOut;
-		countOver = false;
-		canCheckPlayers = false;
+        countdown = timeOut;
+        countOver = false;
+        canCheckPlayers = false;
 
 #if !UNITY_EDITOR
         if (Debug.isDebugBuild)
@@ -134,6 +134,8 @@ public class BoardManager : MonoBehaviour
         }
 
     }
+
+
 
     private void Start()
     {
@@ -407,6 +409,7 @@ public class BoardManager : MonoBehaviour
                     else if (c.IsSelected())
                     {
                         //This is the card in the player's hand
+                        
                         cardA = c;
                     }
                 }
@@ -471,13 +474,13 @@ public class BoardManager : MonoBehaviour
                     Destroy(_copyCardRight.gameObject);
                     DisableVet(); //shrink vet visuals
                     ToggleCardsOn();
-                    _afterVet = true; //all done vetting
+                    AfterVet = true; //all done vetting
                     PlayerNumber = 0;
                     _aiThinkingDone = false; //reset
                 }
             }
 
-            if (_afterVet) //get the vet result, true for yes/valid, false for no/invalid
+            if (AfterVet) //get the vet result, true for yes/valid, false for no/invalid
             {
                 if (GetVetResult())
                 {
@@ -497,7 +500,7 @@ public class BoardManager : MonoBehaviour
                             PopulateKeywords();
                             IsTurnOver = true;
                             _hitVetBtn = false; //reset btn
-                            _afterVet = false;
+                            AfterVet = false;
                             CurrentPhase = GamePhase.Playing;
 
 							//ColorKeywordButton ();
@@ -537,7 +540,7 @@ public class BoardManager : MonoBehaviour
                     CurrentPhase = GamePhase.Playing;
                     IsTurnOver = true;
                     _hitVetBtn = false; //reset btn
-                    _afterVet = false;
+                    AfterVet = false;
                 }
             }
         }
@@ -811,46 +814,16 @@ public class BoardManager : MonoBehaviour
         }
         // clear the list
 
-        foreach (Transform child in KeywordContainerP1.transform)
-        {
-            Destroy(child.gameObject);
-        }
-
         foreach (Transform child in KeywordContainerP2.transform)
         {
             Destroy(child.gameObject);
         }
 
-        foreach (Transform child in KeywordContainerP3.transform)
-        {
-            Destroy(child.gameObject);
-        }
-
-        foreach (Transform child in KeywordContainerP4.transform)
-        {
-            Destroy(child.gameObject);
-        }
-			
         foreach (string str in _keywordList)
         {
-			SetupKeywordList (KeywordContainerP1, str, 0);
+			SetupKeywordButton (KeywordContainerP2, str, 1);
         }
 
-        foreach (string str in _keywordList)
-        {
-			SetupKeywordList (KeywordContainerP2, str, 1);
-            //Debug.Log(str);
-        }
-
-        foreach (string str in _keywordList)
-        {
-			SetupKeywordList (KeywordContainerP3, str, 2);
-        }
-
-        foreach (string str in _keywordList)
-        {
-			SetupKeywordList (KeywordContainerP4, str, 3);
-        }
     }
 
 
@@ -928,83 +901,8 @@ public class BoardManager : MonoBehaviour
 			}
 			rd.Close();
 			rd = null;
-
 		}
-
-		//1145;
 	}
-
-//    private static void BuildDeck()
-//    {
-//
-//        IDbCommand dbcmd = _dbconn.CreateCommand();
-//
-//
-//        // Load the collections.
-//        List<string> collectionList = new List<string>();
-//        List<int> collectionIdList = new List<int>();
-//        try
-//        {
-//            const string sqlQuery = "SELECT * FROM sets"; // get id of last card inserted into cards table
-//            dbcmd.CommandText = sqlQuery;
-//            IDataReader rd = dbcmd.ExecuteReader();
-//            while (rd.Read())
-//            {
-//                collectionIdList.Add(rd.GetInt32(0));
-//                collectionList.Add(rd.GetString(1));
-//            }
-//            rd.Close();
-//            rd = null;
-//
-//            collectionList = collectionList.Distinct().ToList(); // Remove any duplicates.
-//            collectionIdList = collectionIdList.Distinct().ToList(); // Remove any duplicates.
-//        }
-//        catch (Exception e)
-//        {
-//            Debug.LogException(e);
-//            throw;
-//        }
-//        // Load the artifacts from each collection to make cards from them. Then add them to their respective lists.
-//        foreach (string col in collectionList)
-//        {
-//            int index = collectionList.IndexOf(col);
-//            int setId = collectionIdList[index];
-//
-//            string sqlQuery = "SELECT * FROM cards INNER JOIN sets ON cards.setID = sets.setID WHERE cards.setID = " + setId;// get id of last card inserted into cards table
-//            dbcmd.CommandText = sqlQuery;
-//            IDataReader rd = dbcmd.ExecuteReader();
-//            while (rd.Read())
-//            {
-//                GameObject c = Instantiate(GameObject.Find("Card"));
-//                c.AddComponent<Card>();
-//                Card cardComponent = c.GetComponent<Card>();
-//                cardComponent.name = (string)rd["cardDisplayTitle"];
-//                cardComponent.AddProperty("Collection", col, "1");
-//				//byte[] raw = (byte[])rd["cardDescription"];
-//				string s = rd["cardDescription"].ToString();
-//                cardComponent.SetExpInfo(s);
-//                int cardId = (int)(long)rd["cardID"];
-//				s = rd["imageLocation"].ToString();
-//                cardComponent.SetImageLocation(s);
-//
-//                string keywordQuery = "SELECT * FROM attributes NATURAL JOIN parameters NATURAL JOIN cards NATURAL JOIN parameters_attributes WHERE cardID = " + cardId;
-//                IDbCommand kwCmd = _dbconn.CreateCommand();
-//                kwCmd.CommandText = keywordQuery;
-//                IDataReader kwReader = kwCmd.ExecuteReader();
-//                while (kwReader.Read())
-//                {
-//                    cardComponent.AddProperty((string)kwReader["parameter"], (string)kwReader["attribute"], (int)(long)kwReader["pointValue"] + "");
-//                }
-//                kwReader.Close();
-//                kwReader = null;
-//                Deck.AddCards(cardComponent);
-//            }
-//            rd.Close();
-//            rd = null;
-//
-//        }
-//
-//    }
 
     public void PlaySelect()
     {
@@ -1022,7 +920,7 @@ public class BoardManager : MonoBehaviour
         SoundEffectSource.Play();
     }
 
-    private void PlayExpand()
+    public void PlayExpand()
     {
         if (SoundEffectSource.isPlaying)
             SoundEffectSource.Stop();
@@ -1072,14 +970,8 @@ public class BoardManager : MonoBehaviour
 
     private bool AddCardsToBoard(Card cardA, Card boardCard, string keyword)
     {
-//		if (boardCard.isSnapped == true) 
-//		{
-//			boardCard = Instantiate (boardCard);
-//			boardCard.SetSnapped(false);
-//			Debug.Log (boardCard.GetSnapped ().ToString ());
-//		}
-//
         bool validPlay = true;
+        bool shouldDisable = false;
 
         if (cardA.gameObject.GetComponent<GraphNode>() == null)
             cardA.gameObject.AddComponent<GraphNode>();
@@ -1087,6 +979,7 @@ public class BoardManager : MonoBehaviour
         if (!cardA.DoesPropertyExist(keyword) || !boardCard.DoesPropertyExist(keyword))
             validPlay = false;
 
+        
 	
 
         foreach (GameObject keyNode in _keywordNodes)
@@ -1095,22 +988,14 @@ public class BoardManager : MonoBehaviour
                 continue;
             // The keyword is already a node. Use it.
 
+			shouldDisable = SnapToKeyword.CornerSnap(cardA, boardCard, keyNode);
 
-			SnapToKeyword.CornerSnap(cardA, boardCard, keyNode);
-
-//			for(int i = 0; i < keyNode.GetComponent<KeywordCorners>().cornerFilled.Length; i++)
-//			{
-//				if (keyNode.GetComponent<KeywordCorners> ().cornerFilled [i] == true) 
-//				{
-//					if (i == keyNode.GetComponent<KeywordCorners>().cornerFilled.Length - 1) 
-//					{
-//						Debug.Log ("Removing " + keyNode.GetComponentInChildren<Text>().ToString());
-//
-//					}
-//				}
-//				else
-//					break;
-//			}
+            if(shouldDisable)
+            {
+                //_keywordList.Remove(_currentKeyword);
+                _keywordList.Find(x => x.Contains(_currentKeyword));
+                _playerScriptRefs[CurrentPlayer].IncreaseScore(4);
+            }
 
             cardA.SetIsOnBoard(true);
             PlayPlace();
@@ -1134,7 +1019,7 @@ public class BoardManager : MonoBehaviour
         _keywordNodes.Add(newKeyNode); // Add the keyword to the list of keyword nodes.
   
 		this.GetComponent<GridClass>().SnapToGrid(newKeyNode);
-		SnapToKeyword.CornerSnap(cardA, boardCard, newKeyNode);
+		shouldDisable = SnapToKeyword.CornerSnap(cardA, boardCard, newKeyNode);
 
         cardA.SetIsOnBoard(true);
         PlayPlace();
@@ -1236,7 +1121,7 @@ public class BoardManager : MonoBehaviour
 
                 //turn glow off
                 InHandGlowOff(card);
-
+                _playerScriptRefs[CurrentPlayer].Card1 = null; 
                 _isPlayerCardSelected = false;
                 return;
             }
@@ -1246,6 +1131,7 @@ public class BoardManager : MonoBehaviour
             PlaySelect();
 
             //glow on
+            _playerScriptRefs[CurrentPlayer].Card1 = card;
             InHandGlowOn(card);
 
             return;
@@ -1257,6 +1143,7 @@ public class BoardManager : MonoBehaviour
         _isPlayerCardSelected = true;
 
         //glow on
+        _playerScriptRefs[CurrentPlayer].Card1 = card;
         InHandGlowOn(card);
 
     }
@@ -1746,10 +1633,6 @@ public class BoardManager : MonoBehaviour
 			PassBtnP2.gameObject.SetActive(true);
 			PassBtnP3.gameObject.SetActive(true);
 			PassBtnP4.gameObject.SetActive(true);
-			ResetKeywordColor (KeywordContainerP2);
-			ResetKeywordColor (KeywordContainerP3);
-			ResetKeywordColor (KeywordContainerP4);
-
         }
         else if (_numSelections == MaxNumKeywordPicks) // TODO AI will have to increment _numSelections for this to trigger.
 		{												// It's not the last player's turn, so let's check if they have 5 keywords
@@ -1843,17 +1726,18 @@ public class BoardManager : MonoBehaviour
 	}
 
 	//Container is the Container which is passed in
-	private void SetupKeywordList(GameObject Container, string str, int playerTurn)
+	private GameObject SetupKeywordButton(GameObject Container, string str, int playerTurn)
 	{
 		GameObject go = Instantiate(KeywordPrefab);
-
-		go.GetComponentInChildren<Text> ().text = str;
-		go.GetComponentInChildren<Text> ().resizeTextForBestFit = true;
-		go.GetComponentInChildren<Text> ().resizeTextMaxSize = 10;
-		go.GetComponentInChildren<Text> ().resizeTextMinSize = 1;
-		go.GetComponentInChildren<Text> ().fontStyle = FontStyle.Bold;
-		go.GetComponentInChildren<Text> ().alignByGeometry = true;
-		go.GetComponentInChildren<Text> ().font = newFont;
+		go.name = str;
+        var goText = go.GetComponentInChildren<Text>();
+		goText.text = str;
+		goText.resizeTextForBestFit = true;
+		goText.resizeTextMaxSize = 10;
+		goText.resizeTextMinSize = 1;
+		goText.fontStyle = FontStyle.Bold;
+		goText.alignByGeometry = true;
+		goText.font = newFont;
 
 		go.transform.SetParent (Container.transform);
 
@@ -1916,26 +1800,8 @@ public class BoardManager : MonoBehaviour
 		//go.transform.Rotate(0.0f, 0.0f, -90.0f);
 		go.transform.localScale = scale;
 		go.SetActive (true);
-	}
 
-	public void ResetKeywordColor(GameObject Container)
-	{
-
-		Component[] buttonList;
-
-		buttonList = Container.GetComponentsInChildren<Button> ();
-
-		foreach (Button button in buttonList) 
-		{
-			Button btn = button.GetComponent<Button> ();
-
-			ColorBlock btnColors = button.GetComponent<Button> ().colors;
-			btnColors.normalColor = Color.white;
-			btnColors.highlightedColor = Color.yellow;
-			btnColors.pressedColor = Color.grey;
-
-			btn.colors = btnColors;
-		}
+        return go;
 	}
 
 	//adds a new card to the players hand
@@ -1945,31 +1811,15 @@ public class BoardManager : MonoBehaviour
 		//GetCurrentPlayer ().GetHand ().RemoveAt (cIndex);
 		GetCurrentPlayer ().GetComponent<Player> ()._slotStatus [cIndex] = false; //registers an open spot in the hand
 		GetCurrentPlayer ().RedealCards (); //adds the new card
-		SetUpIndex (cIndex); //swaps the cards so the slot match up
+		SwapCardPos (cIndex); //swaps the cards so the slot match up
 	}
 
 	//swaps old card with new card
-	public void SetUpIndex(int cIndex)
+	public void SwapCardPos(int cIndex)
 	{
 		Card temp = new Card();
 		temp = GetCurrentPlayer ().GetHand ()._cardList [cIndex]; //Temp equals the card played
 		GetCurrentPlayer ().GetHand ()._cardList [cIndex] = GetCurrentPlayer ().GetHand ()._cardList [GetCurrentPlayer ().GetHand ()._cardList.Count - 1]; //replace the played card with the drawn card
 		GetCurrentPlayer ().GetHand ()._cardList [GetCurrentPlayer ().GetHand ()._cardList.Count - 1] = temp; //the last card in the deck is the played card
-	}
-
-
-	//uncomment line 498 to reactivate
-	public void ColorKeywordButton ()
-	{
-		Debug.Log (_currentKeywordButton.ToString ());
-		Button btn = _currentKeywordButton.GetComponent<Button> ();
-
-		ColorBlock btnColors = btn.GetComponent<Button> ().colors;
-		btnColors.normalColor = new Color (0, 0, 0);
-
-		btn.colors = btnColors;
-
-		_currentKeywordButton.GetComponent<Button> ().colors = btnColors;
-
 	}
 }

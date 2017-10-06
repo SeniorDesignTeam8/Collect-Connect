@@ -283,6 +283,7 @@ public class Player : MonoBehaviour
 
     public void PlaceCard(Card c, Vector3 rotation)
     {
+        Debug.Log(CardPlaceholders.Length.ToString());
         for (int i = 0; i < CardPlaceholders.Length; i++)
         {
             if (_slotStatus[i])

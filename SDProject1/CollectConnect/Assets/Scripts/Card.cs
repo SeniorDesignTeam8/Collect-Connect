@@ -439,4 +439,6 @@ public class Card : MonoBehaviour
 		//which corner is the card attached too
 		return atCorner;
 	}
+
+   
 }
