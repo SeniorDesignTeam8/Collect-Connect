@@ -992,7 +992,7 @@ public class BoardManager : MonoBehaviour
 
             if(shouldDisable)
             {
-                //_keywordList.Remove(_currentKeyword);
+                _keywordList.Remove(_currentKeyword);
                 _keywordList.Find(x => x.Contains(_currentKeyword));
                 _playerScriptRefs[CurrentPlayer].IncreaseScore(4);
             }
@@ -1663,7 +1663,7 @@ public class BoardManager : MonoBehaviour
 		OnBoardGlow.transform.position = card.gameObject.transform.position;
     }
 
-    private void InHandGlowOff(Card card)
+    public void InHandGlowOff(Card card)
     {
 		UnrotateGlow (card, InHandGlow);
         InHandGlow.GetComponent<Renderer>().enabled = false;

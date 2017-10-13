@@ -35,6 +35,7 @@ public class Player : MonoBehaviour
     public Card Card1;
     public Card Card2;
     public string ConnectionKeyword;
+	public int SwitchesLeft = 3;
 
     public GameObject PlayerPiece;
 
