@@ -69,6 +69,10 @@ public class Player : MonoBehaviour
     private string _aiText;
     private string _voteHumanText;
 
+    public GameObject switchToken1;
+    public GameObject switchToken2;
+    public GameObject switchToken3;
+
     public static bool[] PassArray =
     {
         false, false, false, false
@@ -627,4 +631,21 @@ public class Player : MonoBehaviour
 		}
 
 	}
+
+    public void RemoveToken()
+    {
+        switch (SwitchesLeft)
+        {
+            case 1:
+                switchToken1.SetActive(false);
+                break;
+            case 2:
+                switchToken2.SetActive(false);
+                break;
+            case 3:
+                switchToken3.SetActive(false);
+                break;
+
+        };
+    }
 }

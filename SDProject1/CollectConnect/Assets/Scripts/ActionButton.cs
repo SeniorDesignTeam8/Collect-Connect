@@ -41,6 +41,7 @@ public class ActionButton : MonoBehaviour {
 			player.Card1.SetIsSelected (false);
 			player.Card1.transform.position = new Vector3 (20, 5, 0);
 
+            player.RemoveToken();
 			player.SwitchesLeft--;
 		}
 

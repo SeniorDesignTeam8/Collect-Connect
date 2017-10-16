@@ -50,7 +50,7 @@ public class MainSceneCharacters : MonoBehaviour {
 		try
 		{
 			//StartCoroutine(ApplySprite());
-			byte[] fileData = File.ReadAllBytes(Application.dataPath + "/AvatarFolder/" + PlayerPrefs.GetString (playerKey) + ".jpg"); //Pulls the application data path and checks the correct folder
+			byte[] fileData = File.ReadAllBytes(Application.dataPath + "/AvatarFolder/" + PlayerPrefs.GetString (playerKey) + ".png"); //Pulls the application data path and checks the correct folder
 			Texture2D tex = new Texture2D(2, 2); 
 			tex.LoadImage(fileData); //Loads the image
 			Sprite mySprite = Sprite.Create(tex, new Rect(0.0f, 0.0f, tex.width, tex.height), new Vector2(0.5f, 0.5f), 75.0f); //Sets to a temp variable
