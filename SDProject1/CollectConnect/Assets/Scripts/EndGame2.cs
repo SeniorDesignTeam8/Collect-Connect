@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class EndGame2 : MonoBehaviour
 {
     public Button MainMenuBtn;
+    public Button PlayAgainBtn;
     public GameObject P1Piece;
     public GameObject P2Piece;
     public GameObject P3Piece;
@@ -26,6 +27,9 @@ public class EndGame2 : MonoBehaviour
         MainMenuBtn.GetComponent<Button>().onClick.AddListener(MainMenuTransition);
         MainMenuBtn.gameObject.SetActive(true);
 
+        PlayAgainBtn.GetComponent<Button>().onClick.AddListener(PlayAgainTransition);
+        PlayAgainBtn.gameObject.SetActive(true);
+
         PlayerScores = new string[4, 2];
         PlayerPieces = new List<GameObject>();
 
@@ -45,6 +49,13 @@ public class EndGame2 : MonoBehaviour
 		BoardManager.CurrentPhase = GamePhase.PreGame;
 		BoardManager.ResetPassArray ();
 		SceneManager.LoadScene ("mainMenu");
+    }
+
+    public static void PlayAgainTransition()    //go back to play scene
+    {
+        BoardManager.CurrentPhase = GamePhase.PreGame;
+        BoardManager.ResetPassArray();
+        SceneManager.LoadScene("MainScene");
     }
 
     private void Scoring()

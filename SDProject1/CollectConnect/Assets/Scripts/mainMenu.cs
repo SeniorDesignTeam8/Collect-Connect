@@ -5,11 +5,13 @@ using UnityEngine.UI;
 public class mainMenu : MonoBehaviour
 {
     public Button PlayBtn;
+    public Button PlayBtn2;
     public Button AboutBtn;
 
     private void Start()
     {
         PlayBtn.GetComponent<Button>().onClick.AddListener(PlayGameTransition);
+        PlayBtn2.GetComponent<Button>().onClick.AddListener(PlayGameTransition);
         AboutBtn.GetComponent<Button>().onClick.AddListener(AboutGameTransition);
         PlayBtn.gameObject.SetActive(true);
         AboutBtn.gameObject.SetActive(true);
