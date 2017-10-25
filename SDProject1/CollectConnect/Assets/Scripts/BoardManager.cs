@@ -1008,6 +1008,19 @@ public class BoardManager : MonoBehaviour
             //cardA.gameObject.AddComponent<MobileNode>();
             ResetPassArray();
 			prevKeyNode = keyNode;
+
+            if (_playerScriptRefs[CurrentPlayer].Score >= 20)
+            {
+                _isGameStarted = false;
+                CurrentPhase = GamePhase.PostGame;
+                // TODO Go to end game screen here.
+                //collect player scores for end game screen
+                PlayerPrefs.SetInt("Player1Score", _playerScriptRefs[0].Score);
+                PlayerPrefs.SetInt("Player2Score", _playerScriptRefs[1].Score);
+                PlayerPrefs.SetInt("Player3Score", _playerScriptRefs[2].Score);
+                PlayerPrefs.SetInt("Player4Score", _playerScriptRefs[3].Score);
+                SceneManager.LoadScene("EndGame");  //using for testing
+            }
             return true;
         }
 
@@ -1033,7 +1046,21 @@ public class BoardManager : MonoBehaviour
 
 		//newKeyNode.gameObject.transform.position = SnapToGrid(transform,GridSpacing);
 		prevKeyNode = newKeyNode;
-        return true;
+
+        if (_playerScriptRefs[CurrentPlayer].Score >= 20)
+        {
+            _isGameStarted = false;
+            CurrentPhase = GamePhase.PostGame;
+            // TODO Go to end game screen here.
+            //collect player scores for end game screen
+            PlayerPrefs.SetInt("Player1Score", _playerScriptRefs[0].Score);
+            PlayerPrefs.SetInt("Player2Score", _playerScriptRefs[1].Score);
+            PlayerPrefs.SetInt("Player3Score", _playerScriptRefs[2].Score);
+            PlayerPrefs.SetInt("Player4Score", _playerScriptRefs[3].Score);
+            SceneManager.LoadScene("EndGame");  //using for testing
+        }
+        
+            return true;
     }
 
     public static void ResetPassArray()

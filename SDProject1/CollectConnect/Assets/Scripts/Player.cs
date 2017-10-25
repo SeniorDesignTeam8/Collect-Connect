@@ -95,12 +95,13 @@ public class Player : MonoBehaviour
 		#endif
 
 		JoinGameBtn.gameObject.SetActive(false);// Race condition forced me to put this here
-		_slotStatus = new bool[HandSize];
+		
 	}
 
     private void Start()
     {
-		//Debug.Log ("Player " + PlayerPiece.ToString () + "   " + PassArray [0] + PassArray [1] + PassArray [2] + PassArray [3]);
+        _slotStatus = new bool[HandSize];
+        //Debug.Log ("Player " + PlayerPiece.ToString () + "   " + PassArray [0] + PassArray [1] + PassArray [2] + PassArray [3]);
         IsDrawingCards = true;
         _playerName = gameObject.name.Replace(" ", "").ToLower();
         // Remove spaces and change to all lowercase to standardize.
