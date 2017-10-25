@@ -35,6 +35,7 @@ public class BoardManager : MonoBehaviour
     public AudioClip ExpandSound;
     public AudioClip PlaceSound;
     public AudioClip ScoreSound;
+    public AudioClip FourScoreSound;
     public AudioClip ErrorSound;
     public List<string> _keywordList, _copyList; // _copyList contains ALL the keywords. _keywordList just contains the 20 for the game.
     public string _currentKeyword, _previousKeyword, _removedKeyword;
@@ -103,6 +104,7 @@ public class BoardManager : MonoBehaviour
 	public Font newFont;
 
 	public List<Text> KeywordList;
+   
 
     private void Awake()
     {
@@ -938,11 +940,19 @@ public class BoardManager : MonoBehaviour
         SoundEffectSource.Play();
     }
 
-    public void PlayScore()
+    public void PlayOnePoint()
     {
         if (SoundEffectSource.isPlaying)
             SoundEffectSource.Stop();
         SoundEffectSource.clip = ScoreSound;
+        SoundEffectSource.Play();
+    }
+
+    public void PlayFourPoint()
+    {
+        if (SoundEffectSource.isPlaying)
+            SoundEffectSource.Stop();
+        SoundEffectSource.clip = FourScoreSound;
         SoundEffectSource.Play();
     }
 
@@ -953,6 +963,7 @@ public class BoardManager : MonoBehaviour
         SoundEffectSource.clip = ErrorSound;
         SoundEffectSource.Play();
     }
+
 
 
 
@@ -1017,6 +1028,7 @@ public class BoardManager : MonoBehaviour
                 _keywordList.Remove(_currentKeyword);
                 _keywordList.Find(x => x.Contains(_currentKeyword));
                 _playerScriptRefs[CurrentPlayer].IncreaseScore(4);
+                PlayFourPoint();
             }
 
             cardA.SetIsOnBoard(true);
@@ -1055,8 +1067,11 @@ public class BoardManager : MonoBehaviour
 
 		//newKeyNode.gameObject.transform.position = SnapToGrid(transform,GridSpacing);
 		prevKeyNode = newKeyNode;
+     
+
         return true;
     }
+
 
     public static void ResetPassArray()
     {

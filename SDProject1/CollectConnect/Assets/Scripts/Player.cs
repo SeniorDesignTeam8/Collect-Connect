@@ -278,10 +278,12 @@ public class Player : MonoBehaviour
     {
         Score += reward;
 
-        for (int i = 0; i < reward; i++)
-            BoardManager.Instance.PlayScore();
+        if (reward > 1)
+            BoardManager.Instance.PlayFourPoint();
+        else
+            BoardManager.Instance.PlayOnePoint();
 
-        //Debug.Log("Score: " + reward);
+        Debug.Log("Score: " + reward);
         PlayerScore.gameObject.GetComponent<Text>().text = Score.ToString(); //display score
     }
 
