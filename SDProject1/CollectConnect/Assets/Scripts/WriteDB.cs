@@ -34,6 +34,6 @@ public class WriteDB : BoardManager
 
 		command.ExecuteNonQuery ();
 
-		Debug.Log ("Wrote to the DB");
+		//Debug.Log ("Wrote to the DB");
 	}
 }

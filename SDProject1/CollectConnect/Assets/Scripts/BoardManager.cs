@@ -34,6 +34,8 @@ public class BoardManager : MonoBehaviour
     public AudioClip DeselectSound;
     public AudioClip ExpandSound;
     public AudioClip PlaceSound;
+    public AudioClip ScoreSound;
+    public AudioClip ErrorSound;
     public List<string> _keywordList, _copyList; // _copyList contains ALL the keywords. _keywordList just contains the 20 for the game.
     public string _currentKeyword, _previousKeyword, _removedKeyword;
 	public GameObject _currentKeywordButton;
@@ -935,6 +937,26 @@ public class BoardManager : MonoBehaviour
         SoundEffectSource.clip = PlaceSound;
         SoundEffectSource.Play();
     }
+
+    public void PlayScore()
+    {
+        if (SoundEffectSource.isPlaying)
+            SoundEffectSource.Stop();
+        SoundEffectSource.clip = ScoreSound;
+        SoundEffectSource.Play();
+    }
+
+    public void PlayErrorSound()
+    {
+        if (SoundEffectSource.isPlaying)
+            SoundEffectSource.Stop();
+        SoundEffectSource.clip = ErrorSound;
+        SoundEffectSource.Play();
+    }
+
+
+
+
 
     public void CardExpand(Card card) //find card and player to expand
     {

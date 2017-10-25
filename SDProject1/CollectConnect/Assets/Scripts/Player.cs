@@ -277,6 +277,10 @@ public class Player : MonoBehaviour
     public void IncreaseScore(int reward)
     {
         Score += reward;
+
+        for (int i = 0; i < reward; i++)
+            BoardManager.Instance.PlayScore();
+
         //Debug.Log("Score: " + reward);
         PlayerScore.gameObject.GetComponent<Text>().text = Score.ToString(); //display score
     }
@@ -288,7 +292,7 @@ public class Player : MonoBehaviour
 
     public void PlaceCard(Card c, Vector3 rotation)
     {
-        Debug.Log(CardPlaceholders.Length.ToString());
+        //Debug.Log(CardPlaceholders.Length.ToString());
         for (int i = 0; i < CardPlaceholders.Length; i++)
         {
             if (_slotStatus[i])
