@@ -891,7 +891,7 @@ public class BoardManager : MonoBehaviour
 				cardComponent.SetID (cardId);
 				cardComponent.SetImageLocation(s);
 
-				string keywordQuery = "SELECT c.*, cat.category, param.parameter, attr.attribute FROM cards c NATURAL JOIN categories_parameters_attributes cpa LEFT OUTER JOIN categories cat ON cpa.categoryID = cat.categoryID LEFT OUTER JOIN parameters param ON cpa.parameterID = param.parameterID LEFT OUTER JOIN attributes attr ON cpa.attributeID = attr.attributeID WHERE cardID = " + cardId ;
+				string keywordQuery = "SELECT cat.category, param.parameter, attr.attribute FROM cards c NATURAL JOIN categories_parameters_attributes cpa LEFT OUTER JOIN categories cat ON cpa.categoryID = cat.categoryID LEFT OUTER JOIN parameters param ON cpa.parameterID = param.parameterID LEFT OUTER JOIN attributes attr ON cpa.attributeID = attr.attributeID WHERE cardID = " + cardId + " ORDER BY CATEGORY, ATTRIBUTE, PARAMETER" ;
 				//Debug.Log (keywordQuery);
 				IDbCommand kwCmd = _dbconn.CreateCommand();
 				kwCmd.CommandText = keywordQuery;
@@ -902,7 +902,7 @@ public class BoardManager : MonoBehaviour
 					//Debug.Log ("Reading Data from Card: " + cardId);
 					//Debug.Log (kwReader ["parameter"] + "    " + kwReader ["attribute"] );
 					//if((string)kwReader ["parameter"] != "NULL" && (string)kwReader ["attribute"]  != "NULL")
-						cardComponent.AddProperty((string)kwReader["category"],(string)kwReader["parameter"],/*,  (string)kwReader["attribute"], /*(int)(long)kwReader["cpa.pointValue"]+*/  "0");
+						cardComponent.AddProperty((string)kwReader["category"],(string)kwReader["parameter"],  (string)kwReader["attribute"], /*(int)(long)kwReader["cpa.pointValue"]+*/  "0");
 				}
 				kwReader.Close();
 				kwReader = null;
