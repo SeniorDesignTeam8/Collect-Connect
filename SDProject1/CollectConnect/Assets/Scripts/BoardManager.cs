@@ -101,6 +101,10 @@ public class BoardManager : MonoBehaviour
 	public Font newFont;
 
 	public List<Text> KeywordList;
+    public GameObject mostRecentCard1;
+    public GameObject mostRecentCard2;
+    public GameObject mostRecentKeyword;
+    public GameObject mostRecentPlayer;
 
     private void Awake()
     {
@@ -1021,6 +1025,9 @@ public class BoardManager : MonoBehaviour
                 PlayerPrefs.SetInt("Player4Score", _playerScriptRefs[3].Score);
                 SceneManager.LoadScene("EndGame");  //using for testing
             }
+
+            SetMostRecent(cardA, boardCard, keyword);
+
             return true;
         }
 
@@ -1057,10 +1064,20 @@ public class BoardManager : MonoBehaviour
             PlayerPrefs.SetInt("Player2Score", _playerScriptRefs[1].Score);
             PlayerPrefs.SetInt("Player3Score", _playerScriptRefs[2].Score);
             PlayerPrefs.SetInt("Player4Score", _playerScriptRefs[3].Score);
-            SceneManager.LoadScene("EndGame");  //using for testing
+            SceneManager.LoadScene("EndGame"); 
         }
-        
+
+        SetMostRecent(cardA, boardCard, keyword);
+
             return true;
+    }
+
+    private void SetMostRecent(Card cardA, Card boardCard, string keyword)
+    {
+        mostRecentCard1.GetComponentInChildren<SpriteRenderer>().sprite = cardA.GetComponent<SpriteRenderer>().sprite;
+        mostRecentCard2.GetComponentInChildren<SpriteRenderer>().sprite = boardCard.GetComponent<SpriteRenderer>().sprite;
+        mostRecentKeyword.GetComponentInChildren<Text>().text = keyword;
+        mostRecentPlayer.GetComponent<SpriteRenderer>().sprite = this.GetComponent<MainSceneCharacters>().Images[CurrentPlayer].sprite;
     }
 
     public static void ResetPassArray()

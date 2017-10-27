@@ -278,6 +278,11 @@ public class Card : MonoBehaviour
         _imageLocation = loc;
     }
 
+    public string GetImageLocation()
+    {
+        return _imageLocation;
+    }
+
     public void SetExpInfo(string info)
     {
         if (string.IsNullOrEmpty(_expandedInfo))
