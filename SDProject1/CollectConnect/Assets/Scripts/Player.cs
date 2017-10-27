@@ -289,11 +289,12 @@ public class Player : MonoBehaviour
 
     public void PlaceCard(Card c, Vector3 rotation)
     {
-        Debug.Log(CardPlaceholders.Length.ToString());
+        //Debug.Log(CardPlaceholders.Length.ToString());
         for (int i = 0; i < CardPlaceholders.Length; i++)
         {
-            if (_slotStatus[i])
-                continue;
+            if (i < _slotStatus.Length)
+                if (_slotStatus[i])
+                    continue;
             c.transform.position = CardPlaceholders[i].transform.position + new Vector3(0.0f, 0.0f, -5.0f);
             c.transform.Rotate(rotation, Space.Self);
             _slotStatus[i] = true;

@@ -48,6 +48,8 @@ public class BoardManager : MonoBehaviour
     private bool _isGameListGenerated;
     public int CurrentPlayer;
     public bool IsTurnOver { get; private set; }
+    public object WaitForTurn { get; private set; }
+
     private bool _playedTurn;
     public GameObject VetEnhance;
     public GameObject VetEnhanceShadow;
@@ -105,6 +107,9 @@ public class BoardManager : MonoBehaviour
     public GameObject mostRecentCard2;
     public GameObject mostRecentKeyword;
     public GameObject mostRecentPlayer;
+    public AudioClip onePointSound;
+    public AudioClip errorSound;
+    public GameObject loadingScreen;
 
     private void Awake()
     {
@@ -932,11 +937,28 @@ public class BoardManager : MonoBehaviour
         SoundEffectSource.Play();
     }
 
-    private void PlayPlace()
+    public void PlayPlace()
     {
         if (SoundEffectSource.isPlaying)
             SoundEffectSource.Stop();
         SoundEffectSource.clip = PlaceSound;
+        SoundEffectSource.Play();
+    }
+
+
+    public void PlayOnePoint()
+    {
+        if (SoundEffectSource.isPlaying)
+            SoundEffectSource.Stop();
+        SoundEffectSource.clip = onePointSound;
+        SoundEffectSource.Play();
+    }
+
+    public void ErrorSound()
+    {
+        if (SoundEffectSource.isPlaying)
+            SoundEffectSource.Stop();
+        SoundEffectSource.clip = errorSound;
         SoundEffectSource.Play();
     }
 
@@ -1015,6 +1037,7 @@ public class BoardManager : MonoBehaviour
 
             if (_playerScriptRefs[CurrentPlayer].Score >= 20)
             {
+                loadingScreen.gameObject.SetActive(true);
                 _isGameStarted = false;
                 CurrentPhase = GamePhase.PostGame;
                 // TODO Go to end game screen here.
@@ -1027,7 +1050,7 @@ public class BoardManager : MonoBehaviour
             }
 
             SetMostRecent(cardA, boardCard, keyword);
-
+            PlayOnePoint();
             return true;
         }
 
@@ -1056,6 +1079,7 @@ public class BoardManager : MonoBehaviour
 
         if (_playerScriptRefs[CurrentPlayer].Score >= 20)
         {
+            loadingScreen.gameObject.SetActive(true);
             _isGameStarted = false;
             CurrentPhase = GamePhase.PostGame;
             // TODO Go to end game screen here.
@@ -1066,18 +1090,38 @@ public class BoardManager : MonoBehaviour
             PlayerPrefs.SetInt("Player4Score", _playerScriptRefs[3].Score);
             SceneManager.LoadScene("EndGame"); 
         }
-
+        
         SetMostRecent(cardA, boardCard, keyword);
+        PlayOnePoint();
 
-            return true;
+        return true;
     }
+
 
     private void SetMostRecent(Card cardA, Card boardCard, string keyword)
     {
-        mostRecentCard1.GetComponentInChildren<SpriteRenderer>().sprite = cardA.GetComponent<SpriteRenderer>().sprite;
+        DestroyAllChildren(mostRecentCard1);
+        Card tempCard = Instantiate(cardA);
+        tempCard.transform.position = mostRecentCard1.transform.position;
+        tempCard.transform.parent = mostRecentCard1.transform;
+
+        DestroyAllChildren(mostRecentCard2);
+        tempCard = Instantiate(boardCard);
+        tempCard.transform.position = mostRecentCard2.transform.position;
+        tempCard.transform.parent = mostRecentCard2.transform;
+        //mostRecentCard1.GetComponentInChildren<SpriteRenderer>().sprite = cardA.GetComponent<SpriteRenderer>().sprite;
         mostRecentCard2.GetComponentInChildren<SpriteRenderer>().sprite = boardCard.GetComponent<SpriteRenderer>().sprite;
         mostRecentKeyword.GetComponentInChildren<Text>().text = keyword;
         mostRecentPlayer.GetComponent<SpriteRenderer>().sprite = this.GetComponent<MainSceneCharacters>().Images[CurrentPlayer].sprite;
+    }
+
+    public void DestroyAllChildren(GameObject Parent)
+    {
+        foreach (Transform child in Parent.transform)
+        {
+            GameObject.Destroy(child.gameObject);
+        }
+
     }
 
     public static void ResetPassArray()

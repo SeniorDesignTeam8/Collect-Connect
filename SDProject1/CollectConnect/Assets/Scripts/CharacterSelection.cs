@@ -32,8 +32,11 @@ public class CharacterSelection : MonoBehaviour {
 	public GameObject AIImage;
 	public Button selCharImage;
 	public Text Title; //Top text that tells the player what to do
+    public int textPlayer;
+    public AudioSource soundEffect;
+    public AudioClip selectSound;
 
-	private void Awake()
+    private void Awake()
 	{
 		DontDestroyOnLoad(this);
 	}
@@ -71,6 +74,7 @@ public class CharacterSelection : MonoBehaviour {
 			//OnClick Listener
 			charButtons.onClick.AddListener(() => {
 
+                PlaySelect();
 				charName.text = button.gameObject.name; //Name
 				charImage.GetComponent<Image>().enabled = true; //Enabled = yes
 				charImage.GetComponent<Image>().sprite = button.image.sprite; //button image
@@ -87,6 +91,7 @@ public class CharacterSelection : MonoBehaviour {
 	{
 		finalizePick.onClick.AddListener (() => {
 
+            PlaySelect();
 			//if the player has actually selected someone
 			if(selCharImage != null)
 			{
@@ -99,33 +104,43 @@ public class CharacterSelection : MonoBehaviour {
 					Title.text = "Select the character for Player " + pickingPlayer;
 				}
 
-				//Cases are which player is picking
-				switch(pickingPlayer)
+                charName.text = ""; //Name
+                charImage.GetComponent<Image>().enabled = false; //Enabled = yes
+                //charImage.GetComponent<Image>().sprite = button.image.sprite; //button image
+                //charImage.GetComponent<Image>().preserveAspect = true;
+                charDescr.GetComponent<Text>().text = ""; //Description of the character
+                textPlayer = pickingPlayer - 1;
+                selCharImage.GetComponentInChildren<Text>().text = "Player " + textPlayer.ToString();
+                selCharImage.GetComponentInChildren<Text>().color = Color.red;
+
+                //Cases are which player is picking
+                switch (pickingPlayer)
 				{
 				//Order of the Cases: 2,3,4,1)
 				case 1: //Since Player 1 is always an AI this is done LAST compared to the other cases
-					AIImage.GetComponent<Image>().sprite = selCharImage.image.sprite; //Sets the image to the selected character
-					PlayerPrefs.SetString ("Player1Key", selCharImage.image.sprite.name);  //Sets the name of the key used in the MainSceneCharacter script
-					Title.text = "Press 'Play Game' to continue to the game"; //New title
-					playGame.interactable = true; //Lets the player move on to play the game
-					finalizePick.interactable = false; //Doesnt allow anyone to pick a character
-					break;
+					    AIImage.GetComponent<Image>().sprite = selCharImage.image.sprite; //Sets the image to the selected character
+					    PlayerPrefs.SetString ("Player1Key", selCharImage.image.sprite.name);  //Sets the name of the key used in the MainSceneCharacter script
+					    Title.text = "Press 'Play Game' to continue to the game"; //New title
+					    playGame.interactable = true; //Lets the player move on to play the game
+					    finalizePick.interactable = false; //Doesnt allow anyone to pick a character
+                        selCharImage.GetComponentInChildren<Text>().text = "AI";
+                        break;
 				case 2: //Player 2 
-					Player1Image.GetComponent<Image>().sprite = selCharImage.image.sprite;
-					PlayerPrefs.SetString ("Player2Key", selCharImage.image.sprite.name);
-					pickingPlayer++;
-					break;
+					    Player1Image.GetComponent<Image>().sprite = selCharImage.image.sprite;
+					    PlayerPrefs.SetString ("Player2Key", selCharImage.image.sprite.name);
+					    pickingPlayer++;
+					    break;
 				case 3: //Player 3
-					Player2Image.GetComponent<Image>().sprite = selCharImage.image.sprite;
-					PlayerPrefs.SetString ("Player3Key", selCharImage.image.sprite.name);
-					pickingPlayer++;
-					break;
+					    Player2Image.GetComponent<Image>().sprite = selCharImage.image.sprite;
+					    PlayerPrefs.SetString ("Player3Key", selCharImage.image.sprite.name);
+					    pickingPlayer++;
+					    break;
 				case 4: //Player 3
-					Player3Image.GetComponent<Image>().sprite = selCharImage.image.sprite;
-					PlayerPrefs.SetString ("Player4Key", selCharImage.image.sprite.name);
-					Title.text = "Select the character for the AI #1";
-					pickingPlayer = 1;
-					break;
+					    Player3Image.GetComponent<Image>().sprite = selCharImage.image.sprite;
+					    PlayerPrefs.SetString ("Player4Key", selCharImage.image.sprite.name);
+					    Title.text = "Select the character for the AI #1";
+					    pickingPlayer = 1;
+					    break;
 
 				};
 				selCharImage.interactable = false;
@@ -163,4 +178,14 @@ public class CharacterSelection : MonoBehaviour {
 	{
 		SceneManager.LoadScene("PlayerSelection");
 	}
+
+
+    public void PlaySelect()
+    {
+        if (soundEffect.isPlaying)
+            soundEffect.Stop();
+        soundEffect.clip = selectSound;
+        soundEffect.Play();
+    }
+
 }
