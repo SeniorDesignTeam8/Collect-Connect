@@ -30,6 +30,9 @@ hard_category_tables = ["work_locations","work_dates","work_concepts","work_lang
 #some text is changed to low caps by TN, so it must be titled. A few tweaks are introduced here.
 def myTitle(text):
     text = text.title()
+    text = re.sub(r'^Ca. ', r'ca. ', text)
+    text = re.sub(r' Ce$', r' CE', text)
+    text = re.sub(r' Bce$', r' BCE', text)
     text = re.sub(r' Of ', r' of ', text)
     text = re.sub(r' The ', r' the ', text)
     text = re.sub(r' And ', r' and ', text)
@@ -164,14 +167,17 @@ def addKeywords(workID):
 
         paramsAttrs = resolveParametersAttributes(workID,idx)
         for pa in paramsAttrs:
-            paramID = findParameter(pa[0])
-            if paramID is not None:
-                attrID = findAttribute(pa[1])
-                if attrID is None:
-                    attrID = 'NULL'
-                query = "INSERT INTO categories_parameters_attributes (cardID,categoryID,parameterID,attributeID) VALUES ({},{},{},{})" \
-                        .format(workID,idx,paramID,attrID)
-                db_cursor.execute(query)
+            # this is to avoid a last-minute issue to display card info correctly in CollectConnect
+            # Located information is now on the cards as "Location"
+            if pa[1] != "Located":
+                paramID = findParameter(pa[0])
+                if paramID is not None:
+                    attrID = findAttribute(pa[1])
+                    if attrID is None:
+                        attrID = 'NULL'
+                    query = "INSERT INTO categories_parameters_attributes (cardID,categoryID,parameterID,attributeID) VALUES ({},{},{},{})" \
+                            .format(workID,idx,paramID,attrID)
+                    db_cursor.execute(query)
 
 ##    for misc in final_dict["work_concepts"]:
 ##        if misc["work"] == workID:

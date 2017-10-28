@@ -12,6 +12,7 @@ public class Card : MonoBehaviour
 
         public readonly string PropertyName;
         public readonly string PropertyValue;
+       
         public int PointValue;
 
         public CardProperty(string name, string value, string pointString = "0")
@@ -58,6 +59,13 @@ public class Card : MonoBehaviour
 	public bool isSnapped;
 	public GameObject attachedKeyNode;
 	public int atCorner;
+
+    public string cardLang;
+    public string cardLoc;
+    public string cardMed;
+    public string cardPeople;
+    public string cardYear;
+    public string cardSourceLoc;
 
     // Use this for initialization
     private void Start()
@@ -125,37 +133,6 @@ public class Card : MonoBehaviour
 
     }
 
-
-    /*private void OnMouseDrag()
-    {
-        if (_isOnBoard && Vector3.Distance(_pointerDownPosition, Input.mousePosition) >
-            gameObject.GetComponent<RectTransform>().rect.width && !_isExpanded)
-        {
-            _isDragging = true;
-            _isTimerRunning = false;
-        }
-        if (_isDragging)
-        {
-			if (BoardManager.Instance.OnBoardGlow.GetComponent<Renderer> ().enabled) 
-			{
-				BoardManager.Instance.OnBoardGlowOn (this); //Makes the Glow the correct rotation on drag
-				BoardManager.Instance.OnBoardGlow.transform.position = gameObject.transform.position;
-			}
-            Vector3 cursorPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, _screenPoint.z);
-            Vector3 cursorPosition = Camera.main.ScreenToWorldPoint(cursorPoint) + _offset;
-            transform.position = cursorPosition;
-
-            //Vector3 actualMouseLocation = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            //gameObject.transform.localPosition = new Vector3(actualMouseLocation.x, actualMouseLocation.y, gameObject.transform.localPosition.z);
-        }
-    }*/
-
-    // Update is called once per frame
-    //private void LateUpdate()
-    //{
-
-    //}
-
 	public void AddProperty(string propName, string propVal, string pointVal = "0")
     {
         CardProperty newProp = new CardProperty(propName, propVal, pointVal);
@@ -194,23 +171,6 @@ public class Card : MonoBehaviour
         }
         return new CardProperty("WRONG", "WRONG");
     }
-    //private bool SetSprite()
-    //{
-    //    try
-    //    {
-    //        string collectionName = PropertyList.Find(prop => prop.PropertyName == "Collection").PropertyValue;
-    //        if (string.IsNullOrEmpty(collectionName))
-    //            return false;
-    //        //string spriteName = name + ".png";
-    //        _renderer.sprite = Resources.Load<Sprite>("Sprites/" + collectionName + "/" + name);
-    //        return true;
-    //    }
-    //    catch (ArgumentNullException e)
-    //    {
-    //        Debug.Log(e);
-    //        return false;
-    //    }
-    //}
 
     public bool SetSprite()
     {
@@ -270,8 +230,9 @@ public class Card : MonoBehaviour
 
 		result.SetPixels(rpixels,0);
 		result.Apply();
-		return result;
-	}
+        return result;
+        
+    }
 
     public void SetImageLocation(string loc)
     {
@@ -444,6 +405,34 @@ public class Card : MonoBehaviour
 		//which corner is the card attached too
 		return atCorner;
 	}
+ 
+    public string GetLocation()
+    {
+        return cardLoc;
+    }
 
-   
+    public void SetLocation(string loc)
+    {
+        cardLoc = loc;
+    }
+
+    public string GetSourceLoc()
+    {
+        return cardSourceLoc;
+    }
+
+    public void SetSourceLoc(string loc)
+    {
+        cardSourceLoc = loc;
+    }
+
+    public string GetContributor()
+    {
+        return cardPeople; 
+    }
+
+    public void SetContributor(string peeps)
+    {
+        cardPeople += peeps;
+    }
 }

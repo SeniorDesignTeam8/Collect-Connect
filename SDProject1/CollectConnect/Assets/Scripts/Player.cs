@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
+using System;
+using System.IO;
 
 public class Player : MonoBehaviour
 {
@@ -15,6 +17,10 @@ public class Player : MonoBehaviour
     public GameObject ExpCardImage; // Expand card Image
     public GameObject ExpCardTitle; // Title of expanded card.
     public GameObject ExpCardInfo; // Extended info of expanded card.
+    public GameObject ExpCardLoc; //Expanded Location of Card
+    public GameObject CardLocImage; //The image of the source
+    public GameObject ImageIconName;
+    public GameObject ContText;
     public int HandSize = 4;
     public bool[] _slotStatus; // True if taken, false if available.
     private string _playerName; // The player's name (internally).
@@ -111,6 +117,10 @@ public class Player : MonoBehaviour
         ExpCardImage.gameObject.GetComponent<Renderer>().enabled = false;
         ExpCardTitle.gameObject.GetComponent<Text>().enabled = false;
         ExpCardInfo.gameObject.GetComponent<Text>().enabled = false;
+        ExpCardLoc.gameObject.GetComponent<Text>().enabled = false;
+        CardLocImage.gameObject.GetComponent<SpriteRenderer>().enabled = false;
+        ImageIconName.gameObject.GetComponent<Text>().enabled = false;
+        ContText.gameObject.GetComponent<Text>().enabled = false;
         PlayerPopUpEnhance.gameObject.GetComponent<Renderer>().enabled = false;
         PlayerPopUpEnhanceShadow.gameObject.GetComponent<Renderer>().enabled = false;
         VetText.gameObject.GetComponent<Text>().enabled = false;
@@ -292,7 +302,7 @@ public class Player : MonoBehaviour
         //Debug.Log(CardPlaceholders.Length.ToString());
         for (int i = 0; i < CardPlaceholders.Length; i++)
         {
-            if (i < _slotStatus.Length)
+            if (i < CardPlaceholders.Length)
                 if (_slotStatus[i])
                     continue;
             c.transform.position = CardPlaceholders[i].transform.position + new Vector3(0.0f, 0.0f, -5.0f);
@@ -318,17 +328,98 @@ public class Player : MonoBehaviour
 
     public void CardExpansion(Card card) //Expand card
     {
-            ExpCardBackground.gameObject.GetComponent<Renderer>().enabled = true;
-            ExpCardImage.gameObject.GetComponent<Renderer>().enabled = true;
-            ExpCardTitle.gameObject.GetComponent<Text>().text = card.name;
-            ExpCardInfo.gameObject.GetComponent<Text>().text = card.GetExpInfo();
-            ExpCardTitle.gameObject.GetComponent<Text>().enabled = true;
-            ExpCardInfo.gameObject.GetComponent<Text>().enabled = true;
-            _expCardPosition = card.gameObject.transform.position;
-            _expCardScale = card.gameObject.transform.localScale;
-            card.gameObject.transform.position = ExpCardImage.transform.position;
-            card.gameObject.transform.localScale = ExpCardImage.gameObject.GetComponent<Renderer>().bounds.extents;
+        ExpCardBackground.gameObject.GetComponent<Renderer>().enabled = true;
+        ExpCardImage.gameObject.GetComponent<Renderer>().enabled = true;
+        ExpCardTitle.gameObject.GetComponent<Text>().text = card.name;
+        ExpCardInfo.gameObject.GetComponent<Text>().text = card.GetExpInfo();
+        ExpCardTitle.gameObject.GetComponent<Text>().enabled = true;
+        ExpCardInfo.gameObject.GetComponent<Text>().enabled = true;
+        ExpCardLoc.gameObject.GetComponent<Text>().enabled = true;
+        ExpCardLoc.gameObject.GetComponent<Text>().text = "Located: " + card.GetSourceLoc() + "\n" + card.GetLocation();
+        ImageIconName.gameObject.GetComponent<Text>().enabled = true;
+        ContText.gameObject.GetComponent<Text>().enabled = true;
+        ContText.gameObject.GetComponent<Text>().text = card.GetContributor();
+        SetSourceSprite(card);
+        _expCardPosition = card.gameObject.transform.position;
+        _expCardScale = card.gameObject.transform.localScale;
+        card.gameObject.transform.position = ExpCardImage.transform.position;
+        card.gameObject.transform.localScale = ExpCardImage.gameObject.GetComponent<Renderer>().bounds.extents;
             //Make card appear in expand
+    }
+
+   
+    public void SetSourceSprite(Card card)
+    {
+        string imageLoc = card.GetSourceLoc();
+        string imageFileName;
+        Debug.Log(imageLoc);
+        switch (imageLoc)
+        {
+
+            //NEW LOCATION NEED TO BE ADDED?
+            //case is the database entry for Card.location
+            //imageFileName is the location of the image which is currentyl stored in the SourceImages folder
+            case "Kelsey":
+                imageFileName = "source-kelsey.png";
+                break;
+            case "AAEL":
+                imageFileName = "source-duderstadt.png";
+                break;
+            case "Clark":
+                imageFileName = "source-clark.png";
+                break;
+            case "Clements":
+                imageFileName = "source-clements.png";
+                break;
+            case "The Arb":
+                imageFileName = "source-botanical.png";
+                break;
+            case "Hatcher":
+                imageFileName = "source-hatcher.png";
+                break;
+            case "Mardigian":
+                imageFileName = "source-mardigian.png";
+                break;
+            case "Bentley":
+                imageFileName = "source-spColl.png";
+                break;
+            case "UMMAA":
+                imageFileName = "source-ummaa.png";
+                break;
+            case "UMMA":
+                imageFileName = "source-umma.png";
+                break;
+            case "CVGA":
+                imageFileName = "source-cvga.png";
+                break;
+            case "LRC":
+                imageFileName = "source-LRC.png";
+                break;
+            case "Shapiro":
+                imageFileName = "source-shapiro.png";
+                break;
+            default:
+                imageFileName = "EMPTY";
+                break;
+        }
+
+
+        if (imageFileName != "EMPTY")
+        {
+            byte[] fileData = File.ReadAllBytes(Application.dataPath + "/SourceImages/" + imageFileName);
+            Debug.Log(Application.dataPath.ToString() + "/SourceImages/" + imageFileName);
+            Texture2D tex = new Texture2D(1, 1);
+            tex.LoadImage(fileData);
+
+            Sprite mySprite = Sprite.Create(tex, new Rect(0.0f, 0.0f, tex.width, tex.height), new Vector2(0.5f, 0.5f));
+
+            CardLocImage.gameObject.GetComponent<SpriteRenderer>().enabled = true;
+            CardLocImage.gameObject.GetComponent<SpriteRenderer>().sprite = mySprite;
+            ImageIconName.gameObject.GetComponent<Text>().text = imageLoc;
+        }
+        else
+            ImageIconName.gameObject.GetComponent<Text>().enabled = false;
+        
     }
 
     public void CardShrink(Card card) //Shrink card
@@ -337,6 +428,17 @@ public class Player : MonoBehaviour
         ExpCardImage.gameObject.GetComponent<Renderer>().enabled = false;
         ExpCardTitle.gameObject.GetComponent<Text>().enabled = false;
         ExpCardInfo.gameObject.GetComponent<Text>().enabled = false;
+        ExpCardLoc.gameObject.GetComponent<Text>().enabled = false;
+        ImageIconName.gameObject.GetComponent<Text>().enabled = false;
+
+        if (CardLocImage.gameObject.GetComponent<SpriteRenderer>().enabled == true)
+        {
+            CardLocImage.gameObject.GetComponent<SpriteRenderer>().enabled = false;
+            ImageIconName.gameObject.GetComponent<Text>().enabled = false;
+        }
+
+        ContText.gameObject.GetComponent<Text>().enabled = false;
+
         card.gameObject.transform.position = _expCardPosition;
         card.gameObject.transform.localScale = _expCardScale;
         //Make card disappear in expand

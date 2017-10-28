@@ -872,7 +872,7 @@ public class BoardManager : MonoBehaviour
 			int index = collectionList.IndexOf(col);
 			int setId = collectionIdList[index];
 
-			string sqlQuery = "SELECT * FROM cards INNER JOIN sets ON cards.setID = sets.setID WHERE cards.setID = " + setId;// get id of last card inserted into cards table
+			string sqlQuery = "SELECT * FROM cards INNER JOIN sets ON cards.setID = sets.setID WHERE cards.setID = " + setId + " AND cards.Location<>''";// get id of last card inserted into cards table
 			//Debug.Log(sqlQuery);
 			dbcmd.CommandText = sqlQuery;
 			IDataReader rd = dbcmd.ExecuteReader();
@@ -890,8 +890,11 @@ public class BoardManager : MonoBehaviour
 				s = (string)rd["imageFileName"];
 				cardComponent.SetID (cardId);
 				cardComponent.SetImageLocation(s);
+                raw = (string)rd["Location"];
+                string loc = raw;
+                cardComponent.SetSourceLoc(loc);
 
-				string keywordQuery = "SELECT cat.category, param.parameter, attr.attribute FROM cards c NATURAL JOIN categories_parameters_attributes cpa LEFT OUTER JOIN categories cat ON cpa.categoryID = cat.categoryID LEFT OUTER JOIN parameters param ON cpa.parameterID = param.parameterID LEFT OUTER JOIN attributes attr ON cpa.attributeID = attr.attributeID WHERE cardID = " + cardId + " ORDER BY CATEGORY, ATTRIBUTE, PARAMETER" ;
+                string keywordQuery = "SELECT cat.category, param.parameter, attr.attribute FROM cards c NATURAL JOIN categories_parameters_attributes cpa LEFT OUTER JOIN categories cat ON cpa.categoryID = cat.categoryID LEFT OUTER JOIN parameters param ON cpa.parameterID = param.parameterID LEFT OUTER JOIN attributes attr ON cpa.attributeID = attr.attributeID WHERE cardID = " + cardId + " ORDER BY CATEGORY, ATTRIBUTE, PARAMETER" ;
 				//Debug.Log (keywordQuery);
 				IDbCommand kwCmd = _dbconn.CreateCommand();
 				kwCmd.CommandText = keywordQuery;
@@ -899,11 +902,55 @@ public class BoardManager : MonoBehaviour
 				//Debug.Log(kwCmd.ToString() + "    " + kwReader.ToString() + "    " + (int)(long)kwReader["cpa.pointValue"]);
 				while (kwReader.Read())
 				{
-					//Debug.Log ("Reading Data from Card: " + cardId);
-					//Debug.Log (kwReader ["parameter"] + "    " + kwReader ["attribute"] );
-					//if((string)kwReader ["parameter"] != "NULL" && (string)kwReader ["attribute"]  != "NULL")
-						cardComponent.AddProperty((string)kwReader["category"],(string)kwReader["parameter"],  (string)kwReader["attribute"], /*(int)(long)kwReader["cpa.pointValue"]+*/  "0");
-				}
+                    //string attr;
+                    string rawString = (string)kwReader["category"];
+                    string cat = rawString;
+
+                    rawString = (string)kwReader["parameter"];
+                    string  param = rawString;
+
+                    //Debug.Log(cardId.ToString());
+
+                    //  rawString = (string)kwReader["attribute"];
+                    // attr = rawString;
+
+                    //Debug.Log ("Reading Data from Card: " + cardId);
+                    //Debug.Log (kwReader ["parameter"] + "    " + kwReader ["attribute"] );
+                    //if((string)kwReader ["parameter"] != "NULL" && (string)kwReader ["attribute"]  != "NULL")
+
+                    //cardComponent.AddProperty((string)kwReader["category"],(string)kwReader["parameter"],  /*(string)kwReader["attribute"], /*(int)(long)kwReader["cpa.pointValue"]+*/  "0");
+                    string attr;
+
+                    if (cat == "Concept")
+                    {
+                        cardComponent.AddProperty(cat,param, "0");
+                    }
+                    else if(cat == "Location")
+                    {
+                        rawString = (string)kwReader["attribute"];
+                        attr = rawString;
+                        cardComponent.SetLocation(attr + ": "+param + "\n");
+                    }
+                    else if (cat == "Person")
+                    {
+                        rawString = (string)kwReader["attribute"];
+                        attr = rawString;
+                        cardComponent.SetContributor(attr + ": " + param + "\n");
+                    }
+                    else if (cat == "Medium")
+                    {
+
+                    }
+                    else if(cat == "Year")
+                    {
+
+                    }
+                    else if(cat == "Language")
+                    {
+
+                    }
+
+                }
 				kwReader.Close();
 				kwReader = null;
 				Deck.AddCards(cardComponent);
