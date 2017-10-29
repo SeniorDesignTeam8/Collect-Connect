@@ -21,6 +21,7 @@ public class Player : MonoBehaviour
     public GameObject CardLocImage; //The image of the source
     public GameObject ImageIconName;
     public GameObject ContText;
+    public Text additinalInfo;
     public int HandSize = 4;
     public bool[] _slotStatus; // True if taken, false if available.
     private string _playerName; // The player's name (internally).
@@ -123,6 +124,7 @@ public class Player : MonoBehaviour
         ContText.gameObject.GetComponent<Text>().enabled = false;
         PlayerPopUpEnhance.gameObject.GetComponent<Renderer>().enabled = false;
         PlayerPopUpEnhanceShadow.gameObject.GetComponent<Renderer>().enabled = false;
+        additinalInfo.enabled = false;
         VetText.gameObject.GetComponent<Text>().enabled = false;
         VetYesBtn.gameObject.SetActive(false);
         VetNoBtn.gameObject.SetActive(false);
@@ -334,20 +336,28 @@ public class Player : MonoBehaviour
         ExpCardInfo.gameObject.GetComponent<Text>().text = card.GetExpInfo();
         ExpCardTitle.gameObject.GetComponent<Text>().enabled = true;
         ExpCardInfo.gameObject.GetComponent<Text>().enabled = true;
-        ExpCardLoc.gameObject.GetComponent<Text>().enabled = true;
-        ExpCardLoc.gameObject.GetComponent<Text>().text = "Located: " + card.GetSourceLoc() + "\n" + card.GetLocation();
+
+        Text expAndLocText = ExpCardLoc.gameObject.GetComponent<Text>();
+        expAndLocText.enabled = true;
+        expAndLocText.text = card.GetLocation() + "\n"+ card.GetContributor();
+
         ImageIconName.gameObject.GetComponent<Text>().enabled = true;
-        ContText.gameObject.GetComponent<Text>().enabled = true;
-        ContText.gameObject.GetComponent<Text>().text = card.GetContributor();
+
+        additinalInfo.enabled = true;
+        additinalInfo.text = card.GetMedium() +card.GetYear()+ card.GetLanguage();
+       //Text contributorText = ContText.gameObject.GetComponent<Text>();
+       //contributorText.enabled = true;
+       //contributorText.text = card.GetContributor();
+
         SetSourceSprite(card);
+
         _expCardPosition = card.gameObject.transform.position;
         _expCardScale = card.gameObject.transform.localScale;
         card.gameObject.transform.position = ExpCardImage.transform.position;
         card.gameObject.transform.localScale = ExpCardImage.gameObject.GetComponent<Renderer>().bounds.extents;
-            //Make card appear in expand
+        //Make card appear in expan
     }
 
-   
     public void SetSourceSprite(Card card)
     {
         string imageLoc = card.GetSourceLoc();
@@ -430,6 +440,7 @@ public class Player : MonoBehaviour
         ExpCardInfo.gameObject.GetComponent<Text>().enabled = false;
         ExpCardLoc.gameObject.GetComponent<Text>().enabled = false;
         ImageIconName.gameObject.GetComponent<Text>().enabled = false;
+        additinalInfo.enabled = false;
 
         if (CardLocImage.gameObject.GetComponent<SpriteRenderer>().enabled == true)
         {

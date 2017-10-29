@@ -413,7 +413,7 @@ public class Card : MonoBehaviour
 
     public void SetLocation(string loc)
     {
-        cardLoc = loc;
+        cardLoc += loc;
     }
 
     public string GetSourceLoc()
@@ -434,5 +434,35 @@ public class Card : MonoBehaviour
     public void SetContributor(string peeps)
     {
         cardPeople += peeps;
+    }
+
+    public string GetMedium()
+    {
+        return cardMed;
+    }
+
+    public void SetMedium(string medium)
+    {
+        cardMed += medium;
+    }
+
+    public string GetYear()
+    {
+        return cardYear;
+    }
+
+    public void SetYear(string year)
+    {
+        cardYear += year;
+    }
+
+    public string GetLanguage()
+    {
+        return cardLang;
+    }
+
+    public void SetLanguage(string lang)
+    {
+        cardLang += lang;
     }
 }

@@ -939,15 +939,25 @@ public class BoardManager : MonoBehaviour
                     }
                     else if (cat == "Medium")
                     {
-
+                       
+                        cardComponent.SetMedium(cat + ": " + param + "\n");
                     }
                     else if(cat == "Year")
                     {
-
+                      if (kwReader["attribute"] != DBNull.Value)
+                        {
+                            rawString = (string)kwReader["attribute"];
+                            attr = rawString;
+                            cardComponent.SetYear(attr + ": " + param + "\n");
+                        }
+                      else
+                        {
+                            cardComponent.SetYear(cat + ": " + param + "\n");
+                        }
                     }
                     else if(cat == "Language")
                     {
-
+                        cardComponent.SetLanguage(cat + ": " + param + "\n");
                     }
 
                 }
