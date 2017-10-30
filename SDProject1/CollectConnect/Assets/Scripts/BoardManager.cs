@@ -929,6 +929,7 @@ public class BoardManager : MonoBehaviour
                     {
                         rawString = (string)kwReader["attribute"];
                         attr = rawString;
+                        
                         cardComponent.SetLocation(attr + ": "+param + "\n");
                     }
                     else if (cat == "Person")

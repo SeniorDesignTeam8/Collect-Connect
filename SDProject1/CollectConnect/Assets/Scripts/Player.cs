@@ -339,6 +339,7 @@ public class Player : MonoBehaviour
 
         Text expAndLocText = ExpCardLoc.gameObject.GetComponent<Text>();
         expAndLocText.enabled = true;
+        
         expAndLocText.text = card.GetLocation() + "\n"+ card.GetContributor();
 
         ImageIconName.gameObject.GetComponent<Text>().enabled = true;
@@ -358,11 +359,13 @@ public class Player : MonoBehaviour
         //Make card appear in expan
     }
 
+
+
     public void SetSourceSprite(Card card)
     {
         string imageLoc = card.GetSourceLoc();
         string imageFileName;
-        Debug.Log(imageLoc);
+        //Debug.Log(imageLoc);
         switch (imageLoc)
         {
 
@@ -417,7 +420,7 @@ public class Player : MonoBehaviour
         if (imageFileName != "EMPTY")
         {
             byte[] fileData = File.ReadAllBytes(Application.dataPath + "/SourceImages/" + imageFileName);
-            Debug.Log(Application.dataPath.ToString() + "/SourceImages/" + imageFileName);
+            //Debug.Log(Application.dataPath.ToString() + "/SourceImages/" + imageFileName);
             Texture2D tex = new Texture2D(1, 1);
             tex.LoadImage(fileData);
 
