@@ -367,8 +367,10 @@ public class Player : MonoBehaviour
 
         _expCardPosition = card.gameObject.transform.position;
         _expCardScale = card.gameObject.transform.localScale;
+        card.GetComponent<SpriteRenderer>().sprite = card.cardFullPic;
         card.gameObject.transform.position = ExpCardImage.transform.position;
-        card.gameObject.transform.localScale = ExpCardImage.gameObject.GetComponent<Renderer>().bounds.extents;
+        
+        card.transform.localScale = ExpCardImage.gameObject.GetComponent<Renderer>().bounds.extents;
         //Make card appear in expan
     }
 
@@ -465,7 +467,7 @@ public class Player : MonoBehaviour
         }
 
         ContText.gameObject.GetComponent<Text>().enabled = false;
-
+        card.GetComponent<SpriteRenderer>().sprite = card.cardSmallPic;
         card.gameObject.transform.position = _expCardPosition;
         card.gameObject.transform.localScale = _expCardScale;
         //Make card disappear in expand

@@ -66,6 +66,9 @@ public class Card : MonoBehaviour
     public string cardPeople;
     public string cardYear;
     public string cardSourceLoc;
+    public Sprite cardFullPic;
+    public Sprite cardSmallPic;
+    public GameObject CardEnhancePlace;
 
     // Use this for initialization
     private void Start()
@@ -75,6 +78,7 @@ public class Card : MonoBehaviour
         LineList = new List<LineRenderer>();
 		isHorizontal = false;
 		isSnapped = false;
+        CardEnhancePlace = GameObject.FindGameObjectWithTag("EnhanceCardGameObject");
         //CardGlow.GetComponent<Renderer>().enabled = false;
     }
 
@@ -178,10 +182,19 @@ public class Card : MonoBehaviour
         {
 			//StartCoroutine(ApplySprite());
             byte[] fileData = File.ReadAllBytes(Application.dataPath + "/pics/" + _imageLocation);
-            Texture2D tex = new Texture2D(2, 2);
+            Texture2D tex = new Texture2D(1, 1);
             tex.LoadImage(fileData);
+            
 
-			if(tex.width >130 && tex.height >165)
+            Renderer EnhanceCard = CardEnhancePlace.gameObject.GetComponent<Renderer>();
+
+            Debug.Log("Before" + tex.width + "    " + tex.height + " Bounds" + EnhanceCard.bounds.size.x.ToString() + EnhanceCard.bounds.size.y.ToString());
+            tex = ScaleTexture(tex, (int)EnhanceCard.bounds.size.x, tex.height);
+            Debug.Log("After" + tex.width + "    " + tex.height);
+
+            cardFullPic = Sprite.Create(tex, new Rect(0.0f, 0.0f, tex.width, tex.height), new Vector2(0.5f, 0.5f));
+
+            if (tex.width >127 && tex.height >160)
 			{
 				if(tex.width > tex.height)
 				{
@@ -197,13 +210,14 @@ public class Card : MonoBehaviour
 			{
 				isHorizontal = true;
 			}
-			//Debug.Log("Exiting ScaleTexture" + tex.width.ToString() + "  " + tex.height.ToString());
+            //Debug.Log("Exiting ScaleTexture" + tex.width.ToString() + "  " + tex.height.ToString());
 
+         
 			Sprite mySprite = Sprite.Create(tex, new Rect(0.0f, 0.0f, tex.width, tex.height ), new Vector2(0.5f, 0.5f), 75.0f);
 
-			//BoundsSetup(mySprite);
+            //BoundsSetup(mySprite);
 
-		
+            cardSmallPic = mySprite;
             _renderer.sprite = mySprite;
 
             return true;
