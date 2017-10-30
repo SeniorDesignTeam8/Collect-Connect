@@ -107,8 +107,12 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
+        HandSize = 4;
         _slotStatus = new bool[HandSize];
-        //Debug.Log ("Player " + PlayerPiece.ToString () + "   " + PassArray [0] + PassArray [1] + PassArray [2] + PassArray [3]);
+        for (int i = 0; i < _slotStatus.Length; i++)
+        {
+            Debug.Log(_slotStatus[i].ToString());
+        }
         IsDrawingCards = true;
         _playerName = gameObject.name.Replace(" ", "").ToLower();
         // Remove spaces and change to all lowercase to standardize.
@@ -301,16 +305,25 @@ public class Player : MonoBehaviour
 
     public void PlaceCard(Card c, Vector3 rotation)
     {
-        //Debug.Log(CardPlaceholders.Length.ToString());
-        for (int i = 0; i < CardPlaceholders.Length; i++)
+        try
         {
-            if (i < CardPlaceholders.Length)
-                if (_slotStatus[i])
-                    continue;
-            c.transform.position = CardPlaceholders[i].transform.position + new Vector3(0.0f, 0.0f, -5.0f);
-            c.transform.Rotate(rotation, Space.Self);
-            _slotStatus[i] = true;
-            break;
+            //Debug.Log(CardPlaceholders.Length.ToString());
+            for (int i = 0; i < CardPlaceholders.Length; i++)
+            {
+                
+                    if (_slotStatus[i])
+                        continue;
+
+                    c.transform.position = CardPlaceholders[i].transform.position + new Vector3(0.0f, 0.0f, -5.0f);
+                    c.transform.Rotate(rotation, Space.Self);
+                    _slotStatus[i] = true;
+                    break;
+                
+            }
+        }
+        catch(Exception e)
+        {
+            Debug.Log(e);
         }
     }
 
@@ -730,9 +743,9 @@ public class Player : MonoBehaviour
 
 	public void RedealCards()
 	{
-		//Debug.Log ("PlayerHand.Size = " + PlayerHand.Size + " Player = " + this.ToString () + " GamePhase = " + BoardManager.CurrentPhase.ToString ());
-
-		if (PlayerHand.Size < HandSize)
+        //Debug.Log ("PlayerHand.Size = " + PlayerHand.Size + " Player = " + this.ToString () + " GamePhase = " + BoardManager.CurrentPhase.ToString ());
+        IsDrawingCards = false;
+        if (PlayerHand.Size < HandSize)
 		{
 			IsDrawingCards = true;
 			if (BoardManager.IsDeckReady || BoardManager.CurrentPhase == GamePhase.Playing)

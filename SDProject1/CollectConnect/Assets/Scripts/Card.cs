@@ -282,6 +282,7 @@ public class Card : MonoBehaviour
                 rotation = Vector3.zero;
                 break;
         }
+       
         p.PlaceCard(this, rotation);
         _renderer.enabled = true;
     }

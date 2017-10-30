@@ -40,7 +40,7 @@ public class BoardManager : MonoBehaviour
     private List<GameObject> _keywordNodes;
 	public Transform BoardGrid;
     public List<Player> _playerScriptRefs { get; private set; }
-    private bool _isGameStarted;
+    public bool _isGameStarted;
     private bool _isFirstCardPlay;
     private bool _isPlayerCardSelected;
     private bool _isBoardCardSelected;
@@ -882,7 +882,7 @@ public class BoardManager : MonoBehaviour
 				c.AddComponent<Card>();
 				Card cardComponent = c.GetComponent<Card>();
 				cardComponent.name = (string)rd["cardDisplayTitle"];
-				cardComponent.AddProperty("Collection", col, "1");
+				//cardComponent.AddProperty("Collection", col, "1");
 				string raw = (string)rd["cardDescription"];
 				string s = raw;
 				cardComponent.SetExpInfo(s);
@@ -1955,7 +1955,7 @@ public class BoardManager : MonoBehaviour
 	{
 		GetCurrentPlayer ().HandSize++; //makes a spot in the players hand
 		//GetCurrentPlayer ().GetHand ().RemoveAt (cIndex);
-		GetCurrentPlayer ().GetComponent<Player> ()._slotStatus [cIndex] = false; //registers an open spot in the hand
+		GetCurrentPlayer ()._slotStatus [cIndex] = false; //registers an open spot in the hand
 		GetCurrentPlayer ().RedealCards (); //adds the new card
 		SwapCardPos (cIndex); //swaps the cards so the slot match up
 	}

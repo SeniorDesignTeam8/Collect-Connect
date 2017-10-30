@@ -16,7 +16,11 @@ public class MainMenuButton : MonoBehaviour {
 
 	public static void LoadMainMenu()
 	{
-		SceneManager.LoadScene ("mainMenu");
+        BoardManager.Instance.loadingScreen.gameObject.SetActive(true);
+        BoardManager.ResetPassArray();
+        BoardManager.CurrentPhase = GamePhase.PreGame;
+     
+        SceneManager.LoadScene ("mainMenu");
 	}
 
 	// Update is called once per frame
