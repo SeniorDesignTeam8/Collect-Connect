@@ -109,10 +109,7 @@ public class Player : MonoBehaviour
     {
         HandSize = 4;
         _slotStatus = new bool[HandSize];
-        for (int i = 0; i < _slotStatus.Length; i++)
-        {
-            Debug.Log(_slotStatus[i].ToString());
-        }
+       
         IsDrawingCards = true;
         _playerName = gameObject.name.Replace(" ", "").ToLower();
         // Remove spaces and change to all lowercase to standardize.
@@ -236,7 +233,7 @@ public class Player : MonoBehaviour
             //else//{
 
 
-            float passChance = Random.Range(0.0f, 1.0f);
+            float passChance = Random.Range(.45f, 1.0f);
             if (passChance <= AiPassThresholds[BoardManager.Instance.CurrentPlayer])
             {
                 //Debug.Log("AI Passed.");
@@ -370,7 +367,7 @@ public class Player : MonoBehaviour
         card.GetComponent<SpriteRenderer>().sprite = card.cardFullPic;
         card.gameObject.transform.position = ExpCardImage.transform.position;
         
-        card.transform.localScale = ExpCardImage.gameObject.GetComponent<Renderer>().bounds.extents;
+        //card.transform.localScale = ExpCardImage.gameObject.GetComponent<Renderer>().bounds.extents;
         //Make card appear in expan
     }
 

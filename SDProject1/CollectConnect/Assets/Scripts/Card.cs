@@ -184,15 +184,11 @@ public class Card : MonoBehaviour
             byte[] fileData = File.ReadAllBytes(Application.dataPath + "/pics/" + _imageLocation);
             Texture2D tex = new Texture2D(1, 1);
             tex.LoadImage(fileData);
-            
 
-            Renderer EnhanceCard = CardEnhancePlace.gameObject.GetComponent<Renderer>();
-
-            Debug.Log("Before" + tex.width + "    " + tex.height + " Bounds" + EnhanceCard.bounds.size.x.ToString() + EnhanceCard.bounds.size.y.ToString());
-            tex = ScaleTexture(tex, (int)EnhanceCard.bounds.size.x, tex.height);
-            Debug.Log("After" + tex.width + "    " + tex.height);
+            tex = ScaleTexture(tex, 725, 900);
 
             cardFullPic = Sprite.Create(tex, new Rect(0.0f, 0.0f, tex.width, tex.height), new Vector2(0.5f, 0.5f));
+
 
             if (tex.width >127 && tex.height >160)
 			{

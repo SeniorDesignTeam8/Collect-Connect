@@ -37,7 +37,7 @@ public class BoardManager : MonoBehaviour
     public List<string> _keywordList, _copyList; // _copyList contains ALL the keywords. _keywordList just contains the 20 for the game.
     public string _currentKeyword, _previousKeyword, _removedKeyword;
 	public GameObject _currentKeywordButton;
-    private List<GameObject> _keywordNodes;
+    public List<GameObject> _keywordNodes;
 	public Transform BoardGrid;
     public List<Player> _playerScriptRefs { get; private set; }
     public bool _isGameStarted;
@@ -67,7 +67,7 @@ public class BoardManager : MonoBehaviour
     private bool _hitVetBtn;
     private int[] _scoreboard;
     public int PlayerNumber;
-    private static IDbConnection _dbconn;
+    public static IDbConnection _dbconn;
     private TimerScript _ts;
     public Button PassBtnP1;
     public Button PassBtnP2;
@@ -110,6 +110,8 @@ public class BoardManager : MonoBehaviour
     public AudioClip onePointSound;
     public AudioClip errorSound;
     public GameObject loadingScreen;
+    public int keyWordCount;
+    public List<String> playedKeywords;
 
     private void Awake()
     {
@@ -148,6 +150,8 @@ public class BoardManager : MonoBehaviour
 
     private void Start()
     {
+        keyWordCount = 0;
+        playedKeywords.Clear();
         if (Instance == null)
         {
             //Debug.Log(Application.dataPath);
@@ -1023,7 +1027,7 @@ public class BoardManager : MonoBehaviour
     public void CardExpand(Card card) //find card and player to expand
     {
         Player p = FindOwningPlayer(card);
-        foreach (Card c in from Card c in p.GetHand() where c.name == card.name select c)
+        foreach (Card c in from Card c in p.GetHand() where c.GetImageLocation() == card.GetImageLocation() select c)
         {
             if (card.IsOnBoard())
             {
@@ -1039,7 +1043,7 @@ public class BoardManager : MonoBehaviour
     public void CardUnexpand(Card card) //find card and player to unexpand
     {
         Player p = FindOwningPlayer(card);
-        foreach (Card c in from Card c in p.GetHand() where c.name == card.name select c)
+        foreach (Card c in from Card c in p.GetHand() where c.GetImageLocation() == card.GetImageLocation() select c)
         {
             if (card.IsOnBoard())
             {
@@ -1052,7 +1056,7 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    private bool AddCardsToBoard(Card cardA, Card boardCard, string keyword)
+    public bool AddCardsToBoard(Card cardA, Card boardCard, string keyword)
     {
         bool validPlay = true;
         bool shouldDisable = false;
@@ -1077,6 +1081,7 @@ public class BoardManager : MonoBehaviour
             if(shouldDisable)
             {
                 _keywordList.Remove(_currentKeyword);
+                playedKeywords.Remove(_currentKeyword);
                 _keywordList.Find(x => x.Contains(_currentKeyword));
                 _playerScriptRefs[CurrentPlayer].IncreaseScore(4);
             }
@@ -1108,7 +1113,12 @@ public class BoardManager : MonoBehaviour
             }
 
             SetMostRecent(cardA, boardCard, keyword);
+            playedKeywords.Add(_currentKeyword);
+            playedKeywords.Distinct();
+            keyWordCount++;
             PlayOnePoint();
+
+            CheckKeywordAmount();
             return true;
         }
 
@@ -1150,11 +1160,31 @@ public class BoardManager : MonoBehaviour
         }
         
         SetMostRecent(cardA, boardCard, keyword);
+        playedKeywords.Add(_currentKeyword);
+        playedKeywords.Distinct();
         PlayOnePoint();
-
+        keyWordCount++;
+        CheckKeywordAmount();
         return true;
     }
 
+    public void CheckKeywordAmount()
+    {
+        if (keyWordCount > 12)
+        {
+            _keywordList.Clear();
+            keyWordCount = 0;
+
+            for(int i = 0; i < playedKeywords.Count(); i++)
+            {
+                _keywordList.Add(playedKeywords[i]);
+            }
+
+            playedKeywords.Distinct();
+        }
+        else
+            return;
+    }
 
     private void SetMostRecent(Card cardA, Card boardCard, string keyword)
     {
