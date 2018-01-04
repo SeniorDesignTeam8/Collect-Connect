@@ -1219,36 +1219,7 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    private void SetDirectionsAndColor(Connection connection)
-    {
-        Card c = connection.target[0].gameObject.GetComponent<Card>();
-        Player p = FindOwningPlayer(c);
-        int playerIndex = _playerScriptRefs.IndexOf(p);
-
-        switch (playerIndex)
-        {
-            case 0:
-                connection.points[0].direction = ConnectionPoint.ConnectionDirection.South;
-                connection.points[1].direction = ConnectionPoint.ConnectionDirection.North;
-                break;
-            case 1:
-                connection.points[0].direction = ConnectionPoint.ConnectionDirection.North;
-                connection.points[1].direction = ConnectionPoint.ConnectionDirection.East;
-                break;
-            case 2:
-                connection.points[0].direction = ConnectionPoint.ConnectionDirection.North;
-                connection.points[1].direction = ConnectionPoint.ConnectionDirection.South;
-                break;
-            case 3:
-                connection.points[0].direction = ConnectionPoint.ConnectionDirection.North;
-                connection.points[1].direction = ConnectionPoint.ConnectionDirection.West;
-                break;
-            default:
-                return; // Should never reach here.
-        }
-        connection.points[0].color = Color.black;
-        connection.points[1].color = Color.black;
-    }
+  
 
     private static Vector3 CalculatePosition(GameObject keyNode)
     {
