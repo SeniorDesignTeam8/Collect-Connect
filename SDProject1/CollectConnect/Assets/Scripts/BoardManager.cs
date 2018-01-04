@@ -1571,42 +1571,7 @@ public class BoardManager : MonoBehaviour
         }
 
         PlayerNumber = 0; //reset for voting below
-        foreach (Player p in _playerScriptRefs)
-        {
-            p.VoteKeywordTxt.gameObject.GetComponent<Text>().text = p.ConnectionKeyword;
-
-            if (p.ConnectionKeyword != "Passed" && p.ConnectionKeyword != "Vetted Against" && p.ConnectionKeyword != "First Card Played")
-            {
-                //don't display cards if player passed or vetted against or if first card
-                //don't allow players to vote for this play
-                p.VoteKeywordTxt.gameObject.GetComponent<Text>().text = p.ConnectionKeyword;
-
-                p.CopyCardLeft = Instantiate(p.Card1, new Vector3(0f, 0f, 0f), Quaternion.identity);
-                p.CopyCardLeft.transform.position = p.VoteCardLeft.gameObject.transform.position;
-                p.CopyCardLeft.transform.localScale = Vector3.one;
-                p.VoteCardLeft.gameObject.GetComponent<Renderer>().enabled = false;
-
-                p.CopyCardRight = Instantiate(p.Card2, new Vector3(0f, 0f, 0f), Quaternion.identity);
-                p.CopyCardRight.transform.position = p.VoteCardRight.gameObject.transform.position;
-                p.CopyCardRight.transform.localScale = Vector3.one;
-                p.VoteCardRight.gameObject.GetComponent<Renderer>().enabled = false;
-                PlayerNumber++;
-                LegalVotePlayerList.Add(PlayerNumber++); //add valid players to list for AI voting
-                PlayerNumber--;
-            }
-            else
-            {
-                //disable voting buttons for those players
-                CantVotePlayerList[PlayerNumber] = true;
-                PlayerNumber++;
-
-                //don't display card holders
-                p.VoteCardLeft.gameObject.GetComponent<Renderer>().enabled = false;
-                p.VoteCardRight.gameObject.GetComponent<Renderer>().enabled = false;
-            }
-        }
-        PlayerNumber = 0; //reset
-
+       
         //AI Voting
         _playerScriptRefs[PlayerNumber].PlayerVoteExpansion();
         VoteResultsList[0] = 1; //preset for AI

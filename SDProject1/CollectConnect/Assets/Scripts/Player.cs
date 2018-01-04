@@ -13,6 +13,7 @@ public class Player : MonoBehaviour
     public AIPlay aiPlayer;
     public GameObject[] CardPlaceholders;
     public GameObject PlayerScore;
+
     public GameObject ExpCardBackground; // The expanded card placeholder.
     public GameObject ExpCardImage; // Expand card Image
     public GameObject ExpCardTitle; // Title of expanded card.
@@ -22,6 +23,7 @@ public class Player : MonoBehaviour
     public GameObject ImageIconName;
     public GameObject ContText;
     public Text additinalInfo;
+
     public int HandSize = 4;
     public bool[] _slotStatus; // True if taken, false if available.
     private string _playerName; // The player's name (internally).
@@ -29,16 +31,16 @@ public class Player : MonoBehaviour
     private Vector3 _expCardPosition;
     private Vector3 _expCardScale;
     public bool IsAiControlled;
+
     public GameObject PlayerPopUpEnhance;
     public GameObject PlayerPopUpEnhanceShadow;
-    public GameObject VetText;
-    public Button VetYesBtn;
-    public Button VetNoBtn;
+
     public Button LeaveGameBtn;
     public Button JoinGameBtn;
     public bool PlayerVetted;
     public bool YesNoBtnHit;
     public bool VetResult;
+
     public Card Card1;
     public Card Card2;
     public string ConnectionKeyword;
@@ -52,29 +54,14 @@ public class Player : MonoBehaviour
     public GameObject LocationOnBoard4;
     public GameObject LocationOnBoard5;
 
-    public GameObject VetPlayerPiece;
-
-    public GameObject VoteText;
-    public Button VoteBtnP1;
-    public Button VoteBtnP2;
-    public Button VoteBtnP3;
-    public Button VoteBtnP4;
     public bool PlayerVoted;
-    public GameObject VoteCardLeft;
-    public GameObject VoteCardRight;
-    public GameObject VoteKeywordTxt;
-    public GameObject VoteConnection;
-    public Button VotePassBtn;
+
     public int VotedForWho;
     public Card CopyCardLeft;
     public Card CopyCardRight;
-   public GameObject VotePlayerPiece;
 
     public GameObject BlockOff;
 
-    private string _vetHumanText;
-    private string _aiText;
-    private string _voteHumanText;
 
     public GameObject switchToken1;
     public GameObject switchToken2;
@@ -84,7 +71,6 @@ public class Player : MonoBehaviour
     {
         false, false, false, false
     };
-
 
 
 	private void Awake()
@@ -111,6 +97,7 @@ public class Player : MonoBehaviour
         _playerName = gameObject.name.Replace(" ", "").ToLower();
         // Remove spaces and change to all lowercase to standardize.
         PlayerHand = new CardCollection(gameObject.name + "'s Hand");
+
         PlayerScore.GetComponent<Text>();
         ExpCardBackground.gameObject.GetComponent<Renderer>().enabled = false; //make card expansion invisible to user
         ExpCardImage.gameObject.GetComponent<Renderer>().enabled = false;
@@ -123,42 +110,23 @@ public class Player : MonoBehaviour
         PlayerPopUpEnhance.gameObject.GetComponent<Renderer>().enabled = false;
         PlayerPopUpEnhanceShadow.gameObject.GetComponent<Renderer>().enabled = false;
         additinalInfo.enabled = false;
-        VetText.gameObject.GetComponent<Text>().enabled = false;
-        VetYesBtn.gameObject.SetActive(false);
-        VetNoBtn.gameObject.SetActive(false);
-        VetYesBtn.GetComponent<Button>().onClick.AddListener(OnYesBtnHit);
-        VetNoBtn.GetComponent<Button>().onClick.AddListener(OnNoBtnHit);
+ 
         LeaveGameBtn.GetComponent<Button>().onClick.AddListener(OnLeaveBtnHit);
         JoinGameBtn.GetComponent<Button>().onClick.AddListener(OnJoinBtnHit);
         PlayerVetted = true;
         YesNoBtnHit = false;
         VetResult = true;
         PlayerVoted = true;
+
         LocationOnBoard1.gameObject.GetComponent<Renderer>().enabled = false;
         LocationOnBoard2.gameObject.GetComponent<Renderer>().enabled = false;
         LocationOnBoard3.gameObject.GetComponent<Renderer>().enabled = false;
         LocationOnBoard4.gameObject.GetComponent<Renderer>().enabled = false;
         LocationOnBoard5.gameObject.GetComponent<Renderer>().enabled = false;
-        VoteText.gameObject.GetComponent<Text>().enabled = false;
-        VoteBtnP1.gameObject.SetActive(false);
-        VoteBtnP2.gameObject.SetActive(false);
-        VoteBtnP3.gameObject.SetActive(false);
-        VoteBtnP4.gameObject.SetActive(false);
-        VoteBtnP1.GetComponent<Button>().onClick.AddListener(VotePlayer1);
-        VoteBtnP2.GetComponent<Button>().onClick.AddListener(VotePlayer2);
-        VoteBtnP3.GetComponent<Button>().onClick.AddListener(VotePlayer3);
-        VoteBtnP4.GetComponent<Button>().onClick.AddListener(VotePlayer4);
-        VotePassBtn.GetComponent<Button>().onClick.AddListener(VotePlayer1);    //auto vote for player 1
-        VotePassBtn.gameObject.SetActive(false);
-        VotedForWho = 0;
-        VotePlayerPiece.gameObject.GetComponent<Renderer>().enabled = false;
+
         PlayerPiece.gameObject.GetComponent<Renderer>().enabled = false;
         BlockOff.gameObject.GetComponent<Renderer>().enabled = false;
-        
-        _aiText = "AI is thinking...";
-        _vetHumanText = "Do you agree with this connection?";
-        _voteHumanText = "Which connection was the most outrageous?";
-        VetPieceShrink();
+ 
     }
 
     private void Update()
