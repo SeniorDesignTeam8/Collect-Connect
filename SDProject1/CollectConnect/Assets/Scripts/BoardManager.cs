@@ -29,11 +29,7 @@ public class BoardManager : MonoBehaviour
     public GameObject MasterKeywordList; // Includes the GridLayoutGroup and label.
     public static CardCollection Deck;
     public static bool IsCardExpanded;
-    public AudioSource SoundEffectSource;
-    public AudioClip SelectSound;
-    public AudioClip DeselectSound;
-    public AudioClip ExpandSound;
-    public AudioClip PlaceSound;
+
     public List<string> _keywordList, _copyList; // _copyList contains ALL the keywords. _keywordList just contains the 20 for the game.
     public string _currentKeyword, _previousKeyword, _removedKeyword;
 	public GameObject _currentKeywordButton;
@@ -100,18 +96,17 @@ public class BoardManager : MonoBehaviour
 	public bool countOver;
 	public GameObject resetBoard;
 	public bool canCheckPlayers;
-	public Font newFont;
 
 	public List<Text> KeywordList;
     public GameObject mostRecentCard1;
     public GameObject mostRecentCard2;
     public GameObject mostRecentKeyword;
     public GameObject mostRecentPlayer;
-    public AudioClip onePointSound;
-    public AudioClip errorSound;
+
     public GameObject loadingScreen;
     public int keyWordCount;
     public List<String> playedKeywords;
+    public SoundMan sound;
 
     private void Awake()
     {
@@ -152,6 +147,7 @@ public class BoardManager : MonoBehaviour
     {
         keyWordCount = 0;
         playedKeywords.Clear();
+
         if (Instance == null)
         {
             //Debug.Log(Application.dataPath);
@@ -161,10 +157,14 @@ public class BoardManager : MonoBehaviour
 
             Deck = new CardCollection("Deck");
             BuildDeck();
+
             if (Deck == null)
                 Deck = new CardCollection("Deck");
+
             Deck.Shuffle();
+
             IsDeckReady = true;
+
             Instance = this;
             _isGameListGenerated = false;
             _playerScriptRefs = new List<Player>();
@@ -188,11 +188,9 @@ public class BoardManager : MonoBehaviour
             }
 
 			canCheckPlayers = true;
-            _keywordGrid = MasterKeywordList.GetComponentInChildren<GridLayoutGroup>();
             _keywordList = new List<string>();
             _copyList = new List<string>();
             _scoreboard = new int[Players.Length];
-            _keywordGrid.GetComponentsInChildren(_graphicalKeyList);
             //Debug.Log("Size of graphical key list: " + _graphicalKeyList.Count);
             _keywordNodes = new List<GameObject>();
             _isFirstCardPlay = true;
@@ -342,7 +340,7 @@ public class BoardManager : MonoBehaviour
                         {
                             if (_graphicalKeyList.IndexOf(t1) / MaxNumKeywordPicks == CurrentPlayer) // was this a keyword picked by the current player?
                             {
-                                PlaySelect();
+                                sound.PlaySelect();
                                 _removedKeyword = t1.text;
                                 _currentKeywordList.Remove(t1.text);
                                 t1.text = "";
@@ -378,7 +376,7 @@ public class BoardManager : MonoBehaviour
                     c.SetIsOnBoard(true);
                     c.SetIsSelected(false);
 
-                    PlayPlace();
+                    sound.PlayPlace();
 
                     //first card played by AI
                     _playerScriptRefs[CurrentPlayer].ConnectionKeyword = "First Card Played";
@@ -975,54 +973,11 @@ public class BoardManager : MonoBehaviour
 		}
 	}
 
-    public void PlaySelect()
-    {
-        if (SoundEffectSource.isPlaying)
-            SoundEffectSource.Stop();
-        SoundEffectSource.clip = SelectSound;
-        SoundEffectSource.Play();
-    }
-
-    private void PlayDeselect()
-    {
-        if (SoundEffectSource.isPlaying)
-            SoundEffectSource.Stop();
-        SoundEffectSource.clip = DeselectSound;
-        SoundEffectSource.Play();
-    }
-
-    public void PlayExpand()
-    {
-        if (SoundEffectSource.isPlaying)
-            SoundEffectSource.Stop();
-        SoundEffectSource.clip = ExpandSound;
-        SoundEffectSource.Play();
-    }
-
-    public void PlayPlace()
-    {
-        if (SoundEffectSource.isPlaying)
-            SoundEffectSource.Stop();
-        SoundEffectSource.clip = PlaceSound;
-        SoundEffectSource.Play();
-    }
 
 
-    public void PlayOnePoint()
-    {
-        if (SoundEffectSource.isPlaying)
-            SoundEffectSource.Stop();
-        SoundEffectSource.clip = onePointSound;
-        SoundEffectSource.Play();
-    }
 
-    public void ErrorSound()
-    {
-        if (SoundEffectSource.isPlaying)
-            SoundEffectSource.Stop();
-        SoundEffectSource.clip = errorSound;
-        SoundEffectSource.Play();
-    }
+
+
 
     public void CardExpand(Card card) //find card and player to expand
     {
@@ -1035,7 +990,7 @@ public class BoardManager : MonoBehaviour
             }
 
             p.CardExpansion(c);
-            PlayExpand();
+            sound.PlayExpand();
             return;
         }
     }
@@ -1051,7 +1006,7 @@ public class BoardManager : MonoBehaviour
             }
 
             p.CardShrink(c);
-            PlayDeselect();
+            sound.PlayDeselect();
             return;
         }
     }
@@ -1087,7 +1042,7 @@ public class BoardManager : MonoBehaviour
             }
 
             cardA.SetIsOnBoard(true);
-            PlayPlace();
+            sound.PlayPlace();
             cardA.SetIsSelected(false);
             boardCard.SetIsSelected(false);
 
@@ -1115,7 +1070,7 @@ public class BoardManager : MonoBehaviour
             SetMostRecent(cardA, boardCard, keyword);
             playedKeywords.Add(_currentKeyword);
             playedKeywords.Distinct();
-            PlayOnePoint();
+            sound.PlayOnePoint();
             return true;
         }
 
@@ -1130,7 +1085,7 @@ public class BoardManager : MonoBehaviour
 		shouldDisable = SnapToKeyword.CornerSnap(cardA, boardCard, newKeyNode);
 
         cardA.SetIsOnBoard(true);
-        PlayPlace();
+        sound.PlayPlace();
         cardA.SetIsSelected(false);
         boardCard.SetIsSelected(false);
         //cardA.gameObject.AddComponent<MobileNode>();
@@ -1159,7 +1114,7 @@ public class BoardManager : MonoBehaviour
         SetMostRecent(cardA, boardCard, keyword);
         playedKeywords.Add(_currentKeyword);
         playedKeywords.Distinct();
-        PlayOnePoint();
+        sound.PlayOnePoint();
         keyWordCount++;
         
         CheckKeywordAmount();
@@ -1263,7 +1218,7 @@ public class BoardManager : MonoBehaviour
             if (c.name == card.name) // Is the card already selected?
             {
                 card.SetIsSelected(false); // If so, deselect the card
-                PlayDeselect();
+                sound.PlayDeselect();
 
                 //turn glow off
                 InHandGlowOff(card);
@@ -1274,7 +1229,7 @@ public class BoardManager : MonoBehaviour
 
             c.SetIsSelected(false); // Deselect the other card, then select this one.
             card.SetIsSelected(true);
-            PlaySelect();
+            sound.PlaySelect();
 
             //glow on
             _playerScriptRefs[CurrentPlayer].Card1 = card;
@@ -1283,7 +1238,7 @@ public class BoardManager : MonoBehaviour
             return;
         }
         card.SetIsSelected(true);
-        PlaySelect();
+        sound.PlaySelect();
 
 			
         _isPlayerCardSelected = true;
@@ -1315,7 +1270,7 @@ public class BoardManager : MonoBehaviour
                 if (c.name == card.name)
                 {
                     c.SetIsSelected(false);
-                    PlayDeselect();
+                    sound.PlayDeselect();
                     _isBoardCardSelected = false;
 
                     //turn glow off
@@ -1325,7 +1280,7 @@ public class BoardManager : MonoBehaviour
                 }
                 c.SetIsSelected(false);
                 card.SetIsSelected(true);
-                PlaySelect();
+                sound.PlaySelect();
 				//Debug.Log (card.ToString ());
                 //glow on
                 OnBoardGlowOn(card);
@@ -1334,7 +1289,7 @@ public class BoardManager : MonoBehaviour
             }
         }
         card.SetIsSelected(true);
-        PlaySelect();
+        sound.PlaySelect();
         _isBoardCardSelected = true;
 
         //glow on
@@ -1348,7 +1303,7 @@ public class BoardManager : MonoBehaviour
         _playerScriptRefs[CurrentPlayer].ConnectionKeyword = "Passed";
         Player.PassArray[CurrentPlayer] = true;
         IsTurnOver = true;
-        PlaySelect();
+        sound.PlaySelect();
         foreach (Card c in from p in _playerScriptRefs from Card c in p.GetHand() where c.IsSelected() select c)
         {
             c.SetIsSelected(false); // Deselect any selected cards.
@@ -1408,45 +1363,20 @@ public class BoardManager : MonoBehaviour
 
     private void DisableVet() //disable vet screen
     {
-        VetEnhance.gameObject.GetComponent<Renderer>().enabled = false;
-        VetEnhanceShadow.gameObject.GetComponent<Renderer>().enabled = false;
-        VetCard1.gameObject.GetComponent<Renderer>().enabled = false;
-        VetCard2.gameObject.GetComponent<Renderer>().enabled = false;
-        ConnectionBackground.gameObject.GetComponent<Renderer>().enabled = false;
-        VetConnectionWordTxt.gameObject.GetComponent<Text>().enabled = false;
-        VetText.gameObject.GetComponent<Text>().enabled = false;
-        _playerScriptRefs[CurrentPlayer].VetPieceShrink();
+        
     }
 
     private void EnableVet() //enable vet screen
     {
-        VetEnhance.gameObject.GetComponent<Renderer>().enabled = true;
-        VetEnhanceShadow.gameObject.GetComponent<Renderer>().enabled = true;
-        ConnectionBackground.gameObject.GetComponent<Renderer>().enabled = true;
-        VetConnectionWordTxt.gameObject.GetComponent<Text>().enabled = true;
-        VetText.gameObject.GetComponent<Text>().enabled = true;
-        _playerScriptRefs[CurrentPlayer].VetPieceExpansion();
-
-        PassBtnP1.gameObject.SetActive(false);
-        PassBtnP2.gameObject.SetActive(false);
-        PassBtnP3.gameObject.SetActive(false);
-        PassBtnP4.gameObject.SetActive(false);
+  
     }
 
     private void VetSetUp()  //timer before vet screen pops up
     {
         //Debug.Log("Enabling vet.");
         CurrentPhase = GamePhase.Vetting;
-        for (int i = 0; i < 4; i++)
-        {
-            VetResultList[i] = true;    //reset result list
-            _playerScriptRefs[i].PlayerVetted = false; //reset all player vetted
-        }
+  
 
-        EnableVet();
-        ToggleCardsOff();
-
-        VetConnectionWordTxt.gameObject.GetComponent<Text>().text = _playerScriptRefs[CurrentPlayer].ConnectionKeyword; //store card connection for vet and vote 
 
         _copyCardLeft = Instantiate(_playerScriptRefs[CurrentPlayer].Card1, new Vector3(0f, 0f, 0f), Quaternion.identity);
         _copyCardLeft.transform.position = VetCard1.gameObject.transform.position;
@@ -1727,7 +1657,7 @@ public class BoardManager : MonoBehaviour
 
         if (CurrentPlayer == Players.Length - 1 && _numSelections == MaxNumKeywordPicks) // If it's the last player's turn to pick & they chose 5 keywords...
         {
-            PlaySelect();
+            sound.PlaySelect();
             CurrentPhase = GamePhase.Playing; // Then let's start the game!
             _isGameStarted = true;
             MasterKeywordList.SetActive(false);
@@ -1746,8 +1676,8 @@ public class BoardManager : MonoBehaviour
 			PassBtnP4.gameObject.SetActive(true);
         }
         else if (_numSelections == MaxNumKeywordPicks) // TODO AI will have to increment _numSelections for this to trigger.
-		{												// It's not the last player's turn, so let's check if they have 5 keywords
-			PlaySelect();                                                       
+		{                                               // It's not the last player's turn, so let's check if they have 5 keywords
+            sound.PlaySelect();                                                       
             _removedKeyword = "";
             _currentKeyword = "";
             _previousKeyword = "";
@@ -1848,7 +1778,6 @@ public class BoardManager : MonoBehaviour
 		goText.resizeTextMinSize = 1;
 		goText.fontStyle = FontStyle.Bold;
 		goText.alignByGeometry = true;
-		goText.font = newFont;
 
 		go.transform.SetParent (Container.transform);
 
@@ -1883,7 +1812,7 @@ public class BoardManager : MonoBehaviour
 				{
 					if (_numSelections < 5 && _currentKeyword != go.GetComponentInChildren<Text> ().text && !_currentKeywordList.Contains (go.GetComponentInChildren<Text> ().text)) 
 					{
-						PlaySelect ();
+                    sound.PlaySelect ();
 						//Debug.Log("Setting current keyword to: " + go.GetComponentInChildren<Text>().text);
 						_currentKeyword = go.GetComponentInChildren<Text> ().text;
 						_currentKeywordButton = go;
@@ -1898,7 +1827,7 @@ public class BoardManager : MonoBehaviour
 				}
 				else if (CurrentPhase == GamePhase.Playing )//&& CurrentPlayer == playerTurn
 				{
-					PlaySelect ();
+                sound.PlaySelect ();
 					_currentKeyword = go.GetComponentInChildren<Text> ().text;
 					_currentKeywordButton = go;
 				}

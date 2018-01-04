@@ -43,12 +43,12 @@ public class ActionButton : MonoBehaviour {
 
             player.RemoveToken();
 			player.SwitchesLeft--;
-            instance.PlayExpand();
+            instance.sound.PlayExpand();
 		}
 
 		else 
 		{
-            instance.ErrorSound();
+            instance.sound.ErrorSound();
 			// add error message
 		}
     }

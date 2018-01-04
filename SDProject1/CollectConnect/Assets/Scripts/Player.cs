@@ -13,7 +13,7 @@ public class Player : MonoBehaviour
     public AIPlay aiPlayer;
     public GameObject[] CardPlaceholders;
     public GameObject PlayerScore;
-
+    public SoundMan sound;
     public GameObject ExpCardBackground; // The expanded card placeholder.
     public GameObject ExpCardImage; // Expand card Image
     public GameObject ExpCardTitle; // Title of expanded card.
@@ -356,7 +356,7 @@ public class Player : MonoBehaviour
 
     private void OnYesBtnHit()
     {
-        BoardManager.Instance.PlaySelect();
+     
         VetResult = true;
         PlayerVetted = true;
         YesNoBtnHit = true;
@@ -364,7 +364,7 @@ public class Player : MonoBehaviour
 
     private void OnNoBtnHit()
     {
-        BoardManager.Instance.PlaySelect();
+       
         VetResult = false;
         PlayerVetted = true;
         YesNoBtnHit = true;
@@ -372,7 +372,7 @@ public class Player : MonoBehaviour
 
     public void OnLeaveBtnHit()
     {
-        BoardManager.Instance.PlaySelect();
+        sound.PlaySelect();
        // Debug.Log("leave btn hit");
 
 		//if the player can leave
@@ -387,7 +387,7 @@ public class Player : MonoBehaviour
 
     private void OnJoinBtnHit()
     {
-        BoardManager.Instance.PlaySelect();
+        sound.PlaySelect();
         //Debug.Log("Join btn hit");
         JoinGameBtn.gameObject.SetActive(false);
         LeaveGameBtn.gameObject.SetActive(true);
