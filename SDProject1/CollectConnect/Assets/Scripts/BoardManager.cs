@@ -1115,10 +1115,7 @@ public class BoardManager : MonoBehaviour
             SetMostRecent(cardA, boardCard, keyword);
             playedKeywords.Add(_currentKeyword);
             playedKeywords.Distinct();
-            keyWordCount++;
             PlayOnePoint();
-
-            CheckKeywordAmount();
             return true;
         }
 
@@ -1164,13 +1161,15 @@ public class BoardManager : MonoBehaviour
         playedKeywords.Distinct();
         PlayOnePoint();
         keyWordCount++;
+        
         CheckKeywordAmount();
         return true;
     }
 
     public void CheckKeywordAmount()
     {
-        if (keyWordCount > 12)
+        Debug.Log(keyWordCount);
+        if (keyWordCount >= 12)
         {
             _keywordList.Clear();
             keyWordCount = 0;
