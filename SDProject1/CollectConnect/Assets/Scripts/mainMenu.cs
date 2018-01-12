@@ -10,9 +10,9 @@ public class mainMenu : MonoBehaviour
 
     private void Start()
     {
-        PlayBtn.GetComponent<Button>().onClick.AddListener(PlayGameTransition);
-        PlayBtn2.GetComponent<Button>().onClick.AddListener(PlayGameTransition);
-        AboutBtn.GetComponent<Button>().onClick.AddListener(AboutGameTransition);
+        PlayBtn.onClick.AddListener(PlayGameTransition);
+        PlayBtn2.onClick.AddListener(PlayGameTransition);
+        AboutBtn.onClick.AddListener(AboutGameTransition);
         PlayBtn.gameObject.SetActive(true);
         AboutBtn.gameObject.SetActive(true);
     }

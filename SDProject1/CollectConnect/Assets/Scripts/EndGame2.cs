@@ -24,10 +24,10 @@ public class EndGame2 : MonoBehaviour
 
     private void Start()
     {
-        MainMenuBtn.GetComponent<Button>().onClick.AddListener(MainMenuTransition);
+        MainMenuBtn.onClick.AddListener(MainMenuTransition);
         MainMenuBtn.gameObject.SetActive(true);
 
-        PlayAgainBtn.GetComponent<Button>().onClick.AddListener(PlayAgainTransition);
+        PlayAgainBtn.onClick.AddListener(PlayAgainTransition);
         PlayAgainBtn.gameObject.SetActive(true);
 
         PlayerScores = new string[4, 2];

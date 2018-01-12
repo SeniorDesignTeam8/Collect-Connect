@@ -973,12 +973,6 @@ public class BoardManager : MonoBehaviour
 		}
 	}
 
-
-
-
-
-
-
     public void CardExpand(Card card) //find card and player to expand
     {
         Player p = FindOwningPlayer(card);
@@ -1016,8 +1010,7 @@ public class BoardManager : MonoBehaviour
         bool validPlay = true;
         bool shouldDisable = false;
 
-        if (cardA.gameObject.GetComponent<GraphNode>() == null)
-            cardA.gameObject.AddComponent<GraphNode>();
+    
 
         if (!cardA.DoesPropertyExist(keyword) || !boardCard.DoesPropertyExist(keyword))
             validPlay = false;
@@ -1172,27 +1165,6 @@ public class BoardManager : MonoBehaviour
         {
             Player.PassArray[i] = false;
         }
-    }
-
-  
-
-    private static Vector3 CalculatePosition(GameObject keyNode)
-    {
-        int numConnections = 0;
-        Vector3 location = Vector3.zero;
-        foreach (Connection conn in ConnectionManager.FindConnections(keyNode.GetComponent<RectTransform>()))
-        {
-            if (conn.target[0].gameObject.name == keyNode.name) // Check one end of the connection.
-            {
-                location += conn.target[1].gameObject.transform.position;
-            }
-            else
-            {
-                location += conn.target[0].gameObject.transform.position;
-            }
-            numConnections++;
-        }
-        return location / numConnections;
     }
 
     public void SelectCardInHand(Card card)
@@ -1783,7 +1755,7 @@ public class BoardManager : MonoBehaviour
 
 		Button btn = go.GetComponent<Button> ();
 
-		ColorBlock btnColors = go.GetComponent<Button> ().colors;
+		ColorBlock btnColors = btn.colors;
 		btnColors.normalColor = Color.white;
 		btnColors.highlightedColor = Color.yellow;
 		btnColors.pressedColor = Color.grey;

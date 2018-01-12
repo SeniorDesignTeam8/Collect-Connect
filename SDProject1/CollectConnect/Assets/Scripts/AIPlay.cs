@@ -1,10 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine.UI;
 using Random = UnityEngine.Random;
-using System;
-using System.IO;
 public class AIPlay : MonoBehaviour {
 
     private static readonly float[] AiPassThresholds =
