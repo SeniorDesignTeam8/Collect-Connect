@@ -18,10 +18,7 @@ public class BoardManager : MonoBehaviour
     public static bool IsDeckReady { get; private set; }
     public static BoardManager Instance;
     public GameObject[] Players;
-    public GameObject KeywordContainerP1;
     public GameObject KeywordContainerP2;
-    public GameObject KeywordContainerP3;
-    public GameObject KeywordContainerP4;
     public GameObject KeywordPrefab;
     public GameObject NodeOne;
     public int Columns = 8, Rows = 8;
@@ -707,8 +704,6 @@ public class BoardManager : MonoBehaviour
                     PassBtnP3.gameObject.SetActive(false);
                     PassBtnP4.gameObject.SetActive(false);
                     KeywordContainerP2.gameObject.layer = 2;
-                    KeywordContainerP3.gameObject.layer = 2;
-                    KeywordContainerP4.gameObject.layer = 2;
 
                     //Turning on/off player blocking
                     _playerScriptRefs[0].BlockOff.gameObject.GetComponent<Renderer>().enabled = false;
@@ -729,8 +724,6 @@ public class BoardManager : MonoBehaviour
                     }
 
                     KeywordContainerP2.gameObject.layer = 5;
-                    KeywordContainerP3.gameObject.layer = 2;
-                    KeywordContainerP4.gameObject.layer = 2;
 
                     //Turning on/off player blocking
                     _playerScriptRefs[0].BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
@@ -745,8 +738,6 @@ public class BoardManager : MonoBehaviour
                     PassBtnP3.gameObject.SetActive(true);
                     PassBtnP4.gameObject.SetActive(false);
                     KeywordContainerP2.gameObject.layer = 2;
-                    KeywordContainerP3.gameObject.layer = 5;
-                    KeywordContainerP4.gameObject.layer = 2;
 
                     //Turning on/off player blocking
                     _playerScriptRefs[0].BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
@@ -768,8 +759,6 @@ public class BoardManager : MonoBehaviour
                     }
 
                     KeywordContainerP2.gameObject.layer = 2;
-                    KeywordContainerP3.gameObject.layer = 2;
-                    KeywordContainerP4.gameObject.layer = 5;
 
                     //Turning on/off player blocking
                     _playerScriptRefs[0].BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
