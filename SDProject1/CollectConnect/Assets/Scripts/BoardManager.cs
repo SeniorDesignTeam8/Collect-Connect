@@ -44,8 +44,13 @@ public class BoardManager : MonoBehaviour
     public object WaitForTurn { get; private set; }
 
     private bool _playedTurn;
+    public GameObject VetEnhance;
+    public GameObject VetEnhanceShadow;
     public GameObject VetCard1;
     public GameObject VetCard2;
+    public GameObject ConnectionBackground;
+    public GameObject VetConnectionWordTxt;
+    public GameObject VetText;
     private Card _copyCardLeft;
     private Card _copyCardRight;
     public List<bool> VetResultList;
@@ -62,6 +67,8 @@ public class BoardManager : MonoBehaviour
     public Button PassBtnP3;
     public Button PassBtnP4;
 
+    public GameObject VoteEnhance;
+    public GameObject VoteEnhanceShadow;
     public List<int> VoteResultsList;
     public List<bool> CantVotePlayerList;
     public List<int> LegalVotePlayerList;
@@ -103,6 +110,8 @@ public class BoardManager : MonoBehaviour
         _isGameStarted = false;
         IsDeckReady = false;
         _playedTurn = false;
+        VetResultList = new List<bool>();
+        VoteResultsList = new List<int>();
         CantVotePlayerList = new List<bool>();
         LegalVotePlayerList = new List<int>();
         AfterVet = false;
@@ -1328,6 +1337,8 @@ public class BoardManager : MonoBehaviour
         //Debug.Log("Enabling vet.");
         CurrentPhase = GamePhase.Vetting;
   
+
+
         _copyCardLeft = Instantiate(_playerScriptRefs[CurrentPlayer].Card1, new Vector3(0f, 0f, 0f), Quaternion.identity);
         _copyCardLeft.transform.position = VetCard1.gameObject.transform.position;
         _copyCardLeft.transform.localScale = VetCard1.gameObject.GetComponent<Renderer>().bounds.extents;
@@ -1417,6 +1428,8 @@ public class BoardManager : MonoBehaviour
 
     private void DisableVote() //disable vote screen
     {
+        VoteEnhance.gameObject.GetComponent<Renderer>().enabled = false;
+        VoteEnhanceShadow.gameObject.GetComponent<Renderer>().enabled = false;
         LegalVotePlayerList.Clear();    //clear player voting list for AI voting
 
         foreach (Player p in _playerScriptRefs) //shrink main voting pieces 
@@ -1427,6 +1440,8 @@ public class BoardManager : MonoBehaviour
 
     private void EnableVote() //enable vote screen
     {
+        VoteEnhance.gameObject.GetComponent<Renderer>().enabled = true;
+        VoteEnhanceShadow.gameObject.GetComponent<Renderer>().enabled = true;
         //Debug.Log("Hi, Mom!");
         foreach (Player p in _playerScriptRefs) //expand main voting pieces 
         {
@@ -1598,7 +1613,41 @@ public class BoardManager : MonoBehaviour
 
     public void EndKeywordPick() // TODO This was originally the EndResearchPhase method. AI should be able to call this after it picks its keywords.
     {
-        
+        //turn on player's block off
+        _playerScriptRefs[CurrentPlayer].BlockOff.gameObject.GetComponent<Renderer>().enabled = true;
+
+        if (CurrentPlayer == Players.Length - 1 && _numSelections == MaxNumKeywordPicks) // If it's the last player's turn to pick & they chose 5 keywords...
+        {
+            sound.PlaySelect();
+            CurrentPhase = GamePhase.Playing; // Then let's start the game!
+            _isGameStarted = true;
+            MasterKeywordList.SetActive(false);
+            _keywordList = _currentKeywordList;
+            _numSelections = 0;
+            _removedKeyword = "";
+            _currentKeyword = "";
+            _previousKeyword = "";
+            WordBankBtn.gameObject.SetActive(false);
+            PopulateKeywords();
+            CurrentPlayer = 0;
+            _ts.StartTimer(); // TODO add timer to Research stage.
+			PassBtnP1.gameObject.SetActive(true);
+			PassBtnP2.gameObject.SetActive(true);
+			PassBtnP3.gameObject.SetActive(true);
+			PassBtnP4.gameObject.SetActive(true);
+        }
+        else if (_numSelections == MaxNumKeywordPicks) // TODO AI will have to increment _numSelections for this to trigger.
+		{                                               // It's not the last player's turn, so let's check if they have 5 keywords
+            sound.PlaySelect();                                                       
+            _removedKeyword = "";
+            _currentKeyword = "";
+            _previousKeyword = "";
+            _keywordList = PickSubset(_copyList);
+            PopulateKeywords();
+            CurrentPlayer++; // Next player's turn to pick keywords.
+            _numSelections = 0;
+
+        }
     }
 
     private void InHandGlowOn(Card card)
