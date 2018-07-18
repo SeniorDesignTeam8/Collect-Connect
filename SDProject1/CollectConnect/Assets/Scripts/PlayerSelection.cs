@@ -16,16 +16,16 @@ public class PlayerSelection : MonoBehaviour
 
     private void Start()
     {
-        BackBtn.onClick.AddListener(BackBtnTransition);
+        BackBtn.GetComponent<Button>().onClick.AddListener(BackBtnTransition);
         BackBtn.gameObject.SetActive(true);
 
-        OnePlayerBtn.onClick.AddListener(OnePlayerFunction);
+        OnePlayerBtn.GetComponent<Button>().onClick.AddListener(OnePlayerFunction);
         OnePlayerBtn.gameObject.SetActive(true);
 
-        TwoPlayersBtn.onClick.AddListener(TwoPlayersFunction);
+        TwoPlayersBtn.GetComponent<Button>().onClick.AddListener(TwoPlayersFunction);
         TwoPlayersBtn.gameObject.SetActive(true);
 
-        ThreePlayersBtn.onClick.AddListener(ThreePlayersFunction);
+        ThreePlayersBtn.GetComponent<Button>().onClick.AddListener(ThreePlayersFunction);
         ThreePlayersBtn.gameObject.SetActive(true);
     }
 

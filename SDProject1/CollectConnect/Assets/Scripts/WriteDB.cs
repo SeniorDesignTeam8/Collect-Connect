@@ -1,9 +1,24 @@
-﻿using Mono.Data.Sqlite;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using Mono.Data.Sqlite;
 using System.Data;
 
 
 public class WriteDB : BoardManager
 {
+
+	// Use this for initialization
+	void Start () {
+		
+	}
+	
+	// Update is called once per frame
+	void Update () {
+		
+	}
+
+
 	public static void WriteConnection(string keyword, int cardOne, int cardTwo, IDbConnection _dbconn)
 	{
 		SqliteConnection dbcmd = new SqliteConnection(_dbconn.ConnectionString);

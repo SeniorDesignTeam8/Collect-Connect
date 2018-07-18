@@ -18,7 +18,10 @@ public class BoardManager : MonoBehaviour
     public static bool IsDeckReady { get; private set; }
     public static BoardManager Instance;
     public GameObject[] Players;
+    public GameObject KeywordContainerP1;
     public GameObject KeywordContainerP2;
+    public GameObject KeywordContainerP3;
+    public GameObject KeywordContainerP4;
     public GameObject KeywordPrefab;
     public GameObject NodeOne;
     public int Columns = 8, Rows = 8;
@@ -696,7 +699,7 @@ public class BoardManager : MonoBehaviour
                 CurrentPlayer %= Players.Length;
             }
 
-            switch (CurrentPlayer)
+               switch (CurrentPlayer)
             {
                 case 0:
                     PassBtnP1.gameObject.SetActive(true);
@@ -962,6 +965,12 @@ public class BoardManager : MonoBehaviour
 		}
 	}
 
+
+
+
+
+
+
     public void CardExpand(Card card) //find card and player to expand
     {
         Player p = FindOwningPlayer(card);
@@ -999,8 +1008,7 @@ public class BoardManager : MonoBehaviour
         bool validPlay = true;
         bool shouldDisable = false;
 
-    
-
+       
         if (!cardA.DoesPropertyExist(keyword) || !boardCard.DoesPropertyExist(keyword))
             validPlay = false;
 
@@ -1155,6 +1163,9 @@ public class BoardManager : MonoBehaviour
             Player.PassArray[i] = false;
         }
     }
+
+  
+
 
     public void SelectCardInHand(Card card)
     {
@@ -1744,7 +1755,7 @@ public class BoardManager : MonoBehaviour
 
 		Button btn = go.GetComponent<Button> ();
 
-		ColorBlock btnColors = btn.colors;
+		ColorBlock btnColors = go.GetComponent<Button> ().colors;
 		btnColors.normalColor = Color.white;
 		btnColors.highlightedColor = Color.yellow;
 		btnColors.pressedColor = Color.grey;
