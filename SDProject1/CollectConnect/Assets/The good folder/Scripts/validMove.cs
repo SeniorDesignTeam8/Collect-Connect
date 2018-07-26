@@ -1,26 +1,69 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+
 
 public class validMove : MonoBehaviour
 {
+    Color bColor = Color.white;
     int xCord, yCord;
-    GameObject board;
-    GameObject neighbor;
+    Image glow;
+    public GameObject board;
+    GameObject neighborLoc;
     initBoardplacement tile;
-    public void checkNearestCard()
+    validMove neighborTile;
+    public bool checkNearestCard()
     {
         if(xCord-1 >=0)
         {
-            if(yCord+1 !=tile.boardDimensions)
+            neighborLoc= tile.board[xCord - 1, yCord];
+            neighborTile= neighborLoc.GetComponent<validMove>();
             {
-
-            }
-            if(yCord-1>=0)
-            {
-
+                if(neighborTile.occupid())
+                {
+                    glow.color = bColor;
+                    return true;
+                }
             }
         }
+        if (xCord + 1 < tile.boardDimensions)
+        {
+            neighborLoc= tile.board[xCord + 1, yCord];
+            neighborTile = neighborLoc.GetComponent<validMove>();
+            {
+                if (neighborTile.occupid())
+                {
+                    glow.color = bColor;
+                    return true;
+                }
+            }
+        }
+        if (yCord - 1 >= 0)
+        {
+            neighborLoc= tile.board[xCord, yCord-1];
+            neighborTile = neighborLoc.GetComponent<validMove>();
+            {
+                if (neighborTile.occupid())
+                {
+                    glow.color = bColor;
+                    return true;
+                }
+            }
+        }
+        if (yCord + 1 < tile.boardDimensions)
+        {
+            neighborLoc= tile.board[xCord , yCord+1];
+            neighborTile = neighborLoc.GetComponent<validMove>();
+            {
+                if (neighborTile.occupid())
+                {
+                    glow.color = bColor;
+                    return true;
+                }
+            }
+        }
+        return false;
     }
     public bool occupid()
     {
@@ -30,6 +73,7 @@ public class validMove : MonoBehaviour
     }
     void Start()
     {
+        board = GameObject.Find("mainCanvas");
         tile = board.GetComponent<initBoardplacement>();
         for (int i = 0; i < tile.boardDimensions; i++)
         {
@@ -43,5 +87,6 @@ public class validMove : MonoBehaviour
                 }
             }
         }
+        glow = GetComponent<Image>();
     }
 }

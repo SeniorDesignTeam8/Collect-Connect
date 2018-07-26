@@ -5,14 +5,23 @@ using UnityEngine.EventSystems;
 
 public class checkDrop : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerExitHandler
 {
+    validMove checkTile;
     public bool ableArrange;
-    bool isValidSpot;
-
+    bool valid;
     public void OnDrop(PointerEventData eventData)
     {
-        Dragable d = eventData.pointerDrag.GetComponent<Dragable>();
-       
+        if ((transform.tag == "tile"&&valid)|| transform.tag=="hand")
+        {
+            Dragable d = eventData.pointerDrag.GetComponent<Dragable>();
+
             d.lastLocation = transform;
+        }
+        else 
+        {
+            Dragable d = eventData.pointerDrag.GetComponent<Dragable>();
+
+            d.lastLocation = GameObject.Find("Hand").transform;
+        }
         
     }
 
@@ -21,6 +30,11 @@ public class checkDrop : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoi
         if (transform.tag == "hand")
         {
             ableArrange = true;
+        }
+        if (transform.tag == "tile")
+        {
+            checkTile = transform.GetComponent<validMove>();
+            valid = checkTile.checkNearestCard();            
         }
         
     }
@@ -31,6 +45,7 @@ public class checkDrop : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoi
         {
             ableArrange = false;
         }
+        valid = false;
     }
 
 
@@ -39,6 +54,7 @@ public class checkDrop : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoi
     void Start ()
     {
         ableArrange = true;
+        valid = false;
 
 	}
 	

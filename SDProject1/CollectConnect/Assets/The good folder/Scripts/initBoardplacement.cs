@@ -12,6 +12,7 @@ public class initBoardplacement : MonoBehaviour {
     public float distancePanelX;
     public float distancePanelY;
     public GameObject mainCanvas;
+    
     public GameObject[,] board;
 
     // Use this for initialization
