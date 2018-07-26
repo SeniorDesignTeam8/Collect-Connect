@@ -14,6 +14,7 @@ public class validMove : MonoBehaviour
     initBoardplacement tile;
     validMove neighborTile;
     public bool isAvailable;
+    public bool occupidTile;
     public void checkNearestCard()
     {
         if(xCord-1 >=0)
