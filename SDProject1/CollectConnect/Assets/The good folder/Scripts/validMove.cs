@@ -13,7 +13,8 @@ public class validMove : MonoBehaviour
     GameObject neighborLoc;
     initBoardplacement tile;
     validMove neighborTile;
-    public bool checkNearestCard()
+    public bool isAvailable;
+    public void checkNearestCard()
     {
         if(xCord-1 >=0)
         {
@@ -23,7 +24,7 @@ public class validMove : MonoBehaviour
                 if(neighborTile.occupid())
                 {
                     glow.color = bColor;
-                    return true;
+                    isAvailable = true;
                 }
             }
         }
@@ -35,7 +36,7 @@ public class validMove : MonoBehaviour
                 if (neighborTile.occupid())
                 {
                     glow.color = bColor;
-                    return true;
+                    isAvailable = true;
                 }
             }
         }
@@ -47,7 +48,7 @@ public class validMove : MonoBehaviour
                 if (neighborTile.occupid())
                 {
                     glow.color = bColor;
-                    return true;
+                    isAvailable = true;
                 }
             }
         }
@@ -59,11 +60,10 @@ public class validMove : MonoBehaviour
                 if (neighborTile.occupid())
                 {
                     glow.color = bColor;
-                    return true;
+                    isAvailable = true;
                 }
             }
         }
-        return false;
     }
     public bool occupid()
     {
@@ -71,22 +71,26 @@ public class validMove : MonoBehaviour
             return true;
         else return false;
     }
-    void Start()
+    public void validateSpaces()
     {
-        board = GameObject.Find("mainCanvas");
-        tile = board.GetComponent<initBoardplacement>();
         for (int i = 0; i < tile.boardDimensions; i++)
         {
             for(int j=0;j<tile.boardDimensions;j++)
             {
-                if(transform==tile.board[i,j].transform)
-                {
+                    glow = tile.board[i, j].GetComponent<Image>();
                     xCord = i;
                     yCord = j;
-                    break;
-                }
+                    checkNearestCard();
             }
         }
-        glow = GetComponent<Image>();
+
+    }
+    void Start()
+    {
+        board = GameObject.Find("mainCanvas");
+        tile = board.GetComponent<initBoardplacement>();
+        validateSpaces();
+        
+        
     }
 }

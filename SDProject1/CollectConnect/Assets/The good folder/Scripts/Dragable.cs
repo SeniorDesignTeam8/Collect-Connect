@@ -12,6 +12,7 @@ public class Dragable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     public  GameObject moveArea;
     RectTransform rectTrans;
     GameObject placeholder;
+    validMove updateSpaces;
 
 
     //when the card is selected it 
