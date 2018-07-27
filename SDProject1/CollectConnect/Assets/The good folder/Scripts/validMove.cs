@@ -9,6 +9,7 @@ public class validMove : MonoBehaviour
     Color bColor = Color.white;
     int xCord, yCord;
     Image glow;
+    Image thisCard;
     public GameObject board;
     GameObject neighborLoc;
     initBoardplacement tile;
@@ -68,6 +69,7 @@ public class validMove : MonoBehaviour
     }
     public bool occupid()
     {
+        
         if (transform.childCount > 0)
             return true;
         else return false;
