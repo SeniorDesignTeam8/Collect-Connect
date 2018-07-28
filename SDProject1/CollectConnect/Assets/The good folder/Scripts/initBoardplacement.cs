@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class initBoardplacement : MonoBehaviour {
+public class initBoardplacement : MonoBehaviour
+{
 
     public GameObject panel;
     public GameObject card;
@@ -14,12 +15,12 @@ public class initBoardplacement : MonoBehaviour {
     public float distancePanelX;
     public float distancePanelY;
     public GameObject mainCanvas;
-    
+
     public GameObject[,] board;
 
 
     // Use this for initialization
-    void Start ()
+    void Start()
     {
         int middle = (boardDimensions - 1) / 2;
         board = new GameObject[boardDimensions, boardDimensions];
@@ -37,13 +38,19 @@ public class initBoardplacement : MonoBehaviour {
                 }
             }
         }
+        Invoke("instatBoard", 1);
 
-        
-        
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+
+    }
+    void instatBoard()
+    {
+        validMove begin = board[0, 0].GetComponent<validMove>();
+        begin.setAvailable();
+
+    }
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
 }

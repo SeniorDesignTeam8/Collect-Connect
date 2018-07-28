@@ -6,84 +6,88 @@ using UnityEngine.UI;
 
 public class validMove : MonoBehaviour
 {
-    Color bColor = Color.white;
-    int xCord, yCord;
+    public bool isOccupid, availableSpace;
+    Color bColor = Color.white, initColor;
+
     Image glow;
-    Image thisCard;
     public GameObject board;
     GameObject neighborLoc;
     initBoardplacement tile;
     validMove neighborTile;
-    public bool isAvailable;
-    public bool occupidTile;
-    public void checkNearestCard()
+
+    public void setNeighbor(int xCord, int yCord)
     {
-        if(xCord-1 >=0)
+
+
+        if (xCord - 1 >= 0)
         {
-            neighborLoc= tile.board[xCord - 1, yCord];
-            neighborTile= neighborLoc.GetComponent<validMove>();
-            {
-                if(neighborTile.occupid())
-                {
-                    glow.color = bColor;
-                    isAvailable = true;
-                }
-            }
+            neighborLoc = tile.board[xCord - 1, yCord];
+            neighborTile = neighborLoc.GetComponent<validMove>();
+            setColoravailable();
         }
+
         if (xCord + 1 < tile.boardDimensions)
         {
-            neighborLoc= tile.board[xCord + 1, yCord];
+            neighborLoc = tile.board[xCord + 1, yCord];
             neighborTile = neighborLoc.GetComponent<validMove>();
-            {
-                if (neighborTile.occupid())
-                {
-                    glow.color = bColor;
-                    isAvailable = true;
-                }
-            }
+            setColoravailable();
         }
         if (yCord - 1 >= 0)
         {
-            neighborLoc= tile.board[xCord, yCord-1];
+            neighborLoc = tile.board[xCord, yCord - 1];
             neighborTile = neighborLoc.GetComponent<validMove>();
-            {
-                if (neighborTile.occupid())
-                {
-                    glow.color = bColor;
-                    isAvailable = true;
-                }
-            }
+            setColoravailable();
         }
         if (yCord + 1 < tile.boardDimensions)
         {
-            neighborLoc= tile.board[xCord , yCord+1];
+            neighborLoc = tile.board[xCord, yCord + 1];
             neighborTile = neighborLoc.GetComponent<validMove>();
-            {
-                if (neighborTile.occupid())
-                {
-                    glow.color = bColor;
-                    isAvailable = true;
-                }
-            }
+            setColoravailable();
         }
+
+    }
+    void setColoravailable()
+    {
+        if (!neighborTile.occupid())
+        {
+            neighborTile.glow.color = bColor;
+            neighborTile.availableSpace = true;
+        }
+        else
+        {
+            neighborTile.glow.color = initColor;
+            neighborTile.availableSpace = false;
+        }
+
     }
     public bool occupid()
     {
-        
         if (transform.childCount > 0)
+        {
+            isOccupid = true;
+            glow.color = initColor;
             return true;
-        else return false;
+        }
+
+        else
+        {
+            isOccupid = false;
+            return false;
+        }
     }
-    public void validateSpaces()
+
+    public void setAvailable()
     {
+
         for (int i = 0; i < tile.boardDimensions; i++)
         {
-            for(int j=0;j<tile.boardDimensions;j++)
+            for (int j = 0; j < tile.boardDimensions; j++)
             {
-                    glow = tile.board[i, j].GetComponent<Image>();
-                    xCord = i;
-                    yCord = j;
-                    checkNearestCard();
+                validMove x = tile.board[i, j].GetComponent<validMove>();
+                if (x.occupid())
+                {
+                    setNeighbor(i, j);
+                }
             }
         }
 
@@ -92,8 +96,8 @@ public class validMove : MonoBehaviour
     {
         board = GameObject.Find("mainCanvas");
         tile = board.GetComponent<initBoardplacement>();
-        validateSpaces();
-        
-        
+        glow = GetComponent<Image>();
+        initColor = glow.color;
+
     }
 }

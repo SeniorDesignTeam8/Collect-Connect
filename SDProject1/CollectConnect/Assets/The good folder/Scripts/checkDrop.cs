@@ -9,29 +9,24 @@ public class checkDrop : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoi
     validMove updateBoard;
     initBoardplacement setTile;
     public bool ableArrange;
-    bool valid;
+    bool valid, occupid;
     public void OnDrop(PointerEventData eventData)
     {
-        if (transform.tag == "tile")
-        {
-            checkTile = transform.GetComponent<validMove>();
-            //checkTile.validateSpaces();
-            valid = checkTile.isAvailable;
-        }
-        
-        if ((transform.tag == "tile"&&valid)|| transform.tag=="hand")
+
+        if ((transform.tag == "tile" && valid && !occupid) || transform.tag == "hand")
         {
             Dragable d = eventData.pointerDrag.GetComponent<Dragable>();
-            updateBoard.validateSpaces();
+
             d.lastLocation = transform;
+            checkTile.setAvailable();
         }
-        else 
+        else
         {
             Dragable d = eventData.pointerDrag.GetComponent<Dragable>();
-            updateBoard.validateSpaces();
-            d.lastLocation = GameObject.Find("Hand").transform;
+
+            d.lastLocation = GameObject.Find("Player1").transform;
         }
-        updateBoard.validateSpaces();
+
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -44,15 +39,16 @@ public class checkDrop : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoi
         if (transform.tag == "tile")
         {
             checkTile = transform.GetComponent<validMove>();
-            valid = checkTile.isAvailable;            
+            valid = checkTile.availableSpace;
+            occupid = checkTile.occupid();
         }
-        
+
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        updateBoard.validateSpaces();
-        if (transform.tag=="hand")
+
+        if (transform.tag == "hand")
         {
             ableArrange = false;
         }
@@ -62,20 +58,19 @@ public class checkDrop : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoi
 
 
     // Use this for initialization
-    void Start ()
+    void Start()
     {
-        setTile = GameObject.Find("mainCanvas").GetComponent<initBoardplacement>();
-        updateBoard = setTile.board[0, 0].GetComponent<validMove>();
+        //  setTile = GameObject.Find("mainCanvas").GetComponent<initBoardplacement>();
+
+        // updateBoard = setTile.board[0, 0].GetComponent<validMove>();
         ableArrange = true;
         valid = false;
         //checkTile.validateSpaces();
+    }
 
+    // Update is called once per frame
+    void Update()
+    {
 
     }
-	
-	// Update is called once per frame
-	void Update ()
-    {
-		
-	}
 }
