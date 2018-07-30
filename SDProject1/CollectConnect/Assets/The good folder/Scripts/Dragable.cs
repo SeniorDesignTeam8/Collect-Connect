@@ -12,7 +12,7 @@ public class Dragable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     public GameObject moveArea;
     RectTransform rectTrans;
     GameObject placeholder;
-
+    Board choiceConfirmed;
     public bool canBeMoved;
 
 
@@ -52,6 +52,10 @@ public class Dragable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
         Destroy(placeholder);
 
         cgroup.blocksRaycasts = true;
+        if(transform.parent.tag=="tile"&&choiceConfirmed)
+        {
+            cgroup.blocksRaycasts = false;
+        }
     }
 
     void arrangeHand()
@@ -73,10 +77,12 @@ public class Dragable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     // Use this for initialization
     void Start()
     {
+       
         rectTrans = GetComponent<RectTransform>();
         cgroup = GetComponent<CanvasGroup>();
         moveArea = GameObject.Find("mainCanvas");
-        hand = lastLocation = transform.parent;
+        choiceConfirmed = moveArea.GetComponent<Board>();
+       hand = lastLocation = transform.parent;
 
     }
 

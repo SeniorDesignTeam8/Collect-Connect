@@ -15,7 +15,7 @@ public class Board : MonoBehaviour
     public float distancePanelX;
     public float distancePanelY;
     public GameObject mainCanvas;
-
+    public bool confirmChoice;
 
     public GameObject[,] board;
 
@@ -43,6 +43,7 @@ public class Board : MonoBehaviour
     }
     public void resetBoard()
     {
+        confirmChoice = true;
         for (int i = 0; i < boardDimensions; i++)
         {
             for (int j = 0; j < boardDimensions; j++)
@@ -65,6 +66,7 @@ public class Board : MonoBehaviour
 
             }
         }
+        confirmChoice = false;
 
     }
     public bool checkNeighbor(int xCord, int yCord)
