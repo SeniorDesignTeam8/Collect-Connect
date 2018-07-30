@@ -6,10 +6,9 @@ using UnityEngine.UI;
 
 public class tile : MonoBehaviour
 {
-   
     public bool isOccupid, available;
     Color glowColor = Color.white, initColor;
- 
+
     Image imageHighlight;
 
 
@@ -22,8 +21,8 @@ public class tile : MonoBehaviour
         }
         else
         {
+            transform.GetChild(0).GetComponent<Dragable>().cgroup.blocksRaycasts = false;
             available = false;
-
             imageHighlight.color = initColor;
         }
     }
@@ -34,7 +33,6 @@ public class tile : MonoBehaviour
     }
     void Start()
     {
-       // canBeMoved = true;
         imageHighlight = GetComponent<Image>();
         initColor = imageHighlight.color;
 

@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 
 public class Dragable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
-    CanvasGroup cgroup;
+    public CanvasGroup cgroup;
     public Transform lastLocation;
     public Transform hand;
     public GameObject moveArea;
