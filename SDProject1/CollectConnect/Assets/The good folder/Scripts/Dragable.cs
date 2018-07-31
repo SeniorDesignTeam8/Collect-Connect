@@ -6,12 +6,14 @@ using UnityEngine.EventSystems;
 
 public class Dragable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
-    CanvasGroup cgroup;
+    public CanvasGroup cgroup;
     public Transform lastLocation;
     public Transform hand;
-    public  GameObject moveArea;
+    public GameObject moveArea;
     RectTransform rectTrans;
     GameObject placeholder;
+    Board choiceConfirmed;
+    public bool canBeMoved;
 
 
     //when the card is selected it 
@@ -31,25 +33,29 @@ public class Dragable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     // events that can occur while moving the card around the screen 
     //
     public void OnDrag(PointerEventData eventData)
-    {      
+    {
         transform.position = eventData.position;
-       checkDrop area= hand.GetComponent<checkDrop>();
-        if(area.ableArrange)
+        checkDrop area = hand.GetComponent<checkDrop>();
+        if (area.ableArrange)
             arrangeHand();
 
-      
+
     }
-    
-    
+
+
     // When the player lets go of the card it will either stay where they dropped it if valid
     //or snap back to the last valid location 
     public void OnEndDrag(PointerEventData eventData)
     {
         transform.SetParent(lastLocation);
-        transform.SetSiblingIndex ( placeholder.transform.GetSiblingIndex());
+        transform.SetSiblingIndex(placeholder.transform.GetSiblingIndex());
         Destroy(placeholder);
-        
+
         cgroup.blocksRaycasts = true;
+        if(transform.parent.tag=="tile"&&choiceConfirmed)
+        {
+            cgroup.blocksRaycasts = false;
+        }
     }
 
     void arrangeHand()
@@ -69,18 +75,20 @@ public class Dragable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
 
 
     // Use this for initialization
-    void Start ()
+    void Start()
     {
+       
         rectTrans = GetComponent<RectTransform>();
         cgroup = GetComponent<CanvasGroup>();
         moveArea = GameObject.Find("mainCanvas");
-       hand= lastLocation = transform.parent;
+        choiceConfirmed = moveArea.GetComponent<Board>();
+       hand = lastLocation = transform.parent;
 
-	}
-	
-	// Update is called once per frame
-	void Update ()
+    }
+
+    // Update is called once per frame
+    void Update()
     {
-		
-	}
+
+    }
 }
