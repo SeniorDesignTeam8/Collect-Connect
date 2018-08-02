@@ -12,7 +12,7 @@ using Random = UnityEngine.Random;
 public class BoardManager : MonoBehaviour
 {
 	public int GridSpacing = 1;
-
+    
 
     private const int MaxNumKeywordPicks = 5;
     public static bool IsDeckReady { get; private set; }
