@@ -165,17 +165,24 @@ public class CardManager : MonoBehaviour{
         Component[] images;
         images=Deck[pick].GetComponentsInChildren<Image>();
         Image art= Deck[pick].GetComponentInChildren<Image>();
+        Image wordBack= Deck[pick].GetComponentInChildren<Image>();
         foreach (Image x in images)
         {
             if(x.tag=="art")
             {
                 art = x;
             }
+            if(x.tag=="wordBacking")
+            {
+                wordBack = x;
+            }
            
         }
-       
+        wordBack.enabled = false;
+        des.enabled = false;
         art.sprite= reset.cardPic;
         GameObject newCard = Deck[pick];//Deck[pick].transform.SetParent(GameObject.Find("Player1").transform);
+      
         Deck.RemoveAt(pick);
         return newCard;
         
