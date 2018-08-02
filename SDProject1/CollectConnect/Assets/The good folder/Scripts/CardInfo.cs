@@ -40,7 +40,8 @@ public class CardInfo : MonoBehaviour {
     }
     public void setImageLocation(string loc)
     {
-        loc=loc.TrimEnd('g', 'p', 'j', '.');
+        int delete= loc.LastIndexOf('.');
+        loc = loc.Remove(delete);
         ImageLoc = loc;
         setImage();
     }

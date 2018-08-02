@@ -23,7 +23,7 @@ public class Board : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        int middle = (boardDimensions - 1) / 2;
+        
         board = new GameObject[boardDimensions, boardDimensions];
         for (int i = 0; i < boardDimensions; i++)
         {
@@ -32,14 +32,18 @@ public class Board : MonoBehaviour
 
                 board[i, j] = Instantiate(panel, new Vector3(i * distancePanelX + offsetX, j * distancePanelY + offsetY, 0), Quaternion.identity);
                 board[i, j].transform.SetParent(mainCanvas.transform);
-                if (i == middle && j == middle)
-                {
-                    start = Instantiate(card);
-                    start.transform.SetParent(board[i, j].transform);
-                }
+
             }
         }
+        Invoke("pickStartCard", 1);
         Invoke("resetBoard", 1);
+    }
+    public void pickStartCard()
+    {
+        int middle = (boardDimensions - 1) / 2;
+        CardManager startingCard = GameObject.Find("mainCanvas").GetComponent<CardManager>();
+        start = startingCard.createCardObject();
+        start.transform.SetParent(board[middle, middle].transform);
     }
     public void resetBoard()
     {

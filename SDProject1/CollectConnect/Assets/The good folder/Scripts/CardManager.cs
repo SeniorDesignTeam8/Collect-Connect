@@ -1,5 +1,6 @@
 ﻿using Mono.Data.Sqlite;
 using System;
+
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
@@ -143,19 +144,27 @@ public class CardManager : MonoBehaviour{
         }
     }
 
-    public void dealCards(string player)
+    public void dealCards()
     {
-
+        GameObject card;
+        for (int i = 0; i < 4;i++)
+        {
+            card = createCardObject();
+            card.transform.SetParent(GameObject.Find("Player1").transform);
+        }
     }
-    public void createCardObject()
+    public GameObject createCardObject()
     {
-        Deck[0].SetActive(true);
-        CardInfo reset = Deck[0].GetComponent<CardInfo>();
-        Text des= Deck[0].GetComponentInChildren<Text>();
+        System.Random rnd = new System.Random();
+        int pick = rnd.Next(Deck.Count-1);
+        int i = pick;
+        Deck[pick].SetActive(true);
+        CardInfo reset = Deck[pick].GetComponent<CardInfo>();
+        Text des= Deck[pick].GetComponentInChildren<Text>();
         des.text=reset.finalDescription();
         Component[] images;
-        images=Deck[0].GetComponentsInChildren<Image>();
-        Image art= Deck[0].GetComponentInChildren<Image>();
+        images=Deck[pick].GetComponentsInChildren<Image>();
+        Image art= Deck[pick].GetComponentInChildren<Image>();
         foreach (Image x in images)
         {
             if(x.tag=="art")
@@ -166,7 +175,9 @@ public class CardManager : MonoBehaviour{
         }
        
         art.sprite= reset.cardPic;
-        Deck[0].transform.SetParent(GameObject.Find("Player1").transform);
+        GameObject newCard = Deck[pick];//Deck[pick].transform.SetParent(GameObject.Find("Player1").transform);
+        Deck.RemoveAt(pick);
+        return newCard;
         
     }
         
@@ -178,7 +189,7 @@ public class CardManager : MonoBehaviour{
         Deck = new List<GameObject>();
        
 		BuildDeck ();
-        Invoke("createCardObject", 3);
+        Invoke("dealCards", 2);
 	}
 	
 	
