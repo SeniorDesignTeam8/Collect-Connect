@@ -12,7 +12,8 @@ public class CardManager : MonoBehaviour{
 
     public static IDbConnection dbConnect;
     public static List<GameObject> Deck;
-  //  public GameObject cards;
+    System.Random rnd;
+    //  public GameObject cards;
 
 
     private static void BuildDeck()
@@ -155,7 +156,7 @@ public class CardManager : MonoBehaviour{
     }
     public GameObject createCardObject()
     {
-        System.Random rnd = new System.Random();
+        
         int pick = rnd.Next(Deck.Count-1);
         int i = pick;
         Deck[pick].SetActive(true);
@@ -194,8 +195,8 @@ public class CardManager : MonoBehaviour{
         dbConnect = (IDbConnection)new SqliteConnection(conn);
         dbConnect.Open();
         Deck = new List<GameObject>();
-       
-		BuildDeck ();
+        rnd = new System.Random();
+        BuildDeck ();
         Invoke("dealCards", 2);
 	}
 	
