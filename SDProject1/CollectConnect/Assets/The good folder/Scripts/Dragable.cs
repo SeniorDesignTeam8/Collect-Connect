@@ -35,10 +35,9 @@ public class Dragable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     public void OnDrag(PointerEventData eventData)
     {
         transform.position = eventData.position;
-        checkDrop area = hand.GetComponent<checkDrop>();
-        if (area.ableArrange)
-            arrangeHand();
-
+            checkDrop area = hand.GetComponent<checkDrop>();
+            if (area.ableArrange)
+                arrangeHand();
 
     }
 

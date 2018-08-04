@@ -14,20 +14,13 @@ public class tile : MonoBehaviour
 
     public void isAvailable()
     {
-        if (transform.childCount == 0)
-        {
-            available = true;
-            imageHighlight.color = glowColor;
-        }
-        else
-        {
-            transform.GetChild(0).GetComponent<Dragable>().cgroup.blocksRaycasts = false;
-            available = false;
-            imageHighlight.color = initColor;
-        }
+         available = true;
+ //        imageHighlight.color = glowColor;
+
     }
     public void notAvailable()
     {
+        transform.GetChild(0).GetComponent<Dragable>().cgroup.blocksRaycasts = false;
         available = false;
         imageHighlight.color = initColor;
     }
