@@ -109,7 +109,7 @@ MonoBehaviour:
   m_MinSize: {x: 683, y: 495}
   m_MaxSize: {x: 14004, y: 14045}
   vertical: 0
-  controlID: 22784
+  controlID: 949
 --- !u!114 &6
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -133,7 +133,7 @@ MonoBehaviour:
   m_MinSize: {x: 406, y: 495}
   m_MaxSize: {x: 10002, y: 14045}
   vertical: 1
-  controlID: 22785
+  controlID: 950
 --- !u!114 &7
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -157,7 +157,7 @@ MonoBehaviour:
   m_MinSize: {x: 406, y: 224}
   m_MaxSize: {x: 8006, y: 4024}
   vertical: 0
-  controlID: 22786
+  controlID: 951
 --- !u!114 &8
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -367,7 +367,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 84ebf6ff3aeaf7ff6007f9ff6afbffff86fbffffb4fbffffe4fbffffe6fbffff000000004232000046320000
+    m_ExpandedIDs: e6fbffff00000000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -527,19 +527,19 @@ MonoBehaviour:
     m_ShowAllHits: 0
     m_SearchArea: 0
     m_Folders:
-    - Assets/The good folder
+    - Assets/The good folder/Prefabs
   m_ViewMode: 1
   m_StartGridSize: 64
   m_LastFolders:
-  - Assets/The good folder
+  - Assets/The good folder/Prefabs
   m_LastFoldersGridSize: -1
   m_LastProjectPath: C:\Users\adrie\Documents\GitHub\Collect-Connect\SDProject1\CollectConnect
   m_IsLocked: 0
   m_FolderTreeState:
-    scrollPos: {x: 0, y: 849}
-    m_SelectedIDs: 962d0000
-    m_LastClickedID: 11670
-    m_ExpandedIDs: 0000000010270000bc270000782800008c280000742a0000b62a0000282b00007a2c0000962d00007c2e0000a22e00004a3100003c3300003e33000040330000423300004433000046330000483300004a3300004c3300004e33000050330000523300005433000056330000583300005a330000ec67000000ca9a3bffffff7f
+    scrollPos: {x: 0, y: 881}
+    m_SelectedIDs: ae300000
+    m_LastClickedID: 12462
+    m_ExpandedIDs: 0000000014270000c427000080280000942800007e2a0000c02a0000322b00008a2c0000a62d0000702e00008e2e0000b42e00005c3100004e33000050330000523300005433000056330000583300005a3300005c3300005e33000060330000623300006433000066330000683300006a3300006c33000000ca9a3bffffff7f
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -567,7 +567,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 0000000010270000bc270000782800008c280000742a0000b62a0000282b00007a2c0000962d00007c2e0000a22e00004a3100003c3300003e33000040330000423300004433000046330000483300004a3300004c3300004e33000050330000523300005433000056330000583300005a330000ec67000000ca9a3bffffff7f
+    m_ExpandedIDs: 0000000014270000c427000080280000942800007e2a0000c02a0000322b00008a2c0000a62d0000702e00008e2e0000b42e00005c3100004e33000050330000523300005433000056330000583300005a3300005c3300005e33000060330000623300006433000066330000683300006a3300006c33000000ca9a3bffffff7f
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -594,7 +594,7 @@ MonoBehaviour:
   m_ListAreaState:
     m_SelectedInstanceIDs: 
     m_LastClickedInstanceID: 0
-    m_HadKeyboardFocusLastEvent: 1
+    m_HadKeyboardFocusLastEvent: 0
     m_ExpandedInstanceIDs: c6230000e42800003a2c00008c2c00004a2c0000a42b0000782c00004c2e0000982800004a2b0000ac2a0000562b0000e22d0000142b00005e270000b22a0000642c000094290000082b0000e42d00003a490000c02f000000000000462a00004a2700004e27000086280000
     m_RenameOverlay:
       m_UserAcceptedRename: 0

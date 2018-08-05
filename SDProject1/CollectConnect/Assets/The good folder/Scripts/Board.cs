@@ -79,7 +79,9 @@ public class Board : MonoBehaviour
                 {
                    board[i, j].GetComponent<tile>().notAvailable();
                    checkNeighbor(i, j);
- 
+                    validConnection(i, j);
+
+
                 }
 
             }
@@ -91,7 +93,7 @@ public class Board : MonoBehaviour
     {
         if (xCord - 2 >= 0)
         {
-            if (board[xCord - 2, yCord] != null)
+            if (board[xCord - 2, yCord] != null && board[xCord-2,yCord].tag=="tile")
             {
                 if (board[xCord - 2, yCord].transform.childCount > 0)
                 {
@@ -106,8 +108,8 @@ public class Board : MonoBehaviour
      
            if (xCord + 2 < size)
             {
-                 if (board[xCord + 2, yCord] != null)
-                  {
+                 if (board[xCord + 2, yCord] != null && board[xCord + 2, yCord].tag == "tile")
+            {
                       if (board[xCord + 2, yCord].transform.childCount > 0)
                       {
                          board[xCord + 2, yCord].GetComponent<tile>().notAvailable();
@@ -120,8 +122,8 @@ public class Board : MonoBehaviour
             }
             if (yCord - 2 >= 0)
             {
-                if (board[xCord, yCord - 2] != null)
-                {
+                if (board[xCord, yCord - 2] != null && board[xCord , yCord- 2].tag == "tile")
+            {
                      if (board[xCord, yCord - 2].transform.childCount > 0)
                       {
                            board[xCord, yCord - 2].GetComponent<tile>().notAvailable();
@@ -136,8 +138,8 @@ public class Board : MonoBehaviour
 
             if (yCord + 2 < size)
             {
-                if (board[xCord, yCord + 2] != null)
-                {
+                if (board[xCord, yCord + 2] != null && board[xCord, yCord + 2].tag == "tile")
+            {
                        if (board[xCord, yCord + 2].transform.childCount > 0)
                       {
                           board[xCord, yCord + 2].GetComponent<tile>().notAvailable();
@@ -151,10 +153,68 @@ public class Board : MonoBehaviour
             }
     }
 
-    public void validConnection()
+    public void validConnection(int xCord, int yCord)
     {
+        if (xCord - 1 >= 0)
+        {
+            if (board[xCord - 1, yCord] != null)
+            {
+                if (board[xCord - 1, yCord].transform.childCount > 0)
+                {
+                    board[xCord - 1, yCord].GetComponent<tile>().notAvailable();
+                }
+                else
+                {
+                    board[xCord - 1, yCord].GetComponent<tile>().isAvailable();
+                }
+            }
+        }
 
+        if (xCord + 1 < size)
+        {
+            if (board[xCord + 1, yCord] != null)
+            {
+                if (board[xCord + 1, yCord].transform.childCount > 0)
+                {
+                    board[xCord + 1, yCord].GetComponent<tile>().notAvailable();
+                }
+                else
+                {
+                    board[xCord + 1, yCord].GetComponent<tile>().isAvailable();
+                }
+            }
+        }
+        if (yCord - 1 >= 0)
+        {
+            if (board[xCord, yCord - 1] != null)
+            {
+                if (board[xCord, yCord - 1].transform.childCount > 0)
+                {
+                    board[xCord, yCord - 1].GetComponent<tile>().notAvailable();
+                }
+                else
+                {
+                    board[xCord, yCord - 1].GetComponent<tile>().isAvailable();
+                }
 
+            }
+        }
+
+        if (yCord + 1 < size)
+        {
+            if (board[xCord, yCord + 1] != null)
+            {
+                if (board[xCord, yCord + 1].transform.childCount > 0)
+                {
+                    board[xCord, yCord + 1].GetComponent<tile>().notAvailable();
+                }
+                else
+                {
+                    board[xCord, yCord + 1].GetComponent<tile>().isAvailable();
+                }
+
+            }
+        }
     }
 
 }
