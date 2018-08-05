@@ -10,7 +10,7 @@ public class InflateCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     GameObject copy;
     public void OnPointerEnter(PointerEventData eventData)
     {
-        Debug.Log("Cursor Entering " + name + " GameObject");
+       // Debug.Log("Cursor Entering " + name + " GameObject");
         if (transform.tag=="card")
         {
             // inflate();
@@ -21,7 +21,7 @@ public class InflateCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        Debug.Log("Cursor Entering " + name + " GameObject");
+       // Debug.Log("Cursor Entering " + name + " GameObject");
         if (transform.tag == "card")
         {
             // deflate();

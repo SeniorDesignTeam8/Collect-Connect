@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class tile : MonoBehaviour
 {
-    public bool isOccupid, available;
+    public bool confirmed, available;
     Color glowColor = Color.white, initColor;
 
     Image imageHighlight;
@@ -15,17 +15,27 @@ public class tile : MonoBehaviour
     public void isAvailable()
     {
          available = true;
- //        imageHighlight.color = glowColor;
+         imageHighlight.color = glowColor;
 
     }
     public void notAvailable()
     {
-        transform.GetChild(0).GetComponent<Dragable>().cgroup.blocksRaycasts = false;
+        Dragable card = transform.GetChild(0).GetComponent<Dragable>();
+        if (card != null)
+        {
+            card.canBeMoved = false;
+        }
+        else
+        {
+            wordDrag connect = transform.GetChild(0).GetComponent<wordDrag>();
+            connect.cgroup.blocksRaycasts = false;
+        }
         available = false;
         imageHighlight.color = initColor;
     }
     void Start()
     {
+        confirmed = false;  
         imageHighlight = GetComponent<Image>();
         initColor = imageHighlight.color;
 

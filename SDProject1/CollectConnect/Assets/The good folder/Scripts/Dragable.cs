@@ -12,33 +12,38 @@ public class Dragable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     public GameObject moveArea;
     RectTransform rectTrans;
     GameObject placeholder;
-
-    public bool canBeMoved;
+    
+    public bool canBeMoved=true;
 
 
     //when the card is selected it 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        placeholder = new GameObject();
-        placeholder.transform.SetParent(transform.parent);
-        RectTransform rt = placeholder.AddComponent<RectTransform>();
-        rt = rectTrans;
-        placeholder.transform.SetSiblingIndex(transform.GetSiblingIndex());
+        if (canBeMoved)
+        {
+            placeholder = new GameObject();
+            placeholder.transform.SetParent(transform.parent);
+            RectTransform rt = placeholder.AddComponent<RectTransform>();
+            rt = rectTrans;
+            placeholder.transform.SetSiblingIndex(transform.GetSiblingIndex());
 
-        lastLocation = transform.parent;
-        transform.SetParent(moveArea.transform);
-        cgroup.blocksRaycasts = false;
+            lastLocation = transform.parent;
+            transform.SetParent(moveArea.transform);
+            cgroup.blocksRaycasts = false;
+        }
     }
 
     // events that can occur while moving the card around the screen 
     //
     public void OnDrag(PointerEventData eventData)
     {
-        transform.position = eventData.position;
+        if (canBeMoved)
+        {
+            transform.position = eventData.position;
             checkDrop area = hand.GetComponent<checkDrop>();
             if (area.ableArrange)
                 arrangeHand();
-
+        }
     }
 
 
@@ -46,11 +51,14 @@ public class Dragable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     //or snap back to the last valid location 
     public void OnEndDrag(PointerEventData eventData)
     {
-        transform.SetParent(lastLocation);
-        transform.SetSiblingIndex(placeholder.transform.GetSiblingIndex());
-        Destroy(placeholder);
+        if (canBeMoved)
+        {
+            transform.SetParent(lastLocation);
+            transform.SetSiblingIndex(placeholder.transform.GetSiblingIndex());
+            Destroy(placeholder);
 
-        cgroup.blocksRaycasts = true;
+            cgroup.blocksRaycasts = true;
+        }
  
     }
 
@@ -73,7 +81,7 @@ public class Dragable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     // Use this for initialization
     void Start()
     {
-       
+       // canBeMoved = true;
         rectTrans = GetComponent<RectTransform>();
         cgroup = GetComponent<CanvasGroup>();
         moveArea = GameObject.Find("mainCanvas");

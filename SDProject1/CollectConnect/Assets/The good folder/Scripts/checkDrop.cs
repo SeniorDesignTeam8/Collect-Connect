@@ -11,17 +11,35 @@ public class checkDrop : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoi
     bool valid;
     public void OnDrop(PointerEventData eventData)
     {
-
-        if ((transform.tag == "tile" && valid) || transform.tag == "hand")
+        wordDrag connect = eventData.pointerDrag.GetComponent<wordDrag>();
+        Dragable card = eventData.pointerDrag.GetComponent<Dragable>();
+        if (card != null)
         {
-            Dragable d = eventData.pointerDrag.GetComponent<Dragable>();
-            d.lastLocation = transform;
+            if ((transform.tag == "tile" && valid) || transform.tag == "hand")
+            {
 
+                card.lastLocation = transform;
+
+            }
+            else
+            {
+                card.lastLocation = GameObject.Find("Player1").transform;
+            }
         }
         else
         {
-            Dragable d = eventData.pointerDrag.GetComponent<Dragable>();
-            d.lastLocation = GameObject.Find("Player1").transform;
+            if ((transform.tag == "connection" && valid) || transform.tag == "wordBank")
+            {
+                wordDrag d = eventData.pointerDrag.GetComponent<wordDrag>();
+                d.lastLocation = transform;
+
+            }
+            else
+            {
+                wordDrag d = eventData.pointerDrag.GetComponent<wordDrag>();
+                d.lastLocation = GameObject.Find("word_bank").transform;
+            }
+
         }
 
     }
@@ -33,7 +51,7 @@ public class checkDrop : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoi
         {
             ableArrange = true;
         }
-        if (transform.tag == "tile")
+        if (transform.tag == "tile"||transform.tag=="connection")
         {
             boardSpace = transform.GetComponent<tile>();
             valid = boardSpace.available;
@@ -67,4 +85,5 @@ public class checkDrop : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoi
     {
 
     }
+
 }

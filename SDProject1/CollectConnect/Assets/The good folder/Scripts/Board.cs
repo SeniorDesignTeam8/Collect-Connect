@@ -26,30 +26,10 @@ public class Board : MonoBehaviour
     {
         setUpBoard();
         Invoke("pickStartCard", 1);
-        Invoke("checkCardsonBoard", 1);
+        Invoke("checkCardsOnBoard", 1);
     }
 
-    //public void setUpBoard()
-    //{
-    //    RectTransform rtCanvas = mainCanvas.GetComponent<RectTransform>();
-    //    Vector2 sizing = rtCanvas.sizeDelta;
-    //    offsetX = sizing.x * .35f;
-    //    offsetY = sizing.y * .3f;
 
-
-    //    board = new GameObject[boardDimensions, boardDimensions];
-
-    //    for (int i = 0; i < boardDimensions; i++)
-    //    {
-    //        for (int j = 0; j < boardDimensions; j++)
-    //        {
-    //            board[i, j] = Instantiate(panel, new Vector3(i * distancePanelX + offsetX, j * distancePanelY + offsetY, 0), Quaternion.identity);
-    //            board[i, j].transform.SetParent(mainCanvas.transform);
-
-    //        }
-    //    }
-
-    //}
     public void setUpBoard()
     {
         RectTransform rtCanvas = mainCanvas.GetComponent<RectTransform>();
@@ -71,9 +51,8 @@ public class Board : MonoBehaviour
                 }
                 else if ((i % 2 == 0 && j % 2 != 0) || (i % 2 != 0 && j % 2 == 0))
                 {
-                    board[i, j] = Instantiate(wordPanel, new Vector3(i * distancePanelX + offsetX, j * distancePanelY + offsetY, 0), Quaternion.identity);
+                    board[i, j] = Instantiate(wordPanel, new Vector3(i * distancePanelX + offsetX, j * distancePanelY + offsetY-20, 0), Quaternion.identity);
                     board[i, j].transform.SetParent(mainCanvas.transform);
-                    board[i, j].GetComponent<tile>().isAvailable();
                 }
 
                 else board[i, j] = null;
@@ -84,27 +63,23 @@ public class Board : MonoBehaviour
     }
     public void pickStartCard()
     {
-        //int middle = (boardDimensions - 1)/2;
          int middle = (boardDimensions - 1);
         CardManager startingCard = GameObject.Find("mainCanvas").GetComponent<CardManager>();
         start = startingCard.createCardObject();
         start.transform.SetParent(board[middle, middle].transform);
     }
-    public void checkCardsonBoard()
+    public void checkCardsOnBoard()
     {
         
         for (int i = 0; i < size; i++)
         {
             for (int j = 0; j < size; j++)
             {
-                if (board[i, j] != null)
+                if (board[i, j] != null&& board[i, j].transform.childCount > 0)
                 {
-                    if (board[i, j].transform.childCount > 0)
-                    {
-                        board[i, j].GetComponent<tile>().notAvailable();
-                        checkNeighbor(i, j);
-               
-                    }
+                   board[i, j].GetComponent<tile>().notAvailable();
+                   checkNeighbor(i, j);
+ 
                 }
 
             }
@@ -176,8 +151,9 @@ public class Board : MonoBehaviour
             }
     }
 
-    public void validMove()
+    public void validConnection()
     {
+
 
     }
 
