@@ -17,18 +17,30 @@ public class Board : MonoBehaviour
     public float distancePanelY;
     public GameObject mainCanvas;
     int size;
-
+    bool begin = false;
     public GameObject[,] board;
-
+    List<GameObject> available;
 
     // Use this for initialization
     void Start()
     {
+        available = new List<GameObject>();
         setUpBoard();
         Invoke("pickStartCard", 1);
         Invoke("checkCardsOnBoard", 1);
+        Invoke("lateStart", 1);
     }
-
+    void lateStart()
+    {
+        begin = true;
+    }
+    private void FixedUpdate()
+    {
+        if(begin)
+        {
+            limitActiveObjects();
+        }
+    }
 
     public void setUpBoard()
     {
@@ -81,7 +93,6 @@ public class Board : MonoBehaviour
                    checkNeighbor(i, j);
                     validConnection(i, j);
 
-
                 }
 
             }
@@ -89,6 +100,44 @@ public class Board : MonoBehaviour
         
 
     }
+
+    public void limitActiveObjects()
+    {
+        int cards = 0, connections = 0, cardref=-1, connRef=-1;
+        
+        for(int i=0; i< available.Count;i++)
+        {
+            if(available[i].transform.childCount>0&&available[i].tag=="tile")
+            {
+                if (cards == 0)
+                {
+                    cards++;
+                    cardref = i;
+                }
+                else
+                {
+                    Transform t = available[cardref].GetComponentInChildren<Dragable>().hand;
+                    available[cardref].transform.GetChild(0).transform.SetParent(t);
+                    cardref = i;
+                }
+            }
+            else if (available[i].transform.childCount > 0 && available[i].tag == "connection")
+            {
+                if (cards == 0)
+                {
+                    connections++;
+                    connRef = i;
+                }
+                else
+                {
+                    Transform t = available[connRef].GetComponentInChildren<wordDrag>().bank;
+                    available[connRef].transform.GetChild(0).transform.SetParent(t);
+                    connRef = i;
+                }
+            }
+        }
+    }
+
     public void checkNeighbor(int xCord, int yCord)
     {
         if (xCord - 2 >= 0)
@@ -97,10 +146,12 @@ public class Board : MonoBehaviour
             {
                 if (board[xCord - 2, yCord].transform.childCount > 0)
                 {
+                    available.Remove(board[xCord - 2, yCord]);
                     board[xCord - 2, yCord].GetComponent<tile>().notAvailable();
                 }
                 else
                 {
+                    available.Add(board[xCord - 2, yCord]);
                     board[xCord - 2, yCord].GetComponent<tile>().isAvailable();
                 }
             }
@@ -112,10 +163,12 @@ public class Board : MonoBehaviour
             {
                       if (board[xCord + 2, yCord].transform.childCount > 0)
                       {
+                         available.Remove(board[xCord + 2, yCord]);
                          board[xCord + 2, yCord].GetComponent<tile>().notAvailable();
                       }
                         else
-                     {
+                      {
+                          available.Add(board[xCord +2, yCord]);   
                           board[xCord + 2, yCord].GetComponent<tile>().isAvailable();
                       }
                  }
@@ -126,12 +179,14 @@ public class Board : MonoBehaviour
             {
                      if (board[xCord, yCord - 2].transform.childCount > 0)
                       {
+                           available.Remove(board[xCord , yCord- 2]);
                            board[xCord, yCord - 2].GetComponent<tile>().notAvailable();
                       }
                      else
                      {
+                           available.Add(board[xCord , yCord-2]);
                            board[xCord, yCord - 2].GetComponent<tile>().isAvailable();
-                        }
+                     }
 
                  }
             }
@@ -140,13 +195,15 @@ public class Board : MonoBehaviour
             {
                 if (board[xCord, yCord + 2] != null && board[xCord, yCord + 2].tag == "tile")
             {
-                       if (board[xCord, yCord + 2].transform.childCount > 0)
-                      {
+                     if (board[xCord, yCord + 2].transform.childCount > 0)
+                     {
+                          available.Remove(board[xCord , yCord +2]);
                           board[xCord, yCord + 2].GetComponent<tile>().notAvailable();
                      }
-                      else
+                     else
                      {
-                          board[xCord, yCord + 2].GetComponent<tile>().isAvailable();
+                        available.Add(board[xCord , yCord+2]);
+                        board[xCord, yCord + 2].GetComponent<tile>().isAvailable();
                      }
                  
                 }
@@ -161,10 +218,12 @@ public class Board : MonoBehaviour
             {
                 if (board[xCord - 1, yCord].transform.childCount > 0)
                 {
+                    available.Remove(board[xCord - 1, yCord]);
                     board[xCord - 1, yCord].GetComponent<tile>().notAvailable();
                 }
                 else
                 {
+                    available.Add(board[xCord - 1, yCord]);
                     board[xCord - 1, yCord].GetComponent<tile>().isAvailable();
                 }
             }
@@ -176,10 +235,12 @@ public class Board : MonoBehaviour
             {
                 if (board[xCord + 1, yCord].transform.childCount > 0)
                 {
+                    available.Remove(board[xCord + 1, yCord]);
                     board[xCord + 1, yCord].GetComponent<tile>().notAvailable();
                 }
                 else
                 {
+                    available.Add(board[xCord + 1, yCord]);
                     board[xCord + 1, yCord].GetComponent<tile>().isAvailable();
                 }
             }
@@ -190,10 +251,12 @@ public class Board : MonoBehaviour
             {
                 if (board[xCord, yCord - 1].transform.childCount > 0)
                 {
+                    available.Remove(board[xCord , yCord- 1]);
                     board[xCord, yCord - 1].GetComponent<tile>().notAvailable();
                 }
                 else
                 {
+                    available.Add(board[xCord , yCord- 1]);
                     board[xCord, yCord - 1].GetComponent<tile>().isAvailable();
                 }
 
@@ -206,10 +269,12 @@ public class Board : MonoBehaviour
             {
                 if (board[xCord, yCord + 1].transform.childCount > 0)
                 {
+                    available.Remove(board[xCord, yCord + 1]);
                     board[xCord, yCord + 1].GetComponent<tile>().notAvailable();
                 }
                 else
                 {
+                    available.Add(board[xCord, yCord + 1]);
                     board[xCord, yCord + 1].GetComponent<tile>().isAvailable();
                 }
 
