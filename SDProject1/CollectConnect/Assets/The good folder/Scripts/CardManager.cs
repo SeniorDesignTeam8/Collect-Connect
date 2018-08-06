@@ -16,6 +16,7 @@ public class CardManager : MonoBehaviour{
     //  public GameObject cards;
 
 
+    //pulls every object from the database and puts them in a deck
     private static void BuildDeck()
     {
 
@@ -145,6 +146,8 @@ public class CardManager : MonoBehaviour{
         }
     }
 
+
+    //deals 4 crads to the players
     public void dealCards()
     {
         GameObject card;
@@ -154,6 +157,8 @@ public class CardManager : MonoBehaviour{
             card.transform.SetParent(GameObject.Find("Player1").transform);
         }
     }
+
+    //creates the actual card gameobject
     public GameObject createCardObject()
     {
         
@@ -201,10 +206,4 @@ public class CardManager : MonoBehaviour{
 	}
 	
 	
-	void Update ()
-    {
-		
-	}
-
-
 }

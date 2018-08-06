@@ -21,27 +21,23 @@ public class Board : MonoBehaviour
     public GameObject[,] board;
     List<GameObject> available;
 
-    // Use this for initialization
+  
     void Start()
     {
         available = new List<GameObject>();
         setUpBoard();
         Invoke("pickStartCard", 1);
         Invoke("checkCardsOnBoard", 1);
-        Invoke("lateStart", 1);
-    }
-    void lateStart()
-    {
-        begin = true;
     }
     private void FixedUpdate()
     {
         if(begin)
         {
-            limitActiveObjects();
+       //     limitActiveObjects();
         }
     }
 
+    //initalizes board with spaces for cards and word connections
     public void setUpBoard()
     {
         RectTransform rtCanvas = mainCanvas.GetComponent<RectTransform>();
@@ -73,6 +69,7 @@ public class Board : MonoBehaviour
         }
 
     }
+    //sets the starting card in the middle of the board
     public void pickStartCard()
     {
          int middle = (boardDimensions - 1);
@@ -80,6 +77,10 @@ public class Board : MonoBehaviour
         start = startingCard.createCardObject();
         start.transform.SetParent(board[middle, middle].transform);
     }
+
+    //checks the board for cards
+    //once a card is found it highlights the neihboring spots
+    //indicating to the player that that is an available spot to play a card
     public void checkCardsOnBoard()
     {
         
@@ -101,13 +102,14 @@ public class Board : MonoBehaviour
 
     }
 
+    //returns a card or word if the player tries to place more than one
     public void limitActiveObjects()
     {
         int cards = 0, connections = 0, cardref=-1, connRef=-1;
         
         for(int i=0; i< available.Count;i++)
         {
-            if(available[i].transform.childCount>0&&available[i].tag=="tile")
+            if(available[i].transform.childCount>0 && available[i].tag=="tile")
             {
                 if (cards == 0)
                 {
@@ -117,13 +119,14 @@ public class Board : MonoBehaviour
                 else
                 {
                     Transform t = available[cardref].GetComponentInChildren<Dragable>().hand;
-                    available[cardref].transform.GetChild(0).transform.SetParent(t);
+                  //  GameObject wtf = available[cardref].transform.GetChild(0).gameObject;
+                    available[cardref].transform.GetChild(0).SetParent(t);
                     cardref = i;
                 }
             }
             else if (available[i].transform.childCount > 0 && available[i].tag == "connection")
             {
-                if (cards == 0)
+                if (connections == 0)
                 {
                     connections++;
                     connRef = i;
@@ -138,6 +141,28 @@ public class Board : MonoBehaviour
         }
     }
 
+    //arranges the list "available" so that the most recently placed object 
+    //is at the back of the list. important for determining which card to 
+    //send back to the players hand when they try to place more than one 
+    //on the board at a time
+    public void addToListEnd(Transform recent)
+    {
+        // available.Add(recent.parent.gameObject);
+        if (available.Contains(recent.parent.gameObject))
+        {
+            int current = available.IndexOf(recent.parent.gameObject);
+            available.Add(available[current]);
+            available.RemoveAt(current);
+        }
+        Invoke("limitActiveObjects", .1f);
+    }
+
+
+
+
+    //the function that checks whether the tiles neighboring where a 
+    //card has been placed are available to hold a card or are already full
+    //and cannot hold a card
     public void checkNeighbor(int xCord, int yCord)
     {
         if (xCord - 2 >= 0)
@@ -210,6 +235,7 @@ public class Board : MonoBehaviour
             }
     }
 
+    //highlights the connections available for a player to make
     public void validConnection(int xCord, int yCord)
     {
         if (xCord - 1 >= 0)

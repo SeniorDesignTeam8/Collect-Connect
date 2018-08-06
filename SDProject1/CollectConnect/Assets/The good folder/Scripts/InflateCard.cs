@@ -100,11 +100,6 @@ public class InflateCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         infalteCopy();
     }
 
-    public void removeDisplay()
-    {
-       
-
-    }
 
     // Use this for initialization
     void Start ()
@@ -112,9 +107,4 @@ public class InflateCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         cardDisplay = GameObject.Find("DisplayCard");
 	}
 	
-	// Update is called once per frame
-	void Update ()
-    {
-		
-	}
 }

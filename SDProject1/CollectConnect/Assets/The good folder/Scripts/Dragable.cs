@@ -16,7 +16,8 @@ public class Dragable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     public bool canBeMoved=true;
 
 
-    //when the card is selected it 
+    //when the card is selected it creates a placeholder in its spot
+    //this allwos the player to be able to arrange their hand
     public void OnBeginDrag(PointerEventData eventData)
     {
         if (canBeMoved)
@@ -49,15 +50,24 @@ public class Dragable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
 
     // When the player lets go of the card it will either stay where they dropped it if valid
     //or snap back to the last valid location 
+    //updates the list of items on the board
+    //does not allow the player to place more than one card on the board at a time
     public void OnEndDrag(PointerEventData eventData)
     {
         if (canBeMoved)
         {
-            transform.SetParent(lastLocation);
+            if (transform.parent.gameObject != hand && lastLocation.childCount > 0)
+            {
+                transform.parent = hand;
+            }
+            else
+                 transform.SetParent(lastLocation);
             transform.SetSiblingIndex(placeholder.transform.GetSiblingIndex());
             Destroy(placeholder);
 
             cgroup.blocksRaycasts = true;
+            GameObject.Find("mainCanvas").GetComponent<Board>().addToListEnd(transform);
+            //GameObject.Find("mainCanvas").GetComponent<Board>().limitActiveObjects();
         }
  
     }

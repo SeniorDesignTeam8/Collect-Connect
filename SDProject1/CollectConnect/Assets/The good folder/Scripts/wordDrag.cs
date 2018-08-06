@@ -16,7 +16,7 @@ public class wordDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     public bool canBeMoved;
 
 
-    //when the card is selected it 
+    //when the word is selected it 
     public void OnBeginDrag(PointerEventData eventData)
     {
      
@@ -25,7 +25,7 @@ public class wordDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
         cgroup.blocksRaycasts = false;
     }
 
-    // events that can occur while moving the card around the screen 
+    // events that can occur while moving the word around the screen 
     //
     public void OnDrag(PointerEventData eventData)
     {
@@ -34,12 +34,19 @@ public class wordDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     }
 
 
-    // When the player lets go of the card it will either stay where they dropped it if valid
+    // When the player lets go of the word it will either stay where they dropped it if valid
     //or snap back to the last valid location 
     public void OnEndDrag(PointerEventData eventData)
     {
-        transform.SetParent(lastLocation);
+        if(transform.parent.gameObject!= bank && lastLocation.childCount>0)
+        {
+            transform.parent = bank;
+        }
+        else
+            transform.SetParent(lastLocation);
         cgroup.blocksRaycasts = true;
+    
+        GameObject.Find("mainCanvas").GetComponent<Board>().addToListEnd(transform);
 
     }
 

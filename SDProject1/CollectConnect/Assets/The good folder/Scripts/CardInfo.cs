@@ -102,17 +102,4 @@ public class CardInfo : MonoBehaviour {
         return des;
     }
 
-
-
-    // Use this for initialization
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
 }

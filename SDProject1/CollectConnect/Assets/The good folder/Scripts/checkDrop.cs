@@ -19,7 +19,7 @@ public class checkDrop : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoi
             {
 
                 card.lastLocation = transform;
-
+               
             }
             else
             {
