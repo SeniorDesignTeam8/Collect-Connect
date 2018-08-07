@@ -332,32 +332,33 @@ public class Board : MonoBehaviour
         {
             for (int j = 0; j < size; j++)
             {
-                if (board[i, j] == available[card])
+                if (card!=-1&& board[i, j] == available[card])
                 {
                     cardi = i;
                     cardj = j;
                 }
-                if (board[i, j] == available[connect])
+                if (connect!=-1&&board[i, j] == available[connect])
                 {
                     connj = j;
                     conni = i;
                 }
             }
         }
-
-        if(cardi==conni&& (cardj + 1 == connj || cardj - 1 == connj))
-        {
-            checkCardsOnBoard();
-        }
-        else if(cardj==connj&& (cardi + 1 == conni || cardi - 1 == conni))
-        {
-            checkCardsOnBoard();
-        }
-        else
-        {
-            Debug.Log(cardi + "   " + conni);
-            Debug.Log(cardj + "   " + connj);
-            Debug.Log("Invalid Move!");
+        if (cardi!=-1&&cardj!=-1&&conni!=-1&&connj!=-1)
+        { if (cardi == conni && (cardj + 1 == connj || cardj - 1 == connj))
+            {
+                checkCardsOnBoard();
+            }
+            else if (cardj == connj && (cardi + 1 == conni || cardi - 1 == conni))
+            {
+                checkCardsOnBoard();
+            }
+            else
+            {
+                Debug.Log(cardi + "   " + conni);
+                Debug.Log(cardj + "   " + connj);
+                Debug.Log("Invalid Move!");
+            }
         }
     }
 }
