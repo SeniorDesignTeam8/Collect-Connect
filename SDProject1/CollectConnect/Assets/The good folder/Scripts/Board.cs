@@ -19,6 +19,7 @@ public class Board : MonoBehaviour
     int size;
     bool begin = false;
     public GameObject[,] board;
+   
     List<GameObject> available;
 
   
@@ -28,13 +29,6 @@ public class Board : MonoBehaviour
         setUpBoard();
         Invoke("pickStartCard", 1);
         Invoke("checkCardsOnBoard", 1);
-    }
-    private void FixedUpdate()
-    {
-        if(begin)
-        {
-       //     limitActiveObjects();
-        }
     }
 
     //initalizes board with spaces for cards and word connections
@@ -56,6 +50,7 @@ public class Board : MonoBehaviour
                 {
                     board[i, j] = Instantiate(panel, new Vector3(i * distancePanelX + offsetX, j * distancePanelY + offsetY, 0), Quaternion.identity);
                     board[i, j].transform.SetParent(mainCanvas.transform);
+                    
                 }
                 else if ((i % 2 == 0 && j % 2 != 0) || (i % 2 != 0 && j % 2 == 0))
                 {
@@ -157,9 +152,6 @@ public class Board : MonoBehaviour
         Invoke("limitActiveObjects", .1f);
     }
 
-
-
-
     //the function that checks whether the tiles neighboring where a 
     //card has been placed are available to hold a card or are already full
     //and cannot hold a card
@@ -176,7 +168,8 @@ public class Board : MonoBehaviour
                 }
                 else
                 {
-                    available.Add(board[xCord - 2, yCord]);
+                    if(!available.Contains(board[xCord - 2, yCord]))
+                         available.Add(board[xCord - 2, yCord]);
                     board[xCord - 2, yCord].GetComponent<tile>().isAvailable();
                 }
             }
@@ -193,7 +186,8 @@ public class Board : MonoBehaviour
                       }
                         else
                       {
-                          available.Add(board[xCord +2, yCord]);   
+                        if (!available.Contains(board[xCord +2, yCord]))
+                            available.Add(board[xCord +2, yCord]);   
                           board[xCord + 2, yCord].GetComponent<tile>().isAvailable();
                       }
                  }
@@ -209,7 +203,8 @@ public class Board : MonoBehaviour
                       }
                      else
                      {
-                           available.Add(board[xCord , yCord-2]);
+                           if(!available.Contains(board[xCord, yCord - 2]))
+                                 available.Add(board[xCord , yCord-2]);
                            board[xCord, yCord - 2].GetComponent<tile>().isAvailable();
                      }
 
@@ -227,7 +222,8 @@ public class Board : MonoBehaviour
                      }
                      else
                      {
-                        available.Add(board[xCord , yCord+2]);
+                        if(!available.Contains(board[xCord , yCord+ 2]))
+                              available.Add(board[xCord , yCord+2]);
                         board[xCord, yCord + 2].GetComponent<tile>().isAvailable();
                      }
                  
@@ -249,7 +245,8 @@ public class Board : MonoBehaviour
                 }
                 else
                 {
-                    available.Add(board[xCord - 1, yCord]);
+                    if (!available.Contains(board[xCord - 1, yCord]))
+                        available.Add(board[xCord - 1, yCord]);
                     board[xCord - 1, yCord].GetComponent<tile>().isAvailable();
                 }
             }
@@ -266,7 +263,8 @@ public class Board : MonoBehaviour
                 }
                 else
                 {
-                    available.Add(board[xCord + 1, yCord]);
+                    if (!available.Contains(board[xCord +1, yCord]))
+                        available.Add(board[xCord + 1, yCord]);
                     board[xCord + 1, yCord].GetComponent<tile>().isAvailable();
                 }
             }
@@ -282,7 +280,8 @@ public class Board : MonoBehaviour
                 }
                 else
                 {
-                    available.Add(board[xCord , yCord- 1]);
+                    if (!available.Contains(board[xCord , yCord-1]))
+                        available.Add(board[xCord , yCord- 1]);
                     board[xCord, yCord - 1].GetComponent<tile>().isAvailable();
                 }
 
@@ -300,7 +299,8 @@ public class Board : MonoBehaviour
                 }
                 else
                 {
-                    available.Add(board[xCord, yCord + 1]);
+                    if (!available.Contains(board[xCord, yCord+1]))
+                        available.Add(board[xCord, yCord + 1]);
                     board[xCord, yCord + 1].GetComponent<tile>().isAvailable();
                 }
 
@@ -308,4 +308,56 @@ public class Board : MonoBehaviour
         }
     }
 
+
+    //checks where the player played a card and a connection
+    //if they are not next to each other then the connection 
+    //is not validated and their turn is not up
+    public void isValidMove()
+    {
+
+        int card = -1, connect = -1, cardi=-1, cardj=-1, connj=-1, conni=-1;
+        for (int i = 0; i < available.Count; i++)
+        {
+            if (available[i].transform.childCount > 0 && available[i].tag == "tile")
+            {
+                card = i;
+            }
+            else if (available[i].transform.childCount > 0 && available[i].tag == "connection")
+            {
+                connect = i;
+            }
+        }
+
+        for (int i = 0; i < size; i++)
+        {
+            for (int j = 0; j < size; j++)
+            {
+                if (board[i, j] == available[card])
+                {
+                    cardi = i;
+                    cardj = j;
+                }
+                if (board[i, j] == available[connect])
+                {
+                    connj = j;
+                    conni = i;
+                }
+            }
+        }
+
+        if(cardi==conni&& (cardj + 1 == connj || cardj - 1 == connj))
+        {
+            checkCardsOnBoard();
+        }
+        else if(cardj==connj&& (cardi + 1 == conni || cardi - 1 == conni))
+        {
+            checkCardsOnBoard();
+        }
+        else
+        {
+            Debug.Log(cardi + "   " + conni);
+            Debug.Log(cardj + "   " + connj);
+            Debug.Log("Invalid Move!");
+        }
+    }
 }

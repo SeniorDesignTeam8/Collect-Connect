@@ -58,7 +58,7 @@ public class Dragable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
         {
             if (transform.parent.gameObject != hand && lastLocation.childCount > 0)
             {
-                transform.parent = hand;
+                transform.SetParent(hand);
             }
             else
                  transform.SetParent(lastLocation);

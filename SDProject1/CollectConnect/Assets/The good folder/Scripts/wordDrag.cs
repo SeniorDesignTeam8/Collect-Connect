@@ -40,7 +40,7 @@ public class wordDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     {
         if(transform.parent.gameObject!= bank && lastLocation.childCount>0)
         {
-            transform.parent = bank;
+            transform.SetParent(bank);
         }
         else
             transform.SetParent(lastLocation);
