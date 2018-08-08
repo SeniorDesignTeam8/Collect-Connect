@@ -15,7 +15,7 @@ public class checkDrop : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoi
         Dragable card = eventData.pointerDrag.GetComponent<Dragable>();
         if (card != null)
         {
-            if ((transform.tag == "tile" && valid) || transform.tag == "hand")
+            if ((transform.tag == "tile" && valid) || transform.tag == "hand"||transform.tag=="return")
             {
 
                 card.lastLocation = transform;

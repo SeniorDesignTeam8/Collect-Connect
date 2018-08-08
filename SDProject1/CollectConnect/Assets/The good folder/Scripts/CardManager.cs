@@ -12,6 +12,8 @@ public class CardManager : MonoBehaviour{
 
     public static IDbConnection dbConnect;
     public static List<GameObject> Deck;
+    public List<GameObject> returned;
+    public static List<string> wordbank;
     System.Random rnd;
     //  public GameObject cards;
 
@@ -98,6 +100,7 @@ public class CardManager : MonoBehaviour{
                     if (cat == "Concept")
                     {
                         cardComponent.setCatParam(cat, param);
+                        wordbank.Add(param);
                     }
                     else if (cat == "Location")
                     {
@@ -151,11 +154,11 @@ public class CardManager : MonoBehaviour{
     public void dealCards()
     {
         GameObject card;
-        for (int i = 0; i < 4;i++)
-        {
+        //for (int i = 0; i < 4;i++)
+        //{
             card = createCardObject();
             card.transform.SetParent(GameObject.Find("Player1").transform);
-        }
+       // }
     }
 
     //creates the actual card gameobject
@@ -193,17 +196,27 @@ public class CardManager : MonoBehaviour{
         return newCard;
         
     }
+
+    public void returnCard()
+    {
+        returned.Add(GameObject.FindGameObjectWithTag("return").transform.GetChild(0).gameObject);
+    }
         
     void Start ()
     {
+        returned = new List<GameObject>();
+        wordbank = new List<string>();
         string conn = "URI=file:" + Application.dataPath + "/CollectConnectDB.db";
         dbConnect = (IDbConnection)new SqliteConnection(conn);
         dbConnect.Open();
         Deck = new List<GameObject>();
         rnd = new System.Random();
         BuildDeck ();
-        Invoke("dealCards", 2);
-	}
+        Invoke("dealCards", .5f);
+        Invoke("dealCards", .5f);
+        Invoke("dealCards", .5f);
+        Invoke("dealCards", .5f);
+    }
 	
 	
 }

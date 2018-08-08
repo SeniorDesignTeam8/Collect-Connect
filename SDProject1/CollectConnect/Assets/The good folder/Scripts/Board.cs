@@ -19,12 +19,12 @@ public class Board : MonoBehaviour
     int size;
     bool begin = false;
     public GameObject[,] board;
-   
-    List<GameObject> available;
+    public List<GameObject> available;
+    public bool cardonBoard=false;
 
   
     void Start()
-    {
+    { 
         available = new List<GameObject>();
         setUpBoard();
         Invoke("pickStartCard", 1);
@@ -100,6 +100,7 @@ public class Board : MonoBehaviour
     //returns a card or word if the player tries to place more than one
     public void limitActiveObjects()
     {
+        cardonBoard = false;
         int cards = 0, connections = 0, cardref=-1, connRef=-1;
         
         for(int i=0; i< available.Count;i++)
@@ -108,6 +109,7 @@ public class Board : MonoBehaviour
             {
                 if (cards == 0)
                 {
+                    cardonBoard = true;
                     cards++;
                     cardref = i;
                 }
@@ -123,6 +125,7 @@ public class Board : MonoBehaviour
             {
                 if (connections == 0)
                 {
+                    cardonBoard = true;
                     connections++;
                     connRef = i;
                 }
