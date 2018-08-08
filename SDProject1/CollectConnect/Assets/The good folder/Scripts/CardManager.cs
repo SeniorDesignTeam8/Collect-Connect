@@ -9,7 +9,8 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class CardManager : MonoBehaviour{
-
+    GameObject activeWordBank;
+    public GameObject keyword;
     public static IDbConnection dbConnect;
     public static List<GameObject> Deck;
     public List<GameObject> returned;
@@ -201,9 +202,29 @@ public class CardManager : MonoBehaviour{
     {
         returned.Add(GameObject.FindGameObjectWithTag("return").transform.GetChild(0).gameObject);
     }
-        
+    
+    public void fillCardBank()
+    {
+        int children = activeWordBank.transform.childCount;
+        for(int i=children; i<4;i++)
+        {
+            GameObject word = Instantiate(keyword);
+            Text text = word.GetComponent<Text>();
+            text.text = pickKeyWord();
+            word.transform.SetParent(activeWordBank.transform);
+        }
+    }
+    public string pickKeyWord()
+    {
+        int pick= rnd.Next(wordbank.Count - 1);
+        string choosen = wordbank[pick];
+        wordbank.RemoveAt(pick);
+        return choosen;
+
+    }
     void Start ()
     {
+        activeWordBank=GameObject.Find("word_bank");
         returned = new List<GameObject>();
         wordbank = new List<string>();
         string conn = "URI=file:" + Application.dataPath + "/CollectConnectDB.db";
@@ -216,6 +237,7 @@ public class CardManager : MonoBehaviour{
         Invoke("dealCards", .5f);
         Invoke("dealCards", .5f);
         Invoke("dealCards", .5f);
+        fillCardBank();
     }
 	
 	
