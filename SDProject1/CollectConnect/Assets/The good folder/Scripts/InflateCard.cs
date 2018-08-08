@@ -6,12 +6,13 @@ using UnityEngine.EventSystems;
 
 public class InflateCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
+    RectTransform rt;
     GameObject cardDisplay;
     GameObject copy;
     public void OnPointerEnter(PointerEventData eventData)
     {
-       // Debug.Log("Cursor Entering " + name + " GameObject");
-        if (transform.tag=="card")
+        // Debug.Log("Cursor Entering " + name + " GameObject");
+        if (transform.tag == "card")
         {
             // inflate();
             display();
@@ -21,18 +22,18 @@ public class InflateCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
     public void OnPointerExit(PointerEventData eventData)
     {
-       // Debug.Log("Cursor Entering " + name + " GameObject");
+        // Debug.Log("Cursor Entering " + name + " GameObject");
         if (transform.tag == "card")
         {
             // deflate();
-           // removeDisplay();
+            // removeDisplay();
         }
     }
 
     public void inflate()
     {
-        Component [] images = transform.GetComponentsInChildren<Image>();
-        Image wordBack =transform.GetComponentInChildren<Image>();
+        Component[] images = transform.GetComponentsInChildren<Image>();
+        Image wordBack = transform.GetComponentInChildren<Image>();
         foreach (Image x in images)
         {
             if (x.tag == "wordBacking")
@@ -41,15 +42,17 @@ public class InflateCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
             }
 
         }
-        Text des= transform.GetComponentInChildren<Text>();
+        Text des = transform.GetComponentInChildren<Text>();
         des.enabled = true;
         wordBack.enabled = true;
-       transform.localScale+=new Vector3(2f,2f,0);
-        
+        transform.localScale += new Vector3(2f, 2f, 0);
+
 
     }
     public void infalteCopy()
     {
+        rt = copy.GetComponent<RectTransform>();
+        rt.sizeDelta= new Vector2(100, 160);
         Component[] images = copy.transform.GetComponentsInChildren<Image>();
         Image wordBack = copy.transform.GetComponentInChildren<Image>();
         foreach (Image x in images)
@@ -63,7 +66,7 @@ public class InflateCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         Text des = copy.transform.GetComponentInChildren<Text>();
         des.enabled = true;
         wordBack.enabled = true;
-        copy.transform.localScale += new Vector3(.5f, .5f, 0);
+        copy.transform.localScale = new Vector3(1f,1f,1);
     }
     public void deflate()
     {
@@ -102,9 +105,9 @@ public class InflateCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
 
     // Use this for initialization
-    void Start ()
+    void Start()
     {
         cardDisplay = GameObject.Find("DisplayCard");
-	}
-	
+    }
+
 }

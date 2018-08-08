@@ -206,7 +206,7 @@ public class CardManager : MonoBehaviour{
     public void fillCardBank()
     {
         int children = activeWordBank.transform.childCount;
-        for(int i=children; i<4;i++)
+        for(int i=children; i<12;i++)
         {
             GameObject word = Instantiate(keyword);
             Text text = word.GetComponent<Text>();
