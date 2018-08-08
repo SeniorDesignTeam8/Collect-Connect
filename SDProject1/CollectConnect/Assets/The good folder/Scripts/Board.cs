@@ -37,7 +37,7 @@ public class Board : MonoBehaviour
         RectTransform rtCanvas = mainCanvas.GetComponent<RectTransform>();
         Vector2 sizing = rtCanvas.sizeDelta;
         offsetX = sizing.x * .35f;
-        offsetY = sizing.y * .3f;
+        offsetY = sizing.y * .2f;
 
         size = (boardDimensions * 2) - 1;
         board = new GameObject[size, size];
