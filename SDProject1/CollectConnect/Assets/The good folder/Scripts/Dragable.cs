@@ -12,50 +12,64 @@ public class Dragable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     public GameObject moveArea;
     RectTransform rectTrans;
     GameObject placeholder;
-    Board choiceConfirmed;
-    public bool canBeMoved;
+    
+    public bool canBeMoved=true;
 
 
-    //when the card is selected it 
+    //when the card is selected it creates a placeholder in its spot
+    //this allwos the player to be able to arrange their hand
     public void OnBeginDrag(PointerEventData eventData)
     {
-        placeholder = new GameObject();
-        placeholder.transform.SetParent(transform.parent);
-        RectTransform rt = placeholder.AddComponent<RectTransform>();
-        rt = rectTrans;
-        placeholder.transform.SetSiblingIndex(transform.GetSiblingIndex());
+        if (canBeMoved)
+        {
+            placeholder = new GameObject();
+            placeholder.transform.SetParent(transform.parent);
+            RectTransform rt = placeholder.AddComponent<RectTransform>();
+            rt = rectTrans;
+            placeholder.transform.SetSiblingIndex(transform.GetSiblingIndex());
 
-        lastLocation = transform.parent;
-        transform.SetParent(moveArea.transform);
-        cgroup.blocksRaycasts = false;
+            lastLocation = transform.parent;
+            transform.SetParent(moveArea.transform);
+            cgroup.blocksRaycasts = false;
+        }
     }
 
     // events that can occur while moving the card around the screen 
     //
     public void OnDrag(PointerEventData eventData)
     {
-        transform.position = eventData.position;
-        checkDrop area = hand.GetComponent<checkDrop>();
-        if (area.ableArrange)
-            arrangeHand();
-
-
+        if (canBeMoved)
+        {
+            transform.position = eventData.position;
+            checkDrop area = hand.GetComponent<checkDrop>();
+            if (area.ableArrange)
+                arrangeHand();
+        }
     }
 
 
     // When the player lets go of the card it will either stay where they dropped it if valid
     //or snap back to the last valid location 
+    //updates the list of items on the board
+    //does not allow the player to place more than one card on the board at a time
     public void OnEndDrag(PointerEventData eventData)
     {
-        transform.SetParent(lastLocation);
-        transform.SetSiblingIndex(placeholder.transform.GetSiblingIndex());
-        Destroy(placeholder);
-
-        cgroup.blocksRaycasts = true;
-        if(transform.parent.tag=="tile"&&choiceConfirmed)
+        if (canBeMoved)
         {
-            cgroup.blocksRaycasts = false;
+            if (transform.parent.gameObject != hand && lastLocation.childCount > 0)
+            {
+                transform.SetParent(hand);
+            }
+            else
+                 transform.SetParent(lastLocation);
+            transform.SetSiblingIndex(placeholder.transform.GetSiblingIndex());
+            Destroy(placeholder);
+
+            cgroup.blocksRaycasts = true;
+            GameObject.Find("mainCanvas").GetComponent<Board>().addToListEnd(transform);
+            //GameObject.Find("mainCanvas").GetComponent<Board>().limitActiveObjects();
         }
+ 
     }
 
     void arrangeHand()
@@ -77,11 +91,11 @@ public class Dragable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     // Use this for initialization
     void Start()
     {
-       
+       // canBeMoved = true;
         rectTrans = GetComponent<RectTransform>();
         cgroup = GetComponent<CanvasGroup>();
         moveArea = GameObject.Find("mainCanvas");
-        choiceConfirmed = moveArea.GetComponent<Board>();
+        
        hand = lastLocation = transform.parent;
 
     }

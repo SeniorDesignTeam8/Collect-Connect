@@ -100,8 +100,8 @@ C:\Users\adrie\Documents\GitHub\Collect-Connect\SDProject1\CollectConnect\Temp\b
 C:\Users\adrie\Documents\GitHub\Collect-Connect\SDProject1\CollectConnect\Temp\bin\Debug\UnityEngine.Analytics.xml
 C:\Users\adrie\Documents\GitHub\Collect-Connect\SDProject1\CollectConnect\Temp\bin\Debug\UnityEngine.HoloLens.xml
 C:\Users\adrie\Documents\GitHub\Collect-Connect\SDProject1\CollectConnect\Temp\bin\Debug\UnityEngine.VR.xml
+C:\Users\adrie\Documents\GitHub\Collect-Connect\SDProject1\CollectConnect\obj\Debug\Assembly-CSharp.dll
+C:\Users\adrie\Documents\GitHub\Collect-Connect\SDProject1\CollectConnect\obj\Debug\Assembly-CSharp.pdb
 C:\Users\adrie\Documents\GitHub\Collect-Connect\SDProject1\CollectConnect\obj\Debug\Assembly-CSharp.csprojAssemblyReference.cache
 C:\Users\adrie\Documents\GitHub\Collect-Connect\SDProject1\CollectConnect\obj\Debug\Assembly-CSharp.csproj.CoreCompileInputs.cache
 C:\Users\adrie\Documents\GitHub\Collect-Connect\SDProject1\CollectConnect\obj\Debug\Assembly-CSharp.csproj.CopyComplete
-C:\Users\adrie\Documents\GitHub\Collect-Connect\SDProject1\CollectConnect\obj\Debug\Assembly-CSharp.dll
-C:\Users\adrie\Documents\GitHub\Collect-Connect\SDProject1\CollectConnect\obj\Debug\Assembly-CSharp.pdb
