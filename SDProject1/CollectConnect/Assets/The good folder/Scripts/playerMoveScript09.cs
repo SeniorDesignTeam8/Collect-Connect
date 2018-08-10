@@ -25,10 +25,11 @@ public class playerMoveScript09 : MonoBehaviour {
 
         if (isTurn)
         {
+            // quick way to switch turns (testing)
             if (Input.GetKeyDown(moveKey))
             {
-                // needs to be reverted to 2d controls *******
-                transform.position += Vector3.foward;
+             
+                
                 isTurn = false;
                 turnClass.isTurn = isTurn;
                 turnClass.wasTurnPrev = true;
