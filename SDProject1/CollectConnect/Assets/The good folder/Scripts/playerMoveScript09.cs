@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public class playerMoveScript09 : MonoBehaviour {
+public class playerMoveScript09 : NetworkBehaviour {
 
     public turnSystemScript09 turnSystem;
     public TurnClass09 turnClass;
@@ -21,6 +22,12 @@ public class playerMoveScript09 : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+
+        if (!isLocalPlayer)
+        {
+            return;
+        }
+
         isTurn = turnClass.isTurn;
 
         if (isTurn)
