@@ -317,6 +317,7 @@ public class Board : MonoBehaviour
     //is not validated and their turn is not up
     public void isValidMove()
     {
+        GameObject usedTile=null;
 
         int card = -1, connect = -1, cardi=-1, cardj=-1, connj=-1, conni=-1;
         for (int i = 0; i < available.Count; i++)
@@ -327,6 +328,7 @@ public class Board : MonoBehaviour
             }
             else if (available[i].transform.childCount > 0 && available[i].tag == "connection")
             {
+                usedTile = available[i].transform.GetChild(0).gameObject;
                 connect = i;
             }
         }
@@ -348,13 +350,23 @@ public class Board : MonoBehaviour
             }
         }
         if (cardi!=-1&&cardj!=-1&&conni!=-1&&connj!=-1)
-        { if (cardi == conni && (cardj + 1 == connj || cardj - 1 == connj))
+        {
+            CardManager GM = GameObject.Find("mainCanvas").GetComponent<CardManager>();
+            if (cardi == conni && (cardj + 1 == connj || cardj - 1 == connj))
             {
+                GM.playedConnection = usedTile;
+                GM.ScorePoints();
                 checkCardsOnBoard();
+                GM.dealCards(GM.players[GM.turn]);
+                GM.turnSystem();
             }
             else if (cardj == connj && (cardi + 1 == conni || cardi - 1 == conni))
             {
+                GM.playedConnection = usedTile;
+                GM.ScorePoints();
                 checkCardsOnBoard();
+                GM.dealCards(GM.players[GM.turn]);
+                GM.turnSystem();
             }
             else
             {

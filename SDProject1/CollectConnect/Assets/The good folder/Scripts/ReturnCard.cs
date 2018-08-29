@@ -36,7 +36,8 @@ public class ReturnCard : MonoBehaviour {
             returnCardsToHand();
             manager.returned.Add(transform.GetChild(0).gameObject);
             Destroy(transform.GetChild(0).gameObject);
-            manager.dealCards();
+            manager.dealCards(manager.players[manager.turn]);
+            manager.turnSystem();
         }
     }
 

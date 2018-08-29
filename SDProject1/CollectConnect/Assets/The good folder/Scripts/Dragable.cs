@@ -6,6 +6,7 @@ using UnityEngine.EventSystems;
 
 public class Dragable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
+    public playerInfo player;
     public CanvasGroup cgroup;
     public Transform lastLocation;
     public Transform hand;
@@ -20,7 +21,7 @@ public class Dragable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     //this allwos the player to be able to arrange their hand
     public void OnBeginDrag(PointerEventData eventData)
     {
-        if (canBeMoved)
+        if (canBeMoved&&player.turn)
         {
             placeholder = new GameObject();
             placeholder.transform.SetParent(transform.parent);
@@ -38,7 +39,7 @@ public class Dragable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     //
     public void OnDrag(PointerEventData eventData)
     {
-        if (canBeMoved)
+        if (canBeMoved && player.turn)
         {
             transform.position = eventData.position;
             checkDrop area = hand.GetComponent<checkDrop>();
@@ -54,7 +55,7 @@ public class Dragable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     //does not allow the player to place more than one card on the board at a time
     public void OnEndDrag(PointerEventData eventData)
     {
-        if (canBeMoved)
+        if (canBeMoved && player.turn)
         {
             if (transform.parent.gameObject != hand && lastLocation.childCount > 0)
             {
@@ -97,6 +98,7 @@ public class Dragable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
         moveArea = GameObject.Find("mainCanvas");
         
        hand = lastLocation = transform.parent;
+        player = hand.GetComponentInParent<playerInfo>();
 
     }
 

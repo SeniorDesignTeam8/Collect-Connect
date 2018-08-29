@@ -23,7 +23,7 @@ public class checkDrop : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoi
             }
             else
             {
-                card.lastLocation = GameObject.Find("Player1").transform;
+                card.lastLocation = card.hand;
             }
         }
         else

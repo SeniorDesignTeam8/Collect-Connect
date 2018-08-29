@@ -19,8 +19,8 @@ public class PlayerSelection : MonoBehaviour
         BackBtn.GetComponent<Button>().onClick.AddListener(BackBtnTransition);
         BackBtn.gameObject.SetActive(true);
 
-        OnePlayerBtn.GetComponent<Button>().onClick.AddListener(OnePlayerFunction);
-        OnePlayerBtn.gameObject.SetActive(true);
+      //  OnePlayerBtn.GetComponent<Button>().onClick.AddListener(OnePlayerFunction);
+      //  OnePlayerBtn.gameObject.SetActive(true);
 
         TwoPlayersBtn.GetComponent<Button>().onClick.AddListener(TwoPlayersFunction);
         TwoPlayersBtn.gameObject.SetActive(true);

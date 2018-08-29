@@ -9,6 +9,8 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class CardManager : MonoBehaviour{
+   public GameObject playedConnection;
+    public GameObject currentPlayer;
     GameObject activeWordBank;
     public GameObject keyword;
     public static IDbConnection dbConnect;
@@ -16,6 +18,9 @@ public class CardManager : MonoBehaviour{
     public List<GameObject> returned;
     public static List<string> wordbank;
     System.Random rnd;
+    int numPlayers = 0;
+    public GameObject[] players;
+    public int turn = 0;
     //  public GameObject cards;
 
 
@@ -152,13 +157,13 @@ public class CardManager : MonoBehaviour{
 
 
     //deals 4 crads to the players
-    public void dealCards()
+    public void dealCards(GameObject player)
     {
         GameObject card;
         //for (int i = 0; i < 4;i++)
         //{
             card = createCardObject();
-            card.transform.SetParent(GameObject.Find("Player1").transform);
+            card.transform.SetParent(player.transform);
        // }
     }
 
@@ -222,8 +227,50 @@ public class CardManager : MonoBehaviour{
         return choosen;
 
     }
-    void Start ()
+
+    public void ScorePoints()
     {
+        playerInfo p = players[turn].GetComponent<playerInfo>();
+
+        string length = playedConnection.GetComponent<Text>().text;
+        if(length.Length<6)
+        {
+            p.points += 10;
+            p.updateScore();
+        }
+        else if(length.Length>6 &&length.Length<10)
+        {
+            p.points += 17;
+            p.updateScore();
+        }
+        else
+        {
+           p.points += 25;
+           p.updateScore();
+        }
+    }
+
+    public void turnSystem()
+    {
+        players[turn].GetComponent<playerInfo>().turn = false;
+        players[turn].GetComponent<playerInfo>().greyOutCards();
+        if (turn + 1 < numPlayers)
+        {
+            turn++;
+        }
+        else if (turn + 1 == numPlayers)
+        {
+            turn = 0;
+          //////////////////////////////////////////////
+          ////call a function to do new round things////
+          //////////////////////////////////////////////
+        }
+        players[turn].GetComponent<playerInfo>().turn = true;
+        players[turn].GetComponent<playerInfo>().setLookActive();
+    }
+
+    void Start ()
+    {   
         activeWordBank=GameObject.Find("word_bank");
         returned = new List<GameObject>();
         wordbank = new List<string>();
@@ -233,10 +280,13 @@ public class CardManager : MonoBehaviour{
         Deck = new List<GameObject>();
         rnd = new System.Random();
         BuildDeck ();
-        Invoke("dealCards", .5f);
-        Invoke("dealCards", .5f);
-        Invoke("dealCards", .5f);
-        Invoke("dealCards", .5f);
+        players = GameObject.FindGameObjectsWithTag("hand");
+        players[turn].GetComponent<playerInfo>().turn = true;
+        numPlayers = players.Length;
+        //Invoke("dealCards", .5f);
+        //Invoke("dealCards", .5f);
+        //Invoke("dealCards", .5f);
+        //Invoke("dealCards", .5f);
         fillCardBank();
     }
 	
