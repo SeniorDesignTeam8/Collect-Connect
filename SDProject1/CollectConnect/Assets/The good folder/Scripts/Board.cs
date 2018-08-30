@@ -5,7 +5,9 @@ using UnityEngine.UI;
 
 public class Board : MonoBehaviour
 {
-
+    public GameObject usedConnection = null;
+    public GameObject lastCardPlayed = null;
+    public GameObject lastCardConnected = null;
     public GameObject panel;
     public GameObject wordPanel;
     public GameObject card;
@@ -71,6 +73,14 @@ public class Board : MonoBehaviour
         CardManager startingCard = GameObject.Find("mainCanvas").GetComponent<CardManager>();
         start = startingCard.createCardObject();
         start.transform.SetParent(board[middle, middle].transform);
+        Component[] images = start.GetComponentsInChildren<Image>();
+        foreach (Image x in images)
+        {
+            if (x.tag == "No")
+            {
+                x.enabled = false;
+            }
+        }
     }
 
     //checks the board for cards
@@ -317,18 +327,18 @@ public class Board : MonoBehaviour
     //is not validated and their turn is not up
     public void isValidMove()
     {
-        GameObject usedTile=null;
 
         int card = -1, connect = -1, cardi=-1, cardj=-1, connj=-1, conni=-1;
         for (int i = 0; i < available.Count; i++)
         {
             if (available[i].transform.childCount > 0 && available[i].tag == "tile")
             {
+                lastCardPlayed = available[i].transform.GetChild(0).gameObject;
                 card = i;
             }
             else if (available[i].transform.childCount > 0 && available[i].tag == "connection")
             {
-                usedTile = available[i].transform.GetChild(0).gameObject;
+                usedConnection = available[i].transform.GetChild(0).gameObject;
                 connect = i;
             }
         }
@@ -351,22 +361,14 @@ public class Board : MonoBehaviour
         }
         if (cardi!=-1&&cardj!=-1&&conni!=-1&&connj!=-1)
         {
-            CardManager GM = GameObject.Find("mainCanvas").GetComponent<CardManager>();
+           
             if (cardi == conni && (cardj + 1 == connj || cardj - 1 == connj))
             {
-                GM.playedConnection = usedTile;
-                GM.ScorePoints();
-                checkCardsOnBoard();
-                GM.dealCards(GM.players[GM.turn]);
-                GM.turnSystem();
+                endTurn(cardi, cardj, conni, connj);
             }
             else if (cardj == connj && (cardi + 1 == conni || cardi - 1 == conni))
             {
-                GM.playedConnection = usedTile;
-                GM.ScorePoints();
-                checkCardsOnBoard();
-                GM.dealCards(GM.players[GM.turn]);
-                GM.turnSystem();
+                endTurn(cardi, cardj, conni, connj);
             }
             else
             {
@@ -375,5 +377,37 @@ public class Board : MonoBehaviour
                 Debug.Log("Invalid Move!");
             }
         }
+    }
+
+    void endTurn(int cardi, int cardj, int conni, int connj)
+    {
+        CardManager GM = GameObject.Find("mainCanvas").GetComponent<CardManager>();
+        if(connj==cardj)
+        {
+            if (conni < cardi)
+            {
+                lastCardConnected = board[conni - 1, connj].transform.GetChild(0).gameObject;
+            }
+            else
+                lastCardConnected = board[conni + 1, connj].transform.GetChild(0).gameObject;
+        }
+        else
+        {
+            if(connj<cardj)
+            {
+                lastCardConnected = board[conni, connj - 1].transform.GetChild(0).gameObject;
+            }
+            else
+            {
+                lastCardConnected = board[conni, connj + 1].transform.GetChild(0).gameObject;
+            }
+        }
+
+        GM.playedConnection = usedConnection;
+        GM.ScorePoints();
+        checkCardsOnBoard();
+        GM.dealCards(GM.players[GM.turn]);
+        GM.turnSystem();
+
     }
 }

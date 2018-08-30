@@ -268,7 +268,6 @@ public class CardManager : MonoBehaviour{
         players[turn].GetComponent<playerInfo>().turn = true;
         players[turn].GetComponent<playerInfo>().setLookActive();
     }
-
     void Start ()
     {   
         activeWordBank=GameObject.Find("word_bank");
