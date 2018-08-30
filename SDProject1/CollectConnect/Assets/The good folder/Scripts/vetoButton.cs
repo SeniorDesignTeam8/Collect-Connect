@@ -4,11 +4,18 @@ using UnityEngine;
 
 public class vetoButton : MonoBehaviour
 {
-    
-    public void vetoClicked()
+
+    handleVoting voting;
+    public void agree()
     {
-        CardManager GM = GameObject.Find("mainCanvas").GetComponent<CardManager>();
-        playerInfo player = GM.players[GM.turn].GetComponent<playerInfo>();
+        voting = GameObject.Find("mainCanvas").GetComponent<handleVoting>();
+        voting.agree();
+
+    }
+    public void disagree()
+    {
+        voting = GameObject.Find("mainCanvas").GetComponent<handleVoting>();
+        voting.disagree();
 
     }
 }

@@ -18,26 +18,29 @@ public class handleVoting : MonoBehaviour
     public void activateVoting()
     {
         Board board = GameObject.Find("mainCanvas").GetComponent<Board>();
-        card1 = Instantiate(board.lastCardPlayed);
-        card2 = Instantiate(board.lastCardConnected);
-        keyword = Instantiate(board.usedConnection);
-        voting = Instantiate(votingPrefab);
-        
-        
-        voting.transform.SetParent(GameObject.Find("mainCanvas").transform);
-        rt = voting.GetComponent<RectTransform>();
-        rt.anchorMax = new Vector2(.5f, .5f);
-        rt.anchorMin = new Vector2(.5f, .5f);
-        rt.localPosition = new Vector3(0,0,0);
+        if (board.lastCardPlayed != null)
+        {
+            card1 = Instantiate(board.lastCardPlayed);
+            card2 = Instantiate(board.lastCardConnected);
+            keyword = Instantiate(board.usedConnection);
+            voting = Instantiate(votingPrefab);
 
-        keyword.transform.SetParent(voting.transform);
-        keyword.transform.localPosition = locWord.localPosition;
 
-        fixCard(card1);
-        card1.transform.localPosition = locCard1.localPosition;
-        fixCard(card2);
-        card2.transform.localPosition = locCard2.localPosition;
+            voting.transform.SetParent(GameObject.Find("mainCanvas").transform);
+            rt = voting.GetComponent<RectTransform>();
+            rt.anchorMax = new Vector2(.5f, .5f);
+            rt.anchorMin = new Vector2(.5f, .5f);
+            rt.localPosition = new Vector3(0, 0, 0);
 
+            keyword.transform.SetParent(voting.transform);
+            keyword.transform.localPosition = locWord.localPosition;
+            keyword.transform.localScale = new Vector3(1f, 1f, 1);
+
+            fixCard(card1);
+            card1.transform.localPosition = locCard1.localPosition;
+            fixCard(card2);
+            card2.transform.localPosition = locCard2.localPosition;
+        }
     }
 
     void fixCard(GameObject copy)
@@ -60,7 +63,25 @@ public class handleVoting : MonoBehaviour
         copy.transform.SetParent(voting.transform);
         
     }
-	void Awake ()
+
+    public void agree()
+    {
+        // count number of players that agree
+        // if more than half player is not penalized 
+        //voting screen disabled
+        Destroy(voting);
+    }
+
+    public void disagree()
+    {
+        // count number of players that disagree
+        // if more than half player is penalized 
+        // penalized player gets half points for the round
+        //is marked that he has been penalized 
+        // voting screen disabled
+        Destroy(voting);
+    }
+    void Awake ()
     {
 		
 	}

@@ -327,7 +327,7 @@ public class Board : MonoBehaviour
     //is not validated and their turn is not up
     public void isValidMove()
     {
-
+        lastCardPlayed = null;
         int card = -1, connect = -1, cardi=-1, cardj=-1, connj=-1, conni=-1;
         for (int i = 0; i < available.Count; i++)
         {

@@ -21,6 +21,7 @@ public class CardManager : MonoBehaviour{
     int numPlayers = 0;
     public GameObject[] players;
     public int turn = 0;
+    handleVoting voting;
     //  public GameObject cards;
 
 
@@ -265,12 +266,15 @@ public class CardManager : MonoBehaviour{
           ////call a function to do new round things////
           //////////////////////////////////////////////
         }
+
         players[turn].GetComponent<playerInfo>().turn = true;
         players[turn].GetComponent<playerInfo>().setLookActive();
     }
+
     void Start ()
-    {   
-        activeWordBank=GameObject.Find("word_bank");
+    {
+        voting = GetComponent<handleVoting>();
+        activeWordBank =GameObject.Find("word_bank");
         returned = new List<GameObject>();
         wordbank = new List<string>();
         string conn = "URI=file:" + Application.dataPath + "/CollectConnectDB.db";
@@ -282,10 +286,7 @@ public class CardManager : MonoBehaviour{
         players = GameObject.FindGameObjectsWithTag("hand");
         players[turn].GetComponent<playerInfo>().turn = true;
         numPlayers = players.Length;
-        //Invoke("dealCards", .5f);
-        //Invoke("dealCards", .5f);
-        //Invoke("dealCards", .5f);
-        //Invoke("dealCards", .5f);
+
         fillCardBank();
     }
 	
