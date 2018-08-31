@@ -262,6 +262,7 @@ public class CardManager : MonoBehaviour{
         else if (turn + 1 == numPlayers)
         {
             turn = 0;
+            fillCardBank();
           //////////////////////////////////////////////
           ////call a function to do new round things////
           //////////////////////////////////////////////

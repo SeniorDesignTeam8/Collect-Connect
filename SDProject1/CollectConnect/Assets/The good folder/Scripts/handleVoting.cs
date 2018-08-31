@@ -69,7 +69,7 @@ public class handleVoting : MonoBehaviour
         // count number of players that agree
         // if more than half player is not penalized 
         //voting screen disabled
-        Destroy(voting);
+        Destroy(voting.gameObject);
     }
 
     public void disagree()
@@ -79,7 +79,7 @@ public class handleVoting : MonoBehaviour
         // penalized player gets half points for the round
         //is marked that he has been penalized 
         // voting screen disabled
-        Destroy(voting);
+        Destroy(voting.gameObject);
     }
     void Awake ()
     {
