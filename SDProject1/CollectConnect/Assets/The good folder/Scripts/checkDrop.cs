@@ -80,10 +80,5 @@ public class checkDrop : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoi
 
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
 
 }
