@@ -1,17 +1,57 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class PlayerLogic : MonoBehaviour
 {
-    public bool isPickingKeyWords = false;
+    public int holdAmount = 1;
     public int score = 0;
     public bool turn;
-	// Use this for initialization
-	void Start ()
+    [SerializeField]
+    GameEvent invalid;
+    [SerializeField]
+    GameEvent deactivate;
+    [SerializeField]
+    GameEvent endTurn;
+    [SerializeField]
+    GameObject confirmBtn;
+
+    public TextMeshProUGUI scoreText;
+
+    void Start()
     {
-		
-	}
-	
+
+    }
+    public void setTurn(bool isturn)
+    {
+       
+        if (!isturn)
+        {
+            turn = false;
+            confirmBtn.SetActive(false);
+            holdAmount = 0; //can only hold 1 card as a guess 
+
+        }
+        else
+        {
+            confirmBtn.SetActive(true);
+            turn = true;
+            holdAmount = 2; // can hold multiple keywords 
+        }
+    }
+    public void confirmChoice()
+    {
+        if(transform.childCount<1)
+        {
+            invalid.Raise();
+        }
+        else
+        {
+            deactivate.Raise();
+            endTurn.Raise();
+            
+        }
+    }
 
 }

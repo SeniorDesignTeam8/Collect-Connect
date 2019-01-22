@@ -10,35 +10,113 @@ using UnityEngine.UI;
 using TMPro;
 public class GM : MonoBehaviour
 {
-    private GameObject [] players;
+    [SerializeField]
+    PlayerLogic [] players;
     System.Random rnd;
     PlayerLogic currentPlayer;
-    public static IDbConnection dbConnect;
-    public static List<GameObject> Deck;
-    public static List<string> wordbank;
+    static IDbConnection dbConnect;
+    static List<GameObject> Deck;
+    static List<string> wordbank;
+    List<string> activeWords;
+    [SerializeField]
+    int MaxRound;
+    Vector2 currentRound;
+    [SerializeField]
+    GameObject keywordPF;
 
-    public List<string> activeWords;
+    [SerializeField]
+    GameEvent roundOver; //deletes current cards and keywrods
 
-    void Start ()
+    [SerializeField]
+    GameEvent newRoundStart; //has to deal all new cards and keywords
+
+    [SerializeField]
+    GameEvent activateCards; //allows cards to be moved on second players turn
+    [SerializeField]
+    GameObject approveSelect;
+
+    void Awake ()
     {
+        currentRound = new Vector2(0,0); // each round will consist of the players changing turn once 
         rnd = new System.Random();
-        players= GameObject.FindGameObjectsWithTag("Player");
+        startGame();
 	}
 	void startGame()
     {
+        // sets up the players, and assigns who goes first randomly 
         int x = rnd.Next(0,players.Length-1);
-        currentPlayer = players[x].GetComponent<PlayerLogic>();
-        currentPlayer.isPickingKeyWords = true;
-
+        currentPlayer = players[x];
+        currentPlayer.setTurn(true);
+        foreach ( var player in players)
+        {
+            if(player!= players[x])
+            {
+                player.setTurn(false);
+            }
+        }
+        // collects the cards and keywords from the database
         activeWords = new List<string>();
         wordbank = new List<string>();
         Deck = new List<GameObject>();
         string conn = "URI=file:" + Application.dataPath + "/CollectConnectDB.db";
         dbConnect = (IDbConnection)new SqliteConnection(conn);
         dbConnect.Open();
+        BuildDeck();
 
     }
+    public void changeTurn()
+    {
+        if(currentRound.y==0)
+        {
+            //change player turn
+            foreach (var x in players)
+            {
+                x.setTurn(!x.turn);
+            }
 
+            activateCards.Raise();
+            currentRound.y++;
+        }
+        else // dont change player turn 
+        {
+            //ask player1 to check choice pop up
+                 //give points 
+            approveSelect.SetActive(true);
+
+
+        }
+    }
+
+    public void finishRound()
+    {
+            roundOver.Raise(); //clear the board
+            currentRound.y = 0;
+            currentRound.x++;          
+            newRound(); //call new round
+    }
+
+    public void givePoints()
+    {
+        foreach (var x in players)
+        {
+            x.score+= x.transform.childCount;
+            x.scoreText.text = x.score.ToString();
+        }
+        Invoke("finishRound", .15f);
+    }
+    public void newRound()
+    {
+        if(currentRound.x<MaxRound)
+        {
+            newRoundStart.Raise();
+        }
+        else
+        {
+            //game over 
+            //announce winner 
+        }
+        
+    }
 
     private static void BuildDeck()
     {
@@ -192,10 +270,25 @@ public class GM : MonoBehaviour
         }
         art.sprite = reset.cardPic;
         GameObject newCard = Deck[pick];
-        // save keywords at picked 
-        //
+        //stores the keyword associated with the card that was chosen 
+        activeWords.Add(wordbank[pick]);
+        wordbank.RemoveAt(pick);
+
         Deck.RemoveAt(pick);
         return newCard;
+
+    }
+
+    public GameObject getKeywords()
+    {
+        GameObject keyword = Instantiate(keywordPF);
+        if (activeWords.Count != 0)
+        {
+            int x = rnd.Next(0, activeWords.Count - 1);
+            keyword.GetComponentInChildren<TextMeshProUGUI>().text= activeWords[x];
+            activeWords.RemoveAt(x);
+        }
+        return keyword;
 
     }
     // function to make keyword objects 

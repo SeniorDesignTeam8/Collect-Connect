@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 
 public class HandleDrop : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerExitHandler
 {
-
+    PlayerLogic player;
     bool valid;
 
     public void OnDrop(PointerEventData eventData)
@@ -30,8 +30,11 @@ public class HandleDrop : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPo
     {
         if (transform.tag == "hand")
         {
+            if (transform.childCount >= player.holdAmount)
+                valid = false;
+            else
+                valid = true;
             Debug.Log("On hand");
-            valid = true;
         }
         else if (transform.tag=="return")
             Debug.Log("Spawn");
@@ -48,6 +51,7 @@ public class HandleDrop : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPo
     // Use this for initialization
     void Start()
     {
+        player = GetComponent<PlayerLogic>();
         valid = false;
 
     }

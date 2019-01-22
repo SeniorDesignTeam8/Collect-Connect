@@ -13,7 +13,7 @@ public class CardInfo : MonoBehaviour {
     public string People;
     public string Year;
     public string SourceLoc;
-    string category, parameter;
+    public string category, parameter;
     public List<string> Property;
     public int ID;
     public string completeDes;

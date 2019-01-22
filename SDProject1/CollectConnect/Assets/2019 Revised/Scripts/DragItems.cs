@@ -10,7 +10,6 @@ public class DragItems : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
     public Transform lastLocation;
     public Transform spawn;
     public GameObject moveArea;
-    private HoldAmount holdAmount;
     public bool canBeMoved = false;
 
 
@@ -43,7 +42,7 @@ public class DragItems : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
     {
         if (canBeMoved)
         {
-            if (lastLocation.tag != "hand"|| lastLocation.tag== "return" || lastLocation.childCount>=holdAmount.amount)// > 0)
+            if (lastLocation.tag != "hand"|| lastLocation.tag== "return" || (tag == "card" && lastLocation.transform.childCount > 0))
             {
                 transform.SetParent(spawn);
             }
@@ -65,7 +64,7 @@ public class DragItems : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
     {
         // canBeMoved = true;
         cgroup = GetComponent<CanvasGroup>();
-        holdAmount = GetComponent<HoldAmount>();
+       // holdAmount = GetComponent<HoldAmount>();
         moveArea = GameObject.Find("Canvas");
         spawn = lastLocation = transform.parent;
 
