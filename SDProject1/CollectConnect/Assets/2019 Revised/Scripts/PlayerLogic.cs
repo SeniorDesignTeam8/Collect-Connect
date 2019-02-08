@@ -17,6 +17,8 @@ public class PlayerLogic : MonoBehaviour
     [SerializeField]
     GameObject confirmBtn;
 
+   public GameObject panel;
+
     public TextMeshProUGUI scoreText;
 
     void Start()
@@ -28,6 +30,7 @@ public class PlayerLogic : MonoBehaviour
        
         if (!isturn)
         {
+            panel.SetActive(true);
             turn = false;
             confirmBtn.SetActive(false);
             holdAmount = 0; //can only hold 1 card as a guess 
@@ -35,6 +38,7 @@ public class PlayerLogic : MonoBehaviour
         }
         else
         {
+            panel.SetActive(false);
             confirmBtn.SetActive(true);
             turn = true;
             holdAmount = 2; // can hold multiple keywords 

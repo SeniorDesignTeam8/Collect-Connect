@@ -100,7 +100,7 @@ public class GM : MonoBehaviour
         foreach (var x in players)
         {
             x.score+= x.transform.childCount;
-            x.scoreText.text = x.score.ToString();
+            x.scoreText.text ="Score: " +x.score.ToString();
         }
         Invoke("finishRound", .15f);
     }
@@ -274,6 +274,7 @@ public class GM : MonoBehaviour
         activeWords.Add(wordbank[pick]);
         wordbank.RemoveAt(pick);
 
+        newCard.transform.Find("Panel").gameObject.SetActive(false);
         Deck.RemoveAt(pick);
         return newCard;
 

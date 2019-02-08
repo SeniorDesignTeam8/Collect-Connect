@@ -12,6 +12,8 @@ public class HandleDrop : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPo
     {
         DragItems item = eventData.pointerDrag.GetComponent<DragItems>();
 
+        if (item != null)
+        { 
             if (transform.tag == "hand" && valid )
             {
                 Debug.Log("Dropping on Hand");
@@ -22,7 +24,7 @@ public class HandleDrop : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPo
             {
                 item.lastLocation = item.spawn;
             }
-
+        }
        
     }
 
