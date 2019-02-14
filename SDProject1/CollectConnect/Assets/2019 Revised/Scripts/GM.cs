@@ -35,6 +35,9 @@ public class GM : MonoBehaviour
     [SerializeField]
     GameObject approveSelect;
 
+    [SerializeField]
+    GameEvent gameOver;
+
     void Awake ()
     {
         currentRound = new Vector2(0,0); // each round will consist of the players changing turn once 
@@ -63,6 +66,31 @@ public class GM : MonoBehaviour
         dbConnect.Open();
         BuildDeck();
 
+    }
+
+    public void setUp()
+    {
+        clearObjects();
+        BuildDeck();
+        newRound();
+        currentRound = new Vector2(0, 0);
+        //newRoundStart.Raise();
+
+    }
+    void clearObjects()
+    {
+        foreach(var x in Deck)
+        {
+            Destroy(x);
+        }
+        activeWords.Clear();
+        wordbank.Clear();
+        Deck.Clear();
+        foreach (var x in players)
+        {
+            x.score =0;
+            x.scoreText.text = "Score: " + x.score.ToString();
+        }
     }
     public void changeTurn()
     {
@@ -112,8 +140,7 @@ public class GM : MonoBehaviour
         }
         else
         {
-            //game over 
-            //announce winner 
+            gameOver.Raise();
         }
         
     }
