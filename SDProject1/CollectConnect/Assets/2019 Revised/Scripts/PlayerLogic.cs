@@ -41,7 +41,7 @@ public class PlayerLogic : MonoBehaviour
             panel.SetActive(false);
             confirmBtn.SetActive(true);
             turn = true;
-            holdAmount = 2; // can hold multiple keywords 
+            holdAmount = 1; // can hold multiple keywords 
         }
     }
     public void confirmChoice()

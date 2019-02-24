@@ -47,7 +47,7 @@ public class GM : MonoBehaviour
 	void startGame()
     {
         // sets up the players, and assigns who goes first randomly 
-        int x = rnd.Next(0,players.Length-1);
+        int x = rnd.Next(0,players.Length);
         currentPlayer = players[x];
         currentPlayer.setTurn(true);
         foreach ( var player in players)
@@ -130,6 +130,12 @@ public class GM : MonoBehaviour
             x.score+= x.transform.childCount;
             x.scoreText.text ="Score: " +x.score.ToString();
         }
+        // Save the parent Card
+        // The Choosen Key word
+        // The Guessed Card
+
+
+        //Clears the board and increments round 
         Invoke("finishRound", .15f);
     }
     public void newRound()

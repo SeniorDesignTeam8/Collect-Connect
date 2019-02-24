@@ -42,7 +42,7 @@ public class DragItems : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
     {
         if (canBeMoved)
         {
-            if (lastLocation.tag != "hand"|| lastLocation.tag== "return" || (tag == "card" && lastLocation.transform.childCount > 0))
+            if (lastLocation.tag != "hand"|| lastLocation.tag== "return" || (lastLocation.transform.childCount > 0)) //tag == "card" &&
             {
                 transform.SetParent(spawn);
             }
