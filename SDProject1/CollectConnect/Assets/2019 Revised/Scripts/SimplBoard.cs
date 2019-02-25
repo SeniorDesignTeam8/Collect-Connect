@@ -20,7 +20,7 @@ public class SimplBoard : MonoBehaviour
 
     //List<glow> cardGlow;
 
-    glow keyBankGlow;
+    //glow keyBankGlow;
 
     GameObject[] dealtCards;
     List<GameObject> keywords;
@@ -33,7 +33,7 @@ public class SimplBoard : MonoBehaviour
         gm = GetComponent<GM>();
         spots = new GameObject[numOptions];
         dealtCards = new GameObject[numOptions];
-        keyBankGlow = keyBank.GetComponentInParent<glow>();
+        //keyBankGlow = keyBank.GetComponentInParent<glow>();
         createBoard();
         dealCards();
         dealKeywords();
@@ -47,7 +47,7 @@ public class SimplBoard : MonoBehaviour
         float offsetX = startPos.position.x;
         float offsetY = startPos.position.y;
         float widthX = holderPF.GetComponent<RectTransform>().sizeDelta.x;
-        widthX *= 2.5f;
+        widthX +=10;
         for (int i = 0; i < numOptions;i++)
         {
             spots[i] = Instantiate(holderPF, new Vector3(i * widthX + offsetX,  offsetY, 0), Quaternion.identity);
@@ -69,6 +69,7 @@ public class SimplBoard : MonoBehaviour
     public void dealCards()
     {
         parentcard= gm.createCardObject();
+        parentcard.transform.localScale=new Vector3(1.3f,1.3f,1.3f);
         parentcard.transform.SetParent(parentCardPos);
         RectTransform rt = parentcard.GetComponent<RectTransform>();
         rt.localPosition = Vector3.zero;
@@ -80,16 +81,17 @@ public class SimplBoard : MonoBehaviour
             GameObject card = gm.createCardObject();
             card.transform.SetParent(x.transform);
             card.GetComponent<DragItems>().canBeMoved = false;
-            x.GetComponent<glow>().enabled = false;
+//            x.GetComponent<glow>().enabled = false;
             x.GetComponent<Image>().color = Color.white;
             dealtCards[count] = card;
             count++;
         }
+        stopCardGlow();
     }
 
     public void stopCardGlow()
     {
-        foreach (var x in spots)
+        foreach (var x in dealtCards)
         {
             x.GetComponent<glow>().enabled = false;
             x.GetComponent<Image>().color = Color.white;
@@ -98,7 +100,7 @@ public class SimplBoard : MonoBehaviour
     public void deactivate()
     {
         keyWordAcess(false);
-        keyBankGlow.enabled = false;
+     //   keyBankGlow.enabled = false;
         keyBank.GetComponentInParent<Image>().color = Color.white;
 
     }
@@ -109,7 +111,7 @@ public class SimplBoard : MonoBehaviour
         foreach (var x in dealtCards)
         {
             x.GetComponent<DragItems>().canBeMoved = true;
-            x.GetComponentInParent<glow>().enabled = true;
+            x.GetComponent<glow>().enabled = true;
         }
     }
 
@@ -118,8 +120,13 @@ public class SimplBoard : MonoBehaviour
         foreach (var x in keywords)
         {
             x.GetComponent<DragItems>().canBeMoved = access;
+            if (x.GetComponentInChildren<glow>().enabled)
+                x.GetComponentInChildren<glow>().background.color = new Color(0, 0, 0, 0);
+
+            x.GetComponentInChildren<glow>().enabled = access;
+           
         }
-        keyBankGlow.enabled = access;
+       // keyBankGlow.enabled = access;
     }
 	// Update is called once per frame
     public void roundOver()

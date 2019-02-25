@@ -44,6 +44,12 @@ public class PlayerLogic : MonoBehaviour
             holdAmount = 1; // can hold multiple keywords 
         }
     }
+
+    public void toggleConfirm(bool active)
+    {
+        confirmBtn.SetActive(active);
+    }
+
     public void confirmChoice()
     {
         if(transform.childCount<1)

@@ -6,10 +6,11 @@ public class connectionPanel : MonoBehaviour
 {
     GameObject [] players;
     public float offset;
+    RectTransform rect;
 	// Use this for initialization
 	void Awake ()
     {
-        
+        rect = gameObject.GetComponent<RectTransform>();
         players = GameObject.FindGameObjectsWithTag("Player");
 	}
 
@@ -27,6 +28,10 @@ public class connectionPanel : MonoBehaviour
             transform.SetParent(players[1].transform);
            // transform.position = Vector3.zero;
         }
-        transform.position = new Vector3(transform.parent.position.x + offset, transform.position.y, 0f);
+        transform.position = new Vector3(transform.parent.position.x , transform.position.y, 0f);
+        if (rect.position.x<300)
+            transform.position = new Vector3(transform.parent.position.x + offset, transform.position.y, 0f);
+       else
+            transform.position = new Vector3(transform.parent.position.x - offset, transform.position.y, 0f);
     }
 }

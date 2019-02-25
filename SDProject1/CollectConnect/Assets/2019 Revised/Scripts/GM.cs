@@ -107,11 +107,12 @@ public class GM : MonoBehaviour
         }
         else // dont change player turn 
         {
-            //ask player1 to check choice pop up
-                 //give points 
+
             approveSelect.SetActive(true);
-
-
+            foreach(var x in players)
+            {
+                x.toggleConfirm(false);
+            }
         }
     }
 
@@ -143,6 +144,10 @@ public class GM : MonoBehaviour
         if(currentRound.x<MaxRound)
         {
             newRoundStart.Raise();
+            foreach (var x in players)
+            {
+                x.toggleConfirm(x.turn);
+            }
         }
         else
         {
