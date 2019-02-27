@@ -19,7 +19,7 @@ public class GM : MonoBehaviour
     static List<string> wordbank;
     List<string> activeWords;
     [SerializeField]
-    int MaxRound;
+    public int MaxRound;
     Vector2 currentRound;
     [SerializeField]
     GameObject keywordPF;
@@ -38,6 +38,9 @@ public class GM : MonoBehaviour
     [SerializeField]
     GameEvent gameOver;
 
+    [SerializeField]
+    endGameStats stats;
+    bool wasCorrect = false;
     void Awake ()
     {
         currentRound = new Vector2(0,0); // each round will consist of the players changing turn once 
@@ -56,6 +59,7 @@ public class GM : MonoBehaviour
             {
                 player.setTurn(false);
             }
+            player.changeOutline(); // gives the outline of what object they should be holding 
         }
         // collects the cards and keywords from the database
         activeWords = new List<string>();
@@ -70,6 +74,12 @@ public class GM : MonoBehaviour
 
     public void setUp()
     {
+        foreach (var player in players)
+        {
+
+            player.setTurn(player.turn);
+            player.changeOutline(); // gives the outline of what object they should be holding 
+        }
         clearObjects();
         BuildDeck();
         newRound();
@@ -118,14 +128,30 @@ public class GM : MonoBehaviour
 
     public void finishRound()
     {
-            roundOver.Raise(); //clear the board
-            currentRound.y = 0;
-            currentRound.x++;          
-            newRound(); //call new round
+        foreach (var x in players)
+        {
+            if (x.turn)
+            {
+                //set card in stats
+                stats.setCard(x.transform.GetChild(0).gameObject);
+            }
+            else
+            {
+                stats.setKeyWord(x.transform.GetChild(0).gameObject);
+            }
+        }
+        stats.setCorrect(wasCorrect);
+        roundOver.Raise(); //clear the board
+        currentRound.y = 0;
+        currentRound.x++;          
+        newRound(); //calls a new round without changing turns 
+        wasCorrect = false;
     }
+
 
     public void givePoints()
     {
+        wasCorrect = true;
         foreach (var x in players)
         {
             x.score+= x.transform.childCount;
@@ -147,6 +173,7 @@ public class GM : MonoBehaviour
             foreach (var x in players)
             {
                 x.toggleConfirm(x.turn);
+                x.changeOutline();
             }
         }
         else

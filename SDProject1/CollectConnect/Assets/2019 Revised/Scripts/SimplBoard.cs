@@ -18,6 +18,10 @@ public class SimplBoard : MonoBehaviour
     [SerializeField]
     GameObject keyBank;
 
+
+    [SerializeField]
+    endGameStats stats;
+
     //List<glow> cardGlow;
 
     //glow keyBankGlow;
@@ -75,6 +79,8 @@ public class SimplBoard : MonoBehaviour
         rt.localPosition = Vector3.zero;
         parentcard.GetComponent<DragItems>().canBeMoved = false;
 
+        stats.setParent(parentcard);
+
         int count = 0;
         foreach (var x in spots)
         {     
@@ -100,8 +106,12 @@ public class SimplBoard : MonoBehaviour
     public void deactivate()
     {
         keyWordAcess(false);
-     //   keyBankGlow.enabled = false;
-        keyBank.GetComponentInParent<Image>().color = Color.white;
+        foreach (var x in dealtCards)
+        {
+            x.GetComponent<DragItems>().canBeMoved = false;
+        }
+        //   keyBankGlow.enabled = false;
+        //   keyBank.GetComponentInParent<Image>().color = Color.white;
 
     }
 
@@ -133,14 +143,19 @@ public class SimplBoard : MonoBehaviour
     {
         foreach(var x in dealtCards)
         {
-            Destroy(x);
+            if(x!=endGameStats.lastCard)
+                Destroy(x);
         }
         foreach(var x in keywords)
         {
-            Destroy(x);
+            if(x!=endGameStats.lastKeyword)
+                Destroy(x);
         }
         keywords.Clear();
-        Destroy(parentcard);
+
+        
+
+        //Destroy(parentcard);
     }
 
     public void newRound()

@@ -29,9 +29,24 @@ public class connectionPanel : MonoBehaviour
            // transform.position = Vector3.zero;
         }
         transform.position = new Vector3(transform.parent.position.x , transform.position.y, 0f);
-        if (rect.position.x<300)
-            transform.position = new Vector3(transform.parent.position.x + offset, transform.position.y, 0f);
-       else
-            transform.position = new Vector3(transform.parent.position.x - offset, transform.position.y, 0f);
+
+        offset = transform.parent.GetComponent<RectTransform>().sizeDelta.x;
+
+
+        transform.position = new Vector3(transform.parent.position.x + offset, transform.position.y, 0f);
+        Vector3 move = rect.anchoredPosition;
+        move.x = 0;
+        rect.anchoredPosition = move;
+
+
+        //if (rect.position.x < 300)
+        //{
+        //    transform.position = new Vector3(transform.parent.position.x + offset, transform.position.y, 0f);
+        //    Vector3 move = rect.anchoredPosition;
+        //    move.x = 0;
+        //  rect.anchoredPosition = move;
+        //}
+        //else
+        //    transform.position = new Vector3(transform.parent.position.x - offset, transform.position.y, 0f);
     }
 }

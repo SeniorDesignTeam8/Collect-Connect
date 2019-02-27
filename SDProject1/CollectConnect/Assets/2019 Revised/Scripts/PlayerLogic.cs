@@ -17,6 +17,14 @@ public class PlayerLogic : MonoBehaviour
     [SerializeField]
     GameObject confirmBtn;
 
+    [SerializeField]
+    GameObject outlineHolder;
+    [SerializeField]
+    GameObject keyOutline;
+    [SerializeField]
+    GameObject cardOutline;
+
+
    public GameObject panel;
 
     public TextMeshProUGUI scoreText;
@@ -42,6 +50,24 @@ public class PlayerLogic : MonoBehaviour
             confirmBtn.SetActive(true);
             turn = true;
             holdAmount = 1; // can hold multiple keywords 
+        }
+    }
+
+    //call this when there is a new round, since this only changes by round not turn 
+    public void changeOutline()
+    {
+        for(int i =0; i< outlineHolder.transform.childCount;i++)
+        {
+           Destroy(outlineHolder.transform.GetChild(i).gameObject);
+        }
+        outlineHolder.transform.DetachChildren();
+        if(turn)
+        {
+            GameObject temp =Instantiate(keyOutline, outlineHolder.transform);
+        }
+        else
+        {
+            Instantiate(cardOutline, outlineHolder.transform);
         }
     }
 
