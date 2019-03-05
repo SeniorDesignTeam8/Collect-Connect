@@ -11,7 +11,7 @@ using TMPro;
 public class GM : MonoBehaviour
 {
     [SerializeField]
-    PlayerLogic [] players;
+    public PlayerLogic [] players;
     System.Random rnd;
     PlayerLogic currentPlayer;
     static IDbConnection dbConnect;
@@ -32,8 +32,6 @@ public class GM : MonoBehaviour
 
     [SerializeField]
     GameEvent activateCards; //allows cards to be moved on second players turn
-    [SerializeField]
-    GameObject approveSelect;
 
     [SerializeField]
     GameEvent gameOver;
@@ -60,6 +58,7 @@ public class GM : MonoBehaviour
                 player.setTurn(false);
             }
             player.changeOutline(); // gives the outline of what object they should be holding 
+            player.setPromptText();
         }
         // collects the cards and keywords from the database
         activeWords = new List<string>();
@@ -99,7 +98,7 @@ public class GM : MonoBehaviour
         foreach (var x in players)
         {
             x.score =0;
-            x.scoreText.text = "Score: " + x.score.ToString();
+          //  x.scoreText.text = "Score: " + x.score.ToString();
         }
     }
     public void changeTurn()
@@ -110,6 +109,7 @@ public class GM : MonoBehaviour
             foreach (var x in players)
             {
                 x.setTurn(!x.turn);
+                x.setPromptText();
             }
 
             activateCards.Raise();
@@ -118,10 +118,11 @@ public class GM : MonoBehaviour
         else // dont change player turn 
         {
 
-            approveSelect.SetActive(true);
+           // approveSelect.SetActive(true);
             foreach(var x in players)
             {
                 x.toggleConfirm(false);
+                x.updateButtonPanel();
             }
         }
     }
@@ -154,8 +155,9 @@ public class GM : MonoBehaviour
         wasCorrect = true;
         foreach (var x in players)
         {
-            x.score+= x.transform.childCount;
-            x.scoreText.text ="Score: " +x.score.ToString();
+            //will need to change based on the value of the keyword
+            if(!x.turn)
+                x.score += 1;
         }
         // Save the parent Card
         // The Choosen Key word
@@ -174,6 +176,7 @@ public class GM : MonoBehaviour
             {
                 x.toggleConfirm(x.turn);
                 x.changeOutline();
+                x.setPromptText();
             }
         }
         else

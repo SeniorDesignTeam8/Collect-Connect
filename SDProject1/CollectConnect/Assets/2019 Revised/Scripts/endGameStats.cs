@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
-using UnityEditor;
+//using UnityEditor;
 using UnityEngine.UI;
 using TMPro;
 
@@ -27,6 +27,11 @@ public class endGameStats : MonoBehaviour
     [SerializeField]
     public GM gm;
 
+
+    [SerializeField]
+    TextMeshProUGUI pscore1;
+    [SerializeField]
+    TextMeshProUGUI pscore2;
 
     public struct rounds
     {
@@ -122,12 +127,18 @@ public class endGameStats : MonoBehaviour
         {
             for( int j=0; j<4; j++)
             {
-                Destroy(playThrough[i].round[j]);
+                if(playThrough[i].round[j]!=null)
+                     Destroy(playThrough[i].round[j]);
             }
         }
         playThrough.Clear();
     }
+    public void finalScore()
+    {
+        pscore1.text = gm.players[0].score.ToString();
+        pscore2.text = gm.players[1].score.ToString();
 
+    }
     public void setUpSlots()
     {
         setSlotPos();
@@ -145,7 +156,7 @@ public class endGameStats : MonoBehaviour
                 playThrough[i].round[j].SetActive(true);
             }
         }
-        writeStats();
+       // writeStats();
     }
 
     // this is where you would save to a file the parent card info, keyword, chosen card, correctness 
@@ -179,7 +190,7 @@ public class endGameStats : MonoBehaviour
         }
 
 
-        AssetDatabase.ImportAsset(path);
+      //  AssetDatabase.ImportAsset(path);
         
 
         //Print the text from the file
