@@ -53,7 +53,7 @@ public class SimplBoard : MonoBehaviour
         {
             spots[i] = Instantiate(holderPF, new Vector3(i * widthX + offsetX,  offsetY, 0), Quaternion.identity);
             spots[i].transform.SetParent(transform);
-            spots[i].GetComponent<glow>().enabled = false;
+         //   spots[i].GetComponent<glow>().enabled = false;
         }
 
         // make board and place holders equal distance aprt 
@@ -61,7 +61,7 @@ public class SimplBoard : MonoBehaviour
     }
     public void dealKeywords()
     {
-        for(int i =0; i<numOptions+1;i++)
+        for(int i =0; i<6;i++)
         {
             keywords.Add(gm.getKeywords());
             keywords[i].transform.SetParent(keyBank.transform);
@@ -69,27 +69,25 @@ public class SimplBoard : MonoBehaviour
     }
     public void dealCards()
     {
-        parentcard= gm.createCardObject();
-        parentcard.transform.localScale=new Vector3(1.3f,1.3f,1.3f);
+        parentcard= gm.dealCard(0,true);
         parentcard.transform.SetParent(parentCardPos);
         RectTransform rt = parentcard.GetComponent<RectTransform>();
         rt.localPosition = Vector3.zero;
-        parentcard.GetComponent<DragItems>().canBeMoved = false;
         
         stats.setParent(parentcard);
 
         int count = 0;
         foreach (var x in spots)
         {     
-            GameObject card = gm.createCardObject();
+            GameObject card = gm.dealCard(count+1, false);
             card.transform.SetParent(x.transform);
             card.GetComponent<DragItems>().canBeMoved = false;
 
-           // x.GetComponent<Image>().color = Color.white;
-            dealtCards[count] = card;
+          //  x.GetComponent<Image>().color = Color.white;
+           dealtCards[count] = card;
             count++;
         }
-        stopCardGlow();
+       // stopCardGlow();
     }
 
     public void stopCardGlow()
@@ -119,7 +117,7 @@ public class SimplBoard : MonoBehaviour
         foreach (var x in dealtCards)
         {
             x.GetComponent<DragItems>().canBeMoved = true;
-            x.GetComponent<glow>().enabled = true;
+           // x.GetComponent<glow>().enabled = true;
         }
     }
 

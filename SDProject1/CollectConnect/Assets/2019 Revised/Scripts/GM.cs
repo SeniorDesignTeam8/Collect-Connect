@@ -1,4 +1,5 @@
 ﻿using Mono.Data.Sqlite;
+
 using System;
 
 using System.Collections;
@@ -15,9 +16,20 @@ public class GM : MonoBehaviour
     System.Random rnd;
     PlayerLogic currentPlayer;
     static IDbConnection dbConnect;
-    static List<GameObject> Deck;
+
+    [SerializeField]
+    GameObject regCard;
+    [SerializeField]
+    GameObject parentCrd;
+
+ //   List<List<int>> deck;
+    List<int> HPR; //id 1
+    List<int> IRC; //id 2
+    List<int> HIC; //id 3
+    List<int> FUAB; //id 4
+    int[] collectionOnScreen;
+
     static List<string> wordbank;
-    List<string> activeWords;
     [SerializeField]
     public int MaxRound;
     Vector2 currentRound;
@@ -41,6 +53,7 @@ public class GM : MonoBehaviour
     bool wasCorrect = false;
     void Awake ()
     {
+        collectionOnScreen = new int[4];
         currentRound = new Vector2(0,0); // each round will consist of the players changing turn once 
         rnd = new System.Random();
         startGame();
@@ -61,44 +74,122 @@ public class GM : MonoBehaviour
             player.setPromptText();
         }
         // collects the cards and keywords from the database
-        activeWords = new List<string>();
         wordbank = new List<string>();
-        Deck = new List<GameObject>();
+       
         string conn = "URI=file:" + Application.dataPath + "/CollectConnectDB.db";
         dbConnect = (IDbConnection)new SqliteConnection(conn);
         dbConnect.Open();
         BuildDeck();
+        initCards();
 
     }
+    void initCards()
+    {
+        HPR = Enumerable.Range(1,8).ToList();//8
+        IRC = Enumerable.Range(1, 4).ToList();//4
+        HIC = Enumerable.Range(1, 6).ToList();//6
+        FUAB = Enumerable.Range(1, 10).ToList();//10
+    }
+    public GameObject dealCard(int numCard, bool parent)
+    {
+        GameObject dealtCard;
+        int collection = rnd.Next(1, 5);   //pick a collection 
+        if (parent)
+        {
+            dealtCard = Instantiate(parentCrd);
+        }
+        else dealtCard = Instantiate(regCard);
 
+        
+
+        cardChosen(dealtCard, collection);  //from that collection see if you can pull a card
+        collectionOnScreen[numCard] = dealtCard.GetComponent<cardID>().coll_id;  //once a card is chosen save which collection it came from so you can pick the appropiate keywords
+
+        dealtCard.GetComponent<cardID>().setImage();
+        return dealtCard;
+    }
+    void cardChosen(GameObject cardObj, int  col)
+    {
+        if (col == 1)
+        {
+            if (HPR.Count == 1)
+            {
+                 cardChosen(cardObj,col + 1);
+            }
+            else
+            {
+                int pick = rnd.Next(0, HPR.Count);
+                cardObj.GetComponent<cardID>().coll_id = col;
+                cardObj.GetComponent<cardID>().setImageName("HPR_", HPR[pick]);
+
+            }
+        }
+        else if (col == 2)
+        {
+            if (IRC.Count == 0)
+            {
+                cardChosen(cardObj,col + 1);
+            }
+            else
+            {
+                int pick = rnd.Next(0, IRC.Count);
+                cardObj.GetComponent<cardID>().coll_id = col;
+                cardObj.GetComponent<cardID>().setImageName("IRC_", IRC[pick]);
+
+            }
+        }
+        else if (col == 3)
+        {
+            if (HIC.Count == 0)
+            {
+                cardChosen(cardObj,col + 1);
+            }
+            else
+            {
+                int pick = rnd.Next(0, HIC.Count);
+                cardObj.GetComponent<cardID>().coll_id = col;
+                cardObj.GetComponent<cardID>().setImageName("HIC_", HIC[pick]);
+            }
+        }
+        else if (col == 4)
+        {
+            if (FUAB.Count == 0)
+            {
+                cardChosen(cardObj,1);
+            }
+            else
+            {
+                int pick = rnd.Next(0, FUAB.Count);
+                cardObj.GetComponent<cardID>().coll_id = col;
+                cardObj.GetComponent<cardID>().setImageName("FUAB_", FUAB[pick]);
+
+            }
+        }
+    }
     public void setUp()
     {
+
         foreach (var player in players)
         {
-
             player.setTurn(player.turn);
             player.changeOutline(); // gives the outline of what object they should be holding 
         }
         clearObjects();
+        initCards();
         BuildDeck();
         newRound();
         currentRound = new Vector2(0, 0);
-        //newRoundStart.Raise();
-
     }
     void clearObjects()
     {
-        foreach(var x in Deck)
-        {
-            Destroy(x);
-        }
-        activeWords.Clear();
+        HPR.Clear();
+        IRC.Clear();
+        HIC.Clear();
+        FUAB.Clear();
         wordbank.Clear();
-        Deck.Clear();
         foreach (var x in players)
         {
             x.score =0;
-          //  x.scoreText.text = "Score: " + x.score.ToString();
         }
     }
     public void changeTurn()
@@ -186,6 +277,20 @@ public class GM : MonoBehaviour
         
     }
 
+    public GameObject getKeywords()
+    {
+        GameObject keyword = Instantiate(keywordPF);
+        if (wordbank.Count != 0)
+        {
+            int x = rnd.Next(0, wordbank.Count);
+            keyword.GetComponentInChildren<TextMeshProUGUI>().text= wordbank[x];
+            wordbank.RemoveAt(x);
+        }
+        return keyword;
+
+    }
+
+
     private static void BuildDeck()
     {
 
@@ -228,22 +333,18 @@ public class GM : MonoBehaviour
             IDataReader rd = dbcmd.ExecuteReader();
             while (rd.Read())
             {
-                GameObject cards = Instantiate(GameObject.Find("card"));
-                //cards.AddComponent<CardInfo>();
-                //CardInfo cardComponent = new CardInfo();    //cards.GetComponent<CardBase>();
-                CardInfo cardComponent = cards.GetComponent<CardInfo>();
-                cardComponent.name = (string)rd["cardDisplayTitle"];
+
+
 
                 string raw = (string)rd["cardDescription"];
                 string s = raw;
-                cardComponent.setCardDes(s);
+
                 int cardId = (int)(long)rd["cardID"];
                 s = (string)rd["imageFileName"];
-                cardComponent.setCardID(cardId);
-                cardComponent.setImageLocation(s);
+
                 raw = (string)rd["Location"];
                 string loc = raw;
-                cardComponent.setCardSourceLoc(loc);
+
 
                 string keywordQuery = "SELECT cat.category, param.parameter, attr.attribute FROM cards c NATURAL JOIN categories_parameters_attributes cpa LEFT OUTER JOIN categories cat ON cpa.categoryID = cat.categoryID LEFT OUTER JOIN parameters param ON cpa.parameterID = param.parameterID LEFT OUTER JOIN attributes attr ON cpa.attributeID = attr.attributeID WHERE cardID = " + cardId + " ORDER BY CATEGORY, ATTRIBUTE, PARAMETER";
                 //Debug.Log (keywordQuery);
@@ -261,113 +362,22 @@ public class GM : MonoBehaviour
                     string param = rawString;
 
 
-
-                    string attr;
-
                     if (cat == "Concept")
                     {
-                        cardComponent.setCatParam(cat, param);
                         wordbank.Add(param);
                     }
-                    else if (cat == "Location")
-                    {
-                        rawString = (string)kwReader["attribute"];
-                        attr = rawString;
 
-                        cardComponent.setCardLocation(attr + ": " + param + "\n");
-                    }
-                    else if (cat == "Person")
-                    {
-                        rawString = (string)kwReader["attribute"];
-                        attr = rawString;
-                        cardComponent.setCardPeople(attr + ": " + param + "\n");
-                    }
-                    else if (cat == "Medium")
-                    {
-
-                        cardComponent.setCardMedium(cat + ": " + param + "\n");
-                    }
-                    else if (cat == "Year")
-                    {
-                        if (kwReader["attribute"] != DBNull.Value)
-                        {
-                            rawString = (string)kwReader["attribute"];
-                            attr = rawString;
-                            cardComponent.setCardYear(attr + ": " + param + "\n");
-                        }
-                        else
-                        {
-                            cardComponent.setCardYear(cat + ": " + param + "\n");
-                        }
-                    }
-                    else if (cat == "Language")
-                    {
-                        cardComponent.setCardLang(cat + ": " + param + "\n");
-                    }
 
                 }
                 kwReader.Close();
                 kwReader = null;
-                cards.SetActive(false);
-                Deck.Add(cards);
+
             }
             rd.Close();
             rd = null;
         }
     }
 
-    public GameObject createCardObject()
-    {
 
-        int pick = rnd.Next(Deck.Count - 1);
-        int i = pick;
-        Deck[pick].SetActive(true);
-        CardInfo reset = Deck[pick].GetComponent<CardInfo>();
-        TextMeshProUGUI des = Deck[pick].GetComponentInChildren<TextMeshProUGUI>();
-        des.text = reset.finalDescription();
-        Component[] images;
-        images = Deck[pick].GetComponentsInChildren<Image>();
-        Image art = Deck[pick].GetComponentInChildren<Image>();
-        foreach (Image x in images)
-        {
-            if (x.tag == "art")
-            {
-                art = x;
-            }
-
-        }
-        art.sprite = reset.cardPic;
-        GameObject newCard = Deck[pick];
-        //stores the keyword associated with the card that was chosen 
-        activeWords.Add(wordbank[pick]);
-        wordbank.RemoveAt(pick);
-
-        newCard.transform.Find("Panel").gameObject.SetActive(false);
-        Deck.RemoveAt(pick);
-        return newCard;
-
-    }
-
-    public GameObject getKeywords()
-    {
-        GameObject keyword = Instantiate(keywordPF);
-        if (activeWords.Count != 0)
-        {
-            int x = rnd.Next(0, activeWords.Count - 1);
-            keyword.GetComponentInChildren<TextMeshProUGUI>().text= activeWords[x];
-            activeWords.RemoveAt(x);
-        }
-        return keyword;
-
-    }
-    // function to make keyword objects 
-    //return those keyword 
-    
-    
-    //use events ???
-    // changing turn 
-    //delete all cards and keywords
-    // update scores
-    // 
 
 }

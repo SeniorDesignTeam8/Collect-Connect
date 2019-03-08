@@ -50,13 +50,4 @@ public class showInfo : MonoBehaviour, IPointerClickHandler
         
     }
 
-    //public void checkCanBeMoved()
-    //{
-    //    Invoke("setCanBeMoved", .2f);
-    //}
-    //void setCanBeMoved()
-    //{
-    //    active = movable.canBeMoved;
-    //}
-
 }

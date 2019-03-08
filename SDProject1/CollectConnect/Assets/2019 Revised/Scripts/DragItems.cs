@@ -11,7 +11,7 @@ public class DragItems : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
     public Transform spawn;
     public GameObject moveArea;
     public bool canBeMoved = false;
-
+    Vector3 startScale;
 
     //when the card is selected it creates a placeholder in its spot
     //this allwos the player to be able to arrange their hand
@@ -42,12 +42,21 @@ public class DragItems : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
     {
         if (canBeMoved)
         {
-            if (lastLocation.tag != "hand"|| lastLocation.tag== "return" || (lastLocation.transform.childCount > 0)) //tag == "card" &&
+            if (lastLocation.tag != "hand" || lastLocation.tag == "return" || (lastLocation.transform.childCount > 0)) //tag == "card" &&
             {
                 transform.SetParent(spawn);
+               
+                transform.localScale = startScale;
             }
             else
+            {
+                if (lastLocation.tag == "hand")
+                {
+                    transform.localScale = new Vector3(.55f, .55f, .55f);
+                }
+                else transform.localScale = startScale;
                 transform.SetParent(lastLocation);
+            }
  
             cgroup.blocksRaycasts = true;
         }
@@ -62,6 +71,7 @@ public class DragItems : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
     // Use this for initialization
     void Start()
     {
+        startScale = transform.localScale;
         // canBeMoved = true;
         cgroup = GetComponent<CanvasGroup>();
        // holdAmount = GetComponent<HoldAmount>();
