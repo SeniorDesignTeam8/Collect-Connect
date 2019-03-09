@@ -1,13 +1,16 @@
 ﻿using Mono.Data.Sqlite;
 
 using System;
-
-using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Sql;
+using System.Data.SqlClient;
 using System.Linq;
+using MySql.Data;
+using MySql.Data.MySqlClient;
+
 using UnityEngine;
-using UnityEngine.UI;
+
 using TMPro;
 public class GM : MonoBehaviour
 {
@@ -81,6 +84,31 @@ public class GM : MonoBehaviour
         dbConnect.Open();
         BuildDeck();
         initCards();
+        keyWordData();
+
+    }
+
+    void keyWordData()
+       // Server=127.0.0.1;Database=collect_connect_db_2019;User ID = root; Password=;
+    {
+        string connString= "Server=localhost;Database=collect_connect;User=root;Password=dc20pass;Pooling=true";
+        MySqlConnection conn;
+        using (conn = new MySqlConnection(connString))
+        {
+            if (conn.State == ConnectionState.Closed)
+            {
+               
+                conn.Open();
+                Debug.Log("Yooooo");
+                conn.Close();
+            }
+        }
+        //using (IDbConnection dbcon = new SqlConnection(connString))
+        //{
+        //    dbcon.Open();
+        //    Debug.Log("Yooooo");
+        //    dbcon.Close();
+        //}
 
     }
     void initCards()
