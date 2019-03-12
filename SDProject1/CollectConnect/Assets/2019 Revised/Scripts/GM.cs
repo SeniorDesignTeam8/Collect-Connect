@@ -1,16 +1,12 @@
 ﻿using Mono.Data.Sqlite;
-
 using System;
+
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Sql;
-using System.Data.SqlClient;
 using System.Linq;
-using MySql.Data;
-using MySql.Data.MySqlClient;
-
 using UnityEngine;
-
+using UnityEngine.UI;
 using TMPro;
 public class GM : MonoBehaviour
 {
@@ -19,6 +15,7 @@ public class GM : MonoBehaviour
     System.Random rnd;
     PlayerLogic currentPlayer;
     static IDbConnection dbConnect;
+    static IDbConnection wordConnect;
 
     [SerializeField]
     GameObject regCard;
@@ -80,37 +77,19 @@ public class GM : MonoBehaviour
         wordbank = new List<string>();
        
         string conn = "URI=file:" + Application.dataPath + "/CollectConnectDB.db";
+        string conn2= "URI=file:" + Application.dataPath + "/testDB.db";
         dbConnect = (IDbConnection)new SqliteConnection(conn);
+        wordConnect = new SqliteConnection(conn2);
+
         dbConnect.Open();
+        wordConnect.Open();
         BuildDeck();
         initCards();
         keyWordData();
 
     }
 
-    void keyWordData()
-       // Server=127.0.0.1;Database=collect_connect_db_2019;User ID = root; Password=;
-    {
-        string connString= "Server=localhost;Database=collect_connect;User=root;Password=dc20pass;Pooling=true";
-        MySqlConnection conn;
-        using (conn = new MySqlConnection(connString))
-        {
-            if (conn.State == ConnectionState.Closed)
-            {
-               
-                conn.Open();
-                Debug.Log("Yooooo");
-                conn.Close();
-            }
-        }
-        //using (IDbConnection dbcon = new SqlConnection(connString))
-        //{
-        //    dbcon.Open();
-        //    Debug.Log("Yooooo");
-        //    dbcon.Close();
-        //}
 
-    }
     void initCards()
     {
         HPR = Enumerable.Range(1,8).ToList();//8
@@ -317,13 +296,37 @@ public class GM : MonoBehaviour
         return keyword;
 
     }
+    void keyWordData()
+    {
+        List<string> words = new List<string>();
+        IDbCommand dbcmd = wordConnect.CreateCommand();
+        const string query = "SELECT NAME FROM keywords_current WHERE coll_id=2";
+        dbcmd.CommandText = query;
 
+        try
+        {
+            int i = 0;
+            IDataReader rd = dbcmd.ExecuteReader();
+            while (rd.Read())
+            {
+                words.Add(rd.GetString(0));
+                Debug.Log(words[i]);
+                i++;
+            }
+            rd.Close();
+            rd = null;
+        }
+        catch (Exception e)
+        {
+            Debug.LogException(e);
+            throw;
+        }
+    }
 
     private static void BuildDeck()
     {
-
+     
         IDbCommand dbcmd = dbConnect.CreateCommand();
-
 
         // Load the collections.
         List<string> collectionList = new List<string>();
