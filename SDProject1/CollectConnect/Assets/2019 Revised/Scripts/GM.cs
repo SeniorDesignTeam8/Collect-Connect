@@ -31,7 +31,11 @@ public class GM : MonoBehaviour
     public int MaxRound;
     Vector2 currentRound;
     [SerializeField]
-    GameObject keywordPF;
+    GameObject keywordPF10;
+    [SerializeField]
+    GameObject keywordPF20;
+    [SerializeField]
+    GameObject keywordPF40;
 
     [SerializeField]
     GameEvent roundOver; //deletes current cards and keywrods
@@ -120,14 +124,13 @@ public class GM : MonoBehaviour
         else dealtCard = Instantiate(regCard);
 
 
-        int coll = rnd.Next(0, availableCards.Count); //pick a collection at random                 // get the actual id of that collection 
-        if (availableCards[coll].Count > 0)     // if that collection has any card left 
-             card = rnd.Next(0, availableCards[coll].Count);  //pick a card at  random from that collection 
-
-
+        int coll = rnd.Next(0, availableCards.Count); //pick a collection at random            
+        // get the actual id of that collection 
+        if(outColls.Contains(coll + 1) && availableCards[coll].Count > 0)
+            card = rnd.Next(0, availableCards[coll].Count);  //pick a card at  random from that collection  
         else
         {
-            while (availableCards[coll].Count==0)
+            while (!outColls.Contains(coll + 1)|| availableCards[coll].Count == 0)
             {
                 coll = rnd.Next(0, availableCards.Count);
             }
@@ -136,8 +139,7 @@ public class GM : MonoBehaviour
 
        
         outColls.Remove(coll+1);                  //coll has been used this round and is no longer in the out list for keywords
-   
-            inColls.Add(coll+1);                      // coll has been used this round so add to in list for keywords 
+        inColls.Add(coll+1);                      // coll has been used this round so add to in list for keywords 
 
         dealtCard.GetComponent<cardID>().coll_id = coll;
         dealtCard.GetComponent<cardID>().setImageName(collNames[coll], availableCards[coll][card]);
@@ -252,7 +254,7 @@ SELECT name FROM "cards" WHERE coll_id=8 AND NOT id=58;
         string query;
         int rare = 0;
         int coll = -1;
-        
+        GameObject keyword;
         //rare not a collection on board 40 pts 
         if (row==0)
         {
@@ -260,6 +262,7 @@ SELECT name FROM "cards" WHERE coll_id=8 AND NOT id=58;
             coll = outColls[coll];
             outColls.Remove(coll);
             rare = 1;
+            keyword= Instantiate(keywordPF40);
         }
 
         
@@ -279,14 +282,17 @@ SELECT name FROM "cards" WHERE coll_id=8 AND NOT id=58;
                 outColls.Remove(coll);
                 rare = 0;
             }
+            keyword = Instantiate(keywordPF20);
         }
-        else if (row==2)
+        else 
         {
             coll = rnd.Next(0, inColls.Count);//picks a keyword from a card collection  on the board need
             coll = inColls[coll];
             inColls.Remove(coll);
             rare = 0;
+            keyword = Instantiate(keywordPF10);
         }
+        
 
         query= "SELECT NAME FROM keywords_current WHERE coll_id="+coll.ToString()+" AND rare="+rare.ToString();
         dbcmd.CommandText = query;
@@ -310,7 +316,7 @@ SELECT name FROM "cards" WHERE coll_id=8 AND NOT id=58;
 
 
 
-        GameObject keyword = Instantiate(keywordPF);
+        
         keyword.GetComponentInChildren<TextMeshProUGUI>().text = word;
 
         return keyword;
