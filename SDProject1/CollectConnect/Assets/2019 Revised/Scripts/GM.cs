@@ -136,7 +136,7 @@ public class GM : MonoBehaviour
 
        
         outColls.Remove(coll+1);                  //coll has been used this round and is no longer in the out list for keywords
-        if(!inColls.Contains(coll+1))
+   
             inColls.Add(coll+1);                      // coll has been used this round so add to in list for keywords 
 
         dealtCard.GetComponent<cardID>().coll_id = coll;
