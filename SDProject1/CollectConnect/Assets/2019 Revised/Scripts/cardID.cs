@@ -28,7 +28,6 @@ public class cardID : MonoBehaviour
         front = Resources.Load<Sprite>(frontImg);
         back = Resources.Load<Sprite>(backImg);
 
-
     }
     public void setImage()
     {

@@ -61,15 +61,22 @@ public class SimplBoard : MonoBehaviour
     }
     public void dealKeywords()
     {
+        int row=0;
+        bool col = true;
         for(int i =0; i<6;i++)
         {
-            keywords.Add(gm.getKeywords());
+            if (i < 2) row = 0;
+            else if (i == 2) { row = 1; }
+            else if (i == 3) { row = 1; col = false; }
+            else if (i > 3) row = 2;
+
+            keywords.Add(gm.getKeywords(row, col));
             keywords[i].transform.SetParent(keyBank.transform);
         }
     }
     public void dealCards()
     {
-        parentcard= gm.dealCard(0,true);
+        parentcard= gm.dealCard(true);
         parentcard.transform.SetParent(parentCardPos);
         RectTransform rt = parentcard.GetComponent<RectTransform>();
         rt.localPosition = Vector3.zero;
@@ -79,7 +86,7 @@ public class SimplBoard : MonoBehaviour
         int count = 0;
         foreach (var x in spots)
         {     
-            GameObject card = gm.dealCard(count+1, false);
+            GameObject card = gm.dealCard(false);
             card.transform.SetParent(x.transform);
             card.GetComponent<DragItems>().canBeMoved = false;
 

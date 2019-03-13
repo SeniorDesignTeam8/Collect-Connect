@@ -63,18 +63,10 @@ public class DragItems : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
 
     }
 
-
-
-
-
-
-    // Use this for initialization
     void Start()
     {
         startScale = transform.localScale;
-        // canBeMoved = true;
         cgroup = GetComponent<CanvasGroup>();
-       // holdAmount = GetComponent<HoldAmount>();
         moveArea = GameObject.Find("Canvas");
         spawn = lastLocation = transform.parent;
 

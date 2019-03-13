@@ -16,16 +16,13 @@ public class HandleDrop : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPo
         { 
             if (transform.tag == "hand" && valid )
             {
-                Debug.Log("Dropping on Hand");
                 item.lastLocation = transform;
-
             }
             else 
             {
                 item.lastLocation = item.spawn;
             }
-        }
-       
+        }     
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -36,21 +33,15 @@ public class HandleDrop : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPo
                 valid = false;
             else
                 valid = true;
-            Debug.Log("On hand");
         }
-        else if (transform.tag=="return")
-            Debug.Log("Spawn");
+
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        valid = false;
-        
+        valid = false;        
     }
 
-
-
-    // Use this for initialization
     void Start()
     {
         player = GetComponent<PlayerLogic>();
