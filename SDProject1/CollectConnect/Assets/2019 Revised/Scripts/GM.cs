@@ -25,6 +25,8 @@ public class GM : MonoBehaviour
     GameObject parentCrd;
 
 
+    public GameObject popupPanel;
+
     List<int> inColls;
     List<int> outColls;
 
@@ -141,7 +143,7 @@ public class GM : MonoBehaviour
         outColls.Remove(coll+1);                  //coll has been used this round and is no longer in the out list for keywords
         inColls.Add(coll+1);                      // coll has been used this round so add to in list for keywords 
 
-        dealtCard.GetComponent<cardID>().coll_id = coll;
+        dealtCard.GetComponent<cardID>().coll_id = coll+1;
         dealtCard.GetComponent<cardID>().setImageName(collNames[coll], availableCards[coll][card]);
 
         dealtCard.GetComponent<cardID>().setImage();
@@ -209,9 +211,6 @@ public class GM : MonoBehaviour
             if (!x.turn)
                 x.score += 1;
         }
-        // Save the parent Card
-        // The Choosen Key word
-        // The Guessed Card
 
 
         //Clears the board and increments round 
@@ -255,6 +254,8 @@ SELECT name FROM "cards" WHERE coll_id=8 AND NOT id=58;
         int rare = 0;
         int coll = -1;
         GameObject keyword;
+
+        //SAVE WHETHER OR NOT IT IS RARE !!!!!!!!!!!!!!!!!!!!!!!!!
         //rare not a collection on board 40 pts 
         if (row==0)
         {
@@ -268,6 +269,7 @@ SELECT name FROM "cards" WHERE coll_id=8 AND NOT id=58;
         
         else if (row==1)
         {
+            
             if(col)//rare a collecrtion on the board 
             {
                 coll = rnd.Next(0, inColls.Count);//picks a keyword from a card collection  on the board need
@@ -314,11 +316,8 @@ SELECT name FROM "cards" WHERE coll_id=8 AND NOT id=58;
         int x = rnd.Next(0, words.Count);
         word = words[x];
 
-
-
-        
         keyword.GetComponentInChildren<TextMeshProUGUI>().text = word;
-
+        keyword.GetComponent<keywordPts>().rare = rare;
         return keyword;
     }
 
@@ -333,7 +332,6 @@ SELECT name FROM "cards" WHERE coll_id=8 AND NOT id=58;
             availableCards.Add(new List<int>());
         }
 
-       // const string trye = "SELECT name FROM cards WHERE coll_id=4";
         for (int i=0; i <collNames.Count;i++)
         {
             int id = i + 1;
@@ -363,5 +361,15 @@ SELECT name FROM "cards" WHERE coll_id=8 AND NOT id=58;
                 throw;
             }
         }
+    }
+
+    public void closeDataBase()
+    {
+        dbConnect.Close();
+    }
+    public void activateCardPopup()
+    {
+        popupPanel.SetActive(true);
+        popupPanel.transform.SetAsLastSibling();
     }
 }

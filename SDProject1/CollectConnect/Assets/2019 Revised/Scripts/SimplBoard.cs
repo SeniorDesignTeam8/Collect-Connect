@@ -16,8 +16,11 @@ public class SimplBoard : MonoBehaviour
     GameObject holderPF;
     GameObject [] spots;
     [SerializeField]
-    GameObject keyBank;
-
+    GameObject keyBank1;
+    [SerializeField]
+    GameObject keyBank2;
+    [SerializeField]
+    GameObject keyBank3;
 
     [SerializeField]
     endGameStats stats;
@@ -71,7 +74,10 @@ public class SimplBoard : MonoBehaviour
             else if (i > 3) row = 2;
 
             keywords.Add(gm.getKeywords(row, col));
-            keywords[i].transform.SetParent(keyBank.transform);
+            if (i < 2) keywords[i].transform.SetParent(keyBank1.transform);
+            else if (i ==2||i==3) keywords[i].transform.SetParent(keyBank2.transform);
+            else if (i > 3) keywords[i].transform.SetParent(keyBank3.transform);
+
         }
     }
     public void dealCards()
@@ -81,7 +87,7 @@ public class SimplBoard : MonoBehaviour
         RectTransform rt = parentcard.GetComponent<RectTransform>();
         rt.localPosition = Vector3.zero;
         
-        stats.setParent(parentcard);
+        //stats.setParent(parentcard);
 
         int count = 0;
         foreach (var x in spots)
@@ -144,18 +150,18 @@ public class SimplBoard : MonoBehaviour
 
     }
 
+
     public void roundOver()
     {
         foreach(var x in dealtCards)
         {
-            if(x!=endGameStats.lastCard)
                 Destroy(x);
         }
         foreach(var x in keywords)
         {
-            if(x!=endGameStats.lastKeyword)
                 Destroy(x);
         }
+        Destroy(parentcard);
         keywords.Clear();
 
     }

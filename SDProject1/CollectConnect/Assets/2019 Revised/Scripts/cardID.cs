@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class cardID : MonoBehaviour
 {
     public int coll_id;
+    public int cardName;
     public string frontImg;
     public string backImg;
     Sprite front;
@@ -14,6 +15,7 @@ public class cardID : MonoBehaviour
     public Image info;
     public void setImageName(string imgName, int id)
     {
+        cardName = id;
         if(id<10)
         {
             frontImg = imgName + "0" + id.ToString()+"_F";

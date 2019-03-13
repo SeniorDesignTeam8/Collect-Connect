@@ -6,19 +6,14 @@ using UnityEngine.UI;
 
 public class showInfo : MonoBehaviour, IPointerClickHandler
 {
-    bool active;
-    GameObject art;
-    GameObject info;
+    
+
+    Image art;
+    Image info;
+    public Image artImg;
+    public Image backImg;
     float time;
-    DragItems movable;
-	// Use this for initialization
-	void Start ()
-    {
-        active = false;
-        movable = GetComponent<DragItems>();
-        info = this.transform.Find("Panel").gameObject;
-        art = this.transform.Find("artImage").gameObject;
-    }
+    
 
     public void OnPointerClick(PointerEventData eventData)
     {
@@ -37,16 +32,15 @@ public class showInfo : MonoBehaviour, IPointerClickHandler
     }
     void onDoubleClick()
     {
-        art.SetActive(!art.activeSelf);
-        info.SetActive(!info.activeSelf);
-        if(active && info.activeSelf)
-        {
-            movable.canBeMoved = false;
-        }
-        else if(active)
-        {
-            movable.canBeMoved = true;
-        }
+        GameObject.FindGameObjectWithTag("InfoPanel").GetComponent<GM>().activateCardPopup();
+
+        GameObject panel = GameObject.FindGameObjectWithTag("InfoPanel").GetComponent<GM>().popupPanel;
+        art = panel.GetComponent<refToInactiveOb>().art;
+
+        info= panel.GetComponent<refToInactiveOb>().back;
+
+        art.sprite = artImg.sprite;
+        info.sprite = backImg.sprite;
         
     }
 

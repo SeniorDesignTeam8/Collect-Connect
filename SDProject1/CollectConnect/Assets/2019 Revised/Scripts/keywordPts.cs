@@ -5,6 +5,7 @@ using UnityEngine;
 public class keywordPts : MonoBehaviour {
 
     public int pts;
+    public int rare = 0;
 	// Use this for initialization
 	void Start () {
 		
