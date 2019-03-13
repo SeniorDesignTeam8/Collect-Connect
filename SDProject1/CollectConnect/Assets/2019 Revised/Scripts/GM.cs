@@ -120,7 +120,7 @@ public class GM : MonoBehaviour
         else dealtCard = Instantiate(regCard);
 
 
-        int coll = rnd.Next(0, collNames.Count); //pick a collection at random                 // get the actual id of that collection 
+        int coll = rnd.Next(0, availableCards.Count); //pick a collection at random                 // get the actual id of that collection 
         if (availableCards[coll].Count > 0)     // if that collection has any card left 
              card = rnd.Next(0, availableCards[coll].Count);  //pick a card at  random from that collection 
 
@@ -129,19 +129,23 @@ public class GM : MonoBehaviour
         {
             while (availableCards[coll].Count==0)
             {
-                coll = rnd.Next(0, collNames.Count);
+                coll = rnd.Next(0, availableCards.Count);
             }
             card = rnd.Next(0, availableCards[coll].Count);
         }
 
-        availableCards[coll].RemoveAt(card);      //card is no longer available from that collection
+       
         outColls.Remove(coll+1);                  //coll has been used this round and is no longer in the out list for keywords
-        inColls.Add(coll+1);                      // coll has been used this round so add to in list for keywords 
+        if(!inColls.Contains(coll+1))
+            inColls.Add(coll+1);                      // coll has been used this round so add to in list for keywords 
 
         dealtCard.GetComponent<cardID>().coll_id = coll;
-        dealtCard.GetComponent<cardID>().setImageName(collNames[coll], coll+1);
+        dealtCard.GetComponent<cardID>().setImageName(collNames[coll], availableCards[coll][card]);
 
         dealtCard.GetComponent<cardID>().setImage();
+
+
+        availableCards[coll].RemoveAt(card);      //card is no longer available from that collection
         return dealtCard;
     }
 
