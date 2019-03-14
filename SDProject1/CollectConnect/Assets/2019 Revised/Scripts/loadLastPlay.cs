@@ -9,24 +9,32 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 public class loadLastPlay : MonoBehaviour {
+
+    public Slider slidePanel;
+
     public GameObject cardPF;
-    public GameObject keywordPF;
-    public Image right;
-    public Image wrong;
+    public Transform pSpot;
+    public Transform cSpot;
+    public GameObject keyword;
+    public Sprite right;
+    public Sprite wrong;
+    public GameObject correctness;
 
     List<int> parents;
     List<int> children;
     List<int> keywords;
     List<int> correct;
 
-    List<cardID> parentCard;
-    List<cardID> childCards;
+    List<GameObject> parentCard;
+    List<GameObject> childCards;
     List<string> words;
     IDbCommand dbcmd;
     IDbConnection dbConnect;
+    int previousValue;
 
     private void Start()
     {
+        previousValue = 0;
         string conn = "URI=file:" + Application.dataPath + "/testDB.db";
         dbConnect = (IDbConnection)new SqliteConnection(conn);
         dbConnect.Open();
@@ -37,14 +45,16 @@ public class loadLastPlay : MonoBehaviour {
         keywords= new List<int>();
         correct=new List<int>();
 
-        parentCard = new List<cardID>();
-        childCards = new List<cardID>();
+        parentCard = new List<GameObject>();
+        childCards = new List<GameObject>();
         words = new List<string>();
 
         getLastGame();
         createKeywords();
         createParentCards();
         creatChildCard();
+
+        displayPanel();
     }
     private void getLastGame()
     {
@@ -90,8 +100,6 @@ public class loadLastPlay : MonoBehaviour {
             children.Add(idC);
             keywords.Add(idK);
             correct.Add(idcorrect);
-
-   //         Debug.Log(idP.ToString() + " " + idC.ToString() + " " + idK.ToString() + " " + idcorrect.ToString());
             count++;
             if (count > 5) i = 0;
             
@@ -132,9 +140,14 @@ public class loadLastPlay : MonoBehaviour {
                 bool worked = int.TryParse(rd.GetString(2), out nameid);
             }
             rd.Close();
-            cardID card = new cardID();
-            card.setImageName(GM.collNames[collid], nameid);
-            card.setImage();
+            GameObject card = Instantiate(cardPF);
+            cardID info = card.GetComponent<cardID>();
+            info.setImageName(GM.collNames[collid-1], nameid);
+            info.setImage();
+            card.transform.SetParent(pSpot);
+            card.GetComponent<RectTransform>().anchoredPosition = new Vector3(0,0,0);
+            card.GetComponent<showInfo>().enabled = false;
+            card.SetActive(false);
             parentCard.Add(card);
 
         }
@@ -157,11 +170,45 @@ public class loadLastPlay : MonoBehaviour {
                 bool worked = int.TryParse(rd.GetString(2), out nameid);
             }
             rd.Close();
-            cardID card = new cardID();
-            card.setImageName(GM.collNames[collid], nameid);
-            card.setImage();
+            GameObject card = Instantiate(cardPF);
+            cardID info = card.GetComponent<cardID>();
+            info.setImageName(GM.collNames[collid-1], nameid);
+            info.setImage();
+            card.transform.SetParent(cSpot);
+            card.GetComponent<RectTransform>().anchoredPosition = new Vector3(0, 0, 0);
+            card.GetComponent<showInfo>().enabled = false;
+            card.SetActive(false);
             childCards.Add(card);
 
+        }
+    }
+
+    public void  displayPanel()
+    {
+        parentCard[previousValue].SetActive(false);
+        childCards[previousValue].SetActive(false);
+        int i = (int)slidePanel.value;
+        parentCard[i].SetActive(true);
+        childCards[i].SetActive(true);
+        
+
+        keyword.GetComponentInChildren<TextMeshProUGUI>().text = words[i];
+
+        if (correct[i] == 0)
+            correctness.GetComponent<Image>().sprite = wrong;
+
+        else
+            correctness.GetComponent<Image>().sprite = right;
+
+        previousValue = i;
+    }
+
+    public void deleteCards()
+    {
+        for(int i=0; i<words.Count;i++)
+        {
+            Destroy( parentCard[0]);
+            Destroy(childCards[0]);
         }
     }
 }

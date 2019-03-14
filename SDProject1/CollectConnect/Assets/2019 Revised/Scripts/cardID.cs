@@ -33,6 +33,7 @@ public class cardID : MonoBehaviour
     }
     public void setImage()
     {
+
         art.sprite = front;
         info.sprite = back;
     }
