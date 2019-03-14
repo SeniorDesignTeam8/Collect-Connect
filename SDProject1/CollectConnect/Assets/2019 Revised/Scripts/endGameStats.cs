@@ -177,9 +177,6 @@ public class endGameStats : MonoBehaviour
                 }
                 catch (Exception ex2)
                 {
-                    // This catch block will handle any errors that may have occurred
-                    // on the server that would cause the rollback to fail, such as
-                    // a closed connection.
                     Debug.Log("Rollback Exception Type: {2}");
                     Debug.Log("  Message: {2}");
                 }
@@ -188,10 +185,6 @@ public class endGameStats : MonoBehaviour
 
         }
 
-        //INSERT INTO connections ("id","user_id","user2_id", "card1_id","card2_id","keyword_id","keyword_match","keyword_match_rare","keyword_in_coll","time") VALUES ('3','101','102','12','34','67','0','0','0','2019-03-01 0:00:00');
-
     }
-
-
 
 }

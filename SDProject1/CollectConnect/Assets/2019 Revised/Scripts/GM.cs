@@ -10,6 +10,8 @@ using UnityEngine.UI;
 using TMPro;
 public class GM : MonoBehaviour
 {
+    int teamPts = 0;
+    static public int maxRoundPts = 0;
     [SerializeField]
     public PlayerLogic[] players;
     System.Random rnd;
@@ -24,6 +26,8 @@ public class GM : MonoBehaviour
     [SerializeField]
     GameObject parentCrd;
 
+    public TextMeshProUGUI round;
+    public TextMeshProUGUI teamScore;
 
     public GameObject popupPanel;
 
@@ -63,6 +67,7 @@ public class GM : MonoBehaviour
     }
     void startGame()
     {
+        teamPts = 0;
         // sets up the players, and assigns who goes first randomly 
         int x = rnd.Next(0, players.Length);
         currentPlayer = players[x];
@@ -197,6 +202,8 @@ public class GM : MonoBehaviour
         roundOver.Raise(); //clear the board
         currentRound.y = 0;
         currentRound.x++;
+        int thisround = (int) currentRound.x +1;
+        round.text = "Round " + thisround.ToString() + "/" + MaxRound.ToString();
         newRound(); //calls a new round without changing turns 
         wasCorrect = false;
     }
@@ -204,14 +211,20 @@ public class GM : MonoBehaviour
 
     public void givePoints()
     {
+        teamPts = 0;
         wasCorrect = true;
         foreach (var x in players)
         {
             //will need to change based on the value of the keyword
-            if (!x.turn)
-                x.score += 1;
-        }
+            if (x.turn)
+                x.addScore (maxRoundPts);
+            else x.addScore (maxRoundPts / 2);
 
+            teamPts += x.score;
+            x.updatePts();
+        }
+        teamScore.text = "Team Score: " + teamPts.ToString();
+        
 
         //Clears the board and increments round 
         Invoke("finishRound", .15f);

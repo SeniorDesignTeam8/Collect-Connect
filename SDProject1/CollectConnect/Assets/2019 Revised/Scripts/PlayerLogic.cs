@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class PlayerLogic : MonoBehaviour
 {
@@ -32,10 +33,17 @@ public class PlayerLogic : MonoBehaviour
     GameObject yesButt; // button to confirm if the other player guessed the correct connection 
     [SerializeField]
     GameObject noButt; //button to confirm if the other player did not guess the correct connection 
+    Color maketransparent;
+    Color startColor;
 
+    public GameObject scorePopUp;
+
+    public Sprite inactiveConfirm;
+    public Sprite activeConfirm;
     bool pickingWord;
     public TextMeshProUGUI prompt;
 
+    public Sprite[] ptVals;
     public TextMeshProUGUI scoreText;
 
     void Start()
@@ -70,7 +78,7 @@ public class PlayerLogic : MonoBehaviour
         {
             if (pickingWord)
             {
-                prompt.text = "Drag a word to connect on of the smaller cards to the large card. Keep the selected card a secret!";
+                prompt.text = "Think of a mini card that relates to the large card through a keyword. Place keyword here";
             }
             else
             {
@@ -125,10 +133,57 @@ public class PlayerLogic : MonoBehaviour
         }
         else
         {
+            if(transform.GetChild(0).tag=="keyWord")
+            {
+                GM.maxRoundPts = transform.GetChild(0).GetComponent<keywordPts>().pts;
+            }
             deactivate.Raise();
             endTurn.Raise();
             
         }
+    }
+    private void Update()
+    {
+        if(scorePopUp.activeSelf)
+        {
+            maketransparent.a -= .01f;
+            Color lerpedColor = Color.Lerp(maketransparent, startColor, Time.deltaTime);
+            scorePopUp.GetComponent<Image>().color = maketransparent;
+            
+            if (maketransparent.a <= 0)
+                turnoffPopup();
+        }
+    }
+
+    void turnoffPopup()
+    {
+        scorePopUp.SetActive(false);
+        scorePopUp.GetComponent<Image>().color = startColor;
+
+
+
+    }
+    public void addScore(int pts)
+    {
+        score += pts;
+        if (pts == 40)
+            scorePopUp.GetComponent<Image>().sprite = ptVals[4];
+        else if (pts == 20)
+            scorePopUp.GetComponent<Image>().sprite = ptVals[3];
+        else if (pts == 10)
+            scorePopUp.GetComponent<Image>().sprite = ptVals[2];
+        else if (pts == 5)
+            scorePopUp.GetComponent<Image>().sprite = ptVals[1];
+        else 
+            scorePopUp.GetComponent<Image>().sprite = ptVals[0];
+
+        scorePopUp.SetActive(true);
+        startColor = scorePopUp.GetComponent<Image>().color;
+        maketransparent = startColor;
+    }
+    public void updatePts()
+    {
+        scoreText.text = "Score: "+score.ToString();
     }
 
 }
