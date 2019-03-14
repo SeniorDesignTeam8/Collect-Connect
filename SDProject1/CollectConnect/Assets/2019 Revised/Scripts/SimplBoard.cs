@@ -50,8 +50,10 @@ public class SimplBoard : MonoBehaviour
     {
         float offsetX = startPos.position.x;
         float offsetY = startPos.position.y;
+        holderPF.transform.localScale = new Vector3(1, 1, 1);
+
         float widthX = holderPF.GetComponent<RectTransform>().sizeDelta.x;
-        widthX +=10;
+        widthX +=widthX/2;
         for (int i = 0; i < numOptions;i++)
         {
             spots[i] = Instantiate(holderPF, new Vector3(i * widthX + offsetX,  offsetY, 0), Quaternion.identity);
@@ -78,6 +80,8 @@ public class SimplBoard : MonoBehaviour
             else if (i ==2||i==3) keywords[i].transform.SetParent(keyBank2.transform);
             else if (i > 3) keywords[i].transform.SetParent(keyBank3.transform);
 
+            keywords[i].transform.localScale = new Vector3(.75f, .75f, .75f);
+
         }
     }
     public void dealCards()
@@ -86,16 +90,17 @@ public class SimplBoard : MonoBehaviour
         parentcard.transform.SetParent(parentCardPos);
         RectTransform rt = parentcard.GetComponent<RectTransform>();
         rt.localPosition = Vector3.zero;
-        
+        parentcard.transform.localScale = new Vector3(.90f, .90f, .90f);
         stats.setParent(parentcard);
 
         int count = 0;
         foreach (var x in spots)
-        {     
+        {
+            x.transform.localScale = new Vector3(1, 1, 1);
             GameObject card = gm.dealCard(false);
             card.transform.SetParent(x.transform);
             card.GetComponent<DragItems>().canBeMoved = false;
-
+            card.transform.localScale = new Vector3(.85f, .85f, .85f);
           //  x.GetComponent<Image>().color = Color.white;
            dealtCards[count] = card;
             count++;

@@ -82,7 +82,7 @@ public class PlayerLogic : MonoBehaviour
             }
             else
             {
-                prompt.text = "Guess the small card your opponent is thinking of!";
+                prompt.text = "Guess the card your opponent is thinking of!";
             }
         }
         else prompt.text = "";
@@ -144,9 +144,17 @@ public class PlayerLogic : MonoBehaviour
     }
     private void Update()
     {
+        if(confirmBtn.activeSelf)
+        {
+            if (transform.childCount == 0)
+            {
+                confirmBtn.GetComponent<Image>().sprite = inactiveConfirm;
+            }
+            else confirmBtn.GetComponent<Image>().sprite = activeConfirm;
+        }
         if(scorePopUp.activeSelf)
         {
-            maketransparent.a -= .01f;
+            maketransparent.a -= .008f;
             Color lerpedColor = Color.Lerp(maketransparent, startColor, Time.deltaTime);
             scorePopUp.GetComponent<Image>().color = maketransparent;
             

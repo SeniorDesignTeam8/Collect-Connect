@@ -13,7 +13,12 @@ public class tutorial : MonoBehaviour
         active = true;
         help.Raise();
     }
-    
+    private void Start()
+    {
+        roundsActive = 0;
+        active = false;
+    }
+
     public void updateTimeLeft()
     {
         roundsActive++;
