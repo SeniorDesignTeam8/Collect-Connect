@@ -16,7 +16,7 @@ public class GM : MonoBehaviour
     PlayerLogic currentPlayer;
     static IDbConnection dbConnect;
 
-    static List<string> collNames = new List<string>() { "HPR_", "IRC_", "HIC_", "FUAB_", "BCG_", "AAG_", "AW_", "KAG_" };  //order of names here matters!
+    public static List<string> collNames = new List<string>() { "HPR_", "IRC_", "HIC_", "FUAB_", "BCG_", "AAG_", "AW_", "KAG_" };  //order of names here matters!
     List<List<int>> availableCards; // every new game will hold all cards from database
 
     [SerializeField]

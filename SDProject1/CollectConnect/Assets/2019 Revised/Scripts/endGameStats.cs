@@ -11,6 +11,7 @@ using TMPro;
 
 public class endGameStats : MonoBehaviour
 {
+    public static int startCon=0;
 
     List<int> parentCardName;
     List<int> parentCardColl;
@@ -119,13 +120,13 @@ public class endGameStats : MonoBehaviour
             throw;
         }
         startID++;// increment for new entry 
+        startCon = startID;
 
-
-        
+        IDbTransaction transaction = dbConnect.BeginTransaction();
         // for each round of play insert that into the database 
         for (int i=0; i<gm.MaxRound;i++)
         {
-            IDbTransaction transaction = dbConnect.BeginTransaction();
+            
             int parentID = -1;
             int cardID = -1;
             int keywordID =-1;
@@ -150,21 +151,25 @@ public class endGameStats : MonoBehaviour
 
 
                 keywordID = keywords[i];
-              
 
-                queryX = "INSERT INTO connections(id,user_id,user2_id, card1_id,card2_id,keyword_id,keyword_match,keyword_match_rare,keyword_in_coll,time)"+
-                "VALUES("+startID+", 101, 102, "+parentID+ ", " + cardID + ", " + keywordID + ", " + correct[i] + ", " + rare[i] + ", '0', '2019-03-01 0:00:00')";
+
+                
+                dbcmd.Transaction = transaction;
+                queryX = "INSERT INTO connections (id, user_id, user2_id, card1_id, card2_id, keyword_id, keyword_match, keyword_match_rare, keyword_in_coll,time)" +
+                " VALUES ("+startID+", 101, 102, "+parentID+ ", " + cardID + ", " + keywordID + ", " + correct[i] + ", " + rare[i] + ", 0, '2019-03-01 0:00:00')";
                 dbcmd.CommandText=queryX;
                 dbcmd.ExecuteNonQuery();
-                transaction.Commit();
-                Debug.Log("Conn " + i + " succesfull");
+                Debug.Log("Conn: " + i.ToString() + " succesfull");
+                if(i==gm.MaxRound-1)
+                  transaction.Commit();
+                startID++;
+                
 
             }
             catch (Exception ex)
             {
-                Debug.Log("Commit Exception Type: {0}");
-                Debug.Log("  Message: {0}");
-
+                Debug.Log("Commit Failed");
+                var x = ex.GetType();
                 // Attempt to roll back the transaction.
                 try
                 {
@@ -179,6 +184,7 @@ public class endGameStats : MonoBehaviour
                     Debug.Log("  Message: {2}");
                 }
             }
+           
 
         }
 
