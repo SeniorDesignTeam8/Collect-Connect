@@ -6,6 +6,7 @@ public class keywordPts : MonoBehaviour {
 
     public int pts;
     public int rare = 0;
+    public int keyID;
 	// Use this for initialization
 	void Start () {
 		

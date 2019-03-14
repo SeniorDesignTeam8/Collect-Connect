@@ -87,7 +87,7 @@ public class SimplBoard : MonoBehaviour
         RectTransform rt = parentcard.GetComponent<RectTransform>();
         rt.localPosition = Vector3.zero;
         
-        //stats.setParent(parentcard);
+        stats.setParent(parentcard);
 
         int count = 0;
         foreach (var x in spots)

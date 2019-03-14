@@ -18,8 +18,8 @@ public class endGameStats : MonoBehaviour
     List<int> smallCardNames;
     List<int> smallCardColl;
 
-    List<string> keywords;
-    List<bool> correct;
+    List<int> keywords;
+    List<int> correct;
     List<int> rare;
 
     [SerializeField]
@@ -43,8 +43,8 @@ public class endGameStats : MonoBehaviour
         smallCardNames= new List<int>();
         smallCardColl= new List<int>();
 
-        keywords = new List<string>();
-        correct = new List<bool>();
+        keywords = new List<int>();
+        correct = new List<int>();
         rare = new List<int>();
 
     }
@@ -63,14 +63,15 @@ public class endGameStats : MonoBehaviour
 
     public void setKeyWord(GameObject keyword)
     {
-        keywords.Add(keyword.GetComponent<TextMeshProUGUI>().text);
+        keywords.Add(keyword.GetComponent<keywordPts>().keyID);
         rare.Add(keyword.GetComponent<keywordPts>().rare); 
     }
 
     public void setCorrect(bool correct)
     {
-
-        this.correct.Add(correct);
+        if (correct)
+            this.correct.Add(1);
+        else this.correct.Add(0);
     }
 
 
@@ -78,7 +79,7 @@ public class endGameStats : MonoBehaviour
     {
         pscore1.text = gm.players[0].score.ToString();
         pscore2.text = gm.players[1].score.ToString();
-        //saveToDatabase();
+        saveToDatabase();
 
     }
 
@@ -86,6 +87,7 @@ public class endGameStats : MonoBehaviour
     // this is where you would save the parent card info, keyword, chosen card, correctness 
     private void saveToDatabase()
     {
+        int startID = 0;
         //close off the game manager from the database so it can be opened here 
         gm.closeDataBase();
 
@@ -93,53 +95,97 @@ public class endGameStats : MonoBehaviour
         string conn = "URI=file:" + Application.dataPath + "/testDB.db";
         dbConnect = (IDbConnection)new SqliteConnection(conn);
         dbConnect.Open();
+        IDbCommand dbcmd = dbConnect.CreateCommand();
+        
+
+        string query = "SELECT id FROM connections";
+        dbcmd.CommandText = query;
+
+        //get the last id from the connections table 
+        try
+        {
+
+            IDataReader rd = dbcmd.ExecuteReader();
+            while (rd.Read())
+            {              
+                startID=rd.GetInt16(0);
+            }
+            rd.Close();
+            rd = null;
+        }
+        catch (Exception e)
+        {
+            Debug.LogException(e);
+            throw;
+        }
+        startID++;// increment for new entry 
 
 
-        //INSERT INTO "connections" ("id","user_id","user2_id", "card1_id","card2_id","keyword_id","keyword_match","keyword_match_rare","keyword_in_coll","time") VALUES ('3','44','32','12','34','67','0','0','0','2019-03-01 0:00:00');
+        
+        // for each round of play insert that into the database 
+        for (int i=0; i<gm.MaxRound;i++)
+        {
+            IDbTransaction transaction = dbConnect.BeginTransaction();
+            int parentID = -1;
+            int cardID = -1;
+            int keywordID =-1;
+            try
+            {
+
+                string queryX = "SELECT id FROM cards WHERE coll_id=" + parentCardColl[i] + " AND name=" + parentCardName[i];
+                dbcmd.CommandText = queryX;
+                IDataReader rd = dbcmd.ExecuteReader();
+                while(rd.Read())
+                    parentID = rd.GetInt16(0);
+                rd.Close();
+                rd = null;
+
+                queryX = "SELECT id FROM cards WHERE coll_id=" + smallCardColl[i] + " AND name=" + smallCardNames[i];
+                dbcmd.CommandText = queryX;
+                rd = dbcmd.ExecuteReader();
+                while (rd.Read())
+                    cardID = rd.GetInt16(0);
+                rd.Close();
+                rd = null;
+
+
+                keywordID = keywords[i];
+              
+
+                queryX = "INSERT INTO connections(id,user_id,user2_id, card1_id,card2_id,keyword_id,keyword_match,keyword_match_rare,keyword_in_coll,time)"+
+                "VALUES("+startID+", 101, 102, "+parentID+ ", " + cardID + ", " + keywordID + ", " + correct[i] + ", " + rare[i] + ", '0', '2019-03-01 0:00:00')";
+                dbcmd.CommandText=queryX;
+                dbcmd.ExecuteNonQuery();
+                transaction.Commit();
+                Debug.Log("Conn " + i + " succesfull");
+
+            }
+            catch (Exception ex)
+            {
+                Debug.Log("Commit Exception Type: {0}");
+                Debug.Log("  Message: {0}");
+
+                // Attempt to roll back the transaction.
+                try
+                {
+                    transaction.Rollback();
+                }
+                catch (Exception ex2)
+                {
+                    // This catch block will handle any errors that may have occurred
+                    // on the server that would cause the rollback to fail, such as
+                    // a closed connection.
+                    Debug.Log("Rollback Exception Type: {2}");
+                    Debug.Log("  Message: {2}");
+                }
+            }
+
+        }
+
+        //INSERT INTO connections ("id","user_id","user2_id", "card1_id","card2_id","keyword_id","keyword_match","keyword_match_rare","keyword_in_coll","time") VALUES ('3','101','102','12','34','67','0','0','0','2019-03-01 0:00:00');
 
     }
 
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    //correctly posistions holder slots according to screen size. 
-    //public void setSlotPos()
-    //{
-        
-    //    RectTransform rt;
-    //    RectTransform thisRT = GetComponent<RectTransform>();
-    //    float offset = thisRT.sizeDelta.y/ gm.MaxRound;
-    //    float topOfScreen = thisRT.sizeDelta.y / 2f;
-    //    float halfSize;
-
-    //    for(int i =0; i<gm.MaxRound; i++)
-    //    {
-    //        rt = roundSlots[i].GetComponent<RectTransform>();
-    //        halfSize = rt.sizeDelta.y / 2;
-    //        Vector3 newPos = rt.anchoredPosition;
-    //        newPos.y = topOfScreen - (offset * i)- halfSize;
-    //        rt.anchoredPosition = newPos;
-    //    }
-
-    //}

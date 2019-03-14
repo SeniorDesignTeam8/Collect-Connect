@@ -313,11 +313,32 @@ SELECT name FROM "cards" WHERE coll_id=8 AND NOT id=58;
             Debug.LogException(e);
             throw;
         }
+
+        query = "SELECT id FROM keywords_current WHERE coll_id=" + coll.ToString() + " AND rare=" + rare.ToString();
+        dbcmd.CommandText = query;
+        List<int> ids = new List<int>();
+        try
+        {
+            IDataReader rd = dbcmd.ExecuteReader();
+            while (rd.Read())
+            {
+                ids.Add(rd.GetInt16(0));
+            }
+            rd.Close();
+            rd = null;
+        }
+        catch (Exception e)
+        {
+            Debug.LogException(e);
+            throw;
+        }
+
         int x = rnd.Next(0, words.Count);
         word = words[x];
 
         keyword.GetComponentInChildren<TextMeshProUGUI>().text = word;
         keyword.GetComponent<keywordPts>().rare = rare;
+        keyword.GetComponent<keywordPts>().keyID = ids[x];
         return keyword;
     }
 
