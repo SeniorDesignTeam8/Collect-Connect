@@ -10,6 +10,14 @@ using UnityEngine.UI;
 using TMPro;
 public class GM : MonoBehaviour
 {
+    public GameObject timerPanel;
+    public TextMeshProUGUI counter;
+
+    bool continueButton = false;
+    double searchTime;
+    DateTime startTime;
+    bool activateTimer = false;
+    double maxTime = 30;
     int teamPts = 0;
     static public int maxRoundPts = 0;
     [SerializeField]
@@ -20,6 +28,8 @@ public class GM : MonoBehaviour
 
     public static List<string> collNames = new List<string>() { "HPR_", "IRC_", "HIC_", "FUAB_", "BCG_", "AAG_", "AW_", "KAG_" };  //order of names here matters!
     List<List<int>> availableCards; // every new game will hold all cards from database
+
+    public GameObject refreshpopUp;
 
     [SerializeField]
     GameObject regCard;
@@ -33,6 +43,9 @@ public class GM : MonoBehaviour
 
     List<int> inColls;
     List<int> outColls;
+
+    List<int> inCollsRefresh;
+    List<int> outCollsRefresh;
 
     public int MaxRound;
     Vector2 currentRound;
@@ -60,6 +73,7 @@ public class GM : MonoBehaviour
     void Awake()
     {
         outColls = Enumerable.Range(1, 8).ToList(); //8
+        outCollsRefresh = Enumerable.Range(1, 8).ToList();
         inColls = new List<int>();
         currentRound = new Vector2(0, 0); // each round will consist of the players changing turn once 
         rnd = new System.Random();
@@ -82,8 +96,9 @@ public class GM : MonoBehaviour
             player.setPromptText();
         }
         // collects the cards and keywords from the database
-        
 
+        inCollsRefresh= new List<int>();
+      //  outCollsRefresh = new List<int>();
         string conn = "URI=file:" + Application.dataPath + "/testDB.db";
         dbConnect = (IDbConnection)new SqliteConnection(conn);
         dbConnect.Open();
@@ -147,6 +162,8 @@ public class GM : MonoBehaviour
        
         outColls.Remove(coll+1);                  //coll has been used this round and is no longer in the out list for keywords
         inColls.Add(coll+1);                      // coll has been used this round so add to in list for keywords 
+        outCollsRefresh.Remove(coll + 1);
+        inCollsRefresh.Add(coll + 1);
 
         dealtCard.GetComponent<cardID>().coll_id = coll+1;
         dealtCard.GetComponent<cardID>().setImageName(collNames[coll], availableCards[coll][card]);
@@ -157,11 +174,26 @@ public class GM : MonoBehaviour
         availableCards[coll].RemoveAt(card);      //card is no longer available from that collection
         return dealtCard;
     }
+    public void refreshKeylist()
+    {
+        dockPts();
+        outColls.Clear();
+        inColls.Clear();
+        for(int i=0; i< outCollsRefresh.Count;i++)
+        {
+            outColls.Add(outCollsRefresh[i]);
+        }
+        for (int i = 0; i < inCollsRefresh.Count; i++)
+        {
+            inColls.Add(inCollsRefresh[i]);
+        }
+    }
 
     public void changeTurn()
     {
         if (currentRound.y == 0)
         {
+            //deactivate button 
             //change player turn
             foreach (var x in players)
             {
@@ -174,7 +206,7 @@ public class GM : MonoBehaviour
         }
         else // dont change player turn 
         {
-
+            //activate button 
             // approveSelect.SetActive(true);
             foreach (var x in players)
             {
@@ -198,16 +230,55 @@ public class GM : MonoBehaviour
                 stats.setKeyWord(x.transform.GetChild(0).gameObject);
             }
         }
+        // if it was wrong display a timer so people can talk about the decision 
+        if (!wasCorrect)
+        {
+            foreach (var x in players)
+            {
+                //will need to change based on the value of the keyword
+                if (x.turn)
+                    x.addScore(0);
+                else x.addScore(0);
+
+                x.updatePts();
+            }
+            timerPanel.SetActive(true);
+            timerPanel.transform.SetAsLastSibling();
+            counter.text = maxTime.ToString();
+            startTime = DateTime.Now;
+            activateTimer = true;
+            ///make timer panel active 
+
+        }
+        //else if they guessed it right just keep going
+        else afterTimerFinsihRound();
+    }
+    public void afterTimerFinsihRound()
+    {
         stats.setCorrect(wasCorrect);
         roundOver.Raise(); //clear the board
         currentRound.y = 0;
         currentRound.x++;
-        int thisround = (int) currentRound.x +1;
+        int thisround = (int)currentRound.x + 1;
         round.text = "Round " + thisround.ToString() + "/" + MaxRound.ToString();
         newRound(); //calls a new round without changing turns 
         wasCorrect = false;
     }
 
+    public void dockPts()
+    {
+       // maxRoundPts -= 5;
+        teamPts = 0;
+        foreach (var x in players)
+        {
+
+           x.addScore(-5);
+
+            teamPts += x.score;
+            x.updatePts();
+        }
+        teamScore.text = "Team Score: " + teamPts.ToString();
+    }
 
     public void givePoints()
     {
@@ -231,8 +302,10 @@ public class GM : MonoBehaviour
     }
     public void newRound()
     {
+        outCollsRefresh= Enumerable.Range(1, 8).ToList();//8
         outColls = Enumerable.Range(1, 8).ToList();//8
         inColls.Clear();
+        inCollsRefresh.Clear();
         if (currentRound.x < MaxRound)
         {
             newRoundStart.Raise();
@@ -401,9 +474,35 @@ SELECT name FROM "cards" WHERE coll_id=8 AND NOT id=58;
     {
         dbConnect.Close();
     }
+    public void activateRefreshPopuo()
+    {
+        refreshpopUp.SetActive(true);
+        refreshpopUp.transform.SetAsLastSibling();
+    }
     public void activateCardPopup()
     {
         popupPanel.SetActive(true);
         popupPanel.transform.SetAsLastSibling();
+    }
+    private void Update()
+    {
+        if (activateTimer)
+        {
+            TimeSpan diff = DateTime.Now - startTime;
+            searchTime = diff.TotalSeconds;
+            counter.text = (maxTime - (int)searchTime).ToString();
+            if (searchTime >= maxTime|| continueButton)
+            {
+                continueButton = false;
+                activateTimer = false;
+                timerPanel.SetActive(false);
+                afterTimerFinsihRound();
+                
+            }
+        }
+    }
+    public void continueButtonHit()
+    {
+        continueButton = true;
     }
 }

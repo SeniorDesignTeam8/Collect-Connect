@@ -25,6 +25,7 @@ public class SimplBoard : MonoBehaviour
     [SerializeField]
     endGameStats stats;
 
+    public Button refreshButton;
 
     GameObject[] dealtCards;
     List<GameObject> keywords;
@@ -83,9 +84,11 @@ public class SimplBoard : MonoBehaviour
             keywords[i].transform.localScale = new Vector3(.75f, .75f, .75f);
 
         }
+        keyWordAcess(true);
     }
     public void dealCards()
     {
+        refreshButton.interactable = true;
         parentcard= gm.dealCard(true);
         parentcard.transform.SetParent(parentCardPos);
         RectTransform rt = parentcard.GetComponent<RectTransform>();
@@ -132,6 +135,7 @@ public class SimplBoard : MonoBehaviour
 
 	public void cardAcess()
     {
+        refreshButton.interactable = false;
         foreach (var x in dealtCards)
         {
             x.GetComponent<DragItems>().canBeMoved = true;
@@ -152,6 +156,18 @@ public class SimplBoard : MonoBehaviour
             x.GetComponentInChildren<glow>().enabled = access;
            }
         }
+
+    }
+
+    public void refreshKeyBank()
+    {
+        foreach (var x in keywords)
+        {
+            Destroy(x);
+        }
+        keywords.Clear();
+        Invoke("dealKeywords", .1f);
+       
 
     }
 

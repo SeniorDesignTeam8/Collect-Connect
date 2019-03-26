@@ -22,7 +22,7 @@ public class showInfo : MonoBehaviour, IPointerClickHandler
         {
             time = eventData.clickTime;
         }
-        if (eventData.clickTime - time < 1 && clickCount == 2)
+        if (eventData.clickTime - time < 1)
         {
             time = 0;
             clickCount = 0;

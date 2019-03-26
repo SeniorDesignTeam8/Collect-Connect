@@ -10,19 +10,21 @@ public class tutorial : MonoBehaviour
     GameEvent help;
 	public void setHelpText()
     {
+        roundsActive = 0;
         active = true;
         help.Raise();
     }
-    private void Start()
+    private void Awake()
     {
         roundsActive = 0;
-        active = false;
+        active = true;
+        help.Raise();
     }
 
     public void updateTimeLeft()
     {
         roundsActive++;
-        if(roundsActive>2)
+        if(roundsActive>0)
         {
             active = false;
             roundsActive = 0;

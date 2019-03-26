@@ -77,8 +77,8 @@ public class PlayerLogic : MonoBehaviour
         else if (turn && tutorial.active)
         {
             if (pickingWord)
-            {
-                prompt.text = "Think of a mini card that relates to the large card through a keyword. Place keyword here";
+            {                 //                                                                                        //
+                prompt.text = "Select a keyword that relates 1 of the 3 cards on the right to the card on the left";
             }
             else
             {
@@ -174,7 +174,11 @@ public class PlayerLogic : MonoBehaviour
     public void addScore(int pts)
     {
         score += pts;
-        if (pts == 40)
+        if(pts==-5)
+        {
+            scorePopUp.GetComponent<Image>().sprite = ptVals[5];
+        }
+        else if (pts == 40)
             scorePopUp.GetComponent<Image>().sprite = ptVals[4];
         else if (pts == 20)
             scorePopUp.GetComponent<Image>().sprite = ptVals[3];
