@@ -11,13 +11,9 @@ using TMPro;
 public class GM : MonoBehaviour
 {
     public GameObject timerPanel;
+    public GameObject discussPanel;
     public TextMeshProUGUI counter;
 
-    bool continueButton = false;
-    double searchTime;
-    DateTime startTime;
-    bool activateTimer = false;
-    double maxTime = 30;
     int teamPts = 0;
     static public int maxRoundPts = 0;
     [SerializeField]
@@ -244,9 +240,8 @@ public class GM : MonoBehaviour
             }
             timerPanel.SetActive(true);
             timerPanel.transform.SetAsLastSibling();
-            counter.text = maxTime.ToString();
-            startTime = DateTime.Now;
-            activateTimer = true;
+            discussPanel.SetActive(true);
+            
             ///make timer panel active 
 
         }
@@ -484,25 +479,11 @@ SELECT name FROM "cards" WHERE coll_id=8 AND NOT id=58;
         popupPanel.SetActive(true);
         popupPanel.transform.SetAsLastSibling();
     }
-    private void Update()
-    {
-        if (activateTimer)
-        {
-            TimeSpan diff = DateTime.Now - startTime;
-            searchTime = diff.TotalSeconds;
-            counter.text = (maxTime - (int)searchTime).ToString();
-            if (searchTime >= maxTime|| continueButton)
-            {
-                continueButton = false;
-                activateTimer = false;
-                timerPanel.SetActive(false);
-                afterTimerFinsihRound();
-                
-            }
-        }
-    }
+
     public void continueButtonHit()
     {
-        continueButton = true;
+       
+        timerPanel.SetActive(false);
+        afterTimerFinsihRound();
     }
 }

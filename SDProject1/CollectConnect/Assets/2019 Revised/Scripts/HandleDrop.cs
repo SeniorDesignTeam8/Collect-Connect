@@ -5,7 +5,8 @@ using UnityEngine.EventSystems;
 
 public class HandleDrop : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerExitHandler
 {
-    PlayerLogic player;
+    public PlayerLogic player;
+    public GameObject dropArea;
     bool valid;
 
     public void OnDrop(PointerEventData eventData)
@@ -16,7 +17,7 @@ public class HandleDrop : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPo
         { 
             if (transform.tag == "hand" && valid )
             {
-                item.lastLocation = transform;
+                item.lastLocation = dropArea.transform;
             }
             else 
             {
@@ -29,7 +30,7 @@ public class HandleDrop : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPo
     {
         if (transform.tag == "hand")
         {
-            if (transform.childCount >= player.holdAmount)
+            if (dropArea.transform.childCount >= player.holdAmount)
                 valid = false;
             else
                 valid = true;
@@ -44,7 +45,7 @@ public class HandleDrop : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPo
 
     void Start()
     {
-        player = GetComponent<PlayerLogic>();
+       
         valid = false;
 
     }

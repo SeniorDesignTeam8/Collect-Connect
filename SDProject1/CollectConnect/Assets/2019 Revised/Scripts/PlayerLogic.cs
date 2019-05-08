@@ -35,6 +35,8 @@ public class PlayerLogic : MonoBehaviour
     GameObject noButt; //button to confirm if the other player did not guess the correct connection 
     Color maketransparent;
     Color startColor;
+    [SerializeField]
+    GameObject largeDropArea;
 
     public GameObject scorePopUp;
 
@@ -58,10 +60,11 @@ public class PlayerLogic : MonoBehaviour
             turn = false;
             confirmBtn.SetActive(false);
             holdAmount = 0; //can only hold 1 card as a guess 
-
+            largeDropArea.SetActive(false);
         }
         else
         {
+            largeDropArea.SetActive(true);
             confirmBtn.SetActive(true);
             turn = true;
             holdAmount = 1; // can hold multiple keywords 
@@ -149,8 +152,14 @@ public class PlayerLogic : MonoBehaviour
             if (transform.childCount == 0)
             {
                 confirmBtn.GetComponent<Image>().sprite = inactiveConfirm;
+                largeDropArea.SetActive(true);
             }
-            else confirmBtn.GetComponent<Image>().sprite = activeConfirm;
+            else
+            {
+                confirmBtn.GetComponent<Image>().sprite = activeConfirm;
+                largeDropArea.SetActive(false);
+            }
+
         }
         if(scorePopUp.activeSelf)
         {
