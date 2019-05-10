@@ -1,5 +1,3 @@
-// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
-
 Shader "TextMeshPro/Distance Field Overlay" {
 
 Properties {
@@ -66,6 +64,7 @@ Properties {
 	_ScaleX				("Scale X", float) = 1.0
 	_ScaleY				("Scale Y", float) = 1.0
 	_PerspectiveFilter	("Perspective Correction", Range(0, 1)) = 0.875
+	_Sharpness			("Sharpness", Range(-1,1)) = 0
 
 	_VertexOffsetX		("Vertex OffsetX", float) = 0
 	_VertexOffsetY		("Vertex OffsetY", float) = 0
@@ -118,7 +117,9 @@ SubShader {
 		#pragma shader_feature __ BEVEL_ON
 		#pragma shader_feature __ UNDERLAY_ON UNDERLAY_INNER
 		#pragma shader_feature __ GLOW_ON
-		#pragma shader_feature __ MASK_OFF
+
+		#pragma multi_compile __ UNITY_UI_CLIP_RECT
+		#pragma multi_compile __ UNITY_UI_ALPHACLIP
 
 
 		#include "UnityCG.cginc"
@@ -166,7 +167,7 @@ SubShader {
 			float2 pixelSize = vPosition.w;
 			pixelSize /= float2(_ScaleX, _ScaleY) * abs(mul((float2x2)UNITY_MATRIX_P, _ScreenParams.xy));
 			float scale = rsqrt(dot(pixelSize, pixelSize));
-			scale *= abs(input.texcoord1.y) * _GradientScale * 1.5;
+			scale *= abs(input.texcoord1.y) * _GradientScale * (_Sharpness + 1);
 			if (UNITY_MATRIX_P[3][3] == 0) scale = lerp(abs(scale) * (1 - _PerspectiveFilter), scale, abs(dot(UnityObjectToWorldNormal(input.normal.xyz), normalize(WorldSpaceViewDir(vert)))));
 
 			float weight = lerp(_WeightNormal, _WeightBold, bold) / 4.0;
@@ -282,19 +283,17 @@ SubShader {
 			faceColor.rgb += glowColor.rgb * glowColor.a;
 		#endif
 
-		// #if !MASK_OFF
-		#if UNITY_VERSION < 530
-			// Unity 5.2 2D Rect Mask Support
-			if (_UseClipRect)
-				faceColor *= UnityGet2DClipping(input.mask.xy, _ClipRect);
-		#else
-			// Alternative implementation to UnityGet2DClipping with support for softness.
+		// Alternative implementation to UnityGet2DClipping with support for softness.
+		#if UNITY_UI_CLIP_RECT
 			half2 m = saturate((_ClipRect.zw - _ClipRect.xy - abs(input.mask.xy)) * input.mask.zw);
 			faceColor *= m.x * m.y;
 		#endif
-		//#endif
 
-  		return faceColor * input.color.a;
+		#if UNITY_UI_ALPHACLIP
+			clip(faceColor.a - 0.001);
+		#endif
+  		
+			return faceColor * input.color.a;
 		}
 
 		ENDCG
