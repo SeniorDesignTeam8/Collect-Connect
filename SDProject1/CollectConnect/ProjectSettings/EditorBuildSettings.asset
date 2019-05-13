@@ -5,27 +5,6 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
-    path: Assets/Scenes/mainMenu.unity
-    guid: ddc681aab8bb43243987f2d4010d403b
-  - enabled: 0
-    path: Assets/Scenes/About.unity
-    guid: 07f75993d755bba48a30afc90379f3b6
-  - enabled: 0
-    path: Assets/Scenes/MainScene.unity
-    guid: 92137c3634333cf4a960aa44d530210e
-  - enabled: 0
-    path: Assets/Scenes/EndGame.unity
-    guid: 2bd5424ffafb2604e950ae728abeaccc
-  - enabled: 0
-    path: Assets/Scenes/PlayerSelection.unity
-    guid: 9882d58c2cc64ec4da57845c02293913
-  - enabled: 0
-    path: Assets/Scenes/CharacterSelection.unity
-    guid: 7351f7bd1f03d164089e1a128a00b5dd
-  - enabled: 0
-    path: Assets/Scenes/InGameScene.unity
-    guid: 03281b90d1805d648b99deedff554df7
   - enabled: 1
     path: Assets/Scenes/RevisedMainMenu.unity
     guid: e898058b71c790d4b891f396a76810f2
@@ -35,27 +14,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/RevisedGame.unity
     guid: 93ecdd46b1f759d4bbc63407f253f676
-  - enabled: 0
-    path: 
-    guid: 00000000000000000000000000000000
-  - enabled: 0
-    path: 
-    guid: 00000000000000000000000000000000
-  - enabled: 0
-    path: 
-    guid: 00000000000000000000000000000000
-  - enabled: 0
-    path: 
-    guid: 00000000000000000000000000000000
-  - enabled: 0
-    path: 
-    guid: 00000000000000000000000000000000
-  - enabled: 0
-    path: 
-    guid: 00000000000000000000000000000000
-  - enabled: 0
-    path: 
-    guid: 00000000000000000000000000000000
   - enabled: 1
     path: Assets/Scenes/RevisedCredits.unity
     guid: 0d92d864789989a46b8df86ac9327606
