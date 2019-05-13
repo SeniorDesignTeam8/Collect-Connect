@@ -29,7 +29,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/RevisedMainMenu.unity
     guid: e898058b71c790d4b891f396a76810f2
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/RevisedTutorial.unity
     guid: 22b25baed427f0a4c8891a8ca822d304
   - enabled: 1
@@ -37,25 +37,25 @@ EditorBuildSettings:
     guid: 93ecdd46b1f759d4bbc63407f253f676
   - enabled: 0
     path: 
-    guid: fd5c7b0080abd0d44a1f3a11930a231d
+    guid: 00000000000000000000000000000000
   - enabled: 0
     path: 
-    guid: 191c9b8c85415d948ba7ff7703febdcb
+    guid: 00000000000000000000000000000000
   - enabled: 0
     path: 
-    guid: ee0151924c81877408f4ef0c5424e4bf
+    guid: 00000000000000000000000000000000
   - enabled: 0
     path: 
-    guid: b1b5f4d2fee27b54e8fc81149a71ec06
+    guid: 00000000000000000000000000000000
   - enabled: 0
     path: 
-    guid: 17431073c9791144ca348129fde8948d
+    guid: 00000000000000000000000000000000
   - enabled: 0
     path: 
-    guid: 2099cdaf86d66d24abe15c4c6b412b14
+    guid: 00000000000000000000000000000000
   - enabled: 0
     path: 
-    guid: ab2137878e61dc04aa81b4e897ef5278
+    guid: 00000000000000000000000000000000
   - enabled: 1
     path: Assets/Scenes/RevisedCredits.unity
     guid: 0d92d864789989a46b8df86ac9327606
