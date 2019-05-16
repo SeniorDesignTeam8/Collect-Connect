@@ -11,7 +11,7 @@ public class DragItems : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
     public Transform spawn;
     public GameObject moveArea;
     public bool canBeMoved = false;
-    Vector3 startScale;
+    public Vector3 startScale;
 
     //when the card is selected it creates a placeholder in its spot
     //this allwos the player to be able to arrange their hand

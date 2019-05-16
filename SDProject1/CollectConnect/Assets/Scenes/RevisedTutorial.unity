@@ -739,11 +739,6 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 21300000, guid: ddfa95f64406e0f4584b4ec5f1cd19e9,
         type: 3}
-    - target: {fileID: 7184263009897213611, guid: c26f718e3c03f714ea415f4da04b1ffe,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 7184263009623208535, guid: c26f718e3c03f714ea415f4da04b1ffe,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
@@ -793,6 +788,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 7184263009897213611, guid: c26f718e3c03f714ea415f4da04b1ffe,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c26f718e3c03f714ea415f4da04b1ffe, type: 3}
@@ -1206,15 +1206,30 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
       value: SetActive
       objectReference: {fileID: 0}
-    - target: {fileID: 7184263009623208533, guid: c26f718e3c03f714ea415f4da04b1ffe,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 7184263009623208535, guid: c26f718e3c03f714ea415f4da04b1ffe,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 2138661097}
+    - target: {fileID: 7184263009623208533, guid: c26f718e3c03f714ea415f4da04b1ffe,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7184263010793871662, guid: c26f718e3c03f714ea415f4da04b1ffe,
+        type: 3}
+      propertyPath: m_Color.r
+      value: 0.101960786
+      objectReference: {fileID: 0}
+    - target: {fileID: 7184263010793871662, guid: c26f718e3c03f714ea415f4da04b1ffe,
+        type: 3}
+      propertyPath: m_Color.g
+      value: 0.19215687
+      objectReference: {fileID: 0}
+    - target: {fileID: 7184263010793871662, guid: c26f718e3c03f714ea415f4da04b1ffe,
+        type: 3}
+      propertyPath: m_Color.b
+      value: 0.35686275
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c26f718e3c03f714ea415f4da04b1ffe, type: 3}

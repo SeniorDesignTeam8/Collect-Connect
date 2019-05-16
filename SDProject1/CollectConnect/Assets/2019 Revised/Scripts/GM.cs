@@ -35,7 +35,7 @@ public class GM : MonoBehaviour
     public TextMeshProUGUI round;
     public TextMeshProUGUI teamScore;
 
-    public GameObject popupPanel;
+  
 
     List<int> inColls;
     List<int> outColls;
@@ -474,11 +474,11 @@ SELECT name FROM "cards" WHERE coll_id=8 AND NOT id=58;
         refreshpopUp.SetActive(true);
         refreshpopUp.transform.SetAsLastSibling();
     }
-    public void activateCardPopup()
-    {
-        popupPanel.SetActive(true);
-        popupPanel.transform.SetAsLastSibling();
-    }
+    //public void activateCardPopup()
+    //{
+    //    popupPanel.SetActive(true);
+    //    popupPanel.transform.SetAsLastSibling();
+    //}
 
     public void continueButtonHit()
     {

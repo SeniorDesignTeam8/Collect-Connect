@@ -26,6 +26,7 @@ TagManager:
   - keyWord
   - cardHolder
   - InfoPanel
+  - playerWord
   layers:
   - Default
   - TransparentFX

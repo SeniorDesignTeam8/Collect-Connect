@@ -32,9 +32,9 @@ public class showInfo : MonoBehaviour, IPointerClickHandler
     }
     void onDoubleClick()
     {
-        GameObject.FindGameObjectWithTag("InfoPanel").GetComponent<GM>().activateCardPopup();
+        GameObject.FindGameObjectWithTag("InfoPanel").GetComponent<popupPanelActivate>().activateCardPopup();
 
-        GameObject panel = GameObject.FindGameObjectWithTag("InfoPanel").GetComponent<GM>().popupPanel;
+        GameObject panel = GameObject.FindGameObjectWithTag("InfoPanel").GetComponent<popupPanelActivate>().popupPanel;
         art = panel.GetComponent<refToInactiveOb>().art;
 
         info= panel.GetComponent<refToInactiveOb>().back;

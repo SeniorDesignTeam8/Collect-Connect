@@ -7,6 +7,7 @@ public class HandleDrop : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPo
 {
     public PlayerLogic player;
     public GameObject dropArea;
+    returnFirstChild backToSpawn;
     bool valid;
 
     public void OnDrop(PointerEventData eventData)
@@ -17,6 +18,10 @@ public class HandleDrop : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPo
         { 
             if (transform.tag == "hand" && valid )
             {
+                if (dropArea.transform.childCount >= 1 && backToSpawn != null)//player.holdAmount)
+                {
+                    backToSpawn.sendBack();
+                }
                 item.lastLocation = dropArea.transform;
             }
             else 
@@ -30,10 +35,7 @@ public class HandleDrop : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPo
     {
         if (transform.tag == "hand")
         {
-            if (dropArea.transform.childCount >= player.holdAmount)
-                valid = false;
-            else
-                valid = true;
+            valid = true;
         }
 
     }
@@ -45,7 +47,7 @@ public class HandleDrop : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPo
 
     void Start()
     {
-       
+        backToSpawn = GetComponent<returnFirstChild>();
         valid = false;
 
     }

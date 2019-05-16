@@ -819,6 +819,7 @@ GameObject:
   - component: {fileID: 284447888}
   - component: {fileID: 284447887}
   - component: {fileID: 284447889}
+  - component: {fileID: 284447890}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: InfoPanel
@@ -961,11 +962,10 @@ MonoBehaviour:
   parentCrd: {fileID: 1877394373033862, guid: 41fe026425b5bc240abf31e8864e1e54, type: 3}
   round: {fileID: 1013151643}
   teamScore: {fileID: 71217828}
-  popupPanel: {fileID: 357858838}
   MaxRound: 6
-  keywordPF10: {fileID: 1927019735710656, guid: 37d7576044270df408d565f41064ae3e,
+  keywordPF10: {fileID: 8436307950778351342, guid: ecccf863b5e5e6643aec99aa3ff467ae,
     type: 3}
-  keywordPF20: {fileID: 1581315150743612, guid: 088a52b9642ccba4dafaa9e795b8cca7,
+  keywordPF20: {fileID: 4974563186102659062, guid: 3a30c4080786cff4a9249c6f00743637,
     type: 3}
   keywordPF40: {fileID: 1961343927195346, guid: 1eae33fcef0f7724ab617e250c98d243,
     type: 3}
@@ -1169,6 +1169,19 @@ MonoBehaviour:
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   Event: {fileID: 11400000, guid: 63e39d295d8824b448e80d75ff4fc1d3, type: 2}
+--- !u!114 &284447890
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 284447876}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ccc6f6874e47c8409815a4a8e010abe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  popupPanel: {fileID: 357858838}
 --- !u!1 &285186235
 GameObject:
   m_ObjectHideFlags: 0

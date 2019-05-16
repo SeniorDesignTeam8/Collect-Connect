@@ -17,4 +17,13 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/RevisedCredits.unity
     guid: 0d92d864789989a46b8df86ac9327606
+  - enabled: 1
+    path: Assets/Scenes/ConnectGame.unity
+    guid: b44fcbe33a22c8249a5a2c884d6cf67e
+  - enabled: 1
+    path: Assets/Scenes/CollectGame.unity
+    guid: 97eafeb8e10380f4c823b1981383f4a3
+  - enabled: 1
+    path: Assets/Scenes/mobileMenu.unity
+    guid: 3712cfe9d7515794c87b1b14cf44ff91
   m_configObjects: {}
