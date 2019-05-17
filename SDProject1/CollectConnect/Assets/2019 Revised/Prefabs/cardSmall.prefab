@@ -108,7 +108,8 @@ MonoBehaviour:
   lastLocation: {fileID: 0}
   spawn: {fileID: 0}
   moveArea: {fileID: 0}
-  canBeMoved: 1
+  canBeMoved: 0
+  startScale: {x: 0, y: 0, z: 0}
 --- !u!114 &114362473467333914
 MonoBehaviour:
   m_ObjectHideFlags: 0
