@@ -6,13 +6,57 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using UnityEngine;
-
+using System.IO;
+using UnityEngine.Networking;
 public static class DataBaseHandler 
 {
     //static IDbCommand dbcmd;
-    static string conn = "URI=file:" + Application.dataPath + "/testDB.db";
-    static IDbConnection dbConnect = (IDbConnection) new SqliteConnection(conn);
+    static string conn;
+    static IDbConnection dbConnect;
     
+    static void setUp()
+    {
+       // conn = "URI=file:" + Application.dataPath + "/testDB.db";
+        
+
+        if (Application.platform != RuntimePlatform.Android)
+        {
+
+            conn = "URI=file:" + Application.dataPath + "/testDB.db";
+            dbConnect = new SqliteConnection(conn);
+        }
+        else
+        {
+
+            conn =  Application.persistentDataPath + "/" +"testDB.db";
+            if (!File.Exists(conn))
+            {
+                UnityWebRequest load = new UnityWebRequest("jar:file://" + Application.dataPath + "!/assets/" + "testDB.db");
+                load.downloadHandler = new DownloadHandlerBuffer();
+                load.SendWebRequest();
+                if(load.isNetworkError || load.isHttpError)
+                {
+                    Debug.Log(load.error);
+                }
+                else
+                {
+                    Debug.Log("Trying to get database bytes /n");
+                    byte[] results = load.downloadHandler.data;
+                    File.WriteAllBytes(conn, results);
+                    dbConnect = new SqliteConnection(conn);
+                    if (dbConnect != null)
+                        Debug.Log("Success");
+                    else Debug.Log("Failed at writing bytes to database");
+                }
+                
+                // while (!load.isDone) { }
+
+                
+            }
+        }
+
+        dbConnect = new SqliteConnection(conn);
+    }
      
    
 
@@ -24,6 +68,7 @@ public static class DataBaseHandler
     //get random keyword based on rareity and collection 
      public static string getKeywordByColl(int coll, int rare)
     {
+        setUp();
         dbConnect.Open();
         IDbCommand dbcmd = dbConnect.CreateCommand(); 
         string query;
@@ -56,6 +101,7 @@ public static class DataBaseHandler
     }
     public static List<List<int>> getAllCards()
     {
+        setUp();
         dbConnect.Open();
         List<List<int>> availableCards = new List<List<int>>();
 
