@@ -88,7 +88,6 @@ C:\Users\adrie\Documents\GitHub\Collect-Connect\SDProject1\CollectConnect\obj\De
 C:\Users\adrie\Documents\GitHub\Collect-Connect\SDProject1\CollectConnect\obj\Debug\Assembly-CSharp.csproj.CopyComplete
 C:\Users\adrie\Documents\GitHub\Collect-Connect\SDProject1\CollectConnect\Temp\bin\Debug\Microsoft.Win32.Primitives.dll
 C:\Users\adrie\Documents\GitHub\Collect-Connect\SDProject1\CollectConnect\Temp\bin\Debug\mscorlib.dll
-C:\Users\adrie\Documents\GitHub\Collect-Connect\SDProject1\CollectConnect\Temp\bin\Debug\MySql.Data.dll
 C:\Users\adrie\Documents\GitHub\Collect-Connect\SDProject1\CollectConnect\Temp\bin\Debug\netstandard.dll
 C:\Users\adrie\Documents\GitHub\Collect-Connect\SDProject1\CollectConnect\Temp\bin\Debug\System.AppContext.dll
 C:\Users\adrie\Documents\GitHub\Collect-Connect\SDProject1\CollectConnect\Temp\bin\Debug\System.Collections.Concurrent.dll
@@ -280,3 +279,4 @@ C:\Users\adrie\Documents\GitHub\Collect-Connect\SDProject1\CollectConnect\Temp\b
 C:\Users\adrie\Documents\GitHub\Collect-Connect\SDProject1\CollectConnect\Temp\bin\Debug\Unity.CollabProxy.Editor.pdb
 C:\Users\adrie\Documents\GitHub\Collect-Connect\SDProject1\CollectConnect\Temp\bin\Debug\Unity.TextMeshPro.pdb
 C:\Users\adrie\Documents\GitHub\Collect-Connect\SDProject1\CollectConnect\Temp\bin\Debug\Unity.Analytics.DataPrivacy.pdb
+C:\Users\adrie\Documents\GitHub\Collect-Connect\SDProject1\CollectConnect\Temp\bin\Debug\Mono.Data.SqliteClient.dll

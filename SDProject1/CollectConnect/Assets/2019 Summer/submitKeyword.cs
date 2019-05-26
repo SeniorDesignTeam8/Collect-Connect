@@ -11,6 +11,8 @@ public class submitKeyword : MonoBehaviour
     [SerializeField]
     Sprite inactive;
 
+    bool userChoice = false;
+
     public GameObject keywordHolder;
     private void Start()
     {
@@ -18,7 +20,7 @@ public class submitKeyword : MonoBehaviour
     }
     void Update()
     {
-        if (keywordHolder.transform.childCount > 0)
+        if (userChoice)
         {
             submit.interactable = true;
             submit.image.sprite = active;
@@ -30,5 +32,8 @@ public class submitKeyword : MonoBehaviour
             
         }
     }
-
+    public void setUserChoice(bool ready)
+    {
+        userChoice = ready;
+    }
 }

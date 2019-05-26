@@ -7,45 +7,36 @@ using System.Linq;
 
 public class ConnectGM : MonoBehaviour
 {
-    [SerializeField]
-    TextMeshProUGUI round;
-    [SerializeField]
-    TextMeshProUGUI scoretext;
+    [SerializeField]  TextMeshProUGUI round;
+    [SerializeField]  TextMeshProUGUI scoretext;
     int MaxRound=25;
     int currentRound=0;
     int score = 0;
 
 
-    [SerializeField]
-    GameObject keywordSlot;
-    [SerializeField]
-    GameObject cardHolder;
-    [SerializeField]
-    GameObject keywordHolder;
+   // [SerializeField]  GameObject keywordSlot;
+    [SerializeField]  GameObject cardHolder;
+    [SerializeField]  GameObject keywordHolder;
 
-    [SerializeField]
-    GameObject [] keywordPF;
-    [SerializeField]
-    GameObject cardPF;
+    [SerializeField]  GameObject [] keywordPF;
+    [SerializeField]  GameObject cardPF;
     public TMP_InputField inputWord;
-    [SerializeField]
-    GameObject inputWordObj;
+    [SerializeField]  GameObject inputWordObj;
     System.Random rnd;
 
-    GameObject[] cards;
+    public GameObject[] cards;
     GameObject[] keywords;
     List<List<int>> availableCards;
     int[] currentCardColl;
 
-    int inputVal=0;
-
+    [SerializeField]GameEvent clearBoard;
     // Start is called before the first frame update
     void Start()
     {
         currentCardColl = new int[2];
         rnd = new System.Random();
         cards = new GameObject[2];
-        keywords = new GameObject[5];
+        keywords = new GameObject[3];
         availableCards = DataBaseHandler.getAllCards();
         startRound();
     }
@@ -103,40 +94,42 @@ public class ConnectGM : MonoBehaviour
     {
         //list of all the collections
         List<int> collections = Enumerable.Range(0, 7).ToList();
-        for(int i =0; i<2; i++)
-        {
-            keywords[i] = Instantiate(keywordPF[0]);
-            keywords[i].GetComponentInChildren<TextMeshProUGUI>().text = DataBaseHandler.getKeywordByColl(currentCardColl[i]+1, 0);
-            keywords[i].GetComponent<keywordPts>().rare = 0;
-            //remove the collections that cards were dealt from
-            //so that we can pick a keyword from a non dealt collection 
-            collections.Remove(currentCardColl[i]);
-        }
-        for (int i = 2; i < 4; i++)
-        {
-            keywords[i] = Instantiate(keywordPF[1]);
-            keywords[i].GetComponentInChildren<TextMeshProUGUI>().text = DataBaseHandler.getKeywordByColl(currentCardColl[i-2]+1, 1);
-            keywords[i].GetComponent<keywordPts>().rare = 0;
-        }
+        
+        //Remove the collections of the cards that have been dealt
+        collections.Remove(currentCardColl[0]);
+        collections.Remove(currentCardColl[1]);
 
-        //pick a random are keywrod from a collection not chosen 
+        //pick 2 keyword from the collections of the cards
+        //one keyword is rare one keyword is common
+        helperDealKeywords(0, currentCardColl[0], 0);
+        helperDealKeywords(1, currentCardColl[1], 1);
+
+
+
+        //pick a random rare keywrod from a collection in the refined collection list
         int coll = rnd.Next(0, collections.Count);
         coll = collections[coll];
-        keywords[4] = Instantiate(keywordPF[2]);
-        keywords[4].GetComponentInChildren<TextMeshProUGUI>().text = DataBaseHandler.getKeywordByColl(coll+1, 1);
-        keywords[4].GetComponent<keywordPts>().rare = 1;
-        //pick 1 keyword that is not in the
+        helperDealKeywords(2, coll, 1);
 
-        //deal 5 keywords
+        //place the keywords in the proper place
         foreach (var x in keywords)
         {
             x.transform.SetParent(keywordHolder.transform);
-            x.GetComponent<DragItems>().canBeMoved = true;
         }
+
+        //for consistency move the input option to be the last
         inputWordObj.transform.SetAsLastSibling();
-        inputWordObj.GetComponent<DragItems>().canBeMoved = false;
 
     }
+
+    void helperDealKeywords(int index, int collection, int rare)
+    {
+        keywords[index] = Instantiate(keywordPF[0]);
+        keywords[index].GetComponentInChildren<TextMeshProUGUI>().text = DataBaseHandler.getKeywordByColl(collection + 1, 0);
+        keywords[index].GetComponent<keywordPts>().rare = rare;
+    }
+
+
     public void startRound()
     {
         if (currentRound < MaxRound)
@@ -147,31 +140,23 @@ public class ConnectGM : MonoBehaviour
     }
     public void roundOver()
     {
+        
         saveRound();
         updateScore();
         deleteCards();
         deleteWords();
         currentRound++;
         round.text = "Round " + (currentRound + 1) + "/" + MaxRound.ToString();
+        clearBoard.Raise();
     }
 
     void updateScore()
     {
-        if (keywordSlot.transform.GetChild(0).gameObject.tag == "playerWord")
-            score += inputVal;
-        else score += keywordSlot.transform.GetChild(0).GetComponent<keywordPts>().pts;
+        score += currentSelection.points;
+        string choice = currentSelection.choice;
         scoretext.text = "Score: " + score;
     }
-    public void checkInput()
-    {
-        //if the word they input was on screen they recieve -5 pts
-        inputVal = -5;
-        //else if check to see if its in the database at all
-        inputVal = 25;
-        //else 
-        inputVal = 40;
 
-    }
     void saveRound()
     {
         //call database things here

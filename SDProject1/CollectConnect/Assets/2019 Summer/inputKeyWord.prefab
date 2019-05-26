@@ -220,6 +220,8 @@ GameObject:
   - component: {fileID: 6288213336728737718}
   - component: {fileID: 6196064111102259562}
   - component: {fileID: 6193334462108547244}
+  - component: {fileID: 6527377865495273144}
+  - component: {fileID: 8654603056179605139}
   m_Layer: 5
   m_Name: inputKeyWord
   m_TagString: keyWord
@@ -275,7 +277,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6080552832103320426}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2b24205a0a3978e4bb589f06cf23b288, type: 3}
   m_Name: 
@@ -301,6 +303,50 @@ MonoBehaviour:
   pts: 40
   rare: 0
   keyID: 0
+--- !u!114 &6527377865495273144
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6080552832103320426}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aaf75f8896f7af644bb68798042b7479, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  textPro: {fileID: 0}
+  textInput: {fileID: 7027313282159551933}
+  keywordClicked: {fileID: 11400000, guid: 755745a338a8cdd4eb90ee8046b6f4d2, type: 2}
+--- !u!114 &8654603056179605139
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6080552832103320426}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aed70e0823bfe27459baa7040df3cb3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 6527377865495273144}
+        m_MethodName: reset
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  Event: {fileID: 11400000, guid: 8b699a3becd609d499881e700b194e39, type: 2}
 --- !u!1 &6081864409847121064
 GameObject:
   m_ObjectHideFlags: 0
