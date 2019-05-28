@@ -56,7 +56,9 @@ public class keywordInput : MonoBehaviour
         }
         //valid input raises the event that the submit button can be clicked
         else
-            keywordClicked.Raise();
+        {
+            selectable.setUserInput();
+            keywordClicked.Raise(); }
     }
 
     IEnumerator checkIfWord(string uri)

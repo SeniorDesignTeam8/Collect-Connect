@@ -37,9 +37,13 @@ public class currentSelection : MonoBehaviour, IPointerClickHandler
             choice = textInput.text;
             userWordClicked.Raise();
         }
-        
-
-        
+         
+    }
+    public void setUserInput()
+    {
+        selected = gameObject;
+        points = selected.GetComponent<keywordPts>().pts;
+        choice = textInput.text;
     }
     public void reset()
     {

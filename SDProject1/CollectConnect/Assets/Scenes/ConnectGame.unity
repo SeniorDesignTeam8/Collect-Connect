@@ -1351,6 +1351,26 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: 9bf0a6ccd5c2c1f49a5c23a445e44756,
         type: 2}
+    - target: {fileID: 5630631320658027791, guid: 5a5148bc4a5a34941b8e0ed1d336d7f9,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5630631320658027791, guid: 5a5148bc4a5a34941b8e0ed1d336d7f9,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 62.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 5630631320658027791, guid: 5a5148bc4a5a34941b8e0ed1d336d7f9,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0.27
+      objectReference: {fileID: 0}
+    - target: {fileID: 5630631320658027791, guid: 5a5148bc4a5a34941b8e0ed1d336d7f9,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 207.59
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 6196064111102259562, guid: 5a5148bc4a5a34941b8e0ed1d336d7f9, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 5a5148bc4a5a34941b8e0ed1d336d7f9, type: 3}
@@ -2243,6 +2263,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2da0c512f12947e489f739169773d7ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &2039904630 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8954877404521752566, guid: 5a5148bc4a5a34941b8e0ed1d336d7f9,
+    type: 3}
+  m_PrefabInstance: {fileID: 1161573090}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2039904632 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6621249014644709963, guid: 5a5148bc4a5a34941b8e0ed1d336d7f9,
+    type: 3}
+  m_PrefabInstance: {fileID: 1161573090}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2039904630}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2039904634
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2039904630}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d286b1d84b8037645aef99c31042cefd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  glow: {fileID: 2039904632}
+  speed: 2.5
 --- !u!1001 &2090346249
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2418,7 +2470,7 @@ PrefabInstance:
     - target: {fileID: 2011732097820048395, guid: 4f9fbceeda16c134bb7d115185cef8bb,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -0.0005493164
+      value: -0.00048828125
       objectReference: {fileID: 0}
     - target: {fileID: 2011732097820048395, guid: 4f9fbceeda16c134bb7d115185cef8bb,
         type: 3}
