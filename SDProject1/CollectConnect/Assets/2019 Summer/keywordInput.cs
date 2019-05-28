@@ -15,6 +15,7 @@ public class keywordInput : MonoBehaviour
     TMP_InputField word;
     currentSelection selectable;
     public int points = 0;
+    [SerializeField] GameEvent keywordClicked;
     // Start is called before the first frame update
     void Start()
     {
@@ -22,21 +23,6 @@ public class keywordInput : MonoBehaviour
         selectable = GetComponent<currentSelection>();
     }
     [SerializeField]GameEvent resetBoard;
-
-    private void Update()
-    {
-        //if it is a word it can be submitted as an answer 
-        if (validInput)
-            selectable.enabled = true;
-
-        //if not able to be subimtted 
-        else
-        {
-            if (currentSelection.selected = gameObject)
-                resetBoard.Raise();
-            selectable.enabled = false;
-        }
-    }
 
     public void setWord()
     {
@@ -58,6 +44,20 @@ public class keywordInput : MonoBehaviour
 
 
     }
+    public void allowSelection()
+    {
+        //non words do not trigger the submit button 
+        if (!validInput)
+        {
+            selectable.enabled = true;
+            //if the last selected item was the inputfield it needs to be cleard from being the selection
+            if (currentSelection.selected = gameObject)
+                resetBoard.Raise();
+        }
+        //valid input raises the event that the submit button can be clicked
+        else
+            keywordClicked.Raise();
+    }
 
     IEnumerator checkIfWord(string uri)
     {
@@ -72,7 +72,7 @@ public class keywordInput : MonoBehaviour
             string pages = webRequest.downloadHandler.text;
             //StringComparison compare = StringComparison.OrdinalIgnoreCase;
             validInput = pages.Contains("description");
-           
+            allowSelection();
                 if (webRequest.isNetworkError)
             {
                 Debug.Log(": Error: " + webRequest.error);

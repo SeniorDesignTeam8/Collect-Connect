@@ -12,22 +12,34 @@ public class currentSelection : MonoBehaviour, IPointerClickHandler
     public static string choice;
     float time;
     [SerializeField]GameEvent keywordClicked;
+    [SerializeField] GameEvent userWordClicked;
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        onDoubleClick();
+        if(eventData.pointerPress.GetComponent<currentSelection>()!=null)
+            onDoubleClick();
     }
     void onDoubleClick()
     {
-        
+      
         selected = gameObject;
-        if (textPro != null)
-            choice = textPro.text;
-        else if (textInput != null)
-            choice = textInput.text;
         points= selected.GetComponent<keywordPts>().pts;
+        //if it is a regular keyword
+        if (textPro != null)
+        {
+            choice = textPro.text;
+            keywordClicked.Raise();
+        }
 
-        keywordClicked.Raise();
+        //else the user input option was selected 
+        else if (textInput != null)
+        {
+            choice = textInput.text;
+            userWordClicked.Raise();
+        }
+        
+
+        
     }
     public void reset()
     {

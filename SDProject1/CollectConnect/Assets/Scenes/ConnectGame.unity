@@ -493,7 +493,6 @@ GameObject:
   - component: {fileID: 433672222}
   - component: {fileID: 433672224}
   - component: {fileID: 433672223}
-  - component: {fileID: 433672225}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: InfoPanel
@@ -639,21 +638,6 @@ MonoBehaviour:
   inputWordObj: {fileID: 1921136545}
   cards: []
   clearBoard: {fileID: 11400000, guid: 8b699a3becd609d499881e700b194e39, type: 2}
---- !u!114 &433672225
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 433672217}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aaf75f8896f7af644bb68798042b7479, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  textPro: {fileID: 0}
-  textInput: {fileID: 0}
-  keywordClicked: {fileID: 0}
 --- !u!1 &564805382
 GameObject:
   m_ObjectHideFlags: 0
@@ -1126,6 +1110,11 @@ PrefabInstance:
       propertyPath: m_TagString
       value: playerWord
       objectReference: {fileID: 0}
+    - target: {fileID: 6080552832103320426, guid: 5a5148bc4a5a34941b8e0ed1d336d7f9,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6302814683571721684, guid: 5a5148bc4a5a34941b8e0ed1d336d7f9,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1356,6 +1345,12 @@ PrefabInstance:
       propertyPath: m_textInfo.pageCount
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 6527377865495273144, guid: 5a5148bc4a5a34941b8e0ed1d336d7f9,
+        type: 3}
+      propertyPath: userWordClicked
+      value: 
+      objectReference: {fileID: 11400000, guid: 9bf0a6ccd5c2c1f49a5c23a445e44756,
+        type: 2}
     m_RemovedComponents:
     - {fileID: 6196064111102259562, guid: 5a5148bc4a5a34941b8e0ed1d336d7f9, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 5a5148bc4a5a34941b8e0ed1d336d7f9, type: 3}
@@ -1974,7 +1969,37 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   points: 0
+  keywordClicked: {fileID: 11400000, guid: 755745a338a8cdd4eb90ee8046b6f4d2, type: 2}
   resetBoard: {fileID: 11400000, guid: 8b699a3becd609d499881e700b194e39, type: 2}
+--- !u!114 &1921136552
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1921136545}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aed70e0823bfe27459baa7040df3cb3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1921136550}
+        m_MethodName: allowSelection
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  Event: {fileID: 11400000, guid: 9bf0a6ccd5c2c1f49a5c23a445e44756, type: 2}
 --- !u!1 &1940016620
 GameObject:
   m_ObjectHideFlags: 0
