@@ -99,6 +99,32 @@ public static class DataBaseHandler
         return words[i];
 
     }
+    public static bool isKeywordInDataBase(string word)
+    {
+        setUp();
+        dbConnect.Open();
+        IDbCommand dbcmd = dbConnect.CreateCommand();
+        string query="SELECT name FROM keywords_current";
+        dbcmd.CommandText = query;
+        IDataReader rd = dbcmd.ExecuteReader();
+       while(rd.Read())
+        { 
+            string temp =rd.GetString(0);
+
+            if(temp.Equals(word, StringComparison.InvariantCultureIgnoreCase))
+            {
+                rd.Close();
+                rd = null;
+                dbConnect.Close();
+                return true;
+            }
+
+        }
+        rd.Close();
+        rd = null;
+        dbConnect.Close();
+        return false;
+    }
     public static List<List<int>> getAllCards()
     {
         setUp();

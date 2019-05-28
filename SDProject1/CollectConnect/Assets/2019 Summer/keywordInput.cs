@@ -11,14 +11,15 @@ using System.Text.RegularExpressions;
 
 public class keywordInput : MonoBehaviour
 {
+    ConnectGM GM;
     bool validInput=false;
     TMP_InputField word;
     currentSelection selectable;
-    public int points = 0;
     [SerializeField] GameEvent keywordClicked;
     // Start is called before the first frame update
     void Start()
     {
+        GM = GameObject.FindGameObjectWithTag("InfoPanel").GetComponent<ConnectGM>();
         word = GetComponentInChildren<TMP_InputField>();
         selectable = GetComponent<currentSelection>();
     }
@@ -57,6 +58,7 @@ public class keywordInput : MonoBehaviour
         //valid input raises the event that the submit button can be clicked
         else
         {
+            setPts();
             selectable.setUserInput();
             keywordClicked.Raise(); }
     }
@@ -85,8 +87,21 @@ public class keywordInput : MonoBehaviour
 
     private void setPts()
     {
-        //get all other keywords on screen
-        //if they choose the same word that was already prs
+        List<string> words = GM.getListOfKeywords();
+        keywordPts keyInfo = GetComponent<keywordPts>();
+        //user input keyword worth 40 points
+        keyInfo.pts = 40;
+        //if it was in the database it is worth less
+        if (DataBaseHandler.isKeywordInDataBase(word.text))
+            keyInfo.pts = 20;
+
+        //if it ison screen and they try to cheese it, they get a deduction in points
+        foreach(string x in words)
+        {
+            if (x.Equals(word.text, StringComparison.InvariantCultureIgnoreCase))
+                keyInfo.pts = -5;
+        }
+        Debug.Log(keyInfo.pts.ToString());
     }
 
 }

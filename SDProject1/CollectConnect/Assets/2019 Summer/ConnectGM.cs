@@ -179,5 +179,15 @@ public class ConnectGM : MonoBehaviour
         }
     }
 
+    public List<string> getListOfKeywords()
+    {
+        List<string> words = new List<string>();
+        foreach(var x in keywords)
+        {
+            words.Add(x.GetComponentInChildren<TextMeshProUGUI>().text);
+        }
+        return words;
+    }
+
 
 }
