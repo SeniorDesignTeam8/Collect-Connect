@@ -493,6 +493,7 @@ GameObject:
   - component: {fileID: 433672222}
   - component: {fileID: 433672224}
   - component: {fileID: 433672223}
+  - component: {fileID: 433672225}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: InfoPanel
@@ -613,6 +614,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f071170f697752f42abb88fcdc181879, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  wordChosen: {fileID: 11400000, guid: c5e2bbb72fb52fc49aacd32a3718d8ef, type: 2}
 --- !u!114 &433672224
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -638,6 +640,35 @@ MonoBehaviour:
   inputWordObj: {fileID: 1921136545}
   cards: []
   clearBoard: {fileID: 11400000, guid: 8b699a3becd609d499881e700b194e39, type: 2}
+--- !u!114 &433672225
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 433672217}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aed70e0823bfe27459baa7040df3cb3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 433672223}
+        m_MethodName: stepsToFindWord
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  Event: {fileID: 11400000, guid: 8b699a3becd609d499881e700b194e39, type: 2}
 --- !u!1 &564805382
 GameObject:
   m_ObjectHideFlags: 0
@@ -1988,7 +2019,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2d8c9dbefc6f3f44b6e953562ab6d7c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  points: 0
+  AI: 1
   keywordClicked: {fileID: 11400000, guid: 755745a338a8cdd4eb90ee8046b6f4d2, type: 2}
   resetBoard: {fileID: 11400000, guid: 8b699a3becd609d499881e700b194e39, type: 2}
 --- !u!114 &1921136552
@@ -2020,6 +2051,35 @@ MonoBehaviour:
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   Event: {fileID: 11400000, guid: 9bf0a6ccd5c2c1f49a5c23a445e44756, type: 2}
+--- !u!114 &1921136553
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1921136545}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aed70e0823bfe27459baa7040df3cb3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1921136550}
+        m_MethodName: AIpick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  Event: {fileID: 11400000, guid: c5e2bbb72fb52fc49aacd32a3718d8ef, type: 2}
 --- !u!1 &1940016620
 GameObject:
   m_ObjectHideFlags: 0

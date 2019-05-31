@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 
 public class keywordInput : MonoBehaviour
 {
+    public bool AI=true;
     ConnectGM GM;
     bool validInput=false;
     TMP_InputField word;
@@ -24,6 +25,12 @@ public class keywordInput : MonoBehaviour
         selectable = GetComponent<currentSelection>();
     }
     [SerializeField]GameEvent resetBoard;
+
+    public void AIpick()
+    {
+        word.text = readCardTags.choosen;
+        setWord();
+    }
 
     public void setWord()
     {
