@@ -370,17 +370,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 433672224}
-        m_MethodName: startRound
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &363097191
@@ -614,6 +603,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f071170f697752f42abb88fcdc181879, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  runAllRequest: 0
   wordChosen: {fileID: 11400000, guid: c5e2bbb72fb52fc49aacd32a3718d8ef, type: 2}
 --- !u!114 &433672224
 MonoBehaviour:
@@ -639,6 +629,7 @@ MonoBehaviour:
   inputWord: {fileID: 2001132696}
   inputWordObj: {fileID: 1921136545}
   cards: []
+  cardsDealt: {fileID: 11400000, guid: 3d47a8bd0a070d64d8b1638aff77cda3, type: 2}
   clearBoard: {fileID: 11400000, guid: 8b699a3becd609d499881e700b194e39, type: 2}
 --- !u!114 &433672225
 MonoBehaviour:
@@ -668,7 +659,7 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
-  Event: {fileID: 11400000, guid: 8b699a3becd609d499881e700b194e39, type: 2}
+  Event: {fileID: 11400000, guid: 3d47a8bd0a070d64d8b1638aff77cda3, type: 2}
 --- !u!1 &564805382
 GameObject:
   m_ObjectHideFlags: 0

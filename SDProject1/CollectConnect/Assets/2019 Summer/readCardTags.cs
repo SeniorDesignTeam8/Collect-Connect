@@ -9,22 +9,34 @@ using UnityEngine.Networking;
 
 public class readCardTags : MonoBehaviour
 {
+    float thinking = 3f;
+    //is it oulling synonys from the web
+    bool isPullSyn = false;
+    //is it currently comparing sysonyms that have been gathered
+    bool isCompSyn = false;
+    //counts how many web request have been processed 
+    public int runAllRequest;
+    bool found_syn = false;
     public static int NUM_RESULTS=3;
     List<List<string>> card_tags;
     static string path = "Assets/Resources/Records/CSVEXPORTFILE.csv";
     StreamReader reader;
     int loc_card1_tags, loc_card2_tags;
-    List<string> tags1, tags2;
+
     public static string choosen;
 
     List<string> syn1 = new List<string>(), syn2 = new List<string>();
     [SerializeField] GameEvent wordChosen;
-    // Start is called before the first frame update
+
+
+
     void Start()
     {
         //store all of the tags for the cards 
         storeCardTags();
-        Invoke("stepsToFindWord", .5f);
+
+        //after the cards have been dealt begin trying to generate relations
+        Invoke("stepsToFindWord", .2f);
         
     }
     public void stepsToFindWord()
@@ -32,27 +44,31 @@ public class readCardTags : MonoBehaviour
         choosen = null;
         //find the index of the two cards that were dealt
         cardsDealt();
-        addTaggedWords();
+        runAllRequest = 0;
+        isPullSyn = true;
+        //run it through datamuse to find more synonyms
         findSynonyms();
+        Invoke("comparePulledSyn", thinking);
     }
     //add the tags to an easily accessible list, excluding the first entry which is the name of the card
-    void addTaggedWords()
-    {
-        if(tags1==null)
-        {   tags1 = new List<string>(); tags2 = new List<string>(); }
-        else { tags1.Clear(); tags2.Clear(); }
+    //void addTaggedWords()
+    //{
+    //    StopAllCoroutines();
+    //    if (tags1==null)
+    //    {   tags1 = new List<string>(); tags2 = new List<string>(); }
+    //    tags1.Clear(); tags2.Clear();
 
-        for(int i =1;i <card_tags[loc_card1_tags].Count;i++)
-        {
-            tags1.Add(card_tags[loc_card1_tags][i]);
-        }
-        for (int i = 1; i < card_tags[loc_card2_tags].Count; i++)
-        {
-            tags2.Add(card_tags[loc_card2_tags][i]); 
-        }
+    //    for(int i =1;i <card_tags[loc_card1_tags].Count;i++)
+    //    {
+    //        tags1.Add(card_tags[loc_card1_tags][i]);
+    //    }
+    //    for (int i = 1; i < card_tags[loc_card2_tags].Count; i++)
+    //    {
+    //        tags2.Add(card_tags[loc_card2_tags][i]); 
+    //    }
 
 
-    }
+    //}
 
     void storeCardTags()
     {
@@ -103,68 +119,64 @@ public class readCardTags : MonoBehaviour
     }
     public void findSynonyms()
     {
-        string basic = "https://api.datamuse.com/words?rel_syn=";
+        string syn = "https://api.datamuse.com/words?rel_syn=";
         string spc= "https://api.datamuse.com/words?rel_spc=";
-        string jjb= "https://api.datamuse.com/words?rel_jjb=";
-        string trg= "https://api.datamuse.com/words?rel_trg=";
-
         string gen = "https://api.datamuse.com/words?rel_gen=";
-        string com = "https://api.datamuse.com/words?rel_com=";
         string par = "https://api.datamuse.com/words?rel_par=";
-        string ml = "https://api.datamuse.com/words?ml=";
-        string end = "&max=5";
+
+        string end = "&max=2";
+
+        //if there is ANY web request being processed end the fuck outta em because that is messing up the list 
+        StopAllCoroutines();
+
+        //dis bitch emtpy... YEET
         syn1.Clear();
         syn2.Clear();
-        for(int i=0; i< tags1.Count; i++)
+
+        for(int i=1; i< card_tags[loc_card1_tags].Count; i++)
         {
-            //StartCoroutine(GetRequest(basic + tags1[i] + end, syn1, tags1[i], "syn"));
-            //StartCoroutine(GetRequest(spc + tags1[i] + end, syn1, tags1[i], "spc"));
-            //StartCoroutine(GetRequest(jjb + tags1[i] + end, syn1, tags1[i], "jjb"));
-            //StartCoroutine(GetRequest(trg + tags1[i] + end, syn1, tags1[i], "trg"));
-
-
-            StartCoroutine(GetRequest(gen + tags1[i] + end, syn1, tags1[i], "gen"));
-            StartCoroutine(GetRequest(com + tags1[i] + end, syn1, tags1[i], "com"));
-            StartCoroutine(GetRequest(par + tags1[i] + end, syn1, tags1[i], "par"));
-            StartCoroutine(GetRequest(ml + tags1[i] + end, syn1, tags1[i], "ml"));
+            StartCoroutine(GetRequest(syn + card_tags[loc_card1_tags][i] + end, syn1, card_tags[loc_card1_tags][i], "syn"));
+            StartCoroutine(GetRequest(spc + card_tags[loc_card1_tags][i] + end, syn1, card_tags[loc_card1_tags][i], "spc"));
+            StartCoroutine(GetRequest(gen + card_tags[loc_card1_tags][i] + end, syn1, card_tags[loc_card1_tags][i], "gen"));
+            StartCoroutine(GetRequest(par + card_tags[loc_card1_tags][i] + end, syn1, card_tags[loc_card1_tags][i], "par"));
         }
-        for (int i = 0; i < tags2.Count;i++)
+        for (int i = 1; i < card_tags[loc_card2_tags].Count;i++)
         {
-            //StartCoroutine(GetRequest(basic + tags2[i] + end, syn2, tags2[i], "syn"));
-            //StartCoroutine(GetRequest(spc + tags2[i] + end, syn2, tags2[i], "spc"));
-            //StartCoroutine(GetRequest(jjb + tags2[i] + end, syn2, tags2[i], "jjb"));
-            //StartCoroutine(GetRequest(trg + tags2[i] + end, syn2, tags2[i], "trg"));
-
-
-            StartCoroutine(GetRequest(gen + tags2[i] + end, syn2, tags2[i], "gen"));
-            StartCoroutine(GetRequest(com + tags2[i] + end, syn2, tags2[i], "com"));
-            StartCoroutine(GetRequest(par + tags2[i] + end, syn2, tags2[i], "par"));
-            StartCoroutine(GetRequest(ml + tags2[i] + end, syn2, tags2[i], "ml"));
+            StartCoroutine(GetRequest(syn + card_tags[loc_card2_tags][i] + end, syn2, card_tags[loc_card2_tags][i], "syn"));
+            StartCoroutine(GetRequest(spc + card_tags[loc_card2_tags][i] + end, syn2, card_tags[loc_card2_tags][i], "spc"));
+            StartCoroutine(GetRequest(gen + card_tags[loc_card2_tags][i] + end, syn2, card_tags[loc_card2_tags][i], "gen"));
+            StartCoroutine(GetRequest(par + card_tags[loc_card2_tags][i] + end, syn2, card_tags[loc_card2_tags][i], "par"));
         }
-        Invoke("word", 2);
 
-        //https://api.datamuse.com/words?
-        /*
-         jjb 	Popular adjectives used to modify the given noun, per Google Books Ngrams 	beach → sandy
-        syn 	Synonyms (words contained within the same WordNet synset) 	ocean → sea
-        trg 	"Triggers" (words that are statistically associated with the query word in the same piece of text.) 	cow → milking
-        ant 	Antonyms (per WordNet) 	late → early
-        spc 	"Kind of" (direct hypernyms, per WordNet) 	gondola → boat
-        gen 	"More general than" (direct hyponyms, per WordNet) 	boat → gondola
-        com 	"Comprises" (direct holonyms, per WordNet) 	car → accelerator
-        par 	"Part of" (direct meronyms, per WordNet) 	trunk → tree
-         */
     }
 
-    void word()
-    {
-        for(int i=0; i<syn1.Count;i++)
-        {
-            for(int j=0;j<syn2.Count;j++)
-            {
 
+    void comparePulledSyn()
+    {
+        StopAllCoroutines();
+        string syn = "https://api.datamuse.com/words?rel_syn=";
+        string ml = "https://api.datamuse.com/words?ml=";
+        string end = "&max=25";
+        List<string> temp = new List<string>();
+        for (int i = 0; i < syn1.Count; i++)
+        {
+            if(syn2.Contains(syn1[i]))
+            {
+                choosen = syn1[i];
+                wordChosen.Raise();
+                return;
             }
         }
+        
+        for (int i= 0; i<syn1.Count;i++)
+        {
+            StartCoroutine(GetRequest(syn + syn1[i] + end, temp, syn1[i], "syn"));
+        }
+        
+        if(foundSecondSyn(temp, syn2))
+            return;
+
+        Debug.Log("Last Resort");
         System.Random rnd = new System.Random();
         if(rnd.Next()%2==0)
         {
@@ -175,14 +187,21 @@ public class readCardTags : MonoBehaviour
             choosen = syn2[rnd.Next(0, syn2.Count)];
 
         wordChosen.Raise();
+
+       
     }
-    IEnumerator isSyn(string uri)
+    bool foundSecondSyn(List<string> secondSyn, List<string> compare )
     {
-        using (UnityWebRequest webRequest = UnityWebRequest.Get(uri))
+        for (int i = 0; i < secondSyn.Count; i++)
         {
-            // Request and wait for the desired page.
-            yield return webRequest.SendWebRequest();
+            if (compare.Contains(secondSyn[i]))
+            {
+                choosen = secondSyn[i];
+                wordChosen.Raise();
+                return true;
+            }
         }
+        return false;
     }
 
     IEnumerator GetRequest(string uri, List<string> words, string original, string type)
@@ -197,6 +216,8 @@ public class readCardTags : MonoBehaviour
             string[] pages = webRequest.downloadHandler.text.Split(separatingStrings, System.StringSplitOptions.RemoveEmptyEntries);
             int page = pages.Length - 1;
 
+            if (page <= 0)
+                runAllRequest++;
             if (webRequest.isNetworkError)
             {
                 Debug.Log(pages[page] + ": Error: " + webRequest.error);
@@ -209,8 +230,14 @@ public class readCardTags : MonoBehaviour
                     pages[i] = pages[i].Remove(loc);
                     words.Add(pages[i]);
                     Debug.Log(original +":   "+ pages[i] + " : " +type+'\n');
+                    if (i == page - 1)
+                        runAllRequest++;
                 }
+                
             }
-        }
+           
+        } 
+        
     }
+
 }

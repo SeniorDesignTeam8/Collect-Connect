@@ -29,6 +29,7 @@ public class ConnectGM : MonoBehaviour
     List<List<int>> availableCards;
     int[] currentCardColl;
 
+    [SerializeField] GameEvent cardsDealt;
     [SerializeField]GameEvent clearBoard;
     // Start is called before the first frame update
     void Start()
@@ -136,6 +137,7 @@ public class ConnectGM : MonoBehaviour
         {
             dealCards();
             dealKeywords();
+            cardsDealt.Raise();
         }
     }
     public void roundOver()
@@ -148,6 +150,7 @@ public class ConnectGM : MonoBehaviour
         currentRound++;
         round.text = "Round " + (currentRound + 1) + "/" + MaxRound.ToString();
         clearBoard.Raise();
+        Invoke("startRound", .1f);
     }
 
     void updateScore()
