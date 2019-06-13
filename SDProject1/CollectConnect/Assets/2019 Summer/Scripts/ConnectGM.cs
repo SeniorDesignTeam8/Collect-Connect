@@ -7,31 +7,26 @@ using System.Linq;
 
 public class ConnectGM : MonoBehaviour
 {
+    int MaxRound=4,currentRound=0, score = 0;
     Dealer dealKeyWords;
     [SerializeField]  TextMeshProUGUI round;
     [SerializeField]  TextMeshProUGUI scoretext;
-    int MaxRound=25;
-    int currentRound=0;
-    int score = 0;
-
-
-   // [SerializeField]  GameObject keywordSlot;
     [SerializeField]  GameObject cardHolder;
     [SerializeField]  GameObject keywordHolder;
-
     [SerializeField]  GameObject [] keywordPF;
     [SerializeField]  GameObject cardPF;
     public TMP_InputField inputWord;
     [SerializeField]  GameObject inputWordObj;
     System.Random rnd;
-
     public GameObject[] cards;
     GameObject[] keywords;
     List<List<int>> availableCards;
     int[] currentCardColl;
 
-    [SerializeField]GameEvent clearBoard;
-    // Start is called before the first frame update
+    [SerializeField]GameEvent resetSubmit;
+    [SerializeField] GameEvent startSecondMode;
+
+
     void Start()
     {
         dealKeyWords = GetComponent<Dealer>();
@@ -162,8 +157,9 @@ public class ConnectGM : MonoBehaviour
         deleteWords();
         currentRound++;
         round.text = "Round " + (currentRound + 1) + "/" + MaxRound.ToString();
-        clearBoard.Raise();
-        Invoke("startRound", .1f);
+        resetSubmit.Raise();
+        //        Invoke("startRound", .1f);
+        startSecondMode.Raise();
     }
 
     void updateScore()
