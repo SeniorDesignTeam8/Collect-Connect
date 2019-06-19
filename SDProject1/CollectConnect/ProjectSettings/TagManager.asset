@@ -27,6 +27,7 @@ TagManager:
   - cardHolder
   - InfoPanel
   - playerWord
+  - GuessHold
   layers:
   - Default
   - TransparentFX

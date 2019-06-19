@@ -22,9 +22,17 @@ public class ConnectGM : MonoBehaviour
     GameObject[] keywords;
     List<List<int>> availableCards;
     int[] currentCardColl;
+    public GameObject playerSelectedWord;
 
+    public  enum names { Hana, Loki, Player};
+    int aiChoices = 0;
+    public AImanager AI;
     [SerializeField]GameEvent resetSubmit;
     [SerializeField] GameEvent startSecondMode;
+
+
+    [SerializeField] GameObject EnterKeywordPanel;
+    [SerializeField] GameObject GuessHold;
 
 
     void Start()
@@ -137,13 +145,21 @@ public class ConnectGM : MonoBehaviour
     }
     public void startRound()
     {
+        EnterKeywordPanel.SetActive(true);
+        GuessHold.SetActive(false);
+        aiChoices = 0;
         if (currentRound < MaxRound)
         {
+            //clear cards from the previous round done here and not in round over because
+            // the cards need to be displayed for both the first and second half of the round 
+            deleteCards();
             dealCards();
 
             readCardTags.getDealtCardsName();
 
             dealKeyWords.stepsGetKeywords();
+
+            AI.startAIGuess();
             //deal keywords from database
             //           dealKeywords();
 
@@ -153,13 +169,24 @@ public class ConnectGM : MonoBehaviour
     {
         saveRound();
         updateScore();
-        deleteCards();
         deleteWords();
         currentRound++;
         round.text = "Round " + (currentRound + 1) + "/" + MaxRound.ToString();
-        resetSubmit.Raise();
-        //        Invoke("startRound", .1f);
-        startSecondMode.Raise();
+
+        //wait for some time after the player chosses to make it look like others are still thinking 
+        StartCoroutine(waitForAI());
+        
+    }
+    IEnumerator waitForAI()
+    {
+
+        int x = rnd.Next(3, 15);
+        if (aiChoices < 1)
+            x += 10;
+        yield return new WaitForSeconds(x);
+        //   startSecondMode.Raise();
+        secondHalfofRound();
+
     }
 
     void updateScore()
@@ -200,6 +227,20 @@ public class ConnectGM : MonoBehaviour
         }
         return words;
     }
+    public void waitForAiToChoose()
+    {
+        aiChoices++;
+    }
+    //
+    public void secondHalfofRound()
+    {
+        EnterKeywordPanel.SetActive(false);
+        GuessHold.SetActive(true);
+        playerSelectedWord.transform.SetParent(GuessHold.transform);
+        playerSelectedWord.GetComponentInChildren<TextMeshProUGUI>().text = currentSelection.choice;
+        playerSelectedWord.GetComponent<castVote>().ownedBy = (int)names.Player;
 
 
+        AI.showChoices();
+    }
 }

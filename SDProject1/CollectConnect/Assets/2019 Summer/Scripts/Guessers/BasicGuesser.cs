@@ -6,11 +6,10 @@ using System.Linq;
 
 public class BasicGuesser : Synonyms
 {
-    public static string[] keywords = new string[3];
     List<string> syn1 = new List<string>();
     List<string> syn2 = new List<string>();
 
-    void guessBasic()
+    public void guessBasic()
     {
 
         syn1.Clear();

@@ -61,11 +61,15 @@ public class Synonyms: MonoBehaviour
             Debug.Log("Last Resort");
             if (rnd.Next() % 2 == 0)
             {
-                choosen = syn1[rnd.Next(0, syn1.Count)];
+                if (syn1.Count > 0)
+                    choosen = syn1[rnd.Next(0, syn1.Count)];
 
             }
             else
-                choosen = syn2[rnd.Next(0, syn2.Count)];
+            {
+                if (syn2.Count > 0)
+                    choosen = syn2[rnd.Next(0, syn2.Count)];
+            }
 
             finished.Raise();
         }
@@ -92,6 +96,10 @@ public class Synonyms: MonoBehaviour
         }
         compareSyn(syn1, syn2);
     }
+    public void endTheSearch()
+    {
+        StopAllCoroutines();
+    }
     //save a list of words parsed froom datamuse 
     IEnumerator GetRequest(string uri, List<string> words, string original, string type)
     {
@@ -107,8 +115,8 @@ public class Synonyms: MonoBehaviour
 
             if (webRequest.isNetworkError)
             {
-                if (pages.Length > 0)
-                    Debug.Log(pages[page] + ": Error: " + webRequest.error);
+                //    if (pages.Length > 0)
+                //        Debug.Log(pages[page] + ": Error: " + webRequest.error);
             }
             else
             {
