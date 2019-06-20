@@ -167,12 +167,12 @@ public class ConnectGM : MonoBehaviour
     }
     public void roundOver()
     {
-        saveRound();
         updateScore();
         deleteWords();
         currentRound++;
         round.text = "Round " + (currentRound + 1) + "/" + MaxRound.ToString();
-
+        //make the selected words panel inactive so they cannot spam the submit  button
+        EnterKeywordPanel.SetActive(false);
         //wait for some time after the player chosses to make it look like others are still thinking 
         StartCoroutine(waitForAI());
         
@@ -234,7 +234,6 @@ public class ConnectGM : MonoBehaviour
     //
     public void secondHalfofRound()
     {
-        EnterKeywordPanel.SetActive(false);
         GuessHold.SetActive(true);
         playerSelectedWord.transform.SetParent(GuessHold.transform);
         playerSelectedWord.GetComponentInChildren<TextMeshProUGUI>().text = currentSelection.choice;
@@ -242,5 +241,6 @@ public class ConnectGM : MonoBehaviour
 
 
         AI.showChoices();
+        AI.castVotes();
     }
 }

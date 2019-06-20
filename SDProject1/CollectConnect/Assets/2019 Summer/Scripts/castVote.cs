@@ -9,18 +9,25 @@ public class castVote : MonoBehaviour, IPointerClickHandler
 {
     // check whether the keyword they selected is what they played last round. 
     public int ownedBy;
-    public int votes;
-
+    public int votes=0;
+    public GameObject voteHolder;
     public void OnPointerClick(PointerEventData eventData)
     {
-        if(ownedBy!=3)
-        {
-            castTheVote();
-        }
+        connectPlayer player = FindObjectOfType<connectPlayer>();
+        castTheVote((int)ConnectGM.names.Player, player._voteIcon);
     }
 
-    public void castTheVote()
+    public bool castTheVote(int voterID, GameObject voteIcon)
     {
+        if(voterID!=ownedBy)
+        {
+            
+            voteIcon.transform.SetParent(voteHolder.transform);
+            votes = voteHolder.transform.childCount;
+            return true;
+        }
 
+        return false;
     }
+    
 }

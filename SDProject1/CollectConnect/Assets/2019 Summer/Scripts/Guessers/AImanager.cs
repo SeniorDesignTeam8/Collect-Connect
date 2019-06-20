@@ -13,11 +13,11 @@ public class AImanager : MonoBehaviour
 
     [SerializeField] GameObject keywords;
     GameObject[] words;
-    
+    System.Random rnd = new System.Random();
     // Start is called before the first frame update
     void Start()
     {
-        words = new GameObject[3];
+        words = new GameObject[2];
     }
 
     public void startAIGuess()
@@ -48,11 +48,25 @@ public class AImanager : MonoBehaviour
         }
     }
 
-    void castVotes()
+
+    public void castVotes()
     {
-        
+        castVote[] describers = FindObjectsOfType<castVote>();
+        //have loki vote at random
+        int i = rnd.Next(0, describers.Length);
+        while(!describers[i].castTheVote((int)ConnectGM.names.Loki, loki._voteIcon))
+        {
+            i = rnd.Next(0, describers.Length);
+        }
+
+        //same with Hana
+        i = rnd.Next(0, describers.Length);
+        while (!describers[i].castTheVote((int)ConnectGM.names.Hana, hana._voteIcon))
+        {
+            i = rnd.Next(0, describers.Length);
+        }
     }
-    void deleteWords()
+    public void deleteWords()
     {
         foreach (var x in words)
         {
