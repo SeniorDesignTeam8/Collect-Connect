@@ -7,7 +7,9 @@ using System.Linq;
 
 public class ConnectGM : MonoBehaviour
 {
-    int MaxRound=4,currentRound=0, score = 0;
+    [SerializeField] connectPlayer player;
+    public int votingPoints = 50;
+    int MaxRound=4,currentRound=0;
     Dealer dealKeyWords;
     [SerializeField]  TextMeshProUGUI round;
     [SerializeField]  TextMeshProUGUI scoretext;
@@ -22,7 +24,6 @@ public class ConnectGM : MonoBehaviour
     GameObject[] keywords;
     List<List<int>> availableCards;
     int[] currentCardColl;
-    public GameObject playerSelectedWord;
 
     public  enum names { Hana, Loki, Player};
     int aiChoices = 0;
@@ -33,6 +34,7 @@ public class ConnectGM : MonoBehaviour
 
     [SerializeField] GameObject EnterKeywordPanel;
     [SerializeField] GameObject GuessHold;
+    [SerializeField] GameObject waitingPanel;
 
 
     void Start()
@@ -145,6 +147,7 @@ public class ConnectGM : MonoBehaviour
     }
     public void startRound()
     {
+        StopAllCoroutines();
         EnterKeywordPanel.SetActive(true);
         GuessHold.SetActive(false);
         aiChoices = 0;
@@ -157,6 +160,8 @@ public class ConnectGM : MonoBehaviour
 
             readCardTags.getDealtCardsName();
 
+            //should start loading screen with and when the 
+            //events shoots off that all cards have been loaded remove lodaing screen
             dealKeyWords.stepsGetKeywords();
 
             AI.startAIGuess();
@@ -165,9 +170,10 @@ public class ConnectGM : MonoBehaviour
 
         }
     }
-    public void roundOver()
+    public void firstHalfRoundOver()
     {
-        updateScore();
+        string choice = currentSelection.choice;
+        updateScore(currentSelection.points);
         deleteWords();
         currentRound++;
         round.text = "Round " + (currentRound + 1) + "/" + MaxRound.ToString();
@@ -179,21 +185,21 @@ public class ConnectGM : MonoBehaviour
     }
     IEnumerator waitForAI()
     {
-
+        //activate loading screen
         int x = rnd.Next(3, 15);
         if (aiChoices < 1)
             x += 10;
         yield return new WaitForSeconds(x);
-        //   startSecondMode.Raise();
+        //deactivate loading screen
+
         secondHalfofRound();
 
     }
 
-    void updateScore()
+    void updateScore(int points)
     {
-        score += currentSelection.points;
-        string choice = currentSelection.choice;
-        scoretext.text = "Score: " + score;
+        player.points += points;
+        scoretext.text = "Score: " + player.points;
     }
 
     void saveRound()
@@ -235,12 +241,36 @@ public class ConnectGM : MonoBehaviour
     public void secondHalfofRound()
     {
         GuessHold.SetActive(true);
-        playerSelectedWord.transform.SetParent(GuessHold.transform);
-        playerSelectedWord.GetComponentInChildren<TextMeshProUGUI>().text = currentSelection.choice;
-        playerSelectedWord.GetComponent<castVote>().ownedBy = (int)names.Player;
-
-
+        player.readyToCastVote(GuessHold);
         AI.showChoices();
         AI.castVotes();
+    }
+
+    public void collectVotes()
+    {
+        GameObject[] wordsForJudging = GameObject.FindGameObjectsWithTag("VotingKeyword");
+        for (int i = wordsForJudging.Length - 1; i >= 0; i--)
+        {
+            castVote Temp = wordsForJudging[i].GetComponent<castVote>();
+            switch ((names)Temp.ownedBy)
+            {
+                case names.Hana:
+                    AI.addPoints(names.Hana, votingPoints);
+                    break;
+                case names.Loki:
+                    AI.addPoints(names.Loki, votingPoints);
+                    break;
+                case names.Player:
+                    updateScore(votingPoints);
+                    break;
+            }
+
+             Destroy(wordsForJudging[i]);
+        }
+    }
+
+    public void enableWaitingPanel(bool enable)
+    {
+        waitingPanel.SetActive(enable);
     }
 }

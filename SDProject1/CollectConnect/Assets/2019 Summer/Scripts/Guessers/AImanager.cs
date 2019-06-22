@@ -48,23 +48,30 @@ public class AImanager : MonoBehaviour
         }
     }
 
+    public void addPoints(ConnectGM.names id, int points)
+    {
+        if (id == ConnectGM.names.Hana)
+            hana.points += points;
+        else loki.points += points;
+    }
 
     public void castVotes()
     {
         castVote[] describers = FindObjectsOfType<castVote>();
-        //have loki vote at random
-        int i = rnd.Next(0, describers.Length);
-        while(!describers[i].castTheVote((int)ConnectGM.names.Loki, loki._voteIcon))
-        {
-            i = rnd.Next(0, describers.Length);
-        }
+        //have hana and loki vote at random, with random time delay to look like thinking 
+        StartCoroutine(thinkBeforVote(describers, ConnectGM.names.Hana, hana._voteIcon));
+        StartCoroutine(thinkBeforVote(describers, ConnectGM.names.Loki, loki._voteIcon));
 
-        //same with Hana
-        i = rnd.Next(0, describers.Length);
-        while (!describers[i].castTheVote((int)ConnectGM.names.Hana, hana._voteIcon))
+    }
+    IEnumerator thinkBeforVote(castVote[] describers, ConnectGM.names id, GameObject voteIcon)
+    {
+        yield return new WaitForSeconds(rnd.Next(1, 10));
+        int i = rnd.Next(0, describers.Length);
+        while (!describers[i].castTheVote((int)id, voteIcon))
         {
             i = rnd.Next(0, describers.Length);
         }
+        
     }
     public void deleteWords()
     {

@@ -6,6 +6,7 @@ using System.Linq;
 
 public class BasicGuesser : Synonyms
 {
+    public int points=0;
     List<string> syn1 = new List<string>();
     List<string> syn2 = new List<string>();
     [SerializeField] GameObject voteIcon;
@@ -24,9 +25,5 @@ public class BasicGuesser : Synonyms
     public void readyToCastVote()
     {
         _voteIcon = Instantiate(voteIcon);
-    }
-    public void erasedVote()
-    {
-        Destroy(_voteIcon);
     }
 }

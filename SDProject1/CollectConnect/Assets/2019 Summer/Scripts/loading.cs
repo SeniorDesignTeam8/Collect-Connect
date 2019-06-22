@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Voting : MonoBehaviour
+public class loading : MonoBehaviour
 {
     // Start is called before the first frame update
     void Start()
@@ -10,9 +10,9 @@ public class Voting : MonoBehaviour
         
     }
 
-    public void AIcastVotes()
+    // Update is called once per frame
+    void Update()
     {
-
+        
     }
-
 }

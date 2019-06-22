@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 public class TricksterGuesser : Synonyms
 {
+    public int points=0;
     List<string> syn1 = new List<string>();
     List<string> syn2 = new List<string>();
 
@@ -26,8 +27,5 @@ public class TricksterGuesser : Synonyms
     {
         _voteIcon = Instantiate(voteIcon);
     }
-    public void erasedVote()
-    {
-        Destroy(_voteIcon);
-    }
+
 }

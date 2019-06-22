@@ -28,6 +28,7 @@ TagManager:
   - InfoPanel
   - playerWord
   - GuessHold
+  - VotingKeyword
   layers:
   - Default
   - TransparentFX
