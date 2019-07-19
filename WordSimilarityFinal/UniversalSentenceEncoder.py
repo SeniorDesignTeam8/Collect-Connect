@@ -23,9 +23,11 @@ embed = hub.Module(module_url)
 # Compute a representation for each message, showing various lengths supported.
 List11=sys.argv[1]
 List22=sys.argv[2]
+
 List1=["hello","Cat","Dog","Monkey","Spoon","Fork"]
 List2=["Wall","Tiger","Hammer","Mouse","Shirt"]
 print(List11)
+
 print(List22)
 print(List1)
 print(List2)
@@ -61,6 +63,7 @@ print(Embeddings)
 list1Embedding=[]
 list2Embedding=[]
 i=1;
+
 for x in Embeddings:
     temp=x.split(",")
     for f in range(len(temp)):
@@ -72,6 +75,8 @@ for x in Embeddings:
         list2Embedding.append(temp)
     i+=1
 encodingsum=0
+closestSum=10;
+chosenWord=['','']
 for x in range(len(list1Embedding)):
     for y in range(len(list2Embedding)):
         print(list1Embedding[x])
@@ -81,7 +86,14 @@ for x in range(len(list1Embedding)):
             encodingsum+=((list1Embedding[x][f]-list2Embedding[y][f])**2)
         #distance = math.sqrt(sum([(a - b) ** 2 for a, b in zip(x, y)]))
         distance=math.sqrt(encodingsum)
+        if(distance<closestSum):
+            closestSum=distance
+            chosenWord[0]=list1Embedding[x]
+            chosenWord[1]=list2Embedding[y]
+            chosenWord.append()
+
         print("Distance between "+List1[x]+" and "+List2[y]+" is "+str(distance))
+print("The two chosen words are "+chosenWord[0]+" and " + chosenWord[1])
 
 def plot_similarity(labels, features, rotation):
   corr = np.inner(features, features)
