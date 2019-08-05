@@ -72,9 +72,8 @@ public class readCardTags : MonoBehaviour
     }
 
     //get the location of the list where the tags for those cards are being stored
-    public static void getDealtCardsName()
+    public static void getDealtCardsName(GameObject[] cards)
     {
-        GameObject []cards = GameObject.FindGameObjectsWithTag("card");
         string temp1 = cards[0].GetComponent<cardID>().frontImg;
         string temp2 = cards[1].GetComponent<cardID>().frontImg;
         for (int i=0; i<cardName.Count; i++)

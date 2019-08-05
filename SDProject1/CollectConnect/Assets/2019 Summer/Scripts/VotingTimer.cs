@@ -11,27 +11,38 @@ public class VotingTimer : MonoBehaviour
     [SerializeField] GameEvent startMode1;
     [SerializeField]Slider timer;
     // Start is called before the first frame update
-
+    bool countDown;
     private void OnEnable()
     {
+        countDown = true;
         begin = DateTime.Now;
         timer.value = maxTime;
+
     }
     public void endTimer()
     {
-        startMode1.Raise();
+        // startMode1.Raise();
+        FindObjectOfType<ConnectGM>().startRound();
     }
     private void Update()
     {
-
-        TimeSpan delta = DateTime.Now - begin;
-        double multiplier = delta.TotalSeconds;
-        Debug.Log(multiplier);
-        if (multiplier <= maxTime)
+        if (countDown)
         {
-            timer.value = (maxTime - (float)multiplier);
+            TimeSpan delta = DateTime.Now - begin;
+            double timePassed = delta.TotalSeconds;
+
+            if (timePassed <= maxTime)
+            {
+                timer.value = (maxTime - (float)timePassed);
+            }
+
+            else
+            {
+                countDown = false;
+                endTimer();
+            }
         }
 
-        else endTimer();
+        
     }
 }

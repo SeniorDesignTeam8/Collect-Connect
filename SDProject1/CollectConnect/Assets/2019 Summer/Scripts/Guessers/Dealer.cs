@@ -10,47 +10,41 @@ public class Dealer : Synonyms
     public static string[] keywords= new string[3];
     List<string> syn1= new List<string>();
     List<string> syn2 = new List<string>();
-    [SerializeField]GameEvent keywordsChosen;
-
+    [SerializeField]GameEvent loadKeyWords;
 
     public void stepsGetKeywords()
     {
-        finished = keywordsChosen;
         syn1.Clear();
         syn2.Clear();
-
+        firstCard = false;
+        secondCard = false;
         pickSingleDescriptor();
 
         startTime = DateTime.Now;
-        getSynFromTag(readCardTags._basic[readCardTags.loc_card1_tags],  syn1);
-        getSynFromTag(readCardTags._basic[readCardTags.loc_card2_tags], syn2);
-
-        StartCoroutine(compareDepth(5f, syn1, syn2, syn1, syn2));
-
+        getSynFromTag(readCardTags._basic[readCardTags.loc_card1_tags],  syn1,true);
+        getSynFromTag(readCardTags._basic[readCardTags.loc_card2_tags], syn2,false);
+    }
+    private void Update()
+    {
+        if (firstCard && secondCard)
+            compareSyn(syn1, syn2);
     }
     public override void compareSyn(List<string> syn1, List<string> syn2)
     {
+        firstCard = false;
         for (int i = 0; i < syn1.Count; i++)
         {
             if (syn2.Contains(syn1[i]))
             {
                 if (syn1[i] != keywords[0] && syn1[i] != keywords[1])
+                {
                     keywords[2] = syn1[i];
-                finished.Raise();
-                return;
+                    FindObjectOfType<ConnectGM>().setKeyWordsFromSyn();
+                    return;
+                }
             }
         }
 
-        if (!timedOut())
-        {
-            List<string> synDepth1 = new List<string>();
-            List<string> synDepth2 = new List<string>();
-            getSynFromTag(syn1, synDepth1);
-            getSynFromTag(syn2, synDepth2);
-            StartCoroutine(compareDepth(5, syn1, syn2, synDepth1, synDepth2));
-        }
-        else
-        {
             //chose from list 1
             Debug.Log("Last Resort");
             if (rnd.Next() % 2 == 0)
@@ -61,8 +55,8 @@ public class Dealer : Synonyms
             else
                 keywords[2] = syn2[rnd.Next(0, syn2.Count)];
 
-            finished.Raise();
-        }
+        FindObjectOfType<ConnectGM>().setKeyWordsFromSyn();
+           // loadKeyWords.Raise();
     }
 
 

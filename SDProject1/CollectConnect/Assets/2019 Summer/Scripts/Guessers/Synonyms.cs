@@ -13,66 +13,51 @@ public class Synonyms: MonoBehaviour
     public DateTime startTime;
     public string choosen;
     double maxTime = 20;
-
-    string  syn = "https://api.datamuse.com/words?rel_syn=";
-    string  spc = "https://api.datamuse.com/words?rel_spc=";
-    string  gen = "https://api.datamuse.com/words?rel_gen=";
-    string  par = "https://api.datamuse.com/words?rel_par=";
-
+    int maxDepth = 2;
+    public bool firstCard, secondCard;
+    public bool done;
+    // syn  spc  gen par
+    string[] types = { "https://api.datamuse.com/words?ml=", "https://api.datamuse.com/words?rel_jjb=", "https://api.datamuse.com/words?rel_gen=" };//"https://api.datamuse.com/words?rel_par=" };
     string end = "&max=2";
 
     public GameEvent finished;
 
-    public void getSynFromTag(List<string> original, List<string> syn)
+    public void getSynFromTag(List<string> original, List<string> syn, bool first)
     {
-        for (int i = 0; i < original.Count; i++)
-        {
-            StartCoroutine(GetRequest(syn + original[i] + end, syn, original[i], "syn"));
-            StartCoroutine(GetRequest(spc + original[i] + end, syn, original[i], "spc"));
-            StartCoroutine(GetRequest(gen + original[i] + end, syn, original[i], "gen"));
-            StartCoroutine(GetRequest(par + original[i] + end, syn, original[i], "par"));
-        }
+        done = false;
+        firstCard = secondCard = false;
+        StartCoroutine(GetRequest(syn,original, first));
     }
 
  
     public virtual void compareSyn(List<string> syn1, List<string> syn2)
     {
+        //will use the new python script to compare word similarity 
+        // so for now will go back to picking at random until we have the new script, no need to do extra computation 
+        firstCard = false;
         for (int i = 0; i < syn1.Count; i++)
         {
             if (syn2.Contains(syn1[i]))
             {
                 choosen = syn1[i];
-                finished.Raise();
+                //
+                done = true;
                 return;
+
             }
         }
 
-        if (!timedOut())
+        //chose from list 1
+      //  Debug.Log("Last Resort");
+        if (rnd.Next() % 2 == 0)
         {
-            List<string> synDepth1 = new List<string>();
-            List<string> synDepth2 = new List<string>();
-            getSynFromTag(syn1, synDepth1);
-            getSynFromTag(syn2, synDepth2);
-            StartCoroutine(compareDepth(5, syn1, syn2, synDepth1, synDepth2));
+            choosen = syn1[rnd.Next(0, syn1.Count)];
+
         }
         else
-        {
-            //chose from list 1
-            Debug.Log("Last Resort");
-            if (rnd.Next() % 2 == 0)
-            {
-                if (syn1.Count > 0)
-                    choosen = syn1[rnd.Next(0, syn1.Count)];
-
-            }
-            else
-            {
-                if (syn2.Count > 0)
-                    choosen = syn2[rnd.Next(0, syn2.Count)];
-            }
-
-            finished.Raise();
-        }
+            choosen = syn2[rnd.Next(0, syn2.Count)];
+        done = true;
+       //Call GM script to set 
     }
 
     public bool timedOut()
@@ -86,50 +71,63 @@ public class Synonyms: MonoBehaviour
         return false;
     }
 
-    public IEnumerator compareDepth(float delayTime, List<string> syn1, List<string> syn2, List<string> depth1, List<string> depth2)
+
+    IEnumerator GetRequest(List<string> synonyms, List<string> original, bool first)
     {
-        yield return new WaitForSeconds(delayTime);
-        if (depth1 != null)
+        int listSizeBefore =0 ;
+        synonyms.Clear();
+        for (int depth = 0; depth < maxDepth; depth++)
         {
-            syn1 = syn1.Concat(depth1).ToList();
-            syn2 = syn2.Concat(depth2).ToList();
-        }
-        compareSyn(syn1, syn2);
-    }
-    public void endTheSearch()
-    {
-        StopAllCoroutines();
-    }
-    //save a list of words parsed froom datamuse 
-    IEnumerator GetRequest(string uri, List<string> words, string original, string type)
-    {
-        using (UnityWebRequest webRequest = UnityWebRequest.Get(uri))
-        {
-            // Request and wait for the desired page.
-            yield return webRequest.SendWebRequest();
+           
+            synonyms.Clear();
 
-            string[] separatingStrings = { @"{""word"":""", "......." };
-
-            string[] pages = webRequest.downloadHandler.text.Split(separatingStrings, System.StringSplitOptions.RemoveEmptyEntries);
-            int page = pages.Length - 1;
-
-            if (webRequest.isNetworkError)
+            for (int i =listSizeBefore ; i <original.Count; i++)
             {
-                //    if (pages.Length > 0)
-                //        Debug.Log(pages[page] + ": Error: " + webRequest.error);
-            }
-            else
-            {
-                for (int i = 1; i < page; i++)
+                for (int j = 0; j < types.Length; j++)
                 {
-                    int loc = pages[i].IndexOf('"');
-                    pages[i] = pages[i].Remove(loc);
-                    words.Add(pages[i]);
-                    Debug.Log(original + ":   " + pages[i] + " : " + type + '\n');
+                    string uri = types[j] + original[i] + end;
+                    UnityWebRequest webRequest = UnityWebRequest.Get(uri);
+
+            // Request and wait for the desired page.
+                    yield return webRequest.SendWebRequest();
+
+                    string[] separatingStrings = { @"{""word"":""", "......." };
+
+                    string[] pages = webRequest.downloadHandler.text.Split(separatingStrings, System.StringSplitOptions.RemoveEmptyEntries);
+                    int page = pages.Length - 1;
+                    if (webRequest.isNetworkError)
+                    {
+                        Debug.Log(": Error: " + webRequest.error);
+                    }
+                    else
+                    {
+                        for (int k = 1; k < page; k++)
+                        {
+                            int loc = pages[k].IndexOf('"');
+                            pages[k] = pages[k].Remove(loc);
+                            if(!original.Contains(pages[k])&& !synonyms.Contains(pages[k]))
+                                synonyms.Add(pages[k]);
+                        }
+
+                    }
                 }
-
             }
+            listSizeBefore = original.Count;
+            original = original.Concat(synonyms).ToList();
+        }
+        //end loop 
+        synonyms = original;
+  //      Debug.Log(original[0]);
 
+        if (first)
+        {
+            firstCard = true;
+    //        Debug.Log("First " + original[0]);
+        }
+        else
+        {
+            secondCard = true;
+ //           Debug.Log("Second " + original[0]);
         }
 
     }

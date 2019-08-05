@@ -31,7 +31,7 @@ public class ConnectGM : MonoBehaviour
     [SerializeField]GameEvent resetSubmit;
     [SerializeField] GameEvent startSecondMode;
 
-
+    [SerializeField] GameObject guessers;
     [SerializeField] GameObject EnterKeywordPanel;
     [SerializeField] GameObject GuessHold;
     [SerializeField] GameObject waitingPanel;
@@ -147,7 +147,8 @@ public class ConnectGM : MonoBehaviour
     }
     public void startRound()
     {
-        StopAllCoroutines();
+        collectVotes();
+        //StopAllCoroutines();
         EnterKeywordPanel.SetActive(true);
         GuessHold.SetActive(false);
         aiChoices = 0;
@@ -158,7 +159,7 @@ public class ConnectGM : MonoBehaviour
             deleteCards();
             dealCards();
 
-            readCardTags.getDealtCardsName();
+            readCardTags.getDealtCardsName(cards);
 
             //should start loading screen with and when the 
             //events shoots off that all cards have been loaded remove lodaing screen
@@ -170,6 +171,7 @@ public class ConnectGM : MonoBehaviour
 
         }
     }
+    //called when the user submits their keyword
     public void firstHalfRoundOver()
     {
         string choice = currentSelection.choice;
@@ -179,22 +181,9 @@ public class ConnectGM : MonoBehaviour
         round.text = "Round " + (currentRound + 1) + "/" + MaxRound.ToString();
         //make the selected words panel inactive so they cannot spam the submit  button
         EnterKeywordPanel.SetActive(false);
-        //wait for some time after the player chosses to make it look like others are still thinking 
-        StartCoroutine(waitForAI());
-        
+        secondHalfofRound();       
     }
-    IEnumerator waitForAI()
-    {
-        //activate loading screen
-        int x = rnd.Next(3, 15);
-        if (aiChoices < 1)
-            x += 10;
-        yield return new WaitForSeconds(x);
-        //deactivate loading screen
-
-        secondHalfofRound();
-
-    }
+ 
 
     void updateScore(int points)
     {
@@ -233,13 +222,14 @@ public class ConnectGM : MonoBehaviour
         }
         return words;
     }
-    public void waitForAiToChoose()
-    {
-        aiChoices++;
-    }
-    //
+
     public void secondHalfofRound()
     {
+        BasicGuesser bg = guessers.GetComponent<BasicGuesser>();
+        TricksterGuesser tg = guessers.GetComponent<TricksterGuesser>();
+        while(!bg.done && !tg.done)
+        { }
+        //while the ai are not ready put up a loading screen 
         GuessHold.SetActive(true);
         player.readyToCastVote(GuessHold);
         AI.showChoices();
@@ -255,13 +245,13 @@ public class ConnectGM : MonoBehaviour
             switch ((names)Temp.ownedBy)
             {
                 case names.Hana:
-                    AI.addPoints(names.Hana, votingPoints);
+                    AI.addPoints(names.Hana, votingPoints*Temp.getPoints());
                     break;
                 case names.Loki:
-                    AI.addPoints(names.Loki, votingPoints);
+                    AI.addPoints(names.Loki, votingPoints * Temp.getPoints());
                     break;
                 case names.Player:
-                    updateScore(votingPoints);
+                    updateScore(votingPoints * Temp.getPoints());
                     break;
             }
 

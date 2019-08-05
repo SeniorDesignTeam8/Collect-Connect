@@ -311,7 +311,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   choosen: 
-  finished: {fileID: 11400000, guid: d2bad7f47dc4ebf45b79d3931e6a9e71, type: 2}
+  firstCard: 0
+  secondCard: 0
+  done: 0
+  finished: {fileID: 0}
   points: 0
   voteIcon: {fileID: 7777496549892659872, guid: 21298801a49fc58459037106105d8c9a,
     type: 3}
@@ -329,7 +332,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   choosen: 
-  finished: {fileID: 11400000, guid: 3ccbc2c61657b4f469391ee481a0accd, type: 2}
+  firstCard: 0
+  secondCard: 0
+  done: 0
+  finished: {fileID: 0}
   points: 0
   voteIcon: {fileID: 8536499192469008347, guid: 976d1fe7d9db2c34dbadabc5d4a1355f,
     type: 3}
@@ -361,9 +367,8 @@ GameObject:
   - component: {fileID: 207948139}
   - component: {fileID: 207948141}
   - component: {fileID: 207948140}
-  - component: {fileID: 207948142}
   m_Layer: 5
-  m_Name: GuessingPanel
+  m_Name: SecondHalfPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -426,57 +431,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 207948138}
   m_CullTransparentMesh: 0
---- !u!114 &207948142
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 207948138}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aed70e0823bfe27459baa7040df3cb3a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Response:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1046988261}
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
-      - m_Target: {fileID: 433672224}
-        m_MethodName: secondRound
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
-      - m_Target: {fileID: 74778565}
-        m_MethodName: showChoices
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  Event: {fileID: 11400000, guid: d7a8160fb9731b84782f784e6bc7e5e0, type: 2}
 --- !u!224 &353328122 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 6827740307277643482, guid: 57c24380173b0fe42bc238efee91a18a,
@@ -737,9 +691,6 @@ GameObject:
   - component: {fileID: 433672223}
   - component: {fileID: 433672226}
   - component: {fileID: 433672225}
-  - component: {fileID: 433672228}
-  - component: {fileID: 433672227}
-  - component: {fileID: 433672229}
   m_Layer: 5
   m_Name: SelectModeCanvas
   m_TagString: InfoPanel
@@ -890,6 +841,7 @@ MonoBehaviour:
   AI: {fileID: 74778565}
   resetSubmit: {fileID: 11400000, guid: 8b699a3becd609d499881e700b194e39, type: 2}
   startSecondMode: {fileID: 11400000, guid: d7a8160fb9731b84782f784e6bc7e5e0, type: 2}
+  guessers: {fileID: 74778561}
   EnterKeywordPanel: {fileID: 530505195}
   GuessHold: {fileID: 1046988261}
   waitingPanel: {fileID: 0}
@@ -909,119 +861,6 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 433672224}
-        m_MethodName: setKeyWordsFromSyn
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  Event: {fileID: 11400000, guid: 545b20e2ff79a594e905bf9df02a52ae, type: 2}
---- !u!114 &433672226
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 433672217}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9a436fa7a124b2b4da4e5f2ec5fa3f19, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  choosen: 
-  finished: {fileID: 0}
-  keywordsChosen: {fileID: 11400000, guid: 545b20e2ff79a594e905bf9df02a52ae, type: 2}
---- !u!114 &433672227
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 433672217}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aed70e0823bfe27459baa7040df3cb3a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Response:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 433672224}
-        m_MethodName: waitForAiToChoose
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  Event: {fileID: 11400000, guid: d2bad7f47dc4ebf45b79d3931e6a9e71, type: 2}
---- !u!114 &433672228
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 433672217}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aed70e0823bfe27459baa7040df3cb3a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Response:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 433672224}
-        m_MethodName: waitForAiToChoose
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  Event: {fileID: 11400000, guid: 3ccbc2c61657b4f469391ee481a0accd, type: 2}
---- !u!114 &433672229
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 433672217}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aed70e0823bfe27459baa7040df3cb3a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Response:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 433672224}
-        m_MethodName: collectVotes
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 433672224}
         m_MethodName: startRound
         m_Mode: 1
         m_Arguments:
@@ -1035,6 +874,24 @@ MonoBehaviour:
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   Event: {fileID: 11400000, guid: 0132bed77657a07499668a4225f22bfa, type: 2}
+--- !u!114 &433672226
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 433672217}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a436fa7a124b2b4da4e5f2ec5fa3f19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  choosen: 
+  firstCard: 0
+  secondCard: 0
+  done: 0
+  finished: {fileID: 11400000, guid: 10c1ceb6c2917754c9e6e1a5fa6547a6, type: 2}
+  loadKeyWords: {fileID: 0}
 --- !u!1 &530505195
 GameObject:
   m_ObjectHideFlags: 0
@@ -1048,7 +905,7 @@ GameObject:
   - component: {fileID: 530505197}
   - component: {fileID: 530505199}
   m_Layer: 5
-  m_Name: EnterKeyWordPanel
+  m_Name: FirstHalfPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2857,7 +2714,6 @@ GameObject:
   - component: {fileID: 1939199952}
   - component: {fileID: 1939199951}
   - component: {fileID: 1939199954}
-  - component: {fileID: 1939199953}
   m_Layer: 0
   m_Name: player
   m_TagString: Untagged
@@ -2896,35 +2752,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1939199953
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1939199950}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aed70e0823bfe27459baa7040df3cb3a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Response:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1939199951}
-        m_MethodName: erasedVote
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  Event: {fileID: 11400000, guid: 0132bed77657a07499668a4225f22bfa, type: 2}
 --- !u!114 &1939199954
 MonoBehaviour:
   m_ObjectHideFlags: 0

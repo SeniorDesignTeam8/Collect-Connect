@@ -11,6 +11,11 @@ public class castVote : MonoBehaviour, IPointerClickHandler
     public int ownedBy;
     public int votes=0;
     public GameObject voteHolder;
+    public int getPoints()
+    {
+        votes = voteHolder.transform.childCount;
+        return votes;
+    }
     public void OnPointerClick(PointerEventData eventData)
     {
         connectPlayer player = FindObjectOfType<connectPlayer>();

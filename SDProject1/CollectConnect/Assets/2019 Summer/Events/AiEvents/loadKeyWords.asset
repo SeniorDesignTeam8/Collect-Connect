@@ -10,5 +10,5 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a2eeae8223c7a7345ba2e6c47a006cc9, type: 3}
-  m_Name: tricketrDone
+  m_Name: loadKeyWords
   m_EditorClassIdentifier: 
